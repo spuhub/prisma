@@ -27,12 +27,15 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 
+# from PyQt5.uic import loadUi
+
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'prisma_dialog_base.ui'))
+    os.path.dirname(__file__), 'screens/main_window.ui'))
 
 
 class PrismaDialog(QtWidgets.QDialog, FORM_CLASS):
+
     def __init__(self, parent=None):
         """Constructor."""
         super(PrismaDialog, self).__init__(parent)

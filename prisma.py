@@ -21,16 +21,22 @@
  *                                                                         *
  ***************************************************************************/
 """
+import sys
+import os
+
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.uic import loadUi
+
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .prisma_dialog import PrismaDialog
-import os.path
+from .screens.window_controller import Controller
 
+import os.path
 
 class Prisma:
     """QGIS Plugin Implementation."""
@@ -187,13 +193,15 @@ class Prisma:
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
             self.first_start = False
-            self.dlg = PrismaDialog()
 
+        controller = Controller(self.iface)
+
+        # app = QtWidgets.QApplication(sys.argv)
         # show the dialog
-        self.dlg.show()
+        controller.show_main()
         # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
+        result = controller.main_window.exec_()
+        # # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
