@@ -10,6 +10,7 @@ class MainWindow (QtWidgets.QDialog):
     switch_overlay_address = QtCore.pyqtSignal()
     switch_overlay_feature = QtCore.pyqtSignal()
     switch_overlay_shapefile = QtCore.pyqtSignal()
+    switch_overlay_coordinates = QtCore.pyqtSignal()
 
     def __init__(self):
 
@@ -20,6 +21,8 @@ class MainWindow (QtWidgets.QDialog):
         self.btn_endereco.clicked.connect(self.go_to_address)
         self.btn_feicao.clicked.connect(self.go_to_feature)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
+        self.btn_shapefile.clicked.connect(self.go_to_shapefile)
+        self.btn_coordinates.clicked.connect(self.go_to_coordinates)
 
     def go_to_config(self):
         self.switch_config.emit()
@@ -32,3 +35,6 @@ class MainWindow (QtWidgets.QDialog):
 
     def go_to_shapefile(self):
         self.switch_overlay_shapefile.emit()
+
+    def go_to_coordinates(self):
+        self.switch_overlay_coordinates.emit()
