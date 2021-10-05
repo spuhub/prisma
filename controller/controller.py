@@ -4,6 +4,13 @@ import os.path
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
+from ..screens.main_window import MainWindow
+from ..settings.config_window import ConfigWindow
+from ..screens.overlay_address import OverlayAddress
+from ..screens.overlay_feature import OverlayFeature
+from ..screens.overlay_shapefile import OverlayShapefile
+from ..screens.select_databases import SelectDatabases
+
 class Controller:
 
     def __init__(self, iface):
