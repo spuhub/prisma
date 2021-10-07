@@ -21,3 +21,19 @@
  *                                                                         *
  ***************************************************************************/
 """
+class Overlay:
+
+    def __init__(self, ):
+        pass
+
+    def OverlayShapefile(self):
+        pass
+
+    def OverlayDatabase(self):
+        pass
+
+    def OverlayCoordinates(self):
+        pass
+
+    def OverlayFeature(self):
+        pass

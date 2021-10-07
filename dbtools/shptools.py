@@ -22,5 +22,10 @@
  ***************************************************************************/
 """
 
-"""Todas os metodos de no diretorio de shp vao aqui"""
+class HandleShapefile():
+
+    def __init__(self):
+        pass
+
+
 

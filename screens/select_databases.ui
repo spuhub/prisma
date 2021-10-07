@@ -40,7 +40,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="check_bd">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -52,10 +52,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="combo_bd">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text">
+         <string>Selecione um banco de dados</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
-      <widget class="QListView" name="listView"/>
+      <widget class="QListView" name="list_bd">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
@@ -91,7 +104,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="check_shapefile">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -103,54 +116,23 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <widget class="QComboBox" name="combo_shapefile">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <item>
-        <widget class="QLineEdit" name="lineEdit_2">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="inputMask">
-          <string/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-         <property name="placeholderText">
-          <string>Selecione shapefile de input</string>
-         </property>
-         <property name="cursorMoveStyle">
-          <enum>Qt::LogicalMoveStyle</enum>
-         </property>
-        </widget>
+        <property name="text">
+         <string>Selecione um shapefile</string>
+        </property>
        </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </widget>
      </item>
      <item>
-      <widget class="QListView" name="listView_2"/>
+      <widget class="QListView" name="list_shapefile">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -196,9 +178,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_voltar">
+      <widget class="QPushButton" name="btn_cancel">
        <property name="text">
-        <string>Voltar</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>

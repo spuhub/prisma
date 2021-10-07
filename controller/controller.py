@@ -55,7 +55,7 @@ class Controller:
         self.overlay_shapefile_window.show()
 
     def show_overlay_shapefile(self):
-        self.overlay_shapefile_window = OverlayShapefile()
+        self.overlay_shapefile_window = OverlayShapefile(self.iface)
         self.overlay_shapefile_window.back_window.connect(self.show_main)
         self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
         self.overlay_shapefile_window.show()
@@ -66,9 +66,9 @@ class Controller:
         self.overlay_coordinates_window.continue_window.connect(self.show_select_databases)
         self.overlay_coordinates_window.show()
 
-    def show_select_databases(self):
-        self.select_databases = SelectDatabases()
-        # self.select_databases.back_window.connect(self.show_main)
+    def show_select_databases(self, operation_data):
+        self.select_databases = SelectDatabases(operation_data)
+        self.select_databases.cancel_window.connect(self.show_main)
         self.select_databases.continue_window.connect(self.show_output_window)
         self.select_databases.show()
 
