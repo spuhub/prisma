@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
+    <width>685</width>
     <height>445</height>
    </rect>
   </property>
@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -39,7 +39,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QComboBox" name="comoBoxPg">
+        <widget class="QComboBox" name="combo_box_base">
          <item>
           <property name="text">
            <string>Adicionar um novo Banco de dados</string>
@@ -57,7 +57,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="nomeBase">
+          <widget class="QLineEdit" name="nome_base">
            <property name="accessibleName">
             <string/>
            </property>
@@ -132,7 +132,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="baseDeDados">
+          <widget class="QLineEdit" name="base_de_dados">
            <property name="placeholderText">
             <string>Base de dados</string>
            </property>
@@ -150,7 +150,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="orgaoResponsavelbase">
+          <widget class="QLineEdit" name="orgao_responsavel_base">
            <property name="placeholderText">
             <string>Orgão Responsável</string>
            </property>
@@ -170,7 +170,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="periosReferenciaBase">
+            <widget class="QLineEdit" name="perios_referencia_base">
              <property name="placeholderText">
               <string>Periodo de Referência</string>
              </property>
@@ -188,7 +188,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="dataAquisicaoBase">
+            <widget class="QLineEdit" name="data_aquisicao_base">
              <property name="placeholderText">
               <string>Data de Aquisição</string>
              </property>
@@ -233,7 +233,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QPushButton" name="testarBaseCarregarCamadas">
+          <widget class="QPushButton" name="testar_base_carregar_camadas">
            <property name="text">
             <string>Testar Conexão e Carregar Camadas</string>
            </property>
@@ -249,7 +249,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QComboBox" name="comoBoxShp">
+        <widget class="QComboBox" name="combo_box_shp">
          <item>
           <property name="text">
            <string>Adicionar um novo Shapefile</string>
@@ -267,7 +267,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="nomeShp">
+          <widget class="QLineEdit" name="nome_shp">
            <property name="placeholderText">
             <string>Nome</string>
            </property>
@@ -285,7 +285,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="urlDowload">
+          <widget class="QLineEdit" name="url_dowload">
            <property name="placeholderText">
             <string>URL para download</string>
            </property>
@@ -303,7 +303,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="diretorioLocal">
+          <widget class="QLineEdit" name="diretorio_local_shp">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -357,7 +357,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="orgaoResponsavelShp">
+          <widget class="QLineEdit" name="orgao_responsavel_shp">
            <property name="placeholderText">
             <string>Orgão Responsável</string>
            </property>
@@ -375,7 +375,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="periosReferenciaShp">
+          <widget class="QLineEdit" name="perios_referencia_shp">
            <property name="placeholderText">
             <string>Periodo de Referência</string>
            </property>
@@ -393,7 +393,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="dataAquisicaoShp">
+          <widget class="QLineEdit" name="data_aquisicao_shp">
            <property name="placeholderText">
             <string>Data de Aquisição</string>
            </property>
@@ -402,13 +402,80 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="testarShpCarregarCamadas">
+        <widget class="QPushButton" name="testar_shp_carregar_camadas">
          <property name="text">
           <string>Testar Conexão e Carregar Camada</string>
          </property>
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Curadoria</string>
+      </attribute>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>629</width>
+         <height>43</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <item>
+         <widget class="QLabel" name="label_18">
+          <property name="text">
+           <string>Arquivo de Curadoria</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="diretoriolocalcuradoria">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="accessibleName">
+           <string/>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Selecione o caminho do arquivo de curadoria</string>
+          </property>
+          <property name="cursorMoveStyle">
+           <enum>Qt::LogicalMoveStyle</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="tab_geocod">
       <attribute name="title">
@@ -425,7 +492,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBoxServicoGeoCod">
+          <widget class="QComboBox" name="combo_box_servico_geocod">
            <item>
             <property name="text">
              <string>Google</string>
@@ -455,7 +522,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="keyGeoCod"/>
+          <widget class="QLineEdit" name="key_geo_cod"/>
          </item>
         </layout>
        </item>
@@ -479,14 +546,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btnSalvar">
+      <widget class="QPushButton" name="btn_salvar">
        <property name="text">
         <string>Salvar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnCancelar">
+      <widget class="QPushButton" name="btn_cancelar">
        <property name="text">
         <string>Cancelar</string>
        </property>
