@@ -22,7 +22,7 @@ class MainWindow (QtWidgets.QDialog):
         self.btn_feicao.clicked.connect(self.go_to_feature)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
-        self.btn_coordinates.clicked.connect(self.go_to_coordinates)
+        #self.btn_coordinates.clicked.connect(self.go_to_coordinates)
 
     def go_to_config(self):
         self.switch_config.emit()
@@ -39,5 +39,5 @@ class MainWindow (QtWidgets.QDialog):
     def go_to_shapefile(self):
         self.switch_overlay_shapefile.emit()
 
-    def go_to_coordinates(self):
-        self.switch_overlay_coordinates.emit()
+    #def go_to_coordinates(self):
+     #   self.switch_overlay_coordinates.emit()

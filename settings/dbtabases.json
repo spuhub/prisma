@@ -42,7 +42,7 @@
 		"tipo": "shp",
 		"nome": "Área Militar",
 		"urlDowload": "www.google.com",
-		"diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+		"diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
 		"orgaoResponsavel" : "SPU",
 		"periosReferencia": "10/11/2021",
 		"dataAquisicao":"10/11/2021",
