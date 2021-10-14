@@ -4,7 +4,7 @@ call "C:\OSGeo4W\bin\o4w_env.bat"
 @echo on
 pyrcc5 -o resources.py resources.qrc
 pip install --upgrade pip
-pip install "Fiona-1.8.20-cp39-cp39-win_amd64.whl"
+pip install "dist/Fiona-1.8.20-cp39-cp39-win_amd64.whl"
 pip install rtree
-pip install pandas
 pip install geopandas
+pip install geopy

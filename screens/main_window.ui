@@ -51,7 +51,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../resources.qrc">:/plugins/prisma/urgeologo.png</pixmap>
+        <pixmap>:/plugins/prisma/icon.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>

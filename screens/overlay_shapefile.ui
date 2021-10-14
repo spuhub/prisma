@@ -114,7 +114,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QLineEdit" name="lineEdit_2">
+        <widget class="QLineEdit" name="txt_input">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
@@ -144,7 +144,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="btn_input">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -286,7 +286,7 @@
      <item>
       <widget class="QPushButton" name="btn_voltar">
        <property name="text">
-        <string>Voltar</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>
