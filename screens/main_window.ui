@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>584</width>
     <height>607</height>
    </rect>
   </property>
@@ -45,10 +45,10 @@
         </font>
        </property>
        <property name="text">
-        <string/>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/plugins/prisma/urgeologo.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="pixmap">
-        <pixmap>:/plugins/prisma/icon.png</pixmap>
+        <pixmap resource="../resources.qrc">:/plugins/prisma/icon.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -71,13 +71,15 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+         <strikeout>false</strikeout>
+         <kerning>true</kerning>
         </font>
        </property>
        <property name="text">
-        <string>Avaliar sobreposição em massa com Shapefile</string>
+        <string>Apartir de um shapefile</string>
        </property>
       </widget>
      </item>
@@ -104,11 +106,13 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Avaliar sobreposição através da feição selecionada</string>
+        <string>Apartir feição selecionada</string>
        </property>
       </widget>
      </item>
@@ -135,11 +139,13 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Avaliar sobreposição através de um endereço</string>
+        <string>Apartir de um endereço ou ponto</string>
        </property>
       </widget>
      </item>
@@ -166,9 +172,9 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
          <strikeout>false</strikeout>
          <kerning>true</kerning>
         </font>
@@ -196,6 +202,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

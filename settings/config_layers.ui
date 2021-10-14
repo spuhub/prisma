@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>layer_config</class>
+ <widget class="QDialog" name="layer_config">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>961</width>
+    <height>392</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configurações de Camadas</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Camadas disponiveis na base de dado:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableLayers">
+     <row>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Usar?</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Camada</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Nome Fantasia</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Estilo Linha</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Cor da linha</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Espessura da Linha</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Preenchimento</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Cor do Preenchimento</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSalvar">
+       <property name="text">
+        <string>Salvar</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancelar">
+       <property name="text">
+        <string>Cancelar</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
