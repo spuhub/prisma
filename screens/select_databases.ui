@@ -127,13 +127,6 @@
        </item>
       </widget>
      </item>
-     <item>
-      <widget class="QListView" name="list_shapefile">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -148,6 +141,9 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QListWidget" name="list_shapefile"/>
    </item>
    <item>
     <spacer name="verticalSpacer">
