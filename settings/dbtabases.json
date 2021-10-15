@@ -1,80 +1,122 @@
 {
-  "base1": {
-    "id": "base1",
-    "tipo": "pg",
-    "nome": "edgv",
-    "host": "127.0.0.1",
-	"port": "5432",
-    "orgaoResponsavel" : "SPU",
-    "periosReferencia": "10/11/2021",
-    "dataAquisicao":"10/11/2021",
-    "TabelasDisponiveis": ["area", "ferrovia","estrada", "linhaferrea", "LPM"],
-    "TipoTabelasDisponiveis": ["Polygon", "Line","Line", "Line", "Line"],
-    "tabelasCamadas": ["ferrovia", "estrada", "linhaferrea"],
-    "nomeFantasiaTabelasCamadas": ["ferroviasEDGV", "estradas"],
-    "descricaoTabelasCamadas": ["E de ferrovia", "E de estrada", "É de linhaFerrea"],
-    "estiloTabelasCamadas": [
-      {
-        "estiloLinha": "dash dot",
-        "corlinha": "red",
-        "espessuraLinha": 1.0,
-        "TipoPreenchimento": "cross",
-        "corPreenchimento": ""
-      },
-       {
-        "estiloLinha": "dash dot",
-        "corlinha": "red",
-        "espessuraLinha": 1.0,
-        "TipoPreenchimento": "cross",
-        "corPreenchimento": ""
-      },
-       {
-        "estiloLinha": "dash dot",
-        "corlinha": "red",
-        "espessuraLinha": 1.0,
-        "TipoPreenchimento": "cross",
-        "corPreenchimento": ""
-      }
-    ]
-},
-	"base2":{
-		"id": "base2",
-		"tipo": "shp",
-		"nome": "Área Militar",
-		"urlDowload": "www.google.com",
-		"diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-		"orgaoResponsavel" : "SPU",
-		"periosReferencia": "10/11/2021",
-		"dataAquisicao":"10/11/2021",
-		"nomeFantasiaCamada": "Militar",
-		"estiloCamadas": [
-		  {
-			"estiloLinha": "dash dot",
-			"corlinha": "red",
-			"espessuraLinha": 1.0,
-			"TipoPreenchimento": "cross",
-			"corPreenchimento": ""
-		  }
-		]
-	},
-  "base3":{
-		"id": "base2",
-		"tipo": "shp",
-		"nome": "Área Quilombola",
-		"urlDowload": "www.instagram.com",
-		"diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
-		"orgaoResponsavel" : "SPU",
-		"periosReferencia": "10/11/2021",
-		"dataAquisicao":"10/11/2021",
-		"nomeFantasiaCamada": "Floresta",
-		"estiloCamadas": [
-		  {
-			"estiloLinha": "dash dot",
-			"corlinha": "red",
-			"espessuraLinha": 1.0,
-			"TipoPreenchimento": "cross",
-			"corPreenchimento": ""
-		  }
-		]
-	}
+    "base1": {
+        "id": "base1",
+        "tipo": "pg",
+        "nome": "edgv",
+        "host": "127.0.0.1",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "TabelasDisponiveis": [
+            "area",
+            "ferrovia",
+            "estrada",
+            "linhaferrea",
+            "LPM"
+        ],
+        "TipoTabelasDisponiveis": [
+            "Polygon",
+            "Line",
+            "Line",
+            "Line",
+            "Line"
+        ],
+        "tabelasCamadas": [
+            "ferrovia",
+            "estrada",
+            "linhaferrea"
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "ferroviasEDGV",
+            "estradas"
+        ],
+        "descricaoTabelasCamadas": [
+            "E de ferrovia",
+            "E de estrada",
+            "\u00c3\u2030 de linhaFerrea"
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "estiloLinha": "dash dot",
+                "corlinha": "red",
+                "espessuraLinha": 1.0,
+                "TipoPreenchimento": "cross",
+                "corPreenchimento": ""
+            },
+            {
+                "estiloLinha": "dash dot",
+                "corlinha": "red",
+                "espessuraLinha": 1.0,
+                "TipoPreenchimento": "cross",
+                "corPreenchimento": ""
+            },
+            {
+                "estiloLinha": "dash dot",
+                "corlinha": "red",
+                "espessuraLinha": 1.0,
+                "TipoPreenchimento": "cross",
+                "corPreenchimento": ""
+            }
+        ]
+    },
+    "base2": {
+        "id": "base2",
+        "tipo": "shp",
+        "nome": "Shpimoveis",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "ferrovia",
+        "estiloCamadas": [
+            {
+                "estiloLinha": "dash dot",
+                "corlinha": "red",
+                "espessuraLinha": 1.0,
+                "TipoPreenchimento": "cross",
+                "corPreenchimento": ""
+            }
+        ]
+    },
+    "base2": {
+        "id": "base2",
+        "tipo": "shp",
+        "nome": "Área Quilombola",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "Floresta",
+        "estiloCamadas": [
+            {
+                "estiloLinha": "dash dot",
+                "corlinha": "red",
+                "espessuraLinha": 1.0,
+                "TipoPreenchimento": "cross",
+                "corPreenchimento": ""
+            }
+        ]
+    },
+    "base3": {
+        "id": "base3",
+        "tipo": "shp",
+        "nome": "Área Militar",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "Militar",
+        "estiloCamadas": [
+            {
+                "estiloLinha": "dash dot",
+                "corlinha": "red",
+                "espessuraLinha": 1.0,
+                "TipoPreenchimento": "cross",
+                "corPreenchimento": ""
+            }
+        ]
+    }
 }

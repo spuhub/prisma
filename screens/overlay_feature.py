@@ -32,11 +32,10 @@ class OverlayFeature (QtWidgets.QDialog):
         layer = self.iface.activeLayer()
         selected_features = layer.selectedFeatures()
 
-        # for feature in selected_features:
-
-        # print("Fields: ", selected_features[0].fields().names())
-        # print("Atributes: ", selected_features[0].attributes())
-        # print("Geometry: ", selected_features[0].geometry())
+        for feature in range(len(selected_features)):
+            print("Fields: ", selected_features[0].fields().names())
+            print("Atributes: ", selected_features[0].attributes())
+            print("Geometry: ", selected_features[0].geometry())
 
         # selected_features.append(geometry)
         # print(selected_features)

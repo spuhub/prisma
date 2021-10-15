@@ -68,8 +68,11 @@ class SelectDatabases(QtWidgets.QDialog):
             indexCombo = self.combo_shapefile.currentIndex() - 1
 
             # Área Homologada da união e área selecionada para comparação
-            areas = ["C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
-                     self.data_shp[indexCombo]['diretorioLocal']]
+            # areas = ["C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+            #          self.data_shp[indexCombo]['diretorioLocal']]
+
+            areas = [self.data_shp[indexCombo]['diretorioLocal']]
+
             self.operation_data['comparasion_shapefile'] = areas
 
             self.handle_shp = HandleShapefile()

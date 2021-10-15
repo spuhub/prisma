@@ -32,18 +32,18 @@ class HandleShapefile():
     def OverlayAnalisys(self, operation_data):
         self.operation_data = operation_data
         areas = []
-        count = len(self.operation_data['comparasion_shapefile']) - 1
-        for i in 0, count:
+
+        # Leitura dos dados que serão utilizados para sobreposição de áreas
+        input = gpd.read_file(self.operation_data['input'])
+        for i in range(len(self.operation_data['comparasion_shapefile'])):
             areas.append(gpd.read_file(self.operation_data['comparasion_shapefile'][i]))
 
-        # for area in areas:
-        #     for indexArea, rowArea in area.iterrows():
-        #         for indexInput, rowInput in input.iterrows():
-        #             # print(rowArea['geometry'].intersects(rowInput['geometry']))
-        #             print(rowArea['geometry'].intersects(rowInput['geometry']))
+        for area in areas:
+            for indexArea, rowArea in area.iterrows():
+                for indexInput, rowInput in input.iterrows():
+                    print(rowArea['geometry'].intersects(rowInput['geometry']))
 
-        print(areas)
-        # return gpds
+        # print(areas)
 
         # self.quilombola = self.quilombola.to_crs(31982)
         # gpd.read_file()
