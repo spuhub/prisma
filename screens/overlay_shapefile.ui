@@ -184,16 +184,16 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_continuar">
+      <widget class="QPushButton" name="btn_voltar">
        <property name="text">
-        <string>Continuar</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_voltar">
+      <widget class="QPushButton" name="btn_continuar">
        <property name="text">
-        <string>Cancelar</string>
+        <string>Continuar</string>
        </property>
       </widget>
      </item>

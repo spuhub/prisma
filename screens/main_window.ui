@@ -79,7 +79,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Apartir de um shapefile</string>
+        <string>Shapefile</string>
        </property>
       </widget>
      </item>
@@ -112,7 +112,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Apartir feição selecionada</string>
+        <string>Feição selecionada</string>
        </property>
       </widget>
      </item>
@@ -145,7 +145,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Apartir de um endereço ou ponto</string>
+        <string>Endereço ou ponto</string>
        </property>
       </widget>
      </item>

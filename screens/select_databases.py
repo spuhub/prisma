@@ -7,6 +7,8 @@ from PyQt5.uic import loadUi
 from ..settings.handle_json import HandleJson
 from ..dbtools.shptools import HandleShapefile
 
+from qgis.core import QgsVectorLayer, QgsPoint
+
 class SelectDatabases(QtWidgets.QDialog):
     cancel_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()

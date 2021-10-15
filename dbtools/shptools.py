@@ -24,6 +24,8 @@
 
 import geopandas as gpd
 
+from qgis.core import QgsProject, QgsVectorLayer
+
 class HandleShapefile():
 
     def __init__(self):
@@ -35,13 +37,24 @@ class HandleShapefile():
 
         # Leitura dos dados que serão utilizados para sobreposição de áreas
         input = gpd.read_file(self.operation_data['input'])
+        input.to_crs(31982)
         for i in range(len(self.operation_data['comparasion_shapefile'])):
             areas.append(gpd.read_file(self.operation_data['comparasion_shapefile'][i]))
+            areas[i].to_crs(31982)
 
         for area in areas:
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
                     print(rowArea['geometry'].intersects(rowInput['geometry']))
+
+
+        show_overlay = gpd.overlay(input, areas[0], how='intersection')
+
+        show_qgis_input = QgsVectorLayer(show_overlay.to_json(), "input")
+        QgsProject.instance().addMapLayer(show_qgis_input)
+
+        show_qgis_area = QgsVectorLayer(show_overlay.to_json(), "militar")
+        QgsProject.instance().addMapLayer(show_qgis_area)
 
         # print(areas)
 
@@ -49,6 +62,8 @@ class HandleShapefile():
         # gpd.read_file()
 
         return
+
+
 
 
 
