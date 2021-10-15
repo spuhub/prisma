@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -485,9 +485,9 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_17">
          <item>
-          <widget class="QLabel" name="label_17">
+          <widget class="QLabel" name="label_16">
            <property name="text">
-            <string>Chave de Acesso</string>
+            <string>Servico de Geocodificação</string>
            </property>
           </widget>
          </item>
@@ -515,9 +515,9 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_18">
          <item>
-          <widget class="QLabel" name="label_16">
+          <widget class="QLabel" name="label_17">
            <property name="text">
-            <string>Servico de Geocodificação</string>
+            <string>Chave de Acesso</string>
            </property>
           </widget>
          </item>
