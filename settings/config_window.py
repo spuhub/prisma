@@ -20,6 +20,21 @@ class ConfigWindow (QtWidgets.QDialog):
         self.btn_salvar.clicked.connect(self.next)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConf)
 
+
+    def SAveBdConfigJson(self):
+        confg_dic = {}
+
+        confg_dic["id"] = ""
+        confg_dic["tipo"] = "pg"
+        confg_dic["nome"] = self.nome_base.text()
+        confg_dic["host"] = self.host.text()
+        confg_dic["porta"] = self.porta.text()
+        confg_dic["baseDeDados"] =
+
+
+
+
+
     def back(self):
         self.hide()
         self.back_window.emit()
