@@ -67,7 +67,7 @@ class Controller:
         self.select_databases.continue_window.connect(self.show_output_window)
         self.select_databases.show()
 
-    def show_output_window(self):
-        self.overlay_shapefile_window = OutputWindow()
+    def show_output_window(self, result):
+        self.overlay_shapefile_window = OutputWindow(result)
         # self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
         self.overlay_shapefile_window.show()

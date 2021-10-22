@@ -33,8 +33,7 @@ class OverlayAddress (QtWidgets.QDialog):
                 points = geocode(address, provider='nominatim', user_agent='csc_user_ht')
                 print("Points: ", points)
 
-            except(r):
-                print(r)
+            except():
                 self.iface.messageBar().pushMessage("Error", "Endereço não encontrado ou serviço indisponível no momento.", level=1)
 
         # self.hide()

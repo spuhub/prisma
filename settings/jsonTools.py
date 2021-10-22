@@ -8,32 +8,8 @@ class JsonTools:
         with open(self.json_path, 'r', encoding='utf8') as f:
             self.json_config = json.load(f)
 
-
-    def InsertDatabasePg(self, dbjsonconf):
-        dados = {}
-
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
-
-        numofItens = len(list(dados.keys()))
-
-        dbid = "base" + str(numofItens + 1)
-        dbjsonconf ["id"] = dbid
-
-        dados[dbid] = dbjsonconf
-        with open(self.json_path, 'w') as f:
-            json.dump(dados, f, indent=4)
-
-        return dbid
-
-
-    def EditDatabase(self, dbid, dbjsonnewconf):
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
-
-        dados[dbid] = dbjsonnewconf
-        with open(self.json_path, 'w') as f:
-            json.dump(dados, f, indent=4)
+    def GetJson(self):
+        return self.json_config
 
     def GetConfigShapefile(self):
         shp_list = []
@@ -53,13 +29,38 @@ class JsonTools:
 
         return shp_list
 
+    def InsertDatabasePg(self, dbjsonconf):
+        dados = {}
+
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+
+        numofItens = len(list(dados.keys()))
+
+        dbid = "base" + str(numofItens + 1)
+        dbjsonconf ["id"] = dbid
+
+        dados[dbid] = dbjsonconf
+        with open(self.json_path, 'w') as f:
+            json.dump(dados, f, indent=4)
+
+        return dbid
+
+    def EditDatabase(self, dbid, dbjsonnewconf):
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+
+        dados[dbid] = dbjsonnewconf
+        with open(self.json_path, 'w') as f:
+            json.dump(dados, f, indent=4)
+
 if __name__ == '__main__':
     d = JsonTools()
 
     saida = d.GetConfigDatabase()
     d.InsertDatabasePg(saida[0])
     print(d.GetConfigDatabase())
-
+    print(d.GetConfigShapefile())
 
 
 

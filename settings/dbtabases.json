@@ -2,17 +2,21 @@
     "base1": {
         "id": "base1",
         "tipo": "pg",
-        "nome": "edgv",
-        "host": "127.0.0.1",
+        "nome": "usucapiao",
+        "host": "localhost",
+        "porta": "5432",
+        "db": "usucapiao",
+        "usuario": "postgres",
+        "senha": "postgres",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "TabelasDisponiveis": [
-            "area",
-            "ferrovia",
-            "estrada",
-            "linhaferrea",
-            "LPM"
+            "area_especial",
+            "faixa_dominio",
+            "faixa_seguranca",
+            "municipio",
+            "massa_dagua"
         ],
         "TipoTabelasDisponiveis": [
             "Polygon",
@@ -22,13 +26,10 @@
             "Line"
         ],
         "tabelasCamadas": [
-            "ferrovia",
-            "estrada",
-            "linhaferrea"
+            "municipio"
         ],
         "nomeFantasiaTabelasCamadas": [
-            "ferroviasEDGV",
-            "estradas"
+            "Município"
         ],
         "descricaoTabelasCamadas": [
             "E de ferrovia",
