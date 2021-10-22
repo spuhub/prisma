@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QFont
 from PyQt5.uic import loadUi
 
-from ..settings.jsonTools import JsonTools
+from ..settings.json_tools import JsonTools
 from ..dbtools.shp_tools import ShpTools
 
 from qgis.core import QgsVectorLayer, QgsPoint
@@ -17,8 +17,8 @@ class SelectDatabases(QtWidgets.QDialog):
     def __init__(self, operation_data):
         self.operation_data = operation_data
         self.json_tools = JsonTools()
-        self.data_bd = self.json_tools.GetConfigDatabase()
-        self.data_shp = self.json_tools.GetConfigShapefile()
+        self.data_bd = self.json_tools.get_config_database()
+        self.data_shp = self.json_tools.get_config_shapefile()
 
         super(SelectDatabases, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'select_databases.ui'), self)

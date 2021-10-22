@@ -4,14 +4,14 @@ import json
 class JsonTools:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.json_path = base_dir + "\settings\dbtabases.json"
+        self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
         with open(self.json_path, 'r', encoding='utf8') as f:
             self.json_config = json.load(f)
 
-    def GetJson(self):
+    def get_json(self):
         return self.json_config
 
-    def GetConfigShapefile(self):
+    def get_config_shapefile(self):
         shp_list = []
 
         for base, data in self.json_config.items():
@@ -20,7 +20,7 @@ class JsonTools:
 
         return shp_list
 
-    def GetConfigDatabase(self):
+    def get_config_database(self):
         shp_list = []
 
         for base, data in self.json_config.items():
@@ -29,7 +29,7 @@ class JsonTools:
 
         return shp_list
 
-    def InsertDatabasePg(self, dbjsonconf):
+    def insert_database_pg(self, db_json_conf):
         dados = {}
 
         with open(self.json_path, 'r') as f:
@@ -38,29 +38,51 @@ class JsonTools:
         numofItens = len(list(dados.keys()))
 
         dbid = "base" + str(numofItens + 1)
-        dbjsonconf ["id"] = dbid
+        db_json_conf ["id"] = dbid
 
-        dados[dbid] = dbjsonconf
+        dados[dbid] = db_json_conf
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
 
         return dbid
 
-    def EditDatabase(self, dbid, dbjsonnewconf):
+    def edit_database(self, db_id, db_json_new_conf):
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
 
-        dados[dbid] = dbjsonnewconf
+        dados[db_id] = db_json_new_conf
+        dados[db_id]["id"] = db_id
+
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
+
+    def get_keys_name_source_data(self):
+
+        source_data = {}
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+
+        numofItens = list(dados.keys())
+
+        for item in numofItens:
+            nome = dados[item]["nome"]
+            source_data[item] = nome
+
+        return source_data
+
+    def get_source_data(self, id_base):
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+
+
 
 if __name__ == '__main__':
     d = JsonTools()
 
-    saida = d.GetConfigDatabase()
-    d.InsertDatabasePg(saida[0])
-    print(d.GetConfigDatabase())
-    print(d.GetConfigShapefile())
+    saida = d.get_config_database()
+    d.insert_database_pg(saida[0])
+    print(d.get_config_database())
+    print(d.get_config_shapefile())
 
 
 

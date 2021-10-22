@@ -5,24 +5,30 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
 from .config_layers import ConfigLayers
+from .json_tools import JsonTools
+from .env_tools import EnvTools
 
 
-class ConfigWindow (QtWidgets.QDialog):
-
+class ConfigWindow(QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
 
     def __init__(self):
         super(ConfigWindow, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'config_window.ui'), self)
+        self.setings = JsonTools()
+        self.credencials = EnvTools()
+        self.source_databases = self.setings.get_config_database()
+        self.fill_combo_box_base()
 
         self.btn_cancelar.clicked.connect(self.back)
-        self.btn_salvar.clicked.connect(self.next)
+        self.btn_salvar.clicked.connect(self.save_bd_config_json)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConf)
+        self.combo_box_base.activated.connect(self.fill_text_fields_base)
 
-
-    def SAveBdConfigJson(self):
+    def save_bd_config_json(self):
         confg_dic = {}
+        id_current_db = self.combo_box_base.currentData()
 
         confg_dic["id"] = ""
         confg_dic["tipo"] = "pg"
@@ -34,11 +40,77 @@ class ConfigWindow (QtWidgets.QDialog):
         confg_dic["periosReferencia"] = self.perios_referencia_base.text()
         confg_dic["dataAquisicao"] = self.data_aquisicao_base.text()
 
+        if self.combo_box_base.currentData() == "0":
+            if confg_dic["nome"] != "" and confg_dic["host"] != "" and confg_dic["porta"] != "" and confg_dic["baseDeDados"] != "":
+                id = self.setings.insert_database_pg(confg_dic)
+                self.source_databases.append(confg_dic)
+                self.combo_box_base.addItem(self.nome_base.text(), id)
+                self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
+                confg_dic = {}
+
+        else:
+            index = self.search_index_base_pg(id_current_db)
+            print("ID_current ==", id_current_db)
+            self.source_databases[index] = confg_dic
+            self.setings.edit_database(id_current_db,confg_dic)
+
+            self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
+            confg_dic = {}
 
 
 
+    def fill_combo_box_base(self):
+        self.combo_box_base.setItemData(0,"0")
+        if len(self.source_databases) > 0 :
+            for item in self.source_databases:
+                self.combo_box_base.addItem(item["nome"],item["id"])
+
+    def search_base_pg(self, id_base):
+        config = {}
+        for item in self.source_databases:
+            if item["id"] == id_base:
+                config = item
+
+        return config
+
+    def search_index_base_pg(self, id_base):
+        idex=0
+        #cont=0
+        for item in self.source_databases:
+            if item["id"] != id_base:
+                idex = idex + 1
+        return idex;
 
 
+    def fill_text_fields_base(self):
+        current_id = self.combo_box_base.currentData()
+        current_config = self.search_base_pg(current_id)
+
+        if current_id != "0":
+            print("cuureereree ====",current_id)
+            self.nome_base.setText(current_config["nome"])
+            self.host.setText(current_config["host"])
+            self.porta.setText(current_config["porta"])
+            self.base_de_dados.setText(current_config["baseDeDados"])
+            self.orgao_responsavel_base.setText(current_config["orgaoResponsavel"])
+            self.perios_referencia_base.setText(current_config["periosReferencia"])
+            self.data_aquisicao_base.setText(current_config["dataAquisicao"])
+
+            cred = self.credencials.get_credentials(current_id)
+            print ("creed ",cred)
+            self.usuario.setText(cred[0])
+            self.senha.setText(cred[1])
+
+        if current_id == "0":
+            self.nome_base.clear()
+            self.host.clear()
+            self.porta.clear()
+            self.base_de_dados.clear()
+            self.orgao_responsavel_base.clear()
+            self.perios_referencia_base.clear()
+            self.data_aquisicao_base.clear()
+            self.usuario.clear()
+            self.senha.clear()
 
 
     def back(self):
@@ -52,4 +124,3 @@ class ConfigWindow (QtWidgets.QDialog):
     def hideLayerConf(self):
         d = ConfigLayers()
         d.exec_()
-

@@ -5,28 +5,45 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QSettings
 
 
-class JsonTools:
+class EnvTools:
     def __init__(self):
         self.settings = QSettings()
         #print(0)
 
-    def SToreCredentials(self, base_id, user_name, password):
-        self.settings.beginGroup('PostgreSQL/connections/' + base_id)
-        self.settings.setValue('usuario', self.usuario.text())
-        self.settings.setValue('senha', self.senha.text())
+    def store_credentials(self, base_id, user_name, password):
+        self.settings.beginGroup('prisma/connections/' + base_id)
+        self.settings.setValue('usuario', user_name)
+        self.settings.setValue('senha', password)
         self.settings.endGroup()
+        #self.settings.remove("")
+        #print(self.settings.allKeys())
 
-    def SToreKeys(self, service_name, key):
+    def edit_credentials(self, base_id,new_user_name, new_password):
+        self.settings.setValue('prisma/connections/' +base_id+ '/usuario', new_user_name)
+        self.settings.setValue('prisma/connections/' +base_id+ '/senha', new_password)
+        #self.settings.remove("")
+        #print(self.settings.allKeys())
+
+
+        #usuario = self.settings.value('usuario')
+        #senha = self.settings.value('senha')
+        #self.settings.endGroup()
+        #print(usuario, senha)
+        #self.settings.remove("")
+        #print(self.settings.allKeys())
+
+    def store_keys(self, service_name, key):
         self.settings.beginGroup('Geocoding/keys/' + service_name)
-        self.settings.setValue('key', self.key_geo_cod.text())
+        self.settings.setValue('key', self.key)
         self.settings.endGroup()
 
-    def GEtCredentials(self, base_id):
-        self.settings.beginGroup('PostgreSQL/connections/' + base_id)
-        usuario = self.settings.value('usuario')
-        senha = self.settings.value('senha')
+
+    def get_credentials(self, base_id):
+        #self.settings.beginGroup('PostgreSQL/connections/' + base_id)
+        usuario = self.settings.value('prisma/connections/' +base_id+ '/usuario')
+        senha = self.settings.value('prisma/connections/' +base_id+ '/senha')
         return [usuario, senha]
 
-    def GEtKey(self, service_name):
+    def get_key(self, service_name):
         self.settings.beginGroup('Geocoding/keys/' + service_name)
         return self.settings.value('key')

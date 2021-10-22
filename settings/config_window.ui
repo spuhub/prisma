@@ -224,11 +224,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="senha">
-             <property name="placeholderText">
-              <string>Senha</string>
-             </property>
-            </widget>
+            <widget class="QgsPasswordLineEdit" name="senha"/>
            </item>
           </layout>
          </item>
@@ -563,6 +559,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsPasswordLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qgspasswordlineedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
