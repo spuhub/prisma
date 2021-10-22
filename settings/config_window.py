@@ -29,7 +29,13 @@ class ConfigWindow (QtWidgets.QDialog):
         confg_dic["nome"] = self.nome_base.text()
         confg_dic["host"] = self.host.text()
         confg_dic["porta"] = self.porta.text()
-        confg_dic["baseDeDados"] =
+        confg_dic["baseDeDados"] = self.base_de_dados.text()
+        confg_dic["orgaoResponsavel"] = self.orgao_responsavel_base.text()
+        confg_dic["periosReferencia"] = self.perios_referencia_base.text()
+        confg_dic["dataAquisicao"] = self.data_aquisicao_base.text()
+
+
+
 
 
 
