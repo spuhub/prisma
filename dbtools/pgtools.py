@@ -53,7 +53,6 @@ class PgTools:
 
         #self.dataGeomTypes = {"trecho_rodoviario":"LineString", "trecho_ferroviario":"LineString", "area_politico_adminitrativo":"Polygon", "unidade_federacao":"Polygon", "municipio": "Polygon", "municipio":"Polygon", "terreno_sujeito_inundacao":"Polygon","faixa_dominio":"Polygon", "parcela":"Polygon", "terra_originalmente_uniao":"Polygon","trecho_terreno_marginal":"Polygon", "trecho_terreno_marginal":"Polygon","trecho_area_indubitavel":"Polygon", "terras_interiores":"Polygon", "faixa_dominio":"Polygon", "area_especial":"Polygon", "massa_dagua":"Polygon"}
         #self.nameConect = ConfigurationDialog.getLastNameConnection(self)
-
         self.host = host
         self.port = port
         self.db = db
@@ -154,14 +153,13 @@ class PgTools:
 
         return geoTablesLis
 
-
     #return a table with intersects with  polygono
     def CAlculateIntersect(self, polygono, tableName, sridLayer):
 
         t = []
-        if self.getNumberLineOfTable(tableName) > 0:
+        if self.GEtNumberLineOfTable(tableName) > 0:
 
-            sridTable = self.getSridTable(tableName)
+            sridTable = self.GEtSridTable(tableName)
 
             print ("SRID ====", sridLayer)
 
@@ -179,8 +177,8 @@ class PgTools:
 
     def CAlculateIntersectByPoint(self, pointCoord, tableName, sridPoint, raio):
         t = []
-        if self.getNumberLineOfTable(tableName) > 0:
-            sridTable = self.getSridTable(tableName)
+        if self.GEtNumberLineOfTable(tableName) > 0:
+            sridTable = self.GEtSridTable(tableName)
             sql = "select *, ST_AsText(geom) as wkt_geom from " + tableName + " as ta where ST_Intersects (ta.geom, " + "ST_Buffer(ST_Transform ( ST_SetSRID (ST_Point(" + str(pointCoord[0]) + "," + str(pointCoord[1]) + ")," + str(sridPoint) + ")," + str(sridTable) + " )," + str(raio) +") )"
 
             print (sql)
@@ -239,7 +237,7 @@ class PgTools:
 
 
     def GEtGeomTypeTable(self, tableName):
-    #TODO
+        pass
         #return self.dataGeomTypes[tableName]
 
 

@@ -8,7 +8,7 @@ from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-from ..dbtools.shptools import HandleShapefile
+# from ..dbtools.shp_tools import ShpTools
 
 class OverlayShapefile (QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
@@ -16,7 +16,6 @@ class OverlayShapefile (QtWidgets.QDialog):
 
     def __init__(self, iface):
         self.iface = iface
-        self.handle_shapefile = HandleShapefile()
         super(OverlayShapefile, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'overlay_shapefile.ui'), self)
 
