@@ -4,21 +4,21 @@
         "tipo": "pg",
         "nome": "Base Local",
         "host": "127.0.0.1",
-        "porta": "33",
-        "baseDeDados": "guilherme",
-        "orgaoResponsavel": "casa",
+        "porta": "5450",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "Guilherme Henrique",
         "periosReferencia": "27/11/2000",
         "dataAquisicao": "27/11/2000"
     },
     "base2": {
         "id": "base2",
         "tipo": "pg",
-        "nome": "eqreq",
-        "host": "rqeqreq",
-        "porta": "dada",
-        "baseDeDados": "fadafdf",
-        "orgaoResponsavel": "fadfa",
-        "periosReferencia": "adfadfa",
-        "dataAquisicao": "fdafa"
+        "nome": "EDGV",
+        "host": "10.209.9.121",
+        "porta": "5499",
+        "baseDeDados": "ide_spu",
+        "orgaoResponsavel": "CGCIG",
+        "periosReferencia": "01/10/2021",
+        "dataAquisicao": "01/10/2021"
     }
 }

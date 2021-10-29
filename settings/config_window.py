@@ -113,6 +113,9 @@ class ConfigWindow(QtWidgets.QDialog):
             self.senha.clear()
 
 
+
+
+
     def back(self):
         self.hide()
         self.back_window.emit()

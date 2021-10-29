@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
+    <width>698</width>
     <height>439</height>
    </rect>
   </property>
@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -299,45 +299,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="diretorio_local_shp">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="accessibleName">
-            <string/>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="inputMask">
-            <string/>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
-           <property name="placeholderText">
-            <string>Selecione o caminho do shapefile</string>
-           </property>
-           <property name="cursorMoveStyle">
-            <enum>Qt::LogicalMoveStyle</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton">
-           <property name="maximumSize">
-            <size>
-             <width>30</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>...</string>
+          <widget class="QgsFileWidget" name="mQgsFileWidget_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
@@ -428,45 +395,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="diretoriolocalcuradoria">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="accessibleName">
-           <string/>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="inputMask">
-           <string/>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="frame">
+         <widget class="QgsFileWidget" name="mQgsFileWidget">
+          <property name="fileWidgetButtonVisible">
            <bool>true</bool>
           </property>
-          <property name="placeholderText">
-           <string>Selecione o caminho do arquivo de curadoria</string>
+          <property name="useLink">
+           <bool>false</bool>
           </property>
-          <property name="cursorMoveStyle">
-           <enum>Qt::LogicalMoveStyle</enum>
+          <property name="fullUrl">
+           <bool>true</bool>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="maximumSize">
-           <size>
-            <width>30</width>
-            <height>16777215</height>
-           </size>
+          <property name="dialogTitle">
+           <string/>
           </property>
-          <property name="text">
-           <string>...</string>
+          <property name="defaultRoot">
+           <string/>
+          </property>
+          <property name="relativeStorage">
+           <enum>QgsFileWidget::Absolute</enum>
           </property>
          </widget>
         </item>
@@ -560,6 +506,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
   <customwidget>
    <class>QgsPasswordLineEdit</class>
    <extends>QLineEdit</extends>
