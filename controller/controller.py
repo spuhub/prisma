@@ -6,7 +6,7 @@ from PyQt5.uic import loadUi
 
 from ..screens.main_window import MainWindow
 from ..settings.config_window import ConfigWindow
-from ..screens.output_window import OutputWindow
+from ..screens.result_window import ResultWindow
 from ..screens.overlay_address import OverlayAddress
 from ..screens.overlay_feature import OverlayFeature
 from ..screens.overlay_shapefile import OverlayShapefile
@@ -64,10 +64,10 @@ class Controller:
     def show_select_databases(self, operation_data):
         self.select_databases = SelectDatabases(operation_data)
         self.select_databases.cancel_window.connect(self.show_main)
-        self.select_databases.continue_window.connect(self.show_output_window)
+        self.select_databases.continue_window.connect(self.show_result_window)
         self.select_databases.show()
 
-    def show_output_window(self, result):
-        self.overlay_shapefile_window = OutputWindow(result)
-        # self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
-        self.overlay_shapefile_window.show()
+    def show_result_window(self, result):
+        self.result_window = ResultWindow(result)
+        # self.result_window.continue_window.connect()
+        self.result_window.show()

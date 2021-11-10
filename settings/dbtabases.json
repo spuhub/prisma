@@ -38,25 +38,25 @@
         ],
         "estiloTabelasCamadas": [
             {
-                "estiloLinha": "dash dot",
-                "corlinha": "red",
-                "espessuraLinha": 1.0,
-                "TipoPreenchimento": "cross",
-                "corPreenchimento": ""
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
             },
             {
-                "estiloLinha": "dash dot",
-                "corlinha": "red",
-                "espessuraLinha": 1.0,
-                "TipoPreenchimento": "cross",
-                "corPreenchimento": ""
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
             },
             {
-                "estiloLinha": "dash dot",
-                "corlinha": "red",
-                "espessuraLinha": 1.0,
-                "TipoPreenchimento": "cross",
-                "corPreenchimento": ""
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
             }
         ]
     },
@@ -72,11 +72,11 @@
         "nomeFantasiaCamada": "ferrovia",
         "estiloCamadas": [
             {
-                "estiloLinha": "dash dot",
-                "corlinha": "red",
-                "espessuraLinha": 1.0,
-                "TipoPreenchimento": "cross",
-                "corPreenchimento": ""
+                "line_style": "solid",
+                "line_color": "blac",
+                "width_border": "0.2",
+                "style": "solid",
+                "color": "orange"
             }
         ]
     },
@@ -92,11 +92,11 @@
         "nomeFantasiaCamada": "Floresta",
         "estiloCamadas": [
             {
-                "estiloLinha": "dash dot",
-                "corlinha": "red",
-                "espessuraLinha": 1.0,
-                "TipoPreenchimento": "cross",
-                "corPreenchimento": ""
+                "line_style": "solid",
+                "line_color": "black",
+                "width_border": "0.2",
+                "style": "solid",
+                "color": "red"
             }
         ]
     },
@@ -112,11 +112,31 @@
         "nomeFantasiaCamada": "Militar",
         "estiloCamadas": [
             {
-                "estiloLinha": "dash dot",
-                "corlinha": "red",
-                "espessuraLinha": 1.0,
-                "TipoPreenchimento": "cross",
-                "corPreenchimento": ""
+                "line_style": "solid",
+                "line_color": "black",
+                "width_border": "0.2",
+                "style": "solid",
+                "color": "blue"
+            }
+        ]
+    },
+    "base4": {
+        "id": "base4",
+        "tipo": "shp",
+        "nome": "Área união homologada",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "Área união",
+        "estiloCamadas": [
+            {
+                "line_style": "dash dot",
+                "line_color": "black",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": "green"
             }
         ]
     }
