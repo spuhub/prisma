@@ -89,12 +89,12 @@ class SelectDatabases(QtWidgets.QDialog):
 
             self.operation_data = self.create_operation_config(selected_items_bd, selected_items_shp)
 
-            # Comparação de sobreposição utilizando Shapefiles
+            # Comparação com Shapefiles
             self.shp_tools = ShpTools()
             gdf_result = self.shp_tools.OverlayAnalisys(self.operation_data)
-            result = {'operation': 'shapefile', 'gdf_shp': gdf_result['shp'], 'gdf_pg': gdf_result['pg'],
-                      'input': gdf_result['input'], 'areas_shp': gdf_result['areas_shp'],
-                      'areas_db': gdf_result['areas_db'], 'operation_data': self.operation_data}
+            result = {'operation': 'shapefile', 'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'],
+                      'input': gdf_result['input'], 'gdf_selected_shp': gdf_result['gdf_selected_shp'],
+                      'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_data': self.operation_data}
 
             self.continue_window.emit(result)
 

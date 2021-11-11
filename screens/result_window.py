@@ -1,9 +1,9 @@
 import sys
 import os.path
 
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QApplication
 
-from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol
+from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsRasterLayer, QgsMapSettings, QgsCoordinateReferenceSystem
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
@@ -30,11 +30,11 @@ class ResultWindow (QtWidgets.QDialog):
     # Exibe em uma lista a quantidade de sobreposições que se teve com determinada área
     def show_result(self):
         if(self.result['operation'] == 'shapefile'):
-            gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['gdf_shp'])
-            gdf_result_pg = gpd.GeoDataFrame.from_dict(self.result['gdf_pg'])
+            gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
+            gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
 
             show_result_shp = gdf_result_shp.query('sobreposicao == True').reset_index()
-            show_result_pg = gdf_result_pg.query('sobreposicao == True').reset_index()
+            show_result_db = gdf_result_db.query('sobreposicao == True').reset_index()
 
             layers_bd = 0
             for i in self.result['operation_data']['pg']:
@@ -70,8 +70,8 @@ class ResultWindow (QtWidgets.QDialog):
             for bd in self.result['operation_data']['pg']:
                 cont = 0
                 for layer in bd['nomeFantasiaTabelasCamadas']:
-                    for rowIndex, row in show_result_pg.iterrows():
-                        if str(layer) in show_result_pg and row[str(layer)] > 0:
+                    for rowIndex, row in show_result_db.iterrows():
+                        if str(layer) in show_result_db and row[str(layer)] > 0:
                             cont += 1
 
                     cellName = QtWidgets.QTableWidgetItem(str(layer))
@@ -82,56 +82,25 @@ class ResultWindow (QtWidgets.QDialog):
 
                     row_control += 1
 
-
-            # if (len(show_result_shp) > 0):
-            #     self.tbl_result.setColumnCount(len(show_result_shp.columns))
-            #     self.tbl_result.setRowCount(len(show_result_shp))
-            #
-            #     header_labels = show_result_shp.columns
-            #
-                # self.tbl_result.setHorizontalHeaderLabels(header_labels)
-                # for rowIndex, row in show_result_shp.iterrows():  # iterando sobre linhas
-                #     columnIndex = 0
-                #     for columnName, value in row.items():   # iterando sobre colunas
-                #             cell = QtWidgets.QTableWidgetItem(str(value))
-                #             self.tbl_result.setItem(rowIndex, columnIndex, cell)
-                #             columnIndex += 1
-            #
-            # if (len(show_result_pg) > 0):
-            #     self.tbl_result.setColumnCount(len(show_result_pg.columns))
-            #     self.tbl_result.setRowCount(len(show_result_pg))
-            #
-            #     header_labels = show_result_pg.columns
-            #
-            #     self.tbl_result.setHorizontalHeaderLabels(header_labels)
-            #     for rowIndex, row in show_result_pg.iterrows():  # iterando sobre linhas
-            #         columnIndex = 0
-            #         for columnName, value in row.items():  # iterando sobre colunas
-            #             cell = QtWidgets.QTableWidgetItem(str(value))
-            #             self.tbl_result.setItem(rowIndex, columnIndex, cell)
-            #             columnIndex += 1
-
     def handle_output(self):
         self.output = QFileDialog.getExistingDirectory(self, "Selecione a pasta de saída")
         self.txt_output.setText(self.output)
 
     def print_overlay_qgis(self):
-        input = gpd.GeoDataFrame.from_dict(self.result['input'])
-        areas_shp = []
-        areas_db = []
+        input = self.result['input']
 
-        for i in range(len(self.result['areas_shp'])):
-            areas_shp.append(gpd.GeoDataFrame.from_dict(self.result['areas_shp'][i]))
-
-        for i in range(len(self.result['areas_db'])):
-            areas_db.append(gpd.GeoDataFrame.from_dict(self.result['areas_db'][i]))
+        gdf_selected_shp = self.result['gdf_selected_shp']
+        gdf_selected_db = self.result['gdf_selected_db']
 
         # Exibe de sobreposição entre input e Shapefiles
         index = -1
         index_show_overlay = 0
         gdf_input = gpd.GeoDataFrame(columns = input.columns)
         print_input = False
-        for area in areas_shp:
+        input = input.to_crs(4674)
+        for area in gdf_selected_shp:
+            area = area.to_crs(4674)
+            print("area: ", area.crs)
             index += 1
             gdf_area = gpd.GeoDataFrame(columns = area.columns)
             for indexArea, rowArea in area.iterrows():
@@ -150,34 +119,41 @@ class ResultWindow (QtWidgets.QDialog):
                 symbol = QgsFillSymbol.createSimple(self.result['operation_data']['shp'][index]['estiloCamadas'][0])
                 show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
+                #teste
+                # QApplication.instance().processEvents()
+                # QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
 
         # Exibe de sobreposição entre input e Postgis
-        index = -1
-        for area in areas_db:
-            index += 1
-            gdf_area = gpd.GeoDataFrame(columns=area.columns)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        gdf_input.loc[index_show_overlay] = rowInput
-                        gdf_area.loc[index_show_overlay] = rowArea
-                        index_show_overlay += 1
+        index_db = 0
+        index_layer = 0
+        for db in gdf_selected_db:
+            for area in db:
+                area = area.to_crs(4674)
+                gdf_area = gpd.GeoDataFrame(columns=area.columns)
+                for indexArea, rowArea in area.iterrows():
+                    for indexInput, rowInput in input.iterrows():
+                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                            gdf_input.loc[index_show_overlay] = rowInput
+                            gdf_area.loc[index_show_overlay] = rowArea
+                            index_show_overlay += 1
 
-            if len(gdf_area) > 0:
-                print_input = True
-                print(self.result['operation_data']['pg'][index])
-                #                                      'nomeFantasiaCamada'])
+                if len(gdf_area) > 0:
+                    print_input = True
 
-                #
-                # gdf_area = gdf_area.drop_duplicates()
-                # show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                #                                  self.result['operation_data']['shp'][index][
-                #                                      'nomeFantasiaCamada'])
-                #
-                # symbol = QgsFillSymbol.createSimple(
-                #     self.result['operation_data']['shp'][index]['estiloCamadas'][0])
-                # show_qgis_areas.renderer().setSymbol(symbol)
-                # QgsProject.instance().addMapLayer(show_qgis_areas)
+                    gdf_area = gdf_area.drop_duplicates()
+                    show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
+                                                     self.result['operation_data']['pg'][index_db][
+                                                         'nomeFantasiaTabelasCamadas'][index_layer])
+                    symbol = QgsFillSymbol.createSimple(
+                        self.result['operation_data']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                    show_qgis_areas.renderer().setSymbol(symbol)
+                    QgsProject.instance().addMapLayer(show_qgis_areas)
+                    #teste
+                    # QApplication.instance().processEvents()
+                    # QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
+
+                index_layer += 1
+            index_db += 1
 
 
         if print_input:
@@ -186,7 +162,12 @@ class ResultWindow (QtWidgets.QDialog):
             show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "input")
             QgsProject.instance().addMapLayer(show_qgis_input)
 
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
+            QgsProject.instance().addMapLayer(layer)
+            QApplication.instance().processEvents()
+            QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
 
     def cancel(self):
         self.hide()
@@ -198,17 +179,5 @@ class ResultWindow (QtWidgets.QDialog):
         # Verifica se o usuário deseja exibir as camadas de sobreposição no mostrador do Qgis
         if self.check_camadas.isChecked():
             self.print_overlay_qgis()
-
-            # Exibe a camada de input que possui sobreposição
-            # show_qgis_input = QgsVectorLayer(input.to_json(), "input")
-            # QgsProject.instance().addMapLayer(show_qgis_input)
-            #
-            # # Exibe camadas de shapefile que foram selecionadas para comparação
-            # show_qgis_area = QgsVectorLayer(gdf_result_shp.to_json(), "militar")
-            # QgsProject.instance().addMapLayer(show_qgis_area)
-            #
-            # # Exibe camadas de banco de dados que foram selecionadas para comparação
-            # show_qgis_area = QgsVectorLayer(gdf_result_pg.to_json(), "teste")
-            # QgsProject.instance().addMapLayer(show_qgis_area)
 
         self.continue_window.emit()

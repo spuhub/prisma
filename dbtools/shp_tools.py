@@ -39,36 +39,40 @@ class ShpTools():
 
     def OverlayAnalisys(self, operation_data):
         self.operation_data = operation_data
-        areas_shp = []
+        gdf_selected_shp = []
 
         # Leitura dos dados que serão utilizados para sobreposição de áreas
         input = gpd.read_file(self.operation_data['input'])
-        input.to_crs(31982)
+        input.to_crs(4674)
 
-        # Cálculo do buffer de aproximação
+        # Cálculo do buffer de proximidade
         if 'aproximacao' in self.operation_data:
             input['geometry'] = input['geometry'].buffer(self.operation_data['aproximacao'])
 
         # Leitura de shapefiles com GeoPandas
         for shp in range(len(self.operation_data['shp'])):
-            areas_shp.append(gpd.read_file(self.operation_data['shp'][shp]['diretorioLocal']))
-            areas_shp[shp].to_crs(31982)
+            gdf_selected_shp.append(gpd.read_file(self.operation_data['shp'][shp]['diretorioLocal']))
+            gdf_selected_shp[shp].to_crs(4674)
 
         # Comparação de sobreposição entre input e Shapefiles
         index = 0
-        result_shp = input.copy()
-        result_shp['sobreposicao'] = False
-        for area in areas_shp:
+        overlay_shp = input.copy()
+        index_result = 0
+        overlay_shp['sobreposicao'] = False
+        for area in gdf_selected_shp:
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
-                    result_shp.loc[indexInput, 'areaLote'] = rowInput['geometry'].area
-                    result_shp.loc[indexInput, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                    result_shp.loc[indexInput, 'ctr_long'] = rowInput['geometry'].centroid.x
+                    # overlay_shp.loc[index_result, 'areaLote'] = rowInput['geometry'].area
+                    # overlay_shp.loc[index_result, 'ctr_lat'] = rowInput['geometry'].centroid.y
+                    # overlay_shp.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
 
                     if(rowArea['geometry'].intersection(rowInput['geometry'])):
-                        result_shp.loc[indexInput, self.operation_data['shp'][index]['nome']] = (rowArea['geometry'].intersection(rowInput['geometry'])).area
-                        result_shp.loc[indexInput, 'sobreposicao'] = True
-                        # result_shp.loc[indexInput, self.operation_data['shp'][index]['nome']] = rowArea.loc[[indexArea], 'geometry']
+                        # print(rowArea)
+                        overlay_shp.loc[index_result, self.operation_data['shp'][index]['nome']] = (rowArea['geometry'].intersection(rowInput['geometry'])).area
+                        overlay_shp.loc[index_result, 'sobreposicao'] = True
+                        # overlay_shp.loc[indexInput, self.operation_data['shp'][index]['nome']] = rowArea.loc[[indexArea], 'geometry']
+
+                    index_result += 1
             index += 1
 
 
@@ -79,41 +83,42 @@ class ShpTools():
                               'layers': db['tabelasCamadas']})
 
         # Comparação de sobreposição entre input e Postgis
-        areas_db = []
+        gdf_selected_db = []
         layers_db = []
         for database in databases:
             for layer in database['layers']:
-                layers_db.append({str(layer): gpd.GeoDataFrame.from_dict(database['connection'].CalculateIntersectGPD(input.to_dict(), layer,
-                                                                         (str(input.crs)).replace('epsg:', '')))})
+                layers_db.append(gpd.GeoDataFrame.from_dict(database['connection'].CalculateIntersectGPD(input.to_dict(), layer,
+                                                                         (str(input.crs)).replace('epsg:', ''))))
 
-            areas_db.append(layers_db)
+            gdf_selected_db.append(layers_db)
 
         index_db = 0
         index_layer = 0
-        result_db = input.copy()
-        result_db['sobreposicao'] = False
-        for db in areas_db:
+        index_result = 0
+        overlay_db = input.copy()
+        overlay_db['sobreposicao'] = False
+        for db in gdf_selected_db:
             for layer_db in db:
-                layer_db = list(layer_db.values())[0]
                 layer_db.geometry = layer_db['geometry'].apply(loads)
                 for indexArea, rowArea in layer_db.iterrows():
                     for indexInput, rowInput in input.iterrows():
-                        result_db.loc[indexInput, 'areaLote'] = rowInput['geometry'].area
-                        result_db.loc[indexInput, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                        result_db.loc[indexInput, 'ctr_long'] = rowInput['geometry'].centroid.x
+                        # overlay_db.loc[index_result, 'areaLote'] = rowInput['geometry'].area
+                        # overlay_db.loc[index_result, 'ctr_lat'] = rowInput['geometry'].centroid.y
+                        # overlay_db.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
 
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            result_db.loc[indexInput, self.operation_data['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = (
+                            overlay_db.loc[index_result, self.operation_data['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = (
                                 rowArea['geometry'].intersection(rowInput['geometry'])).area
-                            print((rowArea['geometry'].intersection(rowInput['geometry'])).area)
-                            result_db.loc[indexInput, 'sobreposicao'] = True
-                            # result_db.loc[indexInput, self.operation_data['pg'][index]['tabelasCamadas']] = rowArea.loc[[indexArea], 'geometry']
+                            overlay_db.loc[index_result, 'sobreposicao'] = True
+                            # overlay_db.loc[indexInput, self.operation_data['pg'][index]['tabelasCamadas']] = rowArea.loc[[indexArea], 'geometry']
+
+                        index_result += 1
 
                 index_layer += 1
             index_db += 1
 
-        result = {'shp': result_shp.to_dict(), 'pg': result_db.to_dict(), 'input': input.to_dict(),
-                  'areas_shp': areas_shp, 'areas_db': areas_db}
+        result = {'overlay_shp': overlay_shp, 'overlay_db': overlay_db, 'input': input,
+                  'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
 
         return result
 
