@@ -22,6 +22,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.source_shp = self.setings.get_config_shapefile()
         self.fill_combo_box_base()
         self.fill_combo_box_shp()
+        self.fill_combo_box_geocoding_server()
 
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
@@ -188,6 +189,20 @@ class ConfigWindow(QtWidgets.QDialog):
             self.orgao_responsavel_shp.clear()
             self.periodo_referencia_shp.clear()
             self.data_aquisicao_shp.clear()
+
+    def fill_combo_box_geocoding_server(self):
+        self.combo_box_servico_geocod.addItem("Google", 0)
+        self.combo_box_servico_geocod.addItem("Nominatim (OpenStreetMap)", 1)
+        self.combo_box_servico_geocod.addItem("IBGE", 2)
+
+
+
+    def save_geocoding_key(self):
+        current_opt = self.combo_box_servico_geocod.currentData()
+        key = self.key_geo_cod.text()
+        self.credencials.store_keys(str(current_opt), key)
+
+
 
     def back(self):
         self.hide()

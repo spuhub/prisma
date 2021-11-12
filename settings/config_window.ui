@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -434,23 +434,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="combo_box_servico_geocod">
-           <item>
-            <property name="text">
-             <string>Google</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Open Street Map</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>IBGE</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="combo_box_servico_geocod"/>
          </item>
         </layout>
        </item>

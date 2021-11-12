@@ -37,6 +37,14 @@ class EnvTools:
         self.settings.setValue('key', self.key)
         self.settings.endGroup()
 
+    def store_current_geocoding_server(self, id_server):
+        self.settings.beginGroup('Geocoding/currentServer')
+        self.settings.setValue('current', self.key)
+        self.settings.endGroup()
+
+    def get_current_geocoding_server(self):
+        id_current = self.settings.value('Geocoding/currentServer/current')
+        return id_current
 
     def get_credentials(self, base_id):
         #self.settings.beginGroup('PostgreSQL/connections/' + base_id)
