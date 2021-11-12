@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
-    <height>271</height>
+    <width>475</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,14 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <spacer name="verticalSpacer_5">
+    <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>528</width>
-       <height>34</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
@@ -38,6 +38,12 @@
      </item>
      <item>
       <widget class="QLineEdit" name="txt_input">
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -82,14 +88,14 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_8">
+    <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>538</width>
-       <height>34</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
@@ -102,14 +108,14 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_7">
+    <spacer name="verticalSpacer_3">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>538</width>
-       <height>34</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
@@ -119,12 +125,12 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Raio de Busca</string>
+        <string>Faixa de proximidade</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_6">
+      <widget class="QLineEdit" name="txt_aproximacao">
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -146,7 +152,7 @@
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Raio de busca (KM)</string>
+        <string>Faixa de proximidade (metros)</string>
        </property>
        <property name="cursorMoveStyle">
         <enum>Qt::LogicalMoveStyle</enum>
@@ -156,14 +162,14 @@
     </layout>
    </item>
    <item>
-    <spacer name="horizontalSpacer_6">
+    <spacer name="verticalSpacer">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>651</width>
-       <height>17</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>

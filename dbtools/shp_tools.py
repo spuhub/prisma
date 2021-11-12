@@ -26,6 +26,8 @@ import geopandas as gpd
 
 from qgis.core import QgsProject, QgsVectorLayer
 
+from shapely.wkt import loads
+
 from .pgtools import PgTools
 import json
 import numpy as np
@@ -37,35 +39,42 @@ class ShpTools():
 
     def OverlayAnalisys(self, operation_data):
         self.operation_data = operation_data
-        areas_shp = []
+        gdf_selected_shp = []
 
         # Leitura dos dados que serão utilizados para sobreposição de áreas
         input = gpd.read_file(self.operation_data['input'])
-        input.to_crs(31982)
+        input.to_crs(4674)
+
+        # Cálculo do buffer de proximidade
+        if 'aproximacao' in self.operation_data:
+            input['geometry'] = input['geometry'].buffer(self.operation_data['aproximacao'])
 
         # Leitura de shapefiles com GeoPandas
         for shp in range(len(self.operation_data['shp'])):
-            areas_shp.append(gpd.read_file(self.operation_data['shp'][shp]['diretorioLocal']))
-            areas_shp[shp].to_crs(31982)
+            gdf_selected_shp.append(gpd.read_file(self.operation_data['shp'][shp]['diretorioLocal']))
+            gdf_selected_shp[shp].to_crs(4674)
 
         # Comparação de sobreposição entre input e Shapefiles
-        index = -1
-        for area in areas_shp:
-            index += 1
+        index = 0
+        overlay_shp = input.copy()
+        index_result = 0
+        overlay_shp['sobreposicao'] = False
+        for area in gdf_selected_shp:
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
+                    # overlay_shp.loc[index_result, 'areaLote'] = rowInput['geometry'].area
+                    # overlay_shp.loc[index_result, 'ctr_lat'] = rowInput['geometry'].centroid.y
+                    # overlay_shp.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
+
                     if(rowArea['geometry'].intersection(rowInput['geometry'])):
-                        input.loc[indexInput, self.operation_data['shp'][index]['nome']] = (rowArea['geometry'].intersection(rowInput['geometry'])).area
-                        input.loc[indexInput, 'sobreposicao'] = True
-                        input.loc[indexInput, 'areaLote'] = rowInput['geometry'].area
-                        input.loc[indexInput, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                        input.loc[indexInput, 'ctr_long'] = rowInput['geometry'].centroid.x
-                    else:
-                        input.loc[indexInput, self.operation_data['shp'][index]['nome']] = None
-                        input.loc[indexInput, 'sobreposicao'] = False
-                        input.loc[indexInput, 'areaLote'] = rowInput['geometry'].area
-                        input.loc[indexInput, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                        input.loc[indexInput, 'ctr_long'] = rowInput['geometry'].centroid.x
+                        # print(rowArea)
+                        overlay_shp.loc[index_result, self.operation_data['shp'][index]['nome']] = (rowArea['geometry'].intersection(rowInput['geometry'])).area
+                        overlay_shp.loc[index_result, 'sobreposicao'] = True
+                        # overlay_shp.loc[indexInput, self.operation_data['shp'][index]['nome']] = rowArea.loc[[indexArea], 'geometry']
+
+                    index_result += 1
+            index += 1
+
 
         # Configuração acesso banco de dados Postgis junto das camadas que serão utilizadas
         databases = []
@@ -73,35 +82,45 @@ class ShpTools():
             databases.append({'connection': PgTools(db['host'], db['porta'], db['db'], db['usuario'], db['senha']),
                               'layers': db['tabelasCamadas']})
 
-
-
         # Comparação de sobreposição entre input e Postgis
+        gdf_selected_db = []
+        layers_db = []
+        for database in databases:
+            for layer in database['layers']:
+                layers_db.append(gpd.GeoDataFrame.from_dict(database['connection'].CalculateIntersectGPD(input.to_dict(), layer,
+                                                                         (str(input.crs)).replace('epsg:', ''))))
 
-        # for db in databases:
-        #     db['connection'].
-        #     for index, row in input.iterrows():
-        #         print(row['geometry'])
+            gdf_selected_db.append(layers_db)
 
-        g = json.loads(input.to_json())
+        index_db = 0
+        index_layer = 0
+        index_result = 0
+        overlay_db = input.copy()
+        overlay_db['sobreposicao'] = False
+        for db in gdf_selected_db:
+            for layer_db in db:
+                layer_db.geometry = layer_db['geometry'].apply(loads)
+                for indexArea, rowArea in layer_db.iterrows():
+                    for indexInput, rowInput in input.iterrows():
+                        # overlay_db.loc[index_result, 'areaLote'] = rowInput['geometry'].area
+                        # overlay_db.loc[index_result, 'ctr_lat'] = rowInput['geometry'].centroid.y
+                        # overlay_db.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
 
-        coords = np.array(g['features'][10]['geometry']['coordinates'])
-        coords = unzip(coords)
-        print(coords)
+                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                            overlay_db.loc[index_result, self.operation_data['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = (
+                                rowArea['geometry'].intersection(rowInput['geometry'])).area
+                            overlay_db.loc[index_result, 'sobreposicao'] = True
+                            # overlay_db.loc[indexInput, self.operation_data['pg'][index]['tabelasCamadas']] = rowArea.loc[[indexArea], 'geometry']
 
-        # print(str(input.iloc[10]['geometry'].exterior))
+                        index_result += 1
 
-        # print(databases[0]['connection'].CAlculateIntersect(str(input.iloc[10]['geometry'].to_wkt()),
-        #                                                     databases[0]['layers'][0], 31982))
+                index_layer += 1
+            index_db += 1
 
-        # show_overlay = gpd.overlay(input, areas[0], how='intersection')
-        #
-        # show_qgis_input = QgsVectorLayer(show_overlay.to_json(), "input")
-        # QgsProject.instance().addMapLayer(show_qgis_input)
-        #
-        # show_qgis_area = QgsVectorLayer(show_overlay.to_json(), "militar")
-        # QgsProject.instance().addMapLayer(show_qgis_area)
+        result = {'overlay_shp': overlay_shp, 'overlay_db': overlay_db, 'input': input,
+                  'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
 
-        return input
+        return result
 
 
 

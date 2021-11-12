@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>424</height>
+    <width>475</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -369,7 +369,7 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Raio de Busca</string>
+        <string>Faixa de proximidade</string>
        </property>
       </widget>
      </item>
@@ -396,7 +396,7 @@
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Raio de busca (KM)</string>
+        <string>Faixa de proximidade (metros)</string>
        </property>
        <property name="cursorMoveStyle">
         <enum>Qt::LogicalMoveStyle</enum>

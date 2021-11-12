@@ -25,6 +25,8 @@
 
 import os
 
+import geopandas as gpd
+import pandas as pd
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
@@ -161,17 +163,50 @@ class PgTools:
 
             sridTable = self.GEtSridTable(tableName)
 
-            print ("SRID ====", sridLayer)
+            # sql = "select * from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + polygono + "'," + str(
+            #     sridLayer) + ")," + str(sridTable) + " ))"
 
-            sql = "select *, ST_AsText(geom) as wkt_geom from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + polygono + "'," + str(sridLayer) + ")," + str(sridTable) + " ))"
+            sql = "select ST_AsText(geom) as wkt_geom, * from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + polygono + "'," + str(sridLayer) + ")," + str(sridTable) + " ))"
             #sql = "select *, ST_AsText(geom) as wkt_geom from " + tableName + " as ta where ST_Intersects (ta.geom, " + "ST_GeogFromText('SRID=" + str(sridTable) + ";" + polygono + "'))"
             #print (sql)
+
+
+
             cur = self.conn.cursor()
             cur.execute(sql)
             rows = cur.fetchall()
             # for r in rows:
             #     print (r[0])
             return rows
+        else:
+            return t
+
+        # return a geodataframe with intersects with  polygono
+    def CalculateIntersectGPD(self, input, tableName, sridLayer):
+
+        input = gpd.GeoDataFrame.from_dict(input)
+
+        t = []
+        gdf = gpd.GeoDataFrame([])
+        if self.GEtNumberLineOfTable(tableName) > 0:
+
+            sridTable = self.GEtSridTable(tableName)
+
+            for indexInput, rowInput in input.iterrows():
+                # sql = "select *, ST_AsText(geom) as geometry from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + rowInput['geometry'].to_wkt() + "'," + str(
+                #     sridLayer) + ")," + str(sridTable) + " ))"
+
+                sql = "select ST_AsText(ST_Transform(ta.geom," + str(sridTable) + ")," + str(sridLayer) + \
+                      ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('"\
+                    + rowInput['geometry'].to_wkt() + "'," + str(
+                    sridLayer) + ")," + str(sridTable) + " ))"
+
+                gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
+
+            gdf = gdf.drop_duplicates(subset=['geometry'], keep='first')
+            gdf = gdf.reset_index()
+
+            return gdf.to_dict()
         else:
             return t
 

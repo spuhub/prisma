@@ -38,6 +38,11 @@ class OverlayShapefile (QtWidgets.QDialog):
         if (self.path_input != ""):
             self.hide()
             data = {"operation": "shapefile", "input": self.path_input}
+
+            # Caso usuário tenha inserido área de aproximação
+            if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+                data['aproximacao'] = float(self.txt_aproximacao.text())
+
             self.continue_window.emit(data)
         else:
             self.iface.messageBar().pushMessage("Error", "Selecione um shapefile de entrada.", level=1)

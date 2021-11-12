@@ -8,6 +8,8 @@ from PyQt5.uic import loadUi
 from ..settings.json_tools import JsonTools
 from ..dbtools.shp_tools import ShpTools
 
+import geopandas as gpd
+
 from qgis.core import QgsVectorLayer, QgsPoint
 
 class SelectDatabases(QtWidgets.QDialog):
@@ -16,6 +18,7 @@ class SelectDatabases(QtWidgets.QDialog):
 
     def __init__(self, operation_data):
         self.operation_data = operation_data
+        # print(self.operation_data)
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
@@ -29,9 +32,9 @@ class SelectDatabases(QtWidgets.QDialog):
         self.btn_cancel.clicked.connect(self.cancel)
         self.btn_continuar.clicked.connect(self.next)
 
-        # Adição de checkbox e estilização na lista de shapefiles
         self.load_lists()
 
+    # Adição de checkbox e estilização na lista de shapefiles e bancos de dados
     def load_lists(self):
         for i in range(len(self.data_shp)):
             item = QtWidgets.QListWidgetItem(self.data_shp[i]['nome'])
@@ -59,6 +62,7 @@ class SelectDatabases(QtWidgets.QDialog):
         else:
             self.list_shp.setEnabled(False)
 
+    # Monta uma lista de configurações para operação que será realizada
     def create_operation_config(self, selected_items_bd, selected_items_shp):
         self.operation_data['shp'] = []
         for i in self.data_shp:
@@ -85,10 +89,13 @@ class SelectDatabases(QtWidgets.QDialog):
 
             self.operation_data = self.create_operation_config(selected_items_bd, selected_items_shp)
 
+            # Comparação com Shapefiles
             self.shp_tools = ShpTools()
-            gdf_result = self.shp_tools.OverlayAnalisys(self.operation_data).to_dict()
+            gdf_result = self.shp_tools.OverlayAnalisys(self.operation_data)
+            result = {'operation': 'shapefile', 'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'],
+                      'input': gdf_result['input'], 'gdf_selected_shp': gdf_result['gdf_selected_shp'],
+                      'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_data': self.operation_data}
 
-            result = {'operation': 'shapefile', 'gdf': gdf_result}
             self.continue_window.emit(result)
 
         elif(self.operation_data['operation'] == 'feature'):

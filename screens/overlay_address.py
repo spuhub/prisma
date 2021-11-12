@@ -31,6 +31,7 @@ class OverlayAddress (QtWidgets.QDialog):
 
                 print("Endereço: ", address)
                 points = geocode(address, provider='nominatim', user_agent='csc_user_ht')
+                # points = geocode(address, provider='google', api_key='AIzaSyD5FVX9EaxuM2ekd1t0ijtNE5BYq8D32io', user_agent='csc_user_ht', timeout=10)
                 print("Points: ", points)
 
             except():
