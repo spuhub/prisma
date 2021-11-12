@@ -96,7 +96,7 @@
                 "line_color": "black",
                 "width_border": "0.2",
                 "style": "solid",
-                "color": "red"
+                "color": "green"
             }
         ]
     },
@@ -135,8 +135,8 @@
                 "line_style": "dash dot",
                 "line_color": "black",
                 "width_border": "0.2",
-                "style": "cross",
-                "color": "green"
+                "style": "solid",
+                "color": "red"
             }
         ]
     }

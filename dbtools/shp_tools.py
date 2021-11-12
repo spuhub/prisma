@@ -43,16 +43,18 @@ class ShpTools():
 
         # Leitura dos dados que serão utilizados para sobreposição de áreas
         input = gpd.read_file(self.operation_data['input'])
-        input.to_crs(4674)
+        input = input.to_crs(4674)
 
         # Cálculo do buffer de proximidade
         if 'aproximacao' in self.operation_data:
-            input['geometry'] = input['geometry'].buffer(self.operation_data['aproximacao'])
+            buffer_length_in_meters = (5 * 1000) * 1.60934
+
+            input['geometry'] = input['geometry'].buffer(buffer_length_in_meters)
 
         # Leitura de shapefiles com GeoPandas
         for shp in range(len(self.operation_data['shp'])):
             gdf_selected_shp.append(gpd.read_file(self.operation_data['shp'][shp]['diretorioLocal']))
-            gdf_selected_shp[shp].to_crs(4674)
+            gdf_selected_shp[shp] = gdf_selected_shp[shp].to_crs(4674)
 
         # Comparação de sobreposição entre input e Shapefiles
         index = 0
@@ -60,6 +62,8 @@ class ShpTools():
         index_result = 0
         overlay_shp['sobreposicao'] = False
         for area in gdf_selected_shp:
+            print(self.operation_data['shp'][index]['nome'])
+            print(area.crs)
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
                     # overlay_shp.loc[index_result, 'areaLote'] = rowInput['geometry'].area
@@ -67,14 +71,12 @@ class ShpTools():
                     # overlay_shp.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
 
                     if(rowArea['geometry'].intersection(rowInput['geometry'])):
-                        # print(rowArea)
                         overlay_shp.loc[index_result, self.operation_data['shp'][index]['nome']] = (rowArea['geometry'].intersection(rowInput['geometry'])).area
                         overlay_shp.loc[index_result, 'sobreposicao'] = True
                         # overlay_shp.loc[indexInput, self.operation_data['shp'][index]['nome']] = rowArea.loc[[indexArea], 'geometry']
 
                     index_result += 1
             index += 1
-
 
         # Configuração acesso banco de dados Postgis junto das camadas que serão utilizadas
         databases = []
