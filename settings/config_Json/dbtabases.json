@@ -2,33 +2,142 @@
     "base1": {
         "id": "base1",
         "tipo": "pg",
-        "nome": "Base Local",
-        "host": "127.0.0.1",
-        "porta": "5450",
-        "baseDeDados": "usucapiao",
-        "orgaoResponsavel": "Guilherme Henrique",
-        "periosReferencia": "27/11/2000",
-        "dataAquisicao": "27/11/2000"
+        "nome": "usucapiao",
+        "host": "localhost",
+        "porta": "5432",
+        "db": "usucapiao",
+        "usuario": "postgres",
+        "senha": "postgres",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "TabelasDisponiveis": [
+            "area_especial",
+            "faixa_dominio",
+            "faixa_seguranca",
+            "municipio",
+            "massa_dagua"
+        ],
+        "TipoTabelasDisponiveis": [
+            "Polygon",
+            "Line",
+            "Line",
+            "Line",
+            "Line"
+        ],
+        "tabelasCamadas": [
+            "municipio"
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "Município"
+        ],
+        "descricaoTabelasCamadas": [
+            "E de ferrovia",
+            "E de estrada",
+            "\u00c3\u2030 de linhaFerrea"
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
+            },
+            {
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
+            },
+            {
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
+            }
+        ]
     },
     "base2": {
         "id": "base2",
-        "tipo": "pg",
-        "nome": "EDGV",
-        "host": "10.209.9.121",
-        "porta": "5499",
-        "baseDeDados": "ide_spu",
-        "orgaoResponsavel": "CGCIG",
-        "periosReferencia": "01/10/2021",
-        "dataAquisicao": "01/10/2021"
+        "tipo": "shp",
+        "nome": "Shpimoveis",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "ferrovia",
+        "estiloCamadas": [
+            {
+                "line_style": "solid",
+                "line_color": "blac",
+                "width_border": "0.2",
+                "style": "solid",
+                "color": "orange"
+            }
+        ]
+    },
+    "base2": {
+        "id": "base2",
+        "tipo": "shp",
+        "nome": "Área Quilombola",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "Floresta",
+        "estiloCamadas": [
+            {
+                "line_style": "solid",
+                "line_color": "black",
+                "width_border": "0.2",
+                "style": "solid",
+                "color": "red"
+            }
+        ]
     },
     "base3": {
         "id": "base3",
         "tipo": "shp",
-        "nome": "\u00c1rea Quilombola",
-        "urlDowload": "www.google.com.br",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "nome": "Área Militar",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021"
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "Militar",
+        "estiloCamadas": [
+            {
+                "line_style": "solid",
+                "line_color": "black",
+                "width_border": "0.2",
+                "style": "solid",
+                "color": "blue"
+            }
+        ]
+    },
+    "base4": {
+        "id": "base4",
+        "tipo": "shp",
+        "nome": "Área união homologada",
+        "urlDowload": "www.google.com",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "nomeFantasiaCamada": "Área união",
+        "estiloCamadas": [
+            {
+                "line_style": "dash dot",
+                "line_color": "black",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": "green"
+            }
+        ]
     }
 }

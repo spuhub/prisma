@@ -8,7 +8,7 @@ from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsRasterLayer,
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-from ..settings.jsonTools import JsonTools
+from ..settings.json_tools import JsonTools
 
 import geopandas as gpd
 
