@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -299,7 +299,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QgsFileWidget" name="mQgsFileWidget_2">
+          <widget class="QgsFileWidget" name="diretorioLocalshp">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -338,7 +338,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="perios_referencia_shp">
+          <widget class="QLineEdit" name="periodo_referencia_shp">
            <property name="placeholderText">
             <string>Periodo de Referência</string>
            </property>

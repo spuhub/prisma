@@ -19,12 +19,15 @@ class ConfigWindow(QtWidgets.QDialog):
         self.setings = JsonTools()
         self.credencials = EnvTools()
         self.source_databases = self.setings.get_config_database()
+        self.source_shp = self.setings.get_config_shapefile()
         self.fill_combo_box_base()
+        self.fill_combo_box_shp()
 
         self.btn_cancelar.clicked.connect(self.back)
-        self.btn_salvar.clicked.connect(self.save_bd_config_json)
+        self.btn_salvar.clicked.connect(self.save_settings)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConf)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
+        self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
 
     def save_bd_config_json(self):
         confg_dic = {}
@@ -41,7 +44,8 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["dataAquisicao"] = self.data_aquisicao_base.text()
 
         if self.combo_box_base.currentData() == "0":
-            if confg_dic["nome"] != "" and confg_dic["host"] != "" and confg_dic["porta"] != "" and confg_dic["baseDeDados"] != "":
+            if confg_dic["nome"] != "" and confg_dic["host"] != "" and confg_dic["porta"] != "" and confg_dic[
+                "baseDeDados"] != "":
                 id = self.setings.insert_database_pg(confg_dic)
                 self.source_databases.append(confg_dic)
                 self.combo_box_base.addItem(self.nome_base.text(), id)
@@ -52,18 +56,56 @@ class ConfigWindow(QtWidgets.QDialog):
             index = self.search_index_base_pg(id_current_db)
             print("ID_current ==", id_current_db)
             self.source_databases[index] = confg_dic
-            self.setings.edit_database(id_current_db,confg_dic)
+            self.setings.edit_database(id_current_db, confg_dic)
 
             self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
             confg_dic = {}
 
+    def save_settings(self):
+        self.save_bd_config_json()
+        self.save_shp_config_json()
 
+    def save_shp_config_json(self):
+        id_current_db = self.combo_box_shp.currentData()
+        confg_dic = {}
+        confg_dic["id"] = ""
+        confg_dic["tipo"] = "shp"
+        confg_dic["nome"] = self.nome_shp.text()
+        confg_dic["urlDowload"] = self.url_dowload.text()
+        confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
+        confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
+        confg_dic["periosReferencia"] = self.periodo_referencia_shp.text()
+        confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
+
+        if self.combo_box_shp.currentData() == "0":
+            if confg_dic["nome"] != "" and confg_dic["url"] != "" and confg_dic["urlDowload"] != "" and confg_dic[
+                "diretorioLocal"] != "":
+                id = self.setings.insert_database_pg(confg_dic)
+                self.source_databases.append(confg_dic)
+                self.combo_box_base.addItem(self.nome_base.text(), id)
+                self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
+                confg_dic = {}
+
+        else:
+            index = self.search_index_base_shp(id_current_db)
+            print("ID_current ==", id_current_db)
+            self.source_databases[index] = confg_dic
+            self.setings.edit_database(id_current_db, confg_dic)
+
+            self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
+            confg_dic = {}
 
     def fill_combo_box_base(self):
-        self.combo_box_base.setItemData(0,"0")
-        if len(self.source_databases) > 0 :
+        self.combo_box_base.setItemData(0, "0")
+        if len(self.source_databases) > 0:
             for item in self.source_databases:
-                self.combo_box_base.addItem(item["nome"],item["id"])
+                self.combo_box_base.addItem(item["nome"], item["id"])
+
+    def fill_combo_box_shp(self):
+        self.combo_box_shp.setItemData(0, "0")
+        if len(self.source_shp) > 0:
+            for item in self.source_shp:
+                self.combo_box_shp.addItem(item["nome"], item["id"])
 
     def search_base_pg(self, id_base):
         config = {}
@@ -73,21 +115,37 @@ class ConfigWindow(QtWidgets.QDialog):
 
         return config
 
+    def search_base_shp(self, id_base):
+        config = {}
+        for item in self.source_shp:
+            if item["id"] == id_base:
+                config = item
+
+        return config
+
+    def search_index_base_shp(self, id_base):
+        idex = 0
+        for item in self.source_shp:
+            if item["id"] != id_base:
+                idex = idex + 1
+
+        return idex
+
     def search_index_base_pg(self, id_base):
-        idex=0
-        #cont=0
+        idex = 0
+        # cont=0
         for item in self.source_databases:
             if item["id"] != id_base:
                 idex = idex + 1
-        return idex;
 
+        return idex
 
     def fill_text_fields_base(self):
         current_id = self.combo_box_base.currentData()
         current_config = self.search_base_pg(current_id)
 
         if current_id != "0":
-            print("cuureereree ====",current_id)
+            print("cuureereree ====", current_id)
             self.nome_base.setText(current_config["nome"])
             self.host.setText(current_config["host"])
             self.porta.setText(current_config["porta"])
@@ -97,7 +155,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.data_aquisicao_base.setText(current_config["dataAquisicao"])
 
             cred = self.credencials.get_credentials(current_id)
-            print ("creed ",cred)
+            print("creed ", cred)
             self.usuario.setText(cred[0])
             self.senha.setText(cred[1])
 
@@ -112,9 +170,24 @@ class ConfigWindow(QtWidgets.QDialog):
             self.usuario.clear()
             self.senha.clear()
 
+    def fill_text_fields_shp(self):
+        current_id = self.combo_box_shp.currentData()
+        current_config = self.search_base_shp(current_id)
+        if current_id != "0":
+            self.nome_shp.setText(current_config["nome"])
+            self.url_dowload.setText(current_config["urlDowload"])
+            self.diretorioLocalshp.setFilePath(current_config["diretorioLocal"])
+            self.orgao_responsavel_shp.setText(current_config["orgaoResponsavel"])
+            self.periodo_referencia_shp.setText(current_config["periosReferencia"])
+            self.data_aquisicao_shp.setText(current_config["dataAquisicao"])
 
-
-
+        if current_id == "0":
+            self.nome_shp.clear()
+            self.url_dowload.clear()
+            # self.diretorioLocalshp.
+            self.orgao_responsavel_shp.clear()
+            self.periodo_referencia_shp.clear()
+            self.data_aquisicao_shp.clear()
 
     def back(self):
         self.hide()

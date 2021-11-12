@@ -20,15 +20,5 @@
         "orgaoResponsavel": "CGCIG",
         "periosReferencia": "01/10/2021",
         "dataAquisicao": "01/10/2021"
-    },
-    "base3": {
-        "id": "base3",
-        "tipo": "shp",
-        "nome": "\u00c1rea Quilombola",
-        "urlDowload": "www.google.com.br",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
-        "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021"
     }
 }

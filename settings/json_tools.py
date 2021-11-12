@@ -1,6 +1,7 @@
 import os
 import json
 
+
 class JsonTools:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,7 +16,7 @@ class JsonTools:
         shp_list = []
 
         for base, data in self.json_config.items():
-            if(data['tipo'] == 'shp'):
+            if data['tipo'] == 'shp':
                 shp_list.append(data)
 
         return shp_list
@@ -24,7 +25,7 @@ class JsonTools:
         shp_list = []
 
         for base, data in self.json_config.items():
-            if(data['tipo'] == 'pg'):
+            if data['tipo'] == 'pg':
                 shp_list.append(data)
 
         return shp_list
@@ -38,7 +39,7 @@ class JsonTools:
         numofItens = len(list(dados.keys()))
 
         dbid = "base" + str(numofItens + 1)
-        db_json_conf ["id"] = dbid
+        db_json_conf["id"] = dbid
 
         dados[dbid] = db_json_conf
         with open(self.json_path, 'w') as f:
@@ -75,7 +76,6 @@ class JsonTools:
             dados = json.load(f)
 
 
-
 if __name__ == '__main__':
     d = JsonTools()
 
@@ -83,7 +83,3 @@ if __name__ == '__main__':
     d.insert_database_pg(saida[0])
     print(d.get_config_database())
     print(d.get_config_shapefile())
-
-
-
-
