@@ -92,6 +92,14 @@ class ResultWindow (QtWidgets.QDialog):
         gdf_selected_shp = self.result['gdf_selected_shp']
         gdf_selected_db = self.result['gdf_selected_db']
 
+        # Carrega camada mundial do OpenStreetMap
+        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+
+        QgsProject.instance().addMapLayer(layer)
+        QApplication.instance().processEvents()
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
+
         # Exibe de sobreposição entre input e Shapefiles
         index = -1
         index_show_overlay = 0
@@ -100,7 +108,6 @@ class ResultWindow (QtWidgets.QDialog):
         input = input.to_crs(4674)
         for area in gdf_selected_shp:
             area = area.to_crs(4674)
-            print("area: ", area.crs)
             index += 1
             gdf_area = gpd.GeoDataFrame(columns = area.columns)
             for indexArea, rowArea in area.iterrows():
@@ -160,14 +167,18 @@ class ResultWindow (QtWidgets.QDialog):
             gdf_input = gdf_input.drop_duplicates()
 
             show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "input")
+
+            symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
+            show_qgis_input.renderer().setSymbol(symbol)
+
             QgsProject.instance().addMapLayer(show_qgis_input)
 
-            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
-
-            QgsProject.instance().addMapLayer(layer)
-            QApplication.instance().processEvents()
-            QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
+            # Da zoom na camada de input
+            # show_qgis_input = QgsProject.instance().activeLayer()
+            # canvas = QgsProject.instance().mapCanvas()
+            # canvas = qgis.utils.QgsProject.instance().mapCanvas()
+            # canvas.zoomToSelected(show_qgis_input)
+            # canvas.refresh()
 
     def cancel(self):
         self.hide()
