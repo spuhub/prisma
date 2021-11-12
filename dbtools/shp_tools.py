@@ -79,7 +79,7 @@ class ShpTools():
         # Configuração acesso banco de dados Postgis junto das camadas que serão utilizadas
         databases = []
         for db in self.operation_data['pg']:
-            databases.append({'connection': PgTools(db['host'], db['porta'], db['db'], db['usuario'], db['senha']),
+            databases.append({'connection': PgTools(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
                               'layers': db['tabelasCamadas']})
 
         # Comparação de sobreposição entre input e Postgis

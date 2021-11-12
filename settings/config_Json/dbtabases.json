@@ -5,7 +5,7 @@
         "nome": "usucapiao",
         "host": "localhost",
         "porta": "5432",
-        "db": "usucapiao",
+        "baseDeDados": "usucapiao",
         "usuario": "postgres",
         "senha": "postgres",
         "orgaoResponsavel": "SPU",
