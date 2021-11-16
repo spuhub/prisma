@@ -10,6 +10,8 @@ from PyQt5.uic import loadUi
 
 from ..settings.json_tools import JsonTools
 
+from shapely.wkt import loads
+
 import geopandas as gpd
 
 class ResultWindow (QtWidgets.QDialog):
@@ -105,9 +107,9 @@ class ResultWindow (QtWidgets.QDialog):
         index_show_overlay = 0
         gdf_input = gpd.GeoDataFrame(columns = input.columns)
         print_input = False
-        input = input.to_crs(4674)
+        input = input.to_crs(epsg='4674')
         for area in gdf_selected_shp:
-            area = area.to_crs(4674)
+            area = area.to_crs(epsg='4674')
             index += 1
             gdf_area = gpd.GeoDataFrame(columns = area.columns)
             for indexArea, rowArea in area.iterrows():
@@ -132,10 +134,10 @@ class ResultWindow (QtWidgets.QDialog):
 
         # Exibe de sobreposição entre input e Postgis
         index_db = 0
-        index_layer = 0
         for db in gdf_selected_db:
+            index_layer = 0
             for area in db:
-                area = area.to_crs(4674)
+                area.crs = {'init':'epsg:4674'}
                 gdf_area = gpd.GeoDataFrame(columns=area.columns)
                 for indexArea, rowArea in area.iterrows():
                     for indexInput, rowInput in input.iterrows():
@@ -146,6 +148,10 @@ class ResultWindow (QtWidgets.QDialog):
 
                 if len(gdf_area) > 0:
                     print_input = True
+
+                    print(gdf_area['geometry'])
+
+                    gdf_area = gdf_area.set_geometry('geometry')
 
                     gdf_area = gdf_area.drop_duplicates()
                     show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),

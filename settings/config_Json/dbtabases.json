@@ -60,6 +60,69 @@
             }
         ]
     },
+    "base10": {
+        "id": "base10",
+        "tipo": "pg",
+        "nome": "usucapiao 2",
+        "host": "localhost",
+        "porta": "5432",
+        "baseDeDados": "usucapiao",
+        "usuario": "postgres",
+        "senha": "postgres",
+        "orgaoResponsavel": "SPU",
+        "periosReferencia": "10/11/2021",
+        "dataAquisicao": "10/11/2021",
+        "TabelasDisponiveis": [
+            "area_especial",
+            "faixa_dominio",
+            "faixa_seguranca",
+            "municipio",
+            "massa_dagua"
+        ],
+        "TipoTabelasDisponiveis": [
+            "Polygon",
+            "Line",
+            "Line",
+            "Line",
+            "Line"
+        ],
+        "tabelasCamadas": [
+            "trecho_ferroviario",
+            "area_especial"
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "Trecho Ferroviário",
+            "Área Especial"
+        ],
+        "descricaoTabelasCamadas": [
+            "E de ferrovia",
+            "E de estrada",
+            "\u00c3\u2030 de linhaFerrea"
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
+            },
+            {
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
+            },
+            {
+                "line_style": "dash dot",
+                "line_color": "red",
+                "width_border": "0.2",
+                "style": "cross",
+                "color": ""
+            }
+        ]
+    },
     "base2": {
         "id": "base2",
         "tipo": "shp",
@@ -89,14 +152,14 @@
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Floresta",
+        "nomeFantasiaCamada": "Quilombola",
         "estiloCamadas": [
             {
                 "line_style": "solid",
                 "line_color": "black",
-                "width_border": "0.2",
+                "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "green"
             }
         ]
     },
@@ -114,7 +177,7 @@
             {
                 "line_style": "solid",
                 "line_color": "black",
-                "width_border": "0.2",
+                "width_border": "0.35",
                 "style": "solid",
                 "color": "blue"
             }
@@ -132,11 +195,11 @@
         "nomeFantasiaCamada": "Área união",
         "estiloCamadas": [
             {
-                "line_style": "dash dot",
+                "line_style": "solid",
                 "line_color": "black",
-                "width_border": "0.2",
-                "style": "cross",
-                "color": "green"
+                "width_border": "0.35",
+                "style": "solid",
+                "color": "red"
             }
         ]
     }
