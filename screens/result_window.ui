@@ -86,6 +86,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="btn_print_overlay_qgis">
+       <property name="text">
+        <string>Gerar camadas de sobreposição</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_9">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -110,21 +117,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="check_camadas">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="text">
-        <string>Gerar camadas sobrepostas no QGis</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="checkBox_2">

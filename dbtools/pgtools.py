@@ -187,10 +187,10 @@ class PgTools:
         input = gpd.GeoDataFrame.from_dict(input)
 
         t = []
-        gdf = gpd.GeoDataFrame([])
         if self.GEtNumberLineOfTable(tableName) > 0:
 
             sridTable = self.GEtSridTable(tableName)
+            gdf = gpd.GeoDataFrame([], crs='epsg:' + str(sridTable))
 
             for indexInput, rowInput in input.iterrows():
                 # sql = "select *, ST_AsText(geom) as geometry from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + rowInput['geometry'].to_wkt() + "'," + str(
