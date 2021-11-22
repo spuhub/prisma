@@ -22,23 +22,12 @@
  ***************************************************************************/
 """
 """Todas os metodos de percistencia do postgres vao aqui"""
-
-import os
-
 import geopandas as gpd
 import pandas as pd
 
-from PyQt5 import uic
-from PyQt5 import QtWidgets
 import psycopg2
-import sqlite3
 
-#from qgis.PyQt import uic
-#from qgis.PyQt.QtWidgets import QMessageBox, QDialog
-#from ..configuration.configurationDialog import ConfigurationDialog
-
-
-class PgTools:
+class DbConnection:
 
     def __init__(self, host, port, db, user, password):
         """Constructor."""

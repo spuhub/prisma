@@ -1,9 +1,3 @@
-import sys
-import os.path
-
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.uic import loadUi
-
 from ..screens.main_window import MainWindow
 from ..settings.config_window import ConfigWindow
 from ..screens.result_window import ResultWindow
@@ -61,8 +55,8 @@ class Controller:
         self.overlay_coordinates_window.continue_window.connect(self.show_select_databases)
         self.overlay_coordinates_window.show()
 
-    def show_select_databases(self, operation_data):
-        self.select_databases = SelectDatabases(operation_data)
+    def show_select_databases(self, operation_config):
+        self.select_databases = SelectDatabases(operation_config)
         self.select_databases.cancel_window.connect(self.show_main)
         self.select_databases.continue_window.connect(self.show_result_window)
         self.select_databases.show()
