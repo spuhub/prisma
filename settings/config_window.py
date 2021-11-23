@@ -8,6 +8,8 @@ from .config_layers import ConfigLayers
 from .json_tools import JsonTools
 from .env_tools import EnvTools
 
+from ..screens.report_generator import ReportGenerator
+
 
 class ConfigWindow(QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
@@ -29,6 +31,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConf)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
         self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
+        self.btext.clicked.connect(self.hiderheader)
 
     def save_bd_config_json(self):
         confg_dic = {}
@@ -214,4 +217,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def hideLayerConf(self):
         d = ConfigLayers()
+        d.exec_()
+
+    def hiderheader(self):
+        d = ReportGenerator()
         d.exec_()

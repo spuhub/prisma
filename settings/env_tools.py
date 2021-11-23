@@ -34,12 +34,12 @@ class EnvTools:
 
     def store_keys(self, service_name, key):
         self.settings.beginGroup('Geocoding/keys/' + service_name)
-        self.settings.setValue('key', self.key)
+        self.settings.setValue('key', key)
         self.settings.endGroup()
 
     def store_current_geocoding_server(self, id_server):
         self.settings.beginGroup('Geocoding/currentServer')
-        self.settings.setValue('current', self.key)
+        self.settings.setValue('current', id_server)
         self.settings.endGroup()
 
     def get_current_geocoding_server(self):
@@ -55,3 +55,22 @@ class EnvTools:
     def get_key(self, service_name):
         self.settings.beginGroup('Geocoding/keys/' + service_name)
         return self.settings.value('key')
+
+    def store_report_hearder(self, hearder_List):
+        self.settings.beginGroup('prisma/hearderList')
+        self.settings.setValue('header', hearder_List)
+        self.settings.endGroup()
+
+    def get_report_hearder(self):
+        r = {}
+        header = self.settings.value('prisma/hearderList/header')
+        if header is None:
+            return r
+        else:
+            return header
+
+    def clear_repor_header(self):
+        self.settings.remove('prisma/hearderList/header')
+
+
+
