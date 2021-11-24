@@ -1,4 +1,3 @@
-import sys
 import os.path
 
 from PyQt5 import QtCore, QtWidgets
@@ -6,19 +5,16 @@ from PyQt5.QtGui import QFont
 from PyQt5.uic import loadUi
 
 from ..settings.json_tools import JsonTools
-from ..dbtools.shp_tools import ShpTools
-
-import geopandas as gpd
-
-from qgis.core import QgsVectorLayer, QgsPoint
+from ..analysis.overlay_analysis import OverlayAnalisys
+from ..controllers.operation_controller import OperationController
 
 class SelectDatabases(QtWidgets.QDialog):
     cancel_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal(dict)
 
-    def __init__(self, operation_data):
-        self.operation_data = operation_data
-        # print(self.operation_data)
+    def __init__(self, operation_config):
+        self.operation_config = operation_config
+        # print(self.operation_config)
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
@@ -62,20 +58,6 @@ class SelectDatabases(QtWidgets.QDialog):
         else:
             self.list_shp.setEnabled(False)
 
-    # Monta uma lista de configurações para operação que será realizada
-    def create_operation_config(self, selected_items_bd, selected_items_shp):
-        self.operation_data['shp'] = []
-        for i in self.data_shp:
-            if(i['nome'] in selected_items_shp):
-                self.operation_data['shp'].append(i)
-
-        self.operation_data['pg'] = []
-        for i in self.data_bd:
-            if (i['nome'] in selected_items_bd):
-                self.operation_data['pg'].append(i)
-
-        return self.operation_data
-
     def cancel(self):
         self.hide()
         self.cancel_window.emit()
@@ -83,27 +65,25 @@ class SelectDatabases(QtWidgets.QDialog):
     def next(self):
         self.hide()
 
-        if(self.operation_data['operation'] == 'shapefile'):
-            selected_items_bd = [item.text() for item in self.list_bd.selectedItems()]
+        selected_items_shp = []
+        selected_items_bd = []
+
+        # Armazena bases de dados selecionadas
+        if self.check_shp.isChecked():
             selected_items_shp = [item.text() for item in self.list_shp.selectedItems()]
+        if self.check_bd.isChecked():
+            selected_items_bd = [item.text() for item in self.list_bd.selectedItems()]
 
-            self.operation_data = self.create_operation_config(selected_items_bd, selected_items_shp)
+        # Prepara operação que será realizada em formato dicionário
+        oc = OperationController()
+        self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_bd)
 
-            # Comparação com Shapefiles
-            self.shp_tools = ShpTools()
-            gdf_result = self.shp_tools.OverlayAnalisys(self.operation_data)
-            result = {'operation': 'shapefile', 'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'],
-                      'input': gdf_result['input'], 'gdf_selected_shp': gdf_result['gdf_selected_shp'],
-                      'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_data': self.operation_data}
+        # Teste de sobreposição
+        overlay_analysis = OverlayAnalisys()
+        gdf_result = overlay_analysis.OverlayAnalisys(self.operation_config)
 
-            self.continue_window.emit(result)
+        result = {'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'],
+                  'input': gdf_result['input'], 'gdf_selected_shp': gdf_result['gdf_selected_shp'],
+                  'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
 
-        elif(self.operation_data['operation'] == 'feature'):
-            pass
-
-        elif (self.operation_data['operation'] == 'address'):
-            pass
-
-        else:
-            # Point
-            pass
+        self.continue_window.emit(result)

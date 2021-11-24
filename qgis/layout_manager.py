@@ -1,7 +1,4 @@
-from qgis.PyQt import QtGui
-
-from qgis.core import QgsVectorLayer, QgsField, QgsApplication
-from qgis.core import QgsProject, QgsLayoutExporter, Qgis
+from qgis.core import QgsApplication, QgsProject, QgsLayoutExporter, QgsMapSettings, QgsRectangle
 
 class LayoutManager():
     def __init__(self) -> None:
@@ -15,7 +12,7 @@ class LayoutManager():
         project = QgsProject.instance()
         manager = project.layoutManager()
         
-        layout = self.open_layout('FolhaA3_Planta_Paisagem')
+        layout = self.open_layout(r'layout/FolhaA3_Planta_Paisagem')
 
         atlas = layout.atlas()
         map_atlas = atlas.layout()

@@ -8,7 +8,7 @@ from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-# from ..dbtools.shp_tools import ShpTools
+# from ..databases.shp_tools import ShpTools
 
 class OverlayShapefile (QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()

@@ -11,7 +11,7 @@ class EnvTools:
         #print(0)
 
     def store_credentials(self, base_id, user_name, password):
-        self.settings.beginGroup('prisma/connections/' + base_id)
+        self.settings.beginGroup('prisma/databases/' + base_id)
         self.settings.setValue('usuario', user_name)
         self.settings.setValue('senha', password)
         self.settings.endGroup()
@@ -19,8 +19,8 @@ class EnvTools:
         #print(self.settings.allKeys())
 
     def edit_credentials(self, base_id,new_user_name, new_password):
-        self.settings.setValue('prisma/connections/' +base_id+ '/usuario', new_user_name)
-        self.settings.setValue('prisma/connections/' +base_id+ '/senha', new_password)
+        self.settings.setValue('prisma/databases/' +base_id+ '/usuario', new_user_name)
+        self.settings.setValue('prisma/databases/' +base_id+ '/senha', new_password)
         #self.settings.remove("")
         #print(self.settings.allKeys())
 
@@ -47,9 +47,9 @@ class EnvTools:
         return id_current
 
     def get_credentials(self, base_id):
-        #self.settings.beginGroup('PostgreSQL/connections/' + base_id)
-        usuario = self.settings.value('prisma/connections/' +base_id+ '/usuario')
-        senha = self.settings.value('prisma/connections/' +base_id+ '/senha')
+        #self.settings.beginGroup('PostgreSQL/databases/' + base_id)
+        usuario = self.settings.value('prisma/databases/' +base_id+ '/usuario')
+        senha = self.settings.value('prisma/databases/' +base_id+ '/senha')
         return [usuario, senha]
 
     def get_key(self, service_name):

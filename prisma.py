@@ -34,7 +34,7 @@ from PyQt5.uic import loadUi
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .controller.controller import Controller
+from .controllers.screen_controller import Controller
 
 import os.path
 
