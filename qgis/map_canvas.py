@@ -15,8 +15,8 @@ class MapCanvas():
         gdf_selected_db = result['gdf_selected_db']
 
         # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = 'http://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+        layer = QgsRasterLayer(tms, 'GoogleMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
@@ -73,7 +73,7 @@ class MapCanvas():
         gdf_selected_db = result['gdf_selected_db']
 
         # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        tms = 'http://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
         layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
