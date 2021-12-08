@@ -37,20 +37,18 @@ class LayoutManager():
     def process_layer(self):
         input = self.result['input']
         gdf_selected_shp = self.result['gdf_selected_shp']
+        gdf_selected_db = self.result['gdf_selected_db']
         epsg_shp = gpd.read_file(self.epsg_shp_dir)
         epsg_shp = epsg_shp.to_crs(epsg='4674')
         input = input.to_crs(epsg='4674')
 
+        intersection = []
+
         index = 0
-        input['crs_feature'] = None
         for area in gdf_selected_shp:
+            input['crs_feature'] = None
             area = area.to_crs(epsg='4674')
             for indexInput, rowInput in input.iterrows():
-                # Cálculos de área de input, centroid, etc
-                input.loc[indexInput, 'areaLote'] = rowInput['geometry'].area
-                input.loc[indexInput, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                input.loc[indexInput, 'ctr_long'] = rowInput['geometry'].centroid.x
-
                 # Verifica fuso das features do input
                 for indexEpsg, rowEpsg in epsg_shp.iterrows():
                     if (rowInput['geometry'].intersection(rowEpsg['geometry'])):
@@ -60,19 +58,34 @@ class LayoutManager():
                             # Faz parte de dois ou mais fusos horário
                             input.loc[indexInput, 'crs_feature'] = False
 
+                # Cálculos de área de input, centroid, etc
+                input.loc[indexInput, 'areaLote'] = rowInput['geometry'].area
+                input.loc[indexInput, 'ctr_lat'] = rowInput['geometry'].centroid.y
+                input.loc[indexInput, 'ctr_long'] = rowInput['geometry'].centroid.x
+
                 for indexArea, rowArea in area.iterrows():
                     input.loc[indexInput, self.result['operation_config']['shp'][index]['nome']] = rowArea['geometry'].intersection(rowInput['geometry']).area
+                    if (rowInput['geometry'].intersection(rowArea['geometry'])):
+                        data = {
+                            'areaLote': rowInput['geometry'].intersection(rowArea['geometry']).area,
+                            'ctr_lat': rowInput['geometry'].intersection(rowArea['geometry']).centroid.y,
+                            'ctr_long': rowInput['geometry'].intersection(rowArea['geometry']).centroid.x,
+                            'geometry': [rowInput['geometry'].intersection(rowArea['geometry'])]
+                        }
+
+                        intersection = gpd.GeoDataFrame(data, crs=input.crs)
+                        print(intersection['areaLote'])
 
                 if input.iloc[indexInput]['crs_feature'] != False:
-                    self.load_layer(input.loc[[indexInput]], area, index)
+                    self.load_layer(input.loc[[indexInput]], area, intersection, index)
 
             index += 1
 
-    def load_layer(self, feature_input_gdp, feature_area, index):
+    def load_layer(self, feature_input_gdp, feature_area, feature_intersection, index):
         crs = (feature_input_gdp.iloc[0]['crs_feature'])
         get_extent = feature_input_gdp.to_crs(crs)
         extent = get_extent.bounds
-        print(extent)
+        # print(extent)
 
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
         QApplication.instance().processEvents()
@@ -99,7 +112,18 @@ class LayoutManager():
         QgsProject.instance().addMapLayer(show_qgis_input)
         QApplication.instance().processEvents()
 
-        print("CRS da feature: ", crs)
+
+        if len(feature_intersection) > 0:
+            show_qgis_intersection = QgsVectorLayer(feature_intersection.to_json(), "Sobreposição")
+
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': 'yellow', 'width_border': '0,35',
+                 'style': 'solid'})
+            show_qgis_intersection.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_intersection)
+            QApplication.instance().processEvents()
+
+        # print("CRS da feature: ", crs)
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() == 'Lote':
                 rect = QgsRectangle(extent['minx'], extent['miny'], extent['maxx'], extent['maxy'])
@@ -109,27 +133,19 @@ class LayoutManager():
         ms = QgsMapSettings()
         ms.setLayers([self.layers])
         rect = QgsRectangle(ms.fullExtent())
-        rect.scale(1.2)
 
         main_map = self.layout.itemById('Planta_Principal')
         localization_map = self.layout.itemById('Planta_Localizacao')
         situation_map = self.layout.itemById('Planta_Situacao')
 
         ms.setExtent(rect)
-        # map.setExtent(rect)
         main_map.zoomToExtent(rect)
-
-        rect.scale(1.5)
-        localization_map.setExtent(rect)
-        localization_map.zoomToExtent(rect)
-
-        rect.scale(2.0)
-        situation_map.zoomToExtent(rect)
+        localization_map.setScale(main_map.scale() * 1250)
+        # situation_map.zoomToExtent(rect)
+        situation_map.setScale(main_map.scale() * 25)
 
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
-        localization_map.attemptResize(QgsLayoutSize(65, 65, QgsUnitTypes.LayoutMillimeters))
-        situation_map.attemptResize(QgsLayoutSize(65, 65, QgsUnitTypes.LayoutMillimeters))
 
         self.pdf_generator(feature_input_gdp, feature_area, index)
 
