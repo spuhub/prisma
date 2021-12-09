@@ -112,8 +112,7 @@ class OverlayAnalisys():
                         # print("index_layer: ", index_layer)
                         # print(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer])
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_db.loc[
-                                indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
+                            overlay_db.loc[indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
                                     index_layer]] = True
                             # overlay_db.loc[index_result, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = (
                             #     rowArea['geometry'].intersection(rowInput['geometry'])).area
