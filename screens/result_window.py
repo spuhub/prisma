@@ -18,6 +18,8 @@ class ResultWindow (QtWidgets.QDialog):
         super(ResultWindow, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'result_window.ui'), self)
 
+        self.progress_bar.setHidden(True)
+
         self.btn_output.clicked.connect(self.handle_output)
         self.btn_print_overlay_qgis.clicked.connect(self.print_overlay_qgis)
         self.btn_print_all_layers_qgis.clicked.connect(self.print_all_layers_qgis)
@@ -100,7 +102,7 @@ class ResultWindow (QtWidgets.QDialog):
         self.cancel_window.emit()
 
     def next(self):
-        lm = LayoutManager(self.result)
+        lm = LayoutManager(self.result, self.progress_bar)
         lm.export_pdf()
 
         self.hide()

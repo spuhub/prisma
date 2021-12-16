@@ -34,15 +34,21 @@ class OverlayShapefile (QtWidgets.QDialog):
 
     def next(self):
         self.path_input = self.txt_input.text()
-
+        # Testa se o diretório do shp de entrada foi inserido
         if (self.path_input != ""):
-            self.hide()
-            data = {"operation": "shapefile", "input": self.path_input}
+            # Testa se o shp de entrada possui os campos obrigatórios
+            shp_input = gpd.read_file(self.path_input)
+            if 'cpf_cnpj' and 'logradouro' in shp_input:
+                self.hide()
+                data = {"operation": "shapefile", "input": self.path_input}
 
-            # Caso usuário tenha inserido área de aproximação
-            if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-                data['aproximacao'] = float(self.txt_aproximacao.text())
+                # Caso usuário tenha inserido área de aproximação
+                if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+                    data['aproximacao'] = float(self.txt_aproximacao.text())
 
-            self.continue_window.emit(data)
+                self.continue_window.emit(data)
+            else:
+                self.iface.messageBar().pushMessage("Error", "O shapefile de entrada não possui os dados de entrada obrigatórios.", level=1)
+
         else:
             self.iface.messageBar().pushMessage("Error", "Selecione um shapefile de entrada.", level=1)
