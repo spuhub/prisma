@@ -24,6 +24,9 @@ class ShpHandle():
 
     # Adição de buffer de proximidade nos dados de input
     def add_input_approximation(self, input, approximation):
-        # buffer_length_in_meters = (5 * 1000) * 1.60934
-        input['geometry'] = input['geometry'].buffer(approximation)
-        return input
+        # Transforma metros em graus
+        approximation = approximation / 111319.5432
+
+        input_approximation = input.copy()
+        input_approximation['geometry'] = input['geometry'].buffer(approximation)
+        return input_approximation

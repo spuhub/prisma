@@ -83,7 +83,8 @@ class SelectDatabases(QtWidgets.QDialog):
         gdf_result = overlay_analysis.OverlayAnalisys(self.operation_config)
 
         result = {'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'],
-                  'input': gdf_result['input'], 'gdf_selected_shp': gdf_result['gdf_selected_shp'],
-                  'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
+                  'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
+                  'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_db': gdf_result['gdf_selected_db'],
+                  'operation_config': self.operation_config}
 
         self.continue_window.emit(result)

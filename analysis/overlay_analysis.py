@@ -38,9 +38,11 @@ class OverlayAnalisys():
 
         # Leitura do shapefile de input
         input = shp_handle.read_shp_input(self.operation_config['input'])
+        input_standard = []
 
         # Cálculo do buffer de proximidade
         if 'aproximacao' in self.operation_config:
+            input_standard = input.copy()
             input = shp_handle.add_input_approximation(input, self.operation_config['aproximacao'])
 
         # Leitura de shapefiles de comparação
@@ -69,28 +71,22 @@ class OverlayAnalisys():
         overlay_db = self.analysis_databases(input, gdf_selected_db)
 
         result = {'overlay_shp': overlay_shp, 'overlay_db': overlay_db, 'input': input,
-                  'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
+                  'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
 
         return result
 
     def analisys_shapefiles(self, input, gdf_selected_shp):
         index = 0
         overlay_shp = input.copy()
-        # overlay_shp['sobreposicao'] = False
+        
         for area in gdf_selected_shp:
             print(self.operation_config['shp'][index]['nome'])
             print(area.crs)
             overlay_shp[self.operation_config['shp'][index]['nome']] = False
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
-                    # overlay_shp.loc[index_result, 'areaLote'] = rowInput['geometry'].area
-                    # overlay_shp.loc[index_result, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                    # overlay_shp.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
-
                     if (rowArea['geometry'].intersection(rowInput['geometry'])):
                         overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nome']] = True
-                        # overlay_shp.loc[index_result, 'sobreposicao'] = True
-                        # overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nome']] = rowArea.loc[[indexArea], 'geometry']
             index += 1
         return overlay_shp
 
@@ -104,21 +100,9 @@ class OverlayAnalisys():
                 layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
                 for indexArea, rowArea in layer_db.iterrows():
                     for indexInput, rowInput in input.iterrows():
-                        # overlay_db.loc[index_result, 'areaLote'] = rowInput['geometry'].area
-                        # overlay_db.loc[index_result, 'ctr_lat'] = rowInput['geometry'].centroid.y
-                        # overlay_db.loc[index_result, 'ctr_long'] = rowInput['geometry'].centroid.x
-
-                        # print("index_db: ", index_db)
-                        # print("index_layer: ", index_layer)
-                        # print(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer])
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_db.loc[
-                                indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
+                            overlay_db.loc[indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
                                     index_layer]] = True
-                            # overlay_db.loc[index_result, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = (
-                            #     rowArea['geometry'].intersection(rowInput['geometry'])).area
-                            # overlay_db.loc[index_result, 'sobreposicao'] = True
-                            # overlay_db.loc[indexInput, self.operation_config['pg'][index]['tabelasCamadas'][index_layer]] = rowArea.loc[[indexArea], 'geometry']
 
                 index_layer += 1
 
