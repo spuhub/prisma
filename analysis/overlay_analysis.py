@@ -37,7 +37,8 @@ class OverlayAnalisys():
         shp_handle = ShpHandle()
 
         # Leitura do shapefile de input
-        input = shp_handle.read_shp_input(self.operation_config['input'])
+        input = self.operation_config['input']
+        input = input.to_crs(4674)
         input_standard = []
 
         # Cálculo do buffer de proximidade

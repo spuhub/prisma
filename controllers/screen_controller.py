@@ -6,6 +6,7 @@ from ..screens.overlay_feature import OverlayFeature
 from ..screens.overlay_shapefile import OverlayShapefile
 from ..screens.overlay_coordinates import OverlayCoordinates
 from ..screens.select_databases import SelectDatabases
+from ..screens.report_generator import ReportGenerator
 
 # CLASSE PARA CONTROLE DAS TELAS
 class Controller:
@@ -61,7 +62,13 @@ class Controller:
         self.select_databases.continue_window.connect(self.show_result_window)
         self.select_databases.show()
 
+    def show_report_generator(self, result):
+        self.report_generator = ReportGenerator(result)
+        # self.report_generator.cancel_window.connect(self.show_main)
+        # self.report_generator.continue_window.connect(self.show_result_window)
+        self.report_generator.show()
+
     def show_result_window(self, result):
         self.result_window = ResultWindow(result)
-        # self.result_window.continue_window.connect()
+        self.result_window.report_generator_window.connect(self.show_report_generator)
         self.result_window.show()

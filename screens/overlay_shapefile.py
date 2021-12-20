@@ -37,10 +37,10 @@ class OverlayShapefile (QtWidgets.QDialog):
         # Testa se o diretório do shp de entrada foi inserido
         if (self.path_input != ""):
             # Testa se o shp de entrada possui os campos obrigatórios
-            shp_input = gpd.read_file(self.path_input)
-            if 'cpf_cnpj' and 'logradouro' in shp_input:
+            input = gpd.read_file(self.path_input)
+            if 'cpf_cnpj' and 'logradouro' in input:
                 self.hide()
-                data = {"operation": "shapefile", "input": self.path_input}
+                data = {"operation": "shapefile", "input": input}
 
                 # Caso usuário tenha inserido área de aproximação
                 if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:

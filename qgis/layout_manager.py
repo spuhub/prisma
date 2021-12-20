@@ -14,6 +14,7 @@ class LayoutManager():
         super().__init__()
         self.result = result
         self.progress_bar = progress_bar
+        print(self.progress_bar)
         # Adiciona o layout ao projeto atual
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Modelo_Layout_A3.qpt')
         self.add_template_to_project(template_dir)
@@ -35,9 +36,12 @@ class LayoutManager():
 
     def process_layer(self):
         input = self.result['input']
+        input = input.to_crs(4674)
+
         input_standard = self.result['input_standard']
         gdf_selected_shp = self.result['gdf_selected_shp']
         gdf_selected_db = self.result['gdf_selected_db']
+
         # Verifica fuso das features do input
         input = self.get_utm_crs(input)
 
@@ -56,11 +60,11 @@ class LayoutManager():
             if rowInput['crs_feature'] != False:
                 # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
                 if len(input_standard) > 0:
-                    self.calculation_shp(input.loc[[indexInput]], input_standard.loc[[indexInput]],  gdf_selected_shp)
-                    self.calculation_db(input.loc[[indexInput]], input_standard.loc[[indexInput]], gdf_selected_db)
+                    self.calculation_shp(input.iloc[[indexInput]], input_standard.iloc[[indexInput]],  gdf_selected_shp)
+                    self.calculation_db(input.iloc[[indexInput]], input_standard.iloc[[indexInput]], gdf_selected_db)
                 else:
-                    self.calculation_shp(input.loc[[indexInput]], input_standard, gdf_selected_shp)
-                    self.calculation_db(input.loc[[indexInput]], input_standard, gdf_selected_db)
+                    self.calculation_shp(input.iloc[[indexInput]], input_standard, gdf_selected_shp)
+                    self.calculation_db(input.iloc[[indexInput]], input_standard, gdf_selected_db)
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
 
@@ -68,13 +72,13 @@ class LayoutManager():
         input = input.reset_index()
 
         # Transforma a feição de input o crs em que está inserido dentro das Zonas UTM
-        crs = 'EPSG:' + str(input.loc[0]['crs_feature'])
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
         input = input.to_crs(crs)
 
         # Cálculos de área e centroid da feição de input
-        input.loc[0, 'areaLote'] = input.loc[0]['geometry'].area
-        input.loc[0, 'ctr_lat'] = input.loc[0]['geometry'].centroid.y
-        input.loc[0, 'ctr_long'] = input.loc[0]['geometry'].centroid.x
+        input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
+        input.loc[0, 'ctr_lat'] = input.iloc[0]['geometry'].centroid.y
+        input.loc[0, 'ctr_long'] = input.iloc[0]['geometry'].centroid.x
 
         index = 0
         # Compara a feição de entrada com todas as áreas de comparação shp selecionadas pelo usuário
@@ -90,12 +94,12 @@ class LayoutManager():
             # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e feição
             # da atual área que está sendo comparada. Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
             for indexArea, rowArea in area.iterrows():
-                if (input.loc[0]['geometry'].intersection(rowArea['geometry'])):
+                if (input.iloc[0]['geometry'].intersection(rowArea['geometry'])):
                     data.append({
-                        'areaLote': input.loc[0]['geometry'].intersection(rowArea['geometry']).area,
-                        'ctr_lat': input.loc[0]['geometry'].intersection(rowArea['geometry']).centroid.y,
-                        'ctr_long': input.loc[0]['geometry'].intersection(rowArea['geometry']).centroid.x,
-                        'geometry': input.loc[0]['geometry'].intersection(rowArea['geometry'])
+                        'areaLote': input.iloc[0]['geometry'].intersection(rowArea['geometry']).area,
+                        'ctr_lat': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.y,
+                        'ctr_long': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.x,
+                        'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
                     })
 
             intersection = gpd.GeoDataFrame(data, crs=input.crs)
@@ -112,13 +116,13 @@ class LayoutManager():
         input = input.reset_index()
         intersection = []
 
-        crs = 'EPSG:' + str(input.loc[0]['crs_feature'])
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
         input = input.to_crs(crs)
 
         # Cálculos de área de input e centroid feição de entrada
-        input.loc[0, 'areaLote'] = input.loc[0]['geometry'].area
-        input.loc[0, 'ctr_lat'] = input.loc[0]['geometry'].centroid.y
-        input.loc[0, 'ctr_long'] = input.loc[0]['geometry'].centroid.x
+        input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
+        input.loc[0, 'ctr_lat'] = input.iloc[0]['geometry'].centroid.y
+        input.loc[0, 'ctr_long'] = input.iloc[0]['geometry'].centroid.x
 
         index_db = 0
         # Compara a feição de entrada com todas as áreas de comparação db selecionadas pelo usuário
@@ -130,19 +134,19 @@ class LayoutManager():
 
                 # Soma da área de interseção feita com feição de input e atual área comparada
                 # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                input.loc[0, self.result['operation_config']['pg'][index_db]['nomeFantasiaTabelasCamadas'][
+                input.iloc[0, self.result['operation_config']['pg'][index_db]['nomeFantasiaTabelasCamadas'][
                     index_layer]] = gpd.overlay(input, area).area.sum()
 
                 data = []
                 # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e feição
                 # da atual área que está sendo comparada. Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
                 for indexArea, rowArea in area.iterrows():
-                    if (input.loc[0]['geometry'].intersection(rowArea['geometry'])):
+                    if (input.iloc[0]['geometry'].intersection(rowArea['geometry'])):
                         data.append({
-                            'areaLote': input.loc[0]['geometry'].intersection(rowArea['geometry']).area,
-                            'ctr_lat': input.loc[0]['geometry'].intersection(rowArea['geometry']).centroid.y,
-                            'ctr_long': input.loc[0]['geometry'].intersection(rowArea['geometry']).centroid.x,
-                            'geometry': input.loc[0]['geometry'].intersection(rowArea['geometry'])
+                            'areaLote': input.iloc[0]['geometry'].intersection(rowArea['geometry']).area,
+                            'ctr_lat': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.y,
+                            'ctr_long': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.x,
+                            'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
                         })
 
                 intersection = gpd.GeoDataFrame(data, crs = input.crs)
@@ -173,6 +177,10 @@ class LayoutManager():
 
     # Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF
     def load_layer(self, feature_input_gdp, input_standard, feature_area, feature_intersection, index_1, index_2):
+        # Remove camadas já impressas
+        QgsProject.instance().removeAllMapLayers()
+        QApplication.instance().processEvents()
+
         crs = (feature_input_gdp.iloc[0]['crs_feature'])
         # Forma de contornar problema do QGis, que alterava o extent da camada de forma incorreta
         get_extent = feature_input_gdp.to_crs(crs)
@@ -182,7 +190,6 @@ class LayoutManager():
         feature_input_gdp = feature_input_gdp.to_crs(4674)
         feature_area = feature_area.to_crs(4674)
         if len(feature_intersection) > 0:
-            print(feature_intersection)
             feature_intersection = feature_intersection.to_crs(4674)
 
         # Altera o EPSG do projeto QGis
@@ -213,24 +220,33 @@ class LayoutManager():
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
-        # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
-        show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Lote (padrão)")
-
-        symbol = QgsFillSymbol.createSimple(
-            {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
-             'style': 'solid'})
-        show_qgis_input.renderer().setSymbol(symbol)
-        QgsProject.instance().addMapLayer(show_qgis_input)
-
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if len(input_standard) > 0:
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (faixa de proximidade)")
+            # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
+            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Lote (faixa de proximidade)")
+
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                 'style': 'solid'})
+            show_qgis_input.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_input)
+
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (padrão)")
 
             symbol = QgsFillSymbol.createSimple(
                 {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
                  'style': 'solid'})
             show_qgis_input_standard.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input_standard)
+        else:
+            # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
+            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Lote")
+
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
+                 'style': 'solid'})
+            show_qgis_input.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_input)
 
         # Carrega as áreas de intersecção no Qgis
         if len(feature_intersection) > 0:
@@ -244,7 +260,7 @@ class LayoutManager():
 
         # Posiciona a tela do QGis no extent da área de entrada
         for layer in QgsProject.instance().mapLayers().values():
-            if layer.name() == 'Lote (padrão)':
+            if layer.name() == 'Lote (padrão)' or layer.name() == 'Lote':
                 rect = QgsRectangle(extent['minx'], extent['miny'], extent['maxx'], extent['maxy'])
                 # Aqui está sendo contornado o erro de transformação, comentado no comeco desta função
                 layer.setExtent(rect)
@@ -277,10 +293,6 @@ class LayoutManager():
 
         self.pdf_generator(feature_input_gdp, feature_area, index_1, index_2)
 
-        # Remove camadas já impressas
-        QgsProject.instance().removeAllMapLayers()
-        QApplication.instance().processEvents()
-
     def pdf_generator(self, feature_input_gdp, feature_area, index_1, index_2):
         # Manipulação dos textos do layout
         # self.handle_text()
@@ -290,7 +302,7 @@ class LayoutManager():
         else:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'])[index_2] + '.pdf'
 
-        pdf_path = os.path.join(r'C:\Users\vinir\Documents\saida', pdf_name)
+        pdf_path = os.path.join(self.result['path_output'], pdf_name)
         exporter = QgsLayoutExporter(self.layout)
         exporter.exportToPdf(pdf_path, QgsLayoutExporter.PdfExportSettings())
 
