@@ -418,17 +418,38 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>100</y>
+         <width>171</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="testeb"/>
+      </widget>
       <widget class="QToolButton" name="btext">
        <property name="geometry">
         <rect>
-         <x>140</x>
-         <y>140</y>
-         <width>81</width>
-         <height>19</height>
+         <x>30</x>
+         <y>200</y>
+         <width>121</width>
+         <height>22</height>
         </rect>
        </property>
        <property name="text">
         <string>init</string>
+       </property>
+      </widget>
+      <widget class="QgsSymbolButton" name="mSymbolButton">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>250</y>
+         <width>121</width>
+         <height>27</height>
+        </rect>
        </property>
       </widget>
      </widget>
@@ -512,6 +533,11 @@
    <class>QgsPasswordLineEdit</class>
    <extends>QLineEdit</extends>
    <header>qgspasswordlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsSymbolButton</class>
+   <extends>QToolButton</extends>
+   <header>qgssymbolbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
