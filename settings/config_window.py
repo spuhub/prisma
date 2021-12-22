@@ -28,7 +28,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
-        self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConf)
+        self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConfBase)
+        self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
         self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
         self.btext.clicked.connect(self.hiderheader)
@@ -82,8 +83,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
 
         if self.combo_box_shp.currentData() == "0":
-            if confg_dic["nome"] != "" and confg_dic["url"] != "" and confg_dic["urlDowload"] != "" and confg_dic[
-                "diretorioLocal"] != "":
+            if confg_dic["nome"] != "" and confg_dic["url"] != "" and confg_dic["urlDowload"] != "" and confg_dic["diretorioLocal"] != "":
                 id = self.setings.insert_database_pg(confg_dic)
                 self.source_databases.append(confg_dic)
                 self.combo_box_base.addItem(self.nome_base.text(), id)
@@ -215,8 +215,16 @@ class ConfigWindow(QtWidgets.QDialog):
         self.hide()
         self.continue_window.emit()
 
-    def hideLayerConf(self):
-        d = ConfigLayers()
+    def hideLayerConfBase(self):
+        self.save_settings()
+        id_current_db = self.combo_box_base.currentData()
+        d = ConfigLayers("bd", id_current_db)
+        d.exec_()
+
+    def hideLayerConfShp(self):
+        self.save_settings()
+        id_current_shp = self.combo_box_shp.currentData()
+        d = ConfigLayers("shp", id_current_shp)
         d.exec_()
 
     def hiderheader(self):

@@ -15,18 +15,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Camadas disponiveis na base de dado:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QTableWidget" name="table_layers">
      <property name="gridStyle">
       <enum>Qt::SolidLine</enum>
@@ -57,7 +45,7 @@
      </attribute>
      <row>
       <property name="text">
-       <string>1</string>
+       <string/>
       </property>
      </row>
      <column>
@@ -73,7 +61,18 @@
      </column>
      <column>
       <property name="text">
-       <string>Camada</string>
+       <string>Nome Camada</string>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Nome Fantasia</string>
       </property>
       <property name="font">
        <font>
@@ -95,10 +94,23 @@
      </column>
      <column>
       <property name="text">
-       <string>Nome Fantasia</string>
+       <string>É Camada de Base</string>
       </property>
       <property name="font">
        <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Tipo Camada Base</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -159,17 +171,18 @@
        </font>
       </property>
      </column>
-     <item row="0" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Camadas disponiveis na base de dado:</string>
+     </property>
     </widget>
    </item>
    <item>

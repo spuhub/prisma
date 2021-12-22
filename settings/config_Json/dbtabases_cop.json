@@ -1,4 +1,13 @@
 {
+    "obrigatorio" : {
+        "lpm_homologada": ["base1", "lpm_hom"], // LPM Homologada, LTM Homologada, LPM Não Homologada, LTM Não Homologada, Área da União - Homologada, Área da União - Não Homologada
+        "ltm_homologada": ["base1", "ltm_hom"],
+        "area_homologada": ["base1", "area_hom"] ,
+        "lpm_nao_homologada": ["base3",""],
+        "ltm_nao_homologada": ["base1",""],
+        "area_nao_homologada": ["base1","are_n_hom"]
+    },
+
     "base1": {
         "id": "base1",
         "tipo": "pg",
