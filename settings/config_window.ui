@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -418,53 +418,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="verticalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>100</y>
-         <width>171</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="testeb"/>
-      </widget>
-      <widget class="QToolButton" name="btext">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>200</y>
-         <width>121</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>init</string>
-       </property>
-      </widget>
-      <widget class="QgsColorButton" name="mColorButton">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>250</y>
-         <width>120</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="doubleSpinBox">
-       <property name="geometry">
-        <rect>
-         <x>370</x>
-         <y>270</y>
-         <width>62</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="tab_geocod">
       <attribute name="title">
@@ -537,11 +490,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QgsColorButton</class>
-   <extends>QToolButton</extends>
-   <header>qgscolorbutton.h</header>
-  </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>

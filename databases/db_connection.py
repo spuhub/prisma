@@ -264,6 +264,16 @@ class DbConnection:
         pass
         #return self.dataGeomTypes[tableName]
 
+    def GEtGeomTypeTable(self, schema ,tableName):
+        sql = "SELECT ST_GeometryType(geom) FROM " + schema +"." + tableName + " limit 1"
+        cur = self.conn.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        r = ''
+        for row in rows:
+            r = str(row[0])
+        return r
+
 
     def GEtDataTypeColumns(self, tableName):
 
@@ -278,6 +288,14 @@ class DbConnection:
 
         return typeCollumnsDic
 
+    def GEtAllTypeGeomOFGeomColum(self, schema):
+        tables = self.GEtTablesGeo(schema)
+        dataTypeDic = {}
+        for table in tables:
+            tp = self.GEtGeomTypeTable(schema, table)
+            dataTypeDic[table] = tp
+
+        return dataTypeDic
 
     # def GETtStatesName(self):
     #     sql = "SELECT nome_valor FROM dominio.sigla_uf ORDER BY id_codigo ASC "

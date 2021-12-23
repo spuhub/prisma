@@ -4,7 +4,7 @@
         "tipo": "pg",
         "nome": "Usucapiao - Munic\u00edpio",
         "host": "localhost",
-        "porta": "5432",
+        "porta": "5450",
         "baseDeDados": "usucapiao",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
@@ -151,57 +151,27 @@
         "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Quilombola",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "green"
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base3": {
         "id": "base3",
         "tipo": "shp",
         "nome": "\u00c1rea Militar",
         "urlDowload": "www.google.com",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Militar",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "blue"
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base4": {
         "id": "base4",
         "tipo": "shp",
-        "nome": "\u00c1rea uni\u00e3o homologada",
+        "nome": "Faixa Ferrovi\u00e1ria",
         "urlDowload": "www.google.com",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "\u00c1rea uni\u00e3o",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "red"
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base5": {
         "id": "base4",

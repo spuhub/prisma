@@ -32,7 +32,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
         self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
-        self.btext.clicked.connect(self.hiderheader)
+       # self.btext.clicked.connect(self.hiderheader)
 
     def save_bd_config_json(self):
         confg_dic = {}
@@ -92,7 +92,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         else:
             index = self.search_index_base_shp(id_current_db)
-            print("ID_current ==", id_current_db)
+            print("ID_current ==", id_current_db, index)
             self.source_databases[index] = confg_dic
             self.setings.edit_database(id_current_db, confg_dic)
 
@@ -133,7 +133,7 @@ class ConfigWindow(QtWidgets.QDialog):
             if item["id"] != id_base:
                 idex = idex + 1
 
-        return idex
+        return idex - 1
 
     def search_index_base_pg(self, id_base):
         idex = 0
@@ -217,15 +217,19 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def hideLayerConfBase(self):
         self.save_settings()
+
         id_current_db = self.combo_box_base.currentData()
-        d = ConfigLayers("bd", id_current_db)
-        d.exec_()
+        print("curreert",type(id_current_db))
+        if id_current_db != "0":
+            d = ConfigLayers("bd", id_current_db)
+            d.exec_()
 
     def hideLayerConfShp(self):
         self.save_settings()
         id_current_shp = self.combo_box_shp.currentData()
-        d = ConfigLayers("shp", id_current_shp)
-        d.exec_()
+        if id_current_shp != "0":
+            d = ConfigLayers("shp", id_current_shp)
+            d.exec_()
 
     def hiderheader(self):
         d = ReportGenerator()

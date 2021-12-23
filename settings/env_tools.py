@@ -48,8 +48,8 @@ class EnvTools:
 
     def get_credentials(self, base_id):
         #self.settings.beginGroup('PostgreSQL/databases/' + base_id)
-        usuario = self.settings.value('prisma/databases/' +base_id+ '/usuario')
-        senha = self.settings.value('prisma/databases/' +base_id+ '/senha')
+        usuario = self.settings.value('prisma/databases/' + base_id + '/usuario')
+        senha = self.settings.value('prisma/databases/' + base_id + '/senha')
         return [usuario, senha]
 
     def get_key(self, service_name):
