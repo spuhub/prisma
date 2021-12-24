@@ -173,13 +173,13 @@ class DbConnection:
         # return a geodataframe with intersects with  polygono
     def CalculateIntersectGPD(self, input, tableName, sridLayer):
 
-        input = gpd.GeoDataFrame.from_dict(input)
-
         t = []
         if self.GEtNumberLineOfTable(tableName) > 0:
+            comp = sridLayer
+            sridLayer = "".join(c for c in comp if c.isdecimal())
 
             sridTable = self.GEtSridTable(tableName)
-            gdf = gpd.GeoDataFrame([], crs='epsg:' + str(sridTable))
+            gdf = gpd.GeoDataFrame([], crs=sridTable)
 
             for indexInput, rowInput in input.iterrows():
                 # sql = "select *, ST_AsText(geom) as geometry from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + rowInput['geometry'].to_wkt() + "'," + str(
@@ -195,7 +195,7 @@ class DbConnection:
             gdf = gdf.drop_duplicates(subset=['geometry'], keep='first')
             gdf = gdf.reset_index()
 
-            return gdf.to_dict()
+            return gdf, sridTable
         else:
             return t
 

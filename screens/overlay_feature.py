@@ -6,10 +6,12 @@ import geopandas as gpd
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
+from qgis.utils import iface
+
 class OverlayFeature (QtWidgets.QDialog):
 
     back_window = QtCore.pyqtSignal()
-    continue_window = QtCore.pyqtSignal()
+    continue_window = QtCore.pyqtSignal(dict)
 
     def __init__(self, iface):
         self.iface = iface
@@ -25,18 +27,30 @@ class OverlayFeature (QtWidgets.QDialog):
         self.back_window.emit()
 
     def next(self):
+        data = self.get_selected_features()
         self.hide()
-        self.continue_window.emit()
+        self.continue_window.emit(data)
 
     def get_selected_features(self):
         layer = self.iface.activeLayer()
         selected_features = layer.selectedFeatures()
 
-        for feature in range(len(selected_features)):
-            print("Fields: ", selected_features[0].fields().names())
-            print("Atributes: ", selected_features[0].attributes())
-            print("Geometry: ", selected_features[0].geometry())
+        # print("Fields: ", selected_features.fields().names())
+        # print("Atributes: ", selected_features.attributes())
+        # print("Geometry: ", selected_features[0].geometry())
 
-        # selected_features.append(geometry)
-        # print(selected_features)
-        # gdf = gpd.GeoDataFrame
+        # print(selected_features[0].staticMetaObject)
+        input = gpd.GeoDataFrame.from_features(selected_features, crs = iface.activeLayer().sourceCrs().authid())
+
+        # input = input.set_geometry('geometry')
+        # input = input.explode()
+
+        if 'cpf_cnpj' and 'logradouro' in input:
+            self.hide()
+            data = {"operation": "feature", "input": input}
+
+            # Caso usuário tenha inserido área de aproximação
+            if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+                data['aproximacao'] = float(self.txt_aproximacao.text())
+
+            return data

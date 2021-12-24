@@ -1,4 +1,6 @@
-import os.path
+import os
+
+from qgis.core import QgsProject
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QFont
@@ -58,6 +60,12 @@ class SelectDatabases(QtWidgets.QDialog):
         else:
             self.list_shp.setEnabled(False)
 
+    def load_project(self):
+        project = QgsProject.instance()
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        print(BASE_DIR)
+        project.read(BASE_DIR + '/qgis/layouts/SPU-PRISMA_2.0_atlas.qgz')
+
     def cancel(self):
         self.hide()
         self.cancel_window.emit()
@@ -74,6 +82,8 @@ class SelectDatabases(QtWidgets.QDialog):
         if self.check_bd.isChecked():
             selected_items_bd = [item.text() for item in self.list_bd.selectedItems()]
 
+        # self.load_project()
+
         # Prepara operação que será realizada em formato dicionário
         oc = OperationController()
         self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_bd)
@@ -83,7 +93,8 @@ class SelectDatabases(QtWidgets.QDialog):
         gdf_result = overlay_analysis.OverlayAnalisys(self.operation_config)
 
         result = {'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'],
-                  'input': gdf_result['input'], 'gdf_selected_shp': gdf_result['gdf_selected_shp'],
-                  'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
+                  'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
+                  'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_db': gdf_result['gdf_selected_db'],
+                  'operation_config': self.operation_config}
 
         self.continue_window.emit(result)

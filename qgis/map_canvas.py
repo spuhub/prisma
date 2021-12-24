@@ -3,13 +3,83 @@ from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsRasterLayer,
 from qgis.utils import iface
 
 import geopandas as gpd
+import pandas as pd
 
 class MapCanvas():
     def __init__(self):
         pass
 
+    def print_all_layers_qgis(self, result):
+        input = result['input']
+        input_standard = result['input_standard']
+
+        gdf_selected_shp = result['gdf_selected_shp']
+        gdf_selected_db = result['gdf_selected_db']
+
+        # Carrega camada mundial do OpenStreetMap
+        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+
+        QgsProject.instance().addMapLayer(layer)
+        QApplication.instance().processEvents()
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
+
+        # Carrega camadas shapefiles
+        index = -1
+        index_show_overlay = 0
+        input = input.to_crs(epsg='4674')
+        for area in gdf_selected_shp:
+            area = area.to_crs(epsg='4674')
+            index += 1
+
+            show_qgis_areas = QgsVectorLayer(area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
+            symbol = QgsFillSymbol.createSimple(result['operation_config']['shp'][index]['estiloCamadas'][0])
+            show_qgis_areas.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_areas)
+
+        # Exibe de sobreposição entre input e Postgis
+        index_db = 0
+        for db in gdf_selected_db:
+            index_layer = 0
+            for area in db:
+                if 'geom' in area:
+                    area = area.drop(columns=['geom'])
+
+                show_qgis_areas = QgsVectorLayer(area.to_json(),
+                                                 result['operation_config']['pg'][index_db][
+                                                     'nomeFantasiaTabelasCamadas'][index_layer])
+                # symbol = QgsFillSymbol.createSimple(
+                #     result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                # show_qgis_areas.renderer().setSymbol(symbol)
+                QgsProject.instance().addMapLayer(show_qgis_areas)
+                index_layer += 1
+            index_db += 1
+
+        show_qgis_input = QgsVectorLayer(input.to_json(), "Lote")
+
+        symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
+        show_qgis_input.renderer().setSymbol(symbol)
+
+        QgsProject.instance().addMapLayer(show_qgis_input)
+
+        if len(input_standard) > 0:
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote")
+
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                 'style': 'solid'})
+            show_qgis_input_standard.renderer().setSymbol(symbol)
+
+            QgsProject.instance().addMapLayer(show_qgis_input_standard)
+
+        # Repaint the canvas map
+        iface.mapCanvas().refresh()
+        # Da zoom na camada de input
+        iface.zoomToActiveLayer()
+
     def print_overlay_qgis(self, result):
         input = result['input']
+        input_standard = result['input_standard']
 
         gdf_selected_shp = result['gdf_selected_shp']
         gdf_selected_db = result['gdf_selected_db']
@@ -54,7 +124,6 @@ class MapCanvas():
         for db in gdf_selected_db:
             index_layer = 0
             for area in db:
-                area.crs = {'init':'epsg:4674'}
                 gdf_area = gpd.GeoDataFrame(columns=area.columns)
                 for indexArea, rowArea in area.iterrows():
                     for indexInput, rowInput in input.iterrows():
@@ -65,9 +134,6 @@ class MapCanvas():
 
                 if len(gdf_area) > 0:
                     print_input = True
-
-                    # gdf_area['geometry'] = gdf_area['geometry'].apply(lambda x: x.wkt).values
-                    # print(gdf_area['geometry'])
 
                     if 'geom' in gdf_area:
                         gdf_area = gdf_area.drop(columns=['geom'])
@@ -89,14 +155,34 @@ class MapCanvas():
         if print_input:
             gdf_input = gdf_input.drop_duplicates()
 
-            show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "input")
+            show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Lote")
 
             symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
             show_qgis_input.renderer().setSymbol(symbol)
 
             QgsProject.instance().addMapLayer(show_qgis_input)
 
+            if len(input_standard) > 0:
+                input_standard = input_standard.to_crs(4674)
+                get_overlay_standard = gpd.GeoDataFrame(columns=input_standard.columns)
+                for area in gdf_selected_shp:
+                    overlay = gpd.overlay(input_standard, area, how='intersection')
+                    get_overlay_standard = gpd.GeoDataFrame(pd.concat([get_overlay_standard, overlay]))
+
+                get_overlay_standard = get_overlay_standard.drop_duplicates()
+                get_overlay_standard = get_overlay_standard.reset_index()
+
+                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote")
+
+                symbol = QgsFillSymbol.createSimple(
+                    {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                     'style': 'solid'})
+                show_qgis_input_standard.renderer().setSymbol(symbol)
+
+                QgsProject.instance().addMapLayer(show_qgis_input_standard)
+
             # Repaint the canvas map
             iface.mapCanvas().refresh()
             # Da zoom na camada de input
             iface.zoomToActiveLayer()
+

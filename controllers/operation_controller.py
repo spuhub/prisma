@@ -1,4 +1,7 @@
 from ..settings.json_tools import JsonTools
+from PyQt5.QtCore import QVariant
+
+import geopandas as gpd
 
 class OperationController:
     def __init__(self):
@@ -12,8 +15,24 @@ class OperationController:
 
             return operation_config
 
-        elif (self.operation_config['operation'] == 'feature'):
-            pass
+        elif (operation_config['operation'] == 'feature'):
+            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
+
+            # Quando uma camada é pega do QGis, alguns campos são retornados em formato de objeto QVariant
+            # Esses dados sempre são nulos e podem ser apagados, que é oq está sendo feito
+            # Veja: https://github.com/geopandas/geopandas/issues/2269
+            input = operation_config['input']
+            columns = list(input)
+
+            for i in range(len(input)):
+                print("i: ", i)
+                for column in columns:
+                    if column in input:
+                        if type(input.iloc[i][column]) == QVariant:
+                            input = input.drop(column, axis=1)
+
+            operation_config['input'] = input
+            return operation_config
 
         elif (self.operation_config['operation'] == 'address'):
             pass

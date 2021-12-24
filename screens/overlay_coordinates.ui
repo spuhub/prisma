@@ -418,13 +418,6 @@
     </spacer>
    </item>
    <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <spacer name="horizontalSpacer_16">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -438,13 +431,6 @@
     </spacer>
    </item>
    <item>
-    <widget class="QProgressBar" name="progressBar">
-     <property name="value">
-      <number>24</number>
-     </property>
-    </widget>
-   </item>
-   <item>
     <spacer name="horizontalSpacer_17">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -456,13 +442,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
    </item>
    <item>
     <spacer name="horizontalSpacer_18">
