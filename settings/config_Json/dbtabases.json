@@ -2,68 +2,18 @@
     "base1": {
         "id": "base1",
         "tipo": "pg",
-        "nome": "Usucapiao - Município",
+        "nome": "Usucapiao - Munic\u00edpio",
         "host": "localhost",
-        "porta": "5432",
+        "porta": "5450",
         "baseDeDados": "usucapiao",
-        "usuario": "postgres",
-        "senha": "postgres",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "TabelasDisponiveis": [
-            "area_especial",
-            "faixa_dominio",
-            "faixa_seguranca",
-            "municipio",
-            "massa_dagua"
-        ],
-        "TipoTabelasDisponiveis": [
-            "Polygon",
-            "Line",
-            "Line",
-            "Line",
-            "Line"
-        ],
-        "tabelasCamadas": [
-            "municipio"
-        ],
-        "nomeFantasiaTabelasCamadas": [
-            "Município"
-        ],
-        "descricaoTabelasCamadas": [
-            "E de ferrovia",
-            "E de estrada",
-            "\u00c3\u2030 de linhaFerrea"
-        ],
-        "estiloTabelasCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.2",
-                "style": "solid",
-                "color": "green"
-            },
-            {
-                "line_style": "solid",
-                "line_color": "blue",
-                "width_border": "0.2",
-                "style": "solid",
-                "color": ""
-            },
-            {
-                "line_style": "dash dot",
-                "line_color": "red",
-                "width_border": "0.2",
-                "style": "cross",
-                "color": ""
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base14": {
         "id": "base10",
         "tipo": "pg",
-        "nome": "Usucapiao - Área Especial",
+        "nome": "Usucapiao - \u00c1rea Especial",
         "host": "localhost",
         "porta": "5432",
         "baseDeDados": "usucapiao",
@@ -90,7 +40,7 @@
             "area_especial"
         ],
         "nomeFantasiaTabelasCamadas": [
-            "Área Especial"
+            "\u00c1rea Especial"
         ],
         "descricaoTabelasCamadas": [
             "E de ferrovia",
@@ -124,68 +74,18 @@
     "base10": {
         "id": "base10",
         "tipo": "pg",
-        "nome": "Usucapiao - Ferroviário",
+        "nome": "Usucapiao - Rodovi\u00e1rio",
         "host": "localhost",
         "porta": "5432",
         "baseDeDados": "usucapiao",
-        "usuario": "postgres",
-        "senha": "postgres",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "TabelasDisponiveis": [
-            "area_especial",
-            "faixa_dominio",
-            "faixa_seguranca",
-            "municipio",
-            "massa_dagua"
-        ],
-        "TipoTabelasDisponiveis": [
-            "Polygon",
-            "Line",
-            "Line",
-            "Line",
-            "Line"
-        ],
-        "tabelasCamadas": [
-            "trecho_ferroviario"
-        ],
-        "nomeFantasiaTabelasCamadas": [
-            "Trecho Ferroviário"
-        ],
-        "descricaoTabelasCamadas": [
-            "E de ferrovia",
-            "E de estrada",
-            "\u00c3\u2030 de linhaFerrea"
-        ],
-        "estiloTabelasCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.2",
-                "style": "solid",
-                "color": "blue"
-            },
-            {
-                "line_style": "dash dot",
-                "line_color": "red",
-                "width_border": "0.2",
-                "style": "cross",
-                "color": ""
-            },
-            {
-                "line_style": "dash dot",
-                "line_color": "red",
-                "width_border": "0.2",
-                "style": "cross",
-                "color": ""
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base12": {
         "id": "base10",
         "tipo": "pg",
-        "nome": "Usucapiao - Rodoviário",
+        "nome": "Usucapiao - Rodovi\u00e1rio",
         "host": "localhost",
         "porta": "5432",
         "baseDeDados": "usucapiao",
@@ -212,7 +112,7 @@
             "trecho_rodoviario"
         ],
         "nomeFantasiaTabelasCamadas": [
-            "Trecho Rodoviário"
+            "Trecho Rodovi\u00e1rio"
         ],
         "descricaoTabelasCamadas": [
             "E de ferrovia",
@@ -246,93 +146,43 @@
     "base2": {
         "id": "base2",
         "tipo": "shp",
-        "nome": "Shpimoveis",
+        "nome": "\u00c1rea Quilombola",
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "ferrovia",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "blac",
-                "width_border": "0.2",
-                "style": "solid",
-                "color": "orange"
-            }
-        ]
-    },
-    "base2": {
-        "id": "base2",
-        "tipo": "shp",
-        "nome": "Área Quilombola",
-        "urlDowload": "www.google.com",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
-        "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Quilombola",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "green"
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base3": {
         "id": "base3",
         "tipo": "shp",
-        "nome": "Área Militar",
+        "nome": "\u00c1rea Militar",
         "urlDowload": "www.google.com",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Militar",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "blue"
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base4": {
         "id": "base4",
         "tipo": "shp",
-        "nome": "Área união homologada",
+        "nome": "Faixa Ferrovi\u00e1ria",
         "urlDowload": "www.google.com",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Área união",
-        "estiloCamadas": [
-            {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "red"
-            }
-        ]
+        "dataAquisicao": "10/11/2021"
     },
     "base5": {
         "id": "base4",
         "tipo": "shp",
-        "nome": "Faixa Rodoviária",
+        "nome": "Faixa Rodovi\u00e1ria",
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Rodovia_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Faixa Rodoviária",
+        "nomeFantasiaCamada": "Faixa Rodovi\u00e1ria",
         "estiloCamadas": [
             {
                 "line_style": "solid",
@@ -346,13 +196,13 @@
     "base20": {
         "id": "base4",
         "tipo": "shp",
-        "nome": "Faixa Ferroviária",
+        "nome": "Faixa Ferrovi\u00e1ria",
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
         "periosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "Faixa Ferroviária",
+        "nomeFantasiaCamada": "Faixa Ferrovi\u00e1ria",
         "estiloCamadas": [
             {
                 "line_style": "solid",

@@ -2,57 +2,248 @@ import sys
 import os.path
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QTableWidgetItem, QComboBox, QDoubleSpinBox, QCheckBox
 from PyQt5.uic import loadUi
-from qgis.gui import QgsSymbolButton
+from qgis.gui import QgsSymbolButton, QgsColorButton
+
+# from .config_window import ConfigWindow
+from .json_tools import JsonTools
+from .env_tools import EnvTools
+from ..databases.db_connection import DbConnection
+import geopandas as gpd
+import random
+from ..databases.shp_handle import ShpHandle
 
 
-
-
-class ConfigLayers (QtWidgets.QDialog):
-
+class ConfigLayers(QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, tipo_fonte, id_current_db):
         super(ConfigLayers, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'config_layers.ui'), self)
+        self.tipoFonte = tipo_fonte
+        self.id_current_db = id_current_db
+
+        # self.config_windows = ConfigWindow()
+        self.setings02 = JsonTools()
+        self.source_databases = self.setings02.get_config_database()
+        # print("O meu deus ",self.source_databases)
+        self.source_shp = self.setings02.get_config_shapefile()
+
+        self.objects_vai_usar = []
+        self.objects_vai_usar_camada_base = []
+        self.objects_tipo_camada_base = []
+        self.objects_estilo_linhas = []
+        self.objects_cor_linhas = []
+        self.objects_espessura_linhas = []
+        self.objects_preenchimento = []
+        self.objects_cor_preenchimento = []
 
         self.fill_table()
         self.btn_layer_cancelar.clicked.connect(self.back)
         self.btn_layer_salvar.clicked.connect(self.next)
 
-
     def fill_table(self):
-        nb_row = 1
+        if self.tipoFonte == "shp":
+            self.fill_table_shp()
+        if self.tipoFonte == "bd":
+            self.fill_table_bd()
+
+    def create_combobox_line_style(self, id_object):
+        cb = QComboBox()
+        cb.setObjectName(id_object)
+        cb.addItem("________________________", "solid")
+        cb.addItem("-..-..-..-..-..-..-..-..", "dash dot dot")
+        cb.addItem("__.__.__.__.__.__.__.__", "dash dot")
+        cb.addItem(".......................", "dot")
+        cb.addItem("-----------------------", "dash")
+        return cb
+
+    def create_comboBox_tipo_camada_base(self, id_object):
+        cb = QComboBox()
+        cb.setObjectName(id_object)
+        cb.addItem("LPM Homologada", "lpm_homologada")
+        cb.addItem("LTM Homologada", "ltm_homologada")
+        cb.addItem("LPM Não Homologada", "lpm_nao_homologada")
+        cb.addItem("LTM Não Homologada", "ltm_nao_homologada")
+        cb.addItem("Área da União - Homologada", "area_homologada")
+        cb.addItem("Área da União - Não Homologada", "area_nao_homologada")
+        return cb
+
+    def create_espessura_box(self, id_object):
+        dsb = QDoubleSpinBox()
+        dsb.setValue(0.25)
+        dsb.setObjectName(id_object)
+        dsb.setSingleStep(0.1)
+        return dsb
+
+    def create_ComboBox_preenchimento(self, id_object):
+        cb = QComboBox()
+        cb.setObjectName(id_object)
+        cb.addItem("solid", "solid")
+        return cb
+
+    def create_Color_Select(self, id_object, corDefalt):
+        co = QgsColorButton()
+        co.setObjectName(id_object)
+        c = QColor(corDefalt)
+        co.setColor(c)
+        return co
+
+    def create_usar_check(self, id_object, ischeck):
+        b1 = QCheckBox(" ")
+        b1.setChecked(ischeck)
+        b1.setObjectName(id_object)
+        return b1
+
+    def generate_color(self):
+        color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])]
+        return color[0]
+
+    def fill_table_shp(self):
+        shpHandle = ShpHandle()
+        print(self.id_current_db)
+
+        config = self.search_base_shp(self.id_current_db)
+        nomereal = config["diretorioLocal"].replace("\\", "/").split("/").pop().split(".")[0]
+        #print("caminho", config["diretorioLocal"])
+
+        shp = shpHandle.read_shp_input(config["diretorioLocal"])
+        #print("tipe",shp.type)
+
+        self.table_layers.setRowCount(1)
+        self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(0), True))
+        self.table_layers.setCellWidget(0, 0, self.objects_vai_usar[0]) # Qt::AlignHCenter
+
+        itemCellClass = QTableWidgetItem(nomereal)
+        self.table_layers.setItem(0, 1, itemCellClass)
+
+        itemCellClass = QTableWidgetItem(config["nome"].replace("_", " ").replace("-", " ").title())
+        self.table_layers.setItem(0, 2, itemCellClass)
+
+        itemCellClass = QTableWidgetItem(str(shp.type).replace("0", "").replace(" ", ""))
+        self.table_layers.setItem(0, 3, itemCellClass)
+
+        self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
+        self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
+
+        self.objects_tipo_camada_base.append(
+            self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
+        self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
+
+        self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(0) + "-" + str(6)))
+        self.table_layers.setCellWidget(0, 6, self.objects_estilo_linhas[0])
+
+        self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(0) + "-" + str(7), "black"))
+        self.table_layers.setCellWidget(0, 7, self.objects_cor_linhas[0])
+
+        self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8)))
+        self.table_layers.setCellWidget(0, 8, self.objects_espessura_linhas[0])
+
+        self.objects_preenchimento.append(
+            self.create_ComboBox_preenchimento("preenchimento" + "-" + str(0) + "-" + str(9)))
+        self.table_layers.setCellWidget(0, 9, self.objects_preenchimento[0])
+
+        self.objects_cor_preenchimento.append(
+            self.create_Color_Select("corPreenchimento" + "-" + str(0) + "-" + str(10), self.generate_color()))
+        self.table_layers.setCellWidget(0, 10, self.objects_cor_preenchimento[0])
+
+    def fill_table_bd(self):
+
+        print(self.id_current_db)
+        config = self.search_base_pg(self.id_current_db)
+        print(config)
+        idbd = self.id_current_db
+        env = EnvTools()
+        credenciais = env.get_credentials(idbd)
+        conn = DbConnection(config["host"], config["porta"], config["baseDeDados"], credenciais[0], credenciais[1])
+        dataTables = conn.GEtAllTypeGeomOFGeomColum("public")
+        tabelasGeom = list(dataTables.keys())
+
+        nb_row = len(tabelasGeom)
+
         self.table_layers.setRowCount(nb_row)
-        #itemCellClass = QTableWidgetItem(classe)
-        self.bt = QgsSymbolButton()
-        self.bt.setObjectName("testefill")
+        # itemCellClass = QTableWidgetItem(classe)
 
-        self.table_layers.setCellWidget(0, 4, self.bt)
-        self.bt2 = QgsSymbolButton()
-        self.bt2.setObjectName("testefill2")
-        self.table_layers.setCellWidget(0, 5, self.bt2)
-        self.bt3 = QgsSymbolButton()
-        self.bt3.setObjectName("testefill3")
-        self.table_layers.setCellWidget(0, 7, self.bt3)
-        self.bt4 = QgsSymbolButton()
-        self.bt4.setObjectName("testefill4")
-        self.table_layers.setCellWidget(0, 8, self.bt4)
+        for i in range(nb_row):
+
+            self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(i), True))
+            self.table_layers.setCellWidget(i, 0, self.objects_vai_usar[i])
+
+            itemCellClass = QTableWidgetItem(tabelasGeom[i])
+            self.table_layers.setItem(i, 1, itemCellClass)
+
+            itemCellClass = QTableWidgetItem(tabelasGeom[i].replace("_", " ").replace("-", " ").title())
+            self.table_layers.setItem(i, 2, itemCellClass)
+
+            itemCellClass = QTableWidgetItem(dataTables[tabelasGeom[i]])
+            self.table_layers.setItem(i, 3, itemCellClass)
+
+            self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(i), False))
+            self.table_layers.setCellWidget(i, 4, self.objects_vai_usar_camada_base[i])
+
+            self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
+            self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
+
+            self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(i) + "-" + str(6)))
+            self.table_layers.setCellWidget(i, 6, self.objects_estilo_linhas[i])
+
+            self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7), "black"))
+            self.table_layers.setCellWidget(i, 7, self.objects_cor_linhas[i])
+
+            self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8)))
+            self.table_layers.setCellWidget(i, 8, self.objects_espessura_linhas[i])
+
+            self.objects_preenchimento.append(self.create_ComboBox_preenchimento("preenchimento" + "-" + str(i) + "-" + str(9)))
+            self.table_layers.setCellWidget(i, 9, self.objects_preenchimento[i])
+
+            self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10),  self.generate_color()))
+            self.table_layers.setCellWidget(i, 10, self.objects_cor_preenchimento[i])
 
 
 
-        self.table_layers.itemClicked.connect(self.pr)
+    def search_base_pg(self, id_base):
+        config = {}
+        for item in self.source_databases:
+            if item["id"] == id_base:
+                config = item
 
+        return config
+
+    def search_base_shp(self, id_base):
+        config = {}
+        for item in self.source_shp:
+            if item["id"] == id_base:
+                config = item
+
+        return config
+
+    def search_index_base_shp(self, id_base):
+        idex = 0
+        for item in self.source_shp:
+            if item["id"] != id_base:
+                idex = idex + 1
+
+        return idex
+
+    def search_index_base_pg(self, id_base):
+        idex = 0
+        # cont=0
+        for item in self.source_databases:
+            if item["id"] != id_base:
+                idex = idex + 1
+
+        return idex
 
     def back(self):
         self.hide()
         self.back_window.emit()
 
-
     def next(self):
-        print(self.testefill.symbol)
+        # print(self.testefill.symbol)
+        print(self.bt.color().name())
         self.hide()
         self.continue_window.emit()
 
