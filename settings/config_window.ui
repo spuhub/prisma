@@ -418,19 +418,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QToolButton" name="btext">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>140</y>
-         <width>81</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>init</string>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="tab_geocod">
       <attribute name="title">

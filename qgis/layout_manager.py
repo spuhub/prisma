@@ -3,7 +3,7 @@ import os
 from qgis import processing
 
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import *
+from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, QgsPrintLayout, QgsReadWriteContext
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
@@ -14,21 +14,24 @@ class LayoutManager():
         super().__init__()
         self.result = result
         self.progress_bar = progress_bar
-        print(self.progress_bar)
+
         # Adiciona o layout ao projeto atual
-        template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Modelo_Layout_A3.qpt')
+        template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Planta_FolhaA3_Paisagem.qpt')
         self.add_template_to_project(template_dir)
 
         # Armazena na variável o layout que acabou de ser adicionado
         # ao projeto, permitindo a manipulação do mesmo
         self.layout = None
+        self.atlas = None
         self.layers = []
 
         # Diretório do shapefile para gerar dinamicamente os EPSG's
         self.epsg_shp_dir = os.path.join(os.path.dirname(__file__), '..\shapefiles\Zonas_UTM_BR-EPSG4326.shp')
 
     def export_pdf(self):
-        self.layout = QgsProject.instance().layoutManager().layoutByName("FolhaA3_Planta_Retrato")
+        self.layout = QgsProject.instance().layoutManager().layoutByName("Planta_FolhaA3_Paisagem")
+        self.atlas = self.layout.atlas()
+
         # Armazena as camadas em self.layers e adiciona as camadas no QGis
         self.process_layer()
         # Manipulação dos textos do layout
@@ -36,7 +39,7 @@ class LayoutManager():
 
     def process_layer(self):
         input = self.result['input']
-        input = input.to_crs(4674)
+        input = input.to_crs(crs=4326)
 
         input_standard = self.result['input_standard']
         gdf_selected_shp = self.result['gdf_selected_shp']
@@ -44,6 +47,10 @@ class LayoutManager():
 
         # Verifica fuso das features do input
         input = self.get_utm_crs(input)
+
+        # Transforma a feição de input o crs em que está inserido dentro das Zonas UTM
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
+        # input = input.to_crs(crs = crs, epsg = input.iloc[0]['crs_feature'])
 
         # Barra de progresso
         self.progress_bar.setRange(0, 100)
@@ -71,9 +78,14 @@ class LayoutManager():
     def calculation_shp(self, input, input_standard, gdf_selected_shp):
         input = input.reset_index()
 
-        # Transforma a feição de input o crs em que está inserido dentro das Zonas UTM
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
+
         input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
+
+        if len(input_standard) > 0:
+            input_standard = input_standard.to_crs(crs)
+            input_standard.set_crs(crs, allow_override=True)
 
         # Cálculos de área e centroid da feição de input
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
@@ -85,6 +97,7 @@ class LayoutManager():
         for area in gdf_selected_shp:
             intersection = []
             area = area.to_crs(crs)
+            area.set_crs(allow_override = True, crs = crs)
 
             # Soma da área de interseção feita com feição de input e atual área comparada
             # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
@@ -104,11 +117,13 @@ class LayoutManager():
 
             intersection = gpd.GeoDataFrame(data, crs=input.crs)
 
+            if len(intersection) > 0:
+                intersection.set_crs(allow_override=True, crs=crs)
+
             if len(input_standard) > 0:
                 self.load_layer(input.iloc[[0]], input_standard.iloc[[0]], area, intersection, index, None)
             else:
                 self.load_layer(input.iloc[[0]], input_standard, area, intersection, index, None)
-
 
             index += 1
 
@@ -117,7 +132,9 @@ class LayoutManager():
         intersection = []
 
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
+
         input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
 
         # Cálculos de área de input e centroid feição de entrada
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
@@ -129,12 +146,13 @@ class LayoutManager():
         for db in gdf_selected_db:
             index_layer = 0
             for area in db:
-                area.crs = 'EPSG:4674'
+                # area.crs = {'init':'epsg:4674'}
                 area = area.to_crs(crs)
+                area.set_crs(allow_override = True, crs = crs)
 
                 # Soma da área de interseção feita com feição de input e atual área comparada
                 # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                input.iloc[0, self.result['operation_config']['pg'][index_db]['nomeFantasiaTabelasCamadas'][
+                input.loc[0, self.result['operation_config']['pg'][index_db]['nomeFantasiaTabelasCamadas'][
                     index_layer]] = gpd.overlay(input, area).area.sum()
 
                 data = []
@@ -151,6 +169,9 @@ class LayoutManager():
 
                 intersection = gpd.GeoDataFrame(data, crs = input.crs)
 
+                if len(intersection) > 0:
+                    intersection.set_crs(allow_override=True, crs=crs)
+
                 if len(input_standard) > 0:
                     self.load_layer(input.iloc[[0]], input_standard.iloc[[0]], area, intersection, index_db, index_layer)
                 else:
@@ -162,7 +183,7 @@ class LayoutManager():
     def get_utm_crs(self, input):
         input['crs_feature'] = None
         epsg_shp = gpd.read_file(self.epsg_shp_dir)
-        epsg_shp = epsg_shp.to_crs(epsg='4674')
+        # epsg_shp = epsg_shp.to_crs(epsg='4674')
 
         for indexInput, rowInput in input.iterrows():
             for indexEpsg, rowEpsg in epsg_shp.iterrows():
@@ -187,10 +208,10 @@ class LayoutManager():
         extent = feature_input_gdp.bounds
 
         # Transforma todas camadas para EPSG geográfico, deixando a reprojeção para o QGis
-        feature_input_gdp = feature_input_gdp.to_crs(4674)
-        feature_area = feature_area.to_crs(4674)
-        if len(feature_intersection) > 0:
-            feature_intersection = feature_intersection.to_crs(4674)
+        # feature_input_gdp = feature_input_gdp.to_crs(crs)
+        # feature_area = feature_area.to_crs(crs)
+        # if len(feature_intersection) > 0:
+        #     feature_intersection = feature_intersection.to_crs(crs)
 
         # Altera o EPSG do projeto QGis
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
@@ -205,6 +226,8 @@ class LayoutManager():
         if index_2 == None:
             show_qgis_areas = QgsVectorLayer(feature_area.to_json(),
                                              self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada'])
+            show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
             symbol = QgsFillSymbol.createSimple(self.result['operation_config']['shp'][index_1]['estiloCamadas'][0])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
@@ -216,6 +239,8 @@ class LayoutManager():
 
             show_qgis_areas = QgsVectorLayer(feature_area.to_json(),
                                              self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2])
+            show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
             symbol = QgsFillSymbol.createSimple(self.result['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
@@ -223,7 +248,8 @@ class LayoutManager():
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if len(input_standard) > 0:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
-            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Lote (faixa de proximidade)")
+            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
+            show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
             symbol = QgsFillSymbol.createSimple(
                 {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
@@ -231,7 +257,8 @@ class LayoutManager():
             show_qgis_input.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input)
 
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (padrão)")
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
+            show_qgis_input_standard.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
             symbol = QgsFillSymbol.createSimple(
                 {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
@@ -240,7 +267,8 @@ class LayoutManager():
             QgsProject.instance().addMapLayer(show_qgis_input_standard)
         else:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
-            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Lote")
+            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
+            show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
             symbol = QgsFillSymbol.createSimple(
                 {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
@@ -251,6 +279,7 @@ class LayoutManager():
         # Carrega as áreas de intersecção no Qgis
         if len(feature_intersection) > 0:
             show_qgis_intersection = QgsVectorLayer(feature_intersection.to_json(), "Sobreposição")
+            show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
             symbol = QgsFillSymbol.createSimple(
                 {'line_style': 'solid', 'line_color': 'black', 'color': 'yellow', 'width_border': '0,35',
@@ -260,20 +289,19 @@ class LayoutManager():
 
         # Posiciona a tela do QGis no extent da área de entrada
         for layer in QgsProject.instance().mapLayers().values():
-            if layer.name() == 'Lote (padrão)' or layer.name() == 'Lote':
+            if layer.name() == 'Feição de Estudo/Sobreposição (padrão)' or layer.name() == 'Feição de Estudo/Sobreposição':
                 rect = QgsRectangle(extent['minx'], extent['miny'], extent['maxx'], extent['maxy'])
                 # Aqui está sendo contornado o erro de transformação, comentado no comeco desta função
                 layer.setExtent(rect)
+                self.atlas.setEnabled(True)
+                self.atlas.setCoverageLayer(layer)
+                self.atlas.changed
                 self.layers = layer
-
-        iface.mapCanvas().refresh()
 
         # Configurações no QGis para gerar os relatórios PDF
         ms = QgsMapSettings()
         ms.setLayers([self.layers])
         rect = QgsRectangle(ms.fullExtent())
-
-        rect.scale(1.3)
 
         main_map = self.layout.itemById('Planta_Principal')
         localization_map = self.layout.itemById('Planta_Localizacao')
@@ -282,10 +310,11 @@ class LayoutManager():
         ms.setExtent(rect)
         main_map.zoomToExtent(rect)
 
-        localization_map.setScale(main_map.scale() * 1250)
+        # localization_map.setScale(main_map.scale() * 1250)
         # situation_map.zoomToExtent(rect)
-        situation_map.setScale(main_map.scale() * 25)
+        # situation_map.setScale(main_map.scale() * 25)
 
+        iface.mapCanvas().refresh()
         main_map.refresh()
 
         # Tamanho do mapa no layout
@@ -300,14 +329,22 @@ class LayoutManager():
         if index_2 == None:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada']) + '.pdf'
         else:
-            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'])[index_2] + '.pdf'
+            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]) + '.pdf'
 
         pdf_path = os.path.join(self.result['path_output'], pdf_name)
-        exporter = QgsLayoutExporter(self.layout)
-        exporter.exportToPdf(pdf_path, QgsLayoutExporter.PdfExportSettings())
+        print(pdf_path)
 
-        QApplication.instance().processEvents()
+        atlas = self.layout.atlas()
+        map_atlas = atlas.layout()
+        pdf_settings = QgsLayoutExporter(map_atlas).PdfExportSettings()
+        pdf_settings.dpi = 150
 
+        if atlas.enabled():
+            pdf_settings.rasterizeWholeImage = True
+            QgsLayoutExporter.exportToPdf(atlas, pdf_path,
+                                           settings=pdf_settings)
+
+    QApplication.instance().processEvents()
 
     def handle_text(self):
         title = self.layout.itemById('CD_Titulo')

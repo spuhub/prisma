@@ -31,7 +31,6 @@ class ConfigWindow(QtWidgets.QDialog):
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConf)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
         self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
-        self.btext.clicked.connect(self.hiderheader)
 
     def save_bd_config_json(self):
         confg_dic = {}
@@ -220,5 +219,6 @@ class ConfigWindow(QtWidgets.QDialog):
         d.exec_()
 
     def hiderheader(self):
-        d = ReportGenerator()
+        result = ""
+        d = ReportGenerator(result)
         d.exec_()

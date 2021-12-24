@@ -42,7 +42,6 @@ class MapCanvas():
         for db in gdf_selected_db:
             index_layer = 0
             for area in db:
-                area.crs = {'init':'epsg:4674'}
                 if 'geom' in area:
                     area = area.drop(columns=['geom'])
 
@@ -56,7 +55,7 @@ class MapCanvas():
                 index_layer += 1
             index_db += 1
 
-        show_qgis_input = QgsVectorLayer(input.to_json(), "Lote (padrão)")
+        show_qgis_input = QgsVectorLayer(input.to_json(), "Lote")
 
         symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
         show_qgis_input.renderer().setSymbol(symbol)
@@ -64,7 +63,7 @@ class MapCanvas():
         QgsProject.instance().addMapLayer(show_qgis_input)
 
         if len(input_standard) > 0:
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (faixa de proximidade)")
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote")
 
             symbol = QgsFillSymbol.createSimple(
                 {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
@@ -125,7 +124,6 @@ class MapCanvas():
         for db in gdf_selected_db:
             index_layer = 0
             for area in db:
-                area.crs = {'init':'epsg:4674'}
                 gdf_area = gpd.GeoDataFrame(columns=area.columns)
                 for indexArea, rowArea in area.iterrows():
                     for indexInput, rowInput in input.iterrows():
@@ -157,7 +155,7 @@ class MapCanvas():
         if print_input:
             gdf_input = gdf_input.drop_duplicates()
 
-            show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Lote (padrão)")
+            show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Lote")
 
             symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
             show_qgis_input.renderer().setSymbol(symbol)
@@ -174,7 +172,7 @@ class MapCanvas():
                 get_overlay_standard = get_overlay_standard.drop_duplicates()
                 get_overlay_standard = get_overlay_standard.reset_index()
 
-                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote (faixa de proximidade)")
+                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote")
 
                 symbol = QgsFillSymbol.createSimple(
                     {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',

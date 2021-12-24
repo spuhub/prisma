@@ -82,6 +82,7 @@ class ReportGenerator(QtWidgets.QDialog):
         return self.path_output
 
     def next(self):
+        self.save_fields()
         self.hidden_fields()
 
         self.result['path_output'] = self.path_output

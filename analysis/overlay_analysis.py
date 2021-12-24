@@ -38,7 +38,7 @@ class OverlayAnalisys():
 
         # Leitura do shapefile de input
         input = self.operation_config['input']
-        input = input.to_crs(4674)
+        input = input.to_crs(4326)
         input_standard = []
 
         # Cálculo do buffer de proximidade
@@ -63,9 +63,13 @@ class OverlayAnalisys():
         for database in databases:
             layers_db = []
             for layer in database['layers']:
-                layers_db.append(gpd.GeoDataFrame.from_dict(database['connection'].CalculateIntersectGPD(input.to_dict(), layer,
-                                                                         (str(input.crs)).replace('epsg:', ''))))
 
+                gdf, crs = database['connection'].CalculateIntersectGPD(input, layer,
+                                                                         (str(input.crs)).replace('epsg:', ''))
+                gdf.crs = {'init': 'epsg:' + str(crs)}
+                layers_db.append(gpd.GeoDataFrame(gdf, crs=crs))
+
+            print(layers_db[0].crs)
             gdf_selected_db.append(layers_db)
 
         # Comparação de sobreposição entre input e bases de dados de banco de dados
@@ -81,9 +85,8 @@ class OverlayAnalisys():
         overlay_shp = input.copy()
         
         for area in gdf_selected_shp:
-            print(self.operation_config['shp'][index]['nome'])
-            print(area.crs)
             overlay_shp[self.operation_config['shp'][index]['nome']] = False
+            area = area.to_crs(4326)
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
                     if (rowArea['geometry'].intersection(rowInput['geometry'])):
@@ -99,6 +102,7 @@ class OverlayAnalisys():
             index_layer = 0
             for layer_db in db:
                 layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
+                layer_db = layer_db.to_crs(4326)
                 for indexArea, rowArea in layer_db.iterrows():
                     for indexInput, rowInput in input.iterrows():
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):

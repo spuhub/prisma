@@ -1,4 +1,6 @@
-import os.path
+import os
+
+from qgis.core import QgsProject
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QFont
@@ -58,6 +60,12 @@ class SelectDatabases(QtWidgets.QDialog):
         else:
             self.list_shp.setEnabled(False)
 
+    def load_project(self):
+        project = QgsProject.instance()
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        print(BASE_DIR)
+        project.read(BASE_DIR + '/qgis/layouts/SPU-PRISMA_2.0_atlas.qgz')
+
     def cancel(self):
         self.hide()
         self.cancel_window.emit()
@@ -73,6 +81,8 @@ class SelectDatabases(QtWidgets.QDialog):
             selected_items_shp = [item.text() for item in self.list_shp.selectedItems()]
         if self.check_bd.isChecked():
             selected_items_bd = [item.text() for item in self.list_bd.selectedItems()]
+
+        # self.load_project()
 
         # Prepara operação que será realizada em formato dicionário
         oc = OperationController()
