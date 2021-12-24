@@ -1,4 +1,5 @@
 from ..settings.json_tools import JsonTools
+from ..settings.env_tools import  EnvTools
 from PyQt5.QtCore import QVariant
 
 import geopandas as gpd
@@ -50,6 +51,12 @@ class OperationController:
 
         operation_config['pg'] = []
         for i in self.data_bd:
+            et = EnvTools()
+            login = et.get_credentials(i['id'])
+
+            i['usuario'] = login[0]
+            i['senha'] = login[1]
+
             if (i['nome'] in selected_items_bd):
                 operation_config['pg'].append(i)
 
