@@ -257,6 +257,8 @@ class LayoutManager():
             show_qgis_input.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input)
 
+            if index_2 != None:
+                input_standard = input_standard.to_crs(crs)
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
             show_qgis_input_standard.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
