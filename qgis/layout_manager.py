@@ -289,7 +289,7 @@ class LayoutManager():
 
         # Posiciona a tela do QGis no extent da área de entrada
         for layer in QgsProject.instance().mapLayers().values():
-            if layer.name() == 'Feição de Estudo/Sobreposição (padrão)' or layer.name() == 'Feição de Estudo/Sobreposição':
+            if layer.name() == 'Feição de Estudo/Sobreposição':
                 rect = QgsRectangle(extent['minx'], extent['miny'], extent['maxx'], extent['maxy'])
                 # Aqui está sendo contornado o erro de transformação, comentado no comeco desta função
                 layer.setExtent(rect)
@@ -332,7 +332,6 @@ class LayoutManager():
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]) + '.pdf'
 
         pdf_path = os.path.join(self.result['path_output'], pdf_name)
-        print(pdf_path)
 
         atlas = self.layout.atlas()
         map_atlas = atlas.layout()

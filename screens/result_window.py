@@ -27,8 +27,6 @@ class ResultWindow (QtWidgets.QDialog):
         self.btn_print_overlay_qgis.clicked.connect(self.print_overlay_qgis)
         self.btn_print_all_layers_qgis.clicked.connect(self.print_all_layers_qgis)
         self.btn_pdf_generator.clicked.connect(self.btn_report_generator)
-        self.btn_cancel.clicked.connect(self.cancel)
-        self.btn_continuar.clicked.connect(self.next)
 
         self.show_result()
 
@@ -58,6 +56,7 @@ class ResultWindow (QtWidgets.QDialog):
         # Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
         # e realiza a inserção deste valor na tabela
         for i in self.result['operation_config']['shp']:
+            print(i)
             cont = 0
             for rowIndex, row in gdf_result_shp.iterrows():
                 if str(i['nome']) in gdf_result_shp and row[str(i['nome'])] == True:
@@ -71,22 +70,22 @@ class ResultWindow (QtWidgets.QDialog):
 
             row_control += 1
 
-            # Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
-            # e realiza a inserção deste valor na tabela
-            for bd in self.result['operation_config']['pg']:
-                cont = 0
-                for layer in bd['nomeFantasiaTabelasCamadas']:
-                    for rowIndex, row in gdf_result_db.iterrows():
-                        if row[str(layer)]:
-                            cont += 1
+        # Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
+        # e realiza a inserção deste valor na tabela
+        for bd in self.result['operation_config']['pg']:
+            cont = 0
+            for layer in bd['nomeFantasiaTabelasCamadas']:
+                for rowIndex, row in gdf_result_db.iterrows():
+                    if row[str(layer)]:
+                        cont += 1
 
-                    cellName = QtWidgets.QTableWidgetItem(str(layer))
-                    self.tbl_result.setItem(row_control, 0, cellName)
+                cellName = QtWidgets.QTableWidgetItem(str(layer))
+                self.tbl_result.setItem(row_control, 0, cellName)
 
-                    cellValue = QtWidgets.QTableWidgetItem(str(cont))
-                    self.tbl_result.setItem(row_control, 1, cellValue)
+                cellValue = QtWidgets.QTableWidgetItem(str(cont))
+                self.tbl_result.setItem(row_control, 1, cellValue)
 
-                    row_control += 1
+                row_control += 1
 
     def handle_output(self):
         self.output = QFileDialog.getExistingDirectory(self, "Selecione a pasta de saída")
@@ -103,14 +102,3 @@ class ResultWindow (QtWidgets.QDialog):
     def btn_report_generator(self):
         self.hide()
         self.report_generator_window.emit(self.result)
-
-    def cancel(self):
-        self.hide()
-        self.cancel_window.emit()
-
-    def next(self):
-        lm = LayoutManager(self.result, self.progress_bar)
-        lm.export_pdf()
-
-        self.hide()
-        self.continue_window.emit()
