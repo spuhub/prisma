@@ -7,6 +7,8 @@ from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, 
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
+from ..settings.env_tools import EnvTools
+
 import geopandas as gpd
 
 class LayoutManager():
@@ -326,7 +328,7 @@ class LayoutManager():
 
     def pdf_generator(self, feature_input_gdp, feature_area, index_1, index_2):
         # Manipulação dos textos do layout
-        # self.handle_text()
+        self.handle_text(index_1, index_2)
 
         if index_2 == None:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada']) + '.pdf'
@@ -347,12 +349,23 @@ class LayoutManager():
 
     QApplication.instance().processEvents()
 
-    def handle_text(self):
-        title = self.layout.itemById('CD_Titulo')
-        title.setText('Teste 123')
+    def handle_text(self, index_1, index_2):
 
-        scale = self.layout.itemById('CD_Escala')
-        scale.setText('1:' + str(round(iface.mapCanvas().scale())))
+        et = EnvTools()
+        headers = et.get_report_hearder()
+
+        spu = self.layout.itemById('CD_UnidadeSPU')
+        spu.setText(headers['superintendencia'])
+
+        sector = self.layout.itemById('CD_SubUnidadeSPU')
+        sector.setText(headers['setor'])
+
+        title = self.layout.itemById('CD_Titulo')
+        if index_2 == None:
+            title.setText('Caracterização: ' + self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada'])
+        else:
+            title.setText('Caracterização: ' + self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2])
+
 
     def add_template_to_project(self, template_dir):
         project = QgsProject.instance()
