@@ -179,6 +179,7 @@ class DbConnection:
             sridLayer = "".join(c for c in comp if c.isdecimal())
 
             sridTable = self.GEtSridTable(tableName)
+            print("SRID TABLE: ", tableName, ":",  sridTable)
             gdf = gpd.GeoDataFrame([], crs=sridTable)
 
             for indexInput, rowInput in input.iterrows():
@@ -190,6 +191,7 @@ class DbConnection:
                     + rowInput['geometry'].to_wkt() + "'," + str(
                     sridLayer) + ")," + str(sridTable) + " ))"
 
+                self.conn.set_client_encoding('utf-8')
                 gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
 
             gdf = gdf.drop_duplicates(subset=['geometry'], keep='first')
