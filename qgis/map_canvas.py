@@ -57,16 +57,16 @@ class MapCanvas():
 
         show_qgis_input = QgsVectorLayer(input.to_json(), "Lote")
 
-        symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
+        symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35', 'style': 'solid'})
         show_qgis_input.renderer().setSymbol(symbol)
 
         QgsProject.instance().addMapLayer(show_qgis_input)
 
         if len(input_standard) > 0:
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote")
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (padrão)")
 
             symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
                  'style': 'solid'})
             show_qgis_input_standard.renderer().setSymbol(symbol)
 
@@ -157,25 +157,44 @@ class MapCanvas():
 
             show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Lote")
 
-            symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
+            symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35', 'style': 'solid'})
             show_qgis_input.renderer().setSymbol(symbol)
 
             QgsProject.instance().addMapLayer(show_qgis_input)
 
             if len(input_standard) > 0:
                 input_standard = input_standard.to_crs(4674)
+                # gdf_input = gdf_input.to_crs(4674)
                 get_overlay_standard = gpd.GeoDataFrame(columns=input_standard.columns)
+                # Teste com shapefile
                 for area in gdf_selected_shp:
-                    overlay = gpd.overlay(input_standard, area, how='intersection')
-                    get_overlay_standard = gpd.GeoDataFrame(pd.concat([get_overlay_standard, overlay]))
+                    for indexArea, rowArea in area.iterrows():
+                        for indexInput, rowInput in input.iterrows():
+                            if rowInput['geometry'].intersection(rowArea['geometry']):
+                                get_overlay_standard = gpd.GeoDataFrame(pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
+
+                # Teste com banco de dados
+                index_db = 0
+                for db in gdf_selected_db:
+                    index_layer = 0
+                    for area in db:
+                        if 'geom' in area:
+                            area = area.drop(columns=['geom'])
+
+                        for indexInput, rowInput in input.iterrows():
+                            if rowInput['geometry'].intersection(rowArea['geometry']):
+                                get_overlay_standard = gpd.GeoDataFrame(
+                                    pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
+                        index_layer += 1
+                    index_db += 1
 
                 get_overlay_standard = get_overlay_standard.drop_duplicates()
                 get_overlay_standard = get_overlay_standard.reset_index()
 
-                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote")
+                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote (padrão)")
 
                 symbol = QgsFillSymbol.createSimple(
-                    {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                    {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
                      'style': 'solid'})
                 show_qgis_input_standard.renderer().setSymbol(symbol)
 
