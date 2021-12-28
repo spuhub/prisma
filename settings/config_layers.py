@@ -152,15 +152,41 @@ class ConfigLayers(QtWidgets.QDialog):
 
     def fill_table_bd(self):
 
-        print(self.id_current_db)
-        config = self.search_base_pg(self.id_current_db)
-        print(config)
+        #print(self.id_current_db)
         idbd = self.id_current_db
+        config = self.search_base_pg(self.id_current_db)
+
         env = EnvTools()
         credenciais = env.get_credentials(idbd)
         conn = DbConnection(config["host"], config["porta"], config["baseDeDados"], credenciais[0], credenciais[1])
+
         dataTables = conn.GEtAllTypeGeomOFGeomColum("public")
         tabelasGeom = list(dataTables.keys())
+
+        tabelasCamadas = []
+        nomeFantasiaTabelasCamadas =[]
+        descricaoTabelasCamadas = []
+        estiloTabelasCamadas = []
+
+
+        if "TabelasDisponiveis" in config:
+            tabelasGeom = config["TabelasDisponiveis"]
+
+        if "TipoTabelasDisponiveis" in config:
+            dataTables = dict(zip(tabelasGeom, config["TipoTabelasDisponiveis"]))
+
+        if "tabelasCamadas" in config:
+            tabelasCamadas = config["tabelasCamadas"]
+
+        if "nomeFantasiaTabelasCamadas" in config:
+            nomeFantasiaTabelasCamadas = config["nomeFantasiaTabelasCamadas"]
+
+        if "descricaoTabelasCamadas" in config:
+            descricaoTabelasCamadas = config["descricaoTabelasCamadas"]
+
+        if "estiloTabelasCamadas" in config:
+            estiloTabelasCamadas = config["estiloTabelasCamadas"]
+
 
         nb_row = len(tabelasGeom)
 
