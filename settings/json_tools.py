@@ -53,7 +53,7 @@ class JsonTools:
 
         dados[db_id] = db_json_new_conf
         dados[db_id]["id"] = db_id
-
+        print("vixx", dados)
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
 
@@ -75,6 +75,21 @@ class JsonTools:
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
 
+    def get_camadas_base_obrigatoria (self):
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+        if "obrigatorio" in dados:
+            return dados["obrigatorio"]
+        else:
+            return {}
+
+    def set_camadas_base_obrigatoria (self, new_conf):
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+        dados["obrigatorio"] = new_conf
+
+        with open(self.json_path, 'w') as f:
+            json.dump(dados, f, indent=4)
 
 if __name__ == '__main__':
     d = JsonTools()

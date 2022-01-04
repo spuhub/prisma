@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>499</height>
+    <width>845</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -229,6 +229,20 @@
           </layout>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_20">
+           <item>
+            <widget class="QLabel" name="label_19">
+             <property name="text">
+              <string>Descrição</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="textEdit_bd"/>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="QPushButton" name="testar_base_carregar_camadas">
            <property name="text">
             <string>Testar Conexão e Carregar Camadas</string>
@@ -361,6 +375,20 @@
             <string>Data de Aquisição</string>
            </property>
           </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_21">
+         <item>
+          <widget class="QLabel" name="label_20">
+           <property name="text">
+            <string>Descrição</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="textEdit_shp"/>
          </item>
         </layout>
        </item>
