@@ -25,6 +25,8 @@ class ConfigWindow(QtWidgets.QDialog):
         self.fill_combo_box_base()
         self.fill_combo_box_shp()
         self.fill_combo_box_geocoding_server()
+        self.newbdID = ''
+        self.newshpID = ''
 
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
@@ -37,6 +39,11 @@ class ConfigWindow(QtWidgets.QDialog):
     def save_bd_config_json(self):
         confg_dic = {}
         id_current_db = self.combo_box_base.currentData()
+        current_config = self.search_base_pg(id_current_db)
+
+        if current_config != confg_dic:
+            confg_dic = current_config
+
 
         confg_dic["id"] = ""
         confg_dic["tipo"] = "pg"
@@ -52,6 +59,7 @@ class ConfigWindow(QtWidgets.QDialog):
             if confg_dic["nome"] != "" and confg_dic["host"] != "" and confg_dic["porta"] != "" and confg_dic[
                 "baseDeDados"] != "":
                 id = self.setings.insert_database_pg(confg_dic)
+                self.newbdID = id
                 self.source_databases.append(confg_dic)
                 self.combo_box_base.addItem(self.nome_base.text(), id)
                 self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
@@ -59,7 +67,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         else:
             index = self.search_index_base_pg(id_current_db)
-            print("ID_current ==", id_current_db)
+            print("ID_current ==", id_current_db, index)
             self.source_databases[index] = confg_dic
             self.setings.edit_database(id_current_db, confg_dic)
 
@@ -72,7 +80,12 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def save_shp_config_json(self):
         id_current_db = self.combo_box_shp.currentData()
+        current_config = self.search_base_shp(id_current_db)
         confg_dic = {}
+
+        if current_config != confg_dic:
+            confg_dic = current_config
+
         confg_dic["id"] = ""
         confg_dic["tipo"] = "shp"
         confg_dic["nome"] = self.nome_shp.text()
@@ -83,20 +96,22 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
 
         if self.combo_box_shp.currentData() == "0":
-            if confg_dic["nome"] != "" and confg_dic["url"] != "" and confg_dic["urlDowload"] != "" and confg_dic["diretorioLocal"] != "":
+            if confg_dic["nome"] != "" and confg_dic["urlDowload"] != "" and confg_dic["diretorioLocal"] != "":
                 id = self.setings.insert_database_pg(confg_dic)
-                self.source_databases.append(confg_dic)
-                self.combo_box_base.addItem(self.nome_base.text(), id)
-                self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
+                self.newshpID = id
+                print("New id", id)
+                self.source_shp.append(confg_dic)
+                self.combo_box_base.addItem(self.nome_shp.text(), id)
+                #self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
                 confg_dic = {}
 
         else:
             index = self.search_index_base_shp(id_current_db)
             print("ID_current ==", id_current_db, index)
-            self.source_databases[index] = confg_dic
+            self.source_shp[index] = confg_dic
             self.setings.edit_database(id_current_db, confg_dic)
 
-            self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
+            #self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
             confg_dic = {}
 
     def fill_combo_box_base(self):
@@ -138,11 +153,12 @@ class ConfigWindow(QtWidgets.QDialog):
     def search_index_base_pg(self, id_base):
         idex = 0
         # cont=0
+        print("MOBA",self.source_databases)
         for item in self.source_databases:
             if item["id"] != id_base:
                 idex = idex + 1
 
-        return idex
+        return idex-1
 
     def fill_text_fields_base(self):
         current_id = self.combo_box_base.currentData()
@@ -198,14 +214,10 @@ class ConfigWindow(QtWidgets.QDialog):
         self.combo_box_servico_geocod.addItem("Nominatim (OpenStreetMap)", 1)
         self.combo_box_servico_geocod.addItem("IBGE", 2)
 
-
-
     def save_geocoding_key(self):
         current_opt = self.combo_box_servico_geocod.currentData()
         key = self.key_geo_cod.text()
         self.credencials.store_keys(str(current_opt), key)
-
-
 
     def back(self):
         self.hide()
@@ -216,18 +228,28 @@ class ConfigWindow(QtWidgets.QDialog):
         self.continue_window.emit()
 
     def hideLayerConfBase(self):
-        self.save_settings()
 
+        self.save_settings()
         id_current_db = self.combo_box_base.currentData()
+
+        if id_current_db =="0":
+            id_current_db = self.newbdID
+
         print("curreert",type(id_current_db))
         if id_current_db != "0":
             d = ConfigLayers("bd", id_current_db)
             d.exec_()
 
     def hideLayerConfShp(self):
+
         self.save_settings()
         id_current_shp = self.combo_box_shp.currentData()
-        if id_current_shp != "0":
+
+        if id_current_shp == "0":
+            id_current_shp = self.newshpID
+
+        print("curreert-SHP", id_current_shp)
+        if id_current_shp != "0" and self.nome_shp.text() !="" :
             d = ConfigLayers("shp", id_current_shp)
             d.exec_()
 

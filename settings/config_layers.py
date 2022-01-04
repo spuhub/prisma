@@ -40,6 +40,9 @@ class ConfigLayers(QtWidgets.QDialog):
         self.objects_espessura_linhas = []
         self.objects_preenchimento = []
         self.objects_cor_preenchimento = []
+        self.objects_tables_disponiveis = []
+        self.objects_tipo_tables_disponiveis = []
+        self.objects_nome_fantasia = []
 
         self.fill_table()
         self.btn_layer_cancelar.clicked.connect(self.back)
@@ -72,9 +75,9 @@ class ConfigLayers(QtWidgets.QDialog):
         cb.addItem("Área da União - Não Homologada", "area_nao_homologada")
         return cb
 
-    def create_espessura_box(self, id_object):
+    def create_espessura_box(self, id_object, value):
         dsb = QDoubleSpinBox()
-        dsb.setValue(0.25)
+        dsb.setValue(value)
         dsb.setObjectName(id_object)
         dsb.setSingleStep(0.1)
         return dsb
@@ -120,7 +123,9 @@ class ConfigLayers(QtWidgets.QDialog):
         itemCellClass = QTableWidgetItem(nomereal)
         self.table_layers.setItem(0, 1, itemCellClass)
 
-        itemCellClass = QTableWidgetItem(config["nome"].replace("_", " ").replace("-", " ").title())
+        nome = config["nome"].replace("_", " ").replace("-", " ").title()
+        self.objects_nome_fantasia.append(nome)
+        itemCellClass = QTableWidgetItem(nome)
         self.table_layers.setItem(0, 2, itemCellClass)
 
         itemCellClass = QTableWidgetItem(str(shp.type).replace("0", "").replace(" ", ""))
@@ -139,7 +144,7 @@ class ConfigLayers(QtWidgets.QDialog):
         self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(0) + "-" + str(7), "black"))
         self.table_layers.setCellWidget(0, 7, self.objects_cor_linhas[0])
 
-        self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8)))
+        self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8),0.25))
         self.table_layers.setCellWidget(0, 8, self.objects_espessura_linhas[0])
 
         self.objects_preenchimento.append(
@@ -168,7 +173,6 @@ class ConfigLayers(QtWidgets.QDialog):
         descricaoTabelasCamadas = []
         estiloTabelasCamadas = []
 
-
         if "TabelasDisponiveis" in config:
             tabelasGeom = config["TabelasDisponiveis"]
 
@@ -187,7 +191,8 @@ class ConfigLayers(QtWidgets.QDialog):
         if "estiloTabelasCamadas" in config:
             estiloTabelasCamadas = config["estiloTabelasCamadas"]
 
-
+        self.objects_tables_disponiveis = tabelasGeom
+        self.objects_tipo_tables_disponiveis = dataTables.values()
         nb_row = len(tabelasGeom)
 
         self.table_layers.setRowCount(nb_row)
@@ -195,14 +200,29 @@ class ConfigLayers(QtWidgets.QDialog):
 
         for i in range(nb_row):
 
-            self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(i), True))
+            if tabelasGeom[i] in tabelasCamadas:
+                self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(i), True))
+            else:
+                self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(i), False))
+
             self.table_layers.setCellWidget(i, 0, self.objects_vai_usar[i])
 
             itemCellClass = QTableWidgetItem(tabelasGeom[i])
             self.table_layers.setItem(i, 1, itemCellClass)
 
-            itemCellClass = QTableWidgetItem(tabelasGeom[i].replace("_", " ").replace("-", " ").title())
+            if tabelasGeom[i] in tabelasCamadas:
+                itemidex = tabelasCamadas.index(tabelasGeom[i])
+                nome = tabelasCamadas[itemidex].replace("_", " ").replace("-", " ").title()
+                self.objects_nome_fantasia.append(nome)
+                itemCellClass = QTableWidgetItem(nome)
+
+            else:
+                nome = tabelasGeom[i].replace("_", " ").replace("-", " ").title()
+                self.objects_nome_fantasia.append(nome)
+                itemCellClass = QTableWidgetItem(nome)
+
             self.table_layers.setItem(i, 2, itemCellClass)
+
 
             itemCellClass = QTableWidgetItem(dataTables[tabelasGeom[i]])
             self.table_layers.setItem(i, 3, itemCellClass)
@@ -210,23 +230,114 @@ class ConfigLayers(QtWidgets.QDialog):
             self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(i), False))
             self.table_layers.setCellWidget(i, 4, self.objects_vai_usar_camada_base[i])
 
+
             self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
             self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
 
+            style = {}
+
+            if tabelasGeom[i] in tabelasCamadas:
+                itemidex = tabelasCamadas.index(tabelasGeom[i])
+                style = estiloTabelasCamadas[itemidex]
+
+
             self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(i) + "-" + str(6)))
+
+            if "line_style" in style:
+                indexQcombo = self.objects_estilo_linhas[i].findData("line_style")
+                self.objects_estilo_linhas[i].setCurrentIndex(indexQcombo)
+
             self.table_layers.setCellWidget(i, 6, self.objects_estilo_linhas[i])
 
-            self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7), "black"))
+            lineColor = "black"
+            if "line_color" in style:
+                lineColor = style["line_color"]
+
+            self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7),lineColor))
             self.table_layers.setCellWidget(i, 7, self.objects_cor_linhas[i])
 
-            self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8)))
+            espeLine = 0.25
+
+            if "width_border" in style:
+                espeLine = float(style["width_border"])
+
+            self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8), espeLine))
             self.table_layers.setCellWidget(i, 8, self.objects_espessura_linhas[i])
+
 
             self.objects_preenchimento.append(self.create_ComboBox_preenchimento("preenchimento" + "-" + str(i) + "-" + str(9)))
             self.table_layers.setCellWidget(i, 9, self.objects_preenchimento[i])
 
-            self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10),  self.generate_color()))
+            fillColor = self.generate_color()
+
+            if "color" in style:
+                fillColor = style["color"]
+            self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
             self.table_layers.setCellWidget(i, 10, self.objects_cor_preenchimento[i])
+
+    def save_base_pg(self):
+        idbd = self.id_current_db
+        config = self.search_base_pg(self.id_current_db)
+        print(type(config))
+
+        config["TabelasDisponiveis"] = self.objects_tables_disponiveis
+        config["TipoTabelasDisponiveis"] = list(self.objects_tipo_tables_disponiveis)
+        print("OIIIII", config["TipoTabelasDisponiveis"])
+        aux = []
+        for i in range(len(self.objects_tables_disponiveis)):
+            if self.objects_vai_usar[i].checkState():
+                aux.append(self.objects_tables_disponiveis[i])
+
+        config["tabelasCamadas"] = aux
+
+        aux = []
+
+        for i in range(len(self.objects_tables_disponiveis)):
+            if self.objects_vai_usar[i].checkState():
+                aux.append(self.objects_nome_fantasia[i])
+
+        config["nomeFantasiaTabelasCamadas"] = aux
+
+        aux = []
+
+        for i in range(len(self.objects_tables_disponiveis)):
+            if self.objects_vai_usar[i].checkState():
+                aux.append("Builder")
+
+        config["descricaoTabelasCamadas"] = aux
+
+        aux = []
+        for i in range(len(self.objects_tables_disponiveis)):
+            if self.objects_vai_usar[i].checkState():
+                c = {"line_style": self.objects_estilo_linhas[i].currentData(),
+                "line_color": self.objects_cor_linhas[i].color().name(),
+                "width_border": str(self.objects_espessura_linhas[i].value()),
+                "style": self.objects_preenchimento[i].currentData(),
+                "color": self.objects_cor_preenchimento[i].color().name()}
+                aux.append(c)
+
+        config["estiloTabelasCamadas"] = aux
+
+        print(config)
+        self.setings02.edit_database(self.id_current_db,config)
+
+    def save_base_shp(self):
+        idbd = self.id_current_db
+        print ("Currente-shp2223: ",  idbd)
+        config = self.search_base_shp(self.id_current_db)
+
+        config["nomeFantasiaCamada"] = self.objects_nome_fantasia[0]
+
+        c = {"line_style": self.objects_estilo_linhas[0].currentData(),
+             "line_color": self.objects_cor_linhas[0].color().name(),
+             "width_border": str(self.objects_espessura_linhas[0].value()),
+             "style": self.objects_preenchimento[0].currentData(),
+             "color": self.objects_cor_preenchimento[0].color().name()}
+
+        config["estiloCamadas"] = [c]
+
+        self.setings02.edit_database(idbd,config)
+
 
 
 
@@ -269,7 +380,13 @@ class ConfigLayers(QtWidgets.QDialog):
 
     def next(self):
         # print(self.testefill.symbol)
-        print(self.bt.color().name())
+        #print(self.bt.color().name())
+
+        if self.tipoFonte == "shp":
+            self.save_base_shp()
+        if self.tipoFonte == "bd":
+            self.save_base_pg()
+
         self.hide()
         self.continue_window.emit()
 
