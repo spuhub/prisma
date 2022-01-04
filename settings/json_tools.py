@@ -5,7 +5,7 @@ import json
 class JsonTools:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.json_path = base_dir + "/settings/config_Json/dbtabases2.json"
+        self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
         with open(self.json_path, 'r', encoding='utf8') as f:
             self.json_config = json.load(f)
 
