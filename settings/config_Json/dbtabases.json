@@ -60,21 +60,21 @@
             {
                 "line_style": null,
                 "line_color": "#0000c4",
-                "width_border": 0.25,
+                "width_border": "0.25",
                 "style": "solid",
                 "color": "#d02121"
             },
             {
                 "line_style": null,
                 "line_color": "#00ce00",
-                "width_border": 0.44999999999999996,
+                "width_border": "0.45",
                 "style": "solid",
                 "color": "#d02121"
             },
             {
                 "line_style": null,
                 "line_color": "#0000c4",
-                "width_border": 0.25,
+                "width_border": "0.25",
                 "style": "solid",
                 "color": "#d02121"
             }
