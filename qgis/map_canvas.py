@@ -1,5 +1,5 @@
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsRasterLayer, QgsCoordinateReferenceSystem
+from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsRasterLayer, QgsCoordinateReferenceSystem
 from qgis.utils import iface
 
 import geopandas as gpd
@@ -33,7 +33,7 @@ class MapCanvas():
             index += 1
 
             show_qgis_areas = QgsVectorLayer(area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
-            symbol = QgsFillSymbol.createSimple(result['operation_config']['shp'][index]['estiloCamadas'][0])
+            symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -48,9 +48,8 @@ class MapCanvas():
                 show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                  result['operation_config']['pg'][index_db][
                                                      'nomeFantasiaTabelasCamadas'][index_layer])
-                # symbol = QgsFillSymbol.createSimple(
-                #     result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
-                # show_qgis_areas.renderer().setSymbol(symbol)
+                symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
                 index_layer += 1
             index_db += 1
@@ -115,7 +114,8 @@ class MapCanvas():
                 gdf_area = gdf_area.drop_duplicates()
                 show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
 
-                symbol = QgsFillSymbol.createSimple(result['operation_config']['shp'][index]['estiloCamadas'][0])
+                symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
+                print("Geometria: ", show_qgis_areas.geometryType())
                 show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -143,11 +143,10 @@ class MapCanvas():
                     show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
                                                      result['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
-                    # symbol = QgsFillSymbol.createSimple(
-                    #     result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
-                    # show_qgis_areas.renderer().setSymbol(symbol)
+                    symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                    print("Geometria: ", show_qgis_areas.geometryType())
+                    show_qgis_areas.renderer().setSymbol(symbol)
                     QgsProject.instance().addMapLayer(show_qgis_areas)
-
 
                 index_layer += 1
             index_db += 1
@@ -205,3 +204,13 @@ class MapCanvas():
             # Da zoom na camada de input
             iface.zoomToActiveLayer()
 
+    def get_symbol(self, geometry_type, style):
+        symbol = None
+        # Line String
+        if geometry_type == 1:
+            symbol = QgsLineSymbol.createSimple(style)
+        # Polígono
+        elif geometry_type == 2:
+            symbol = QgsFillSymbol.createSimple(style)
+
+        return symbol

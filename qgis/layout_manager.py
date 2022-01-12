@@ -3,7 +3,7 @@ import os
 from qgis import processing
 
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, QgsPrintLayout, QgsReadWriteContext
+from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, QgsPrintLayout, QgsReadWriteContext
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
@@ -230,7 +230,7 @@ class LayoutManager():
                                              self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada'])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(self.result['operation_config']['shp'][index_1]['estiloCamadas'][0])
+            symbol = self.get_symbol(show_qgis_areas.geometryType(), self.result['operation_config']['shp'][index_1]['estiloCamadas'][0])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
         else:
@@ -243,7 +243,7 @@ class LayoutManager():
                                              self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(self.result['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2])
+            symbol = self.get_symbol(show_qgis_areas.geometryType(), self.result['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -381,3 +381,14 @@ class LayoutManager():
         # Adição do template no projeto
         layout.loadFromTemplate(document, QgsReadWriteContext())
         project.layoutManager().addLayout(layout)
+
+    def get_symbol(self, geometry_type, style):
+        symbol = None
+        # Line String
+        if geometry_type == 1:
+            symbol = QgsLineSymbol.createSimple(style)
+        # Polígono
+        elif geometry_type == 2:
+            symbol = QgsFillSymbol.createSimple(style)
+
+        return symbol
