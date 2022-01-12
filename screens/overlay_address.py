@@ -6,6 +6,8 @@ from PyQt5.uic import loadUi
 
 from geopandas.tools import geocode
 
+from ..settings.env_tools import EnvTools
+
 class OverlayAddress (QtWidgets.QDialog):
 
     back_window = QtCore.pyqtSignal()
@@ -18,6 +20,8 @@ class OverlayAddress (QtWidgets.QDialog):
         self.btn_voltar.clicked.connect(self.back)
         self.btn_continuar.clicked.connect(self.next)
 
+        self.env_tools = EnvTools()
+
     def back(self):
         self.hide()
         self.back_window.emit()
@@ -28,6 +32,8 @@ class OverlayAddress (QtWidgets.QDialog):
             try:
                 address = (self.txt_logradouro.text() + ", " + self.txt_numero.text() + ", " + self.txt_cidade.text()
                 + ", " + self.txt_uf.text() + ", Brasil")
+
+                print(self.env_tools.get_current_geocoding_server())
 
                 print("Endereço: ", address)
                 points = geocode(address, provider='nominatim', user_agent='csc_user_ht')

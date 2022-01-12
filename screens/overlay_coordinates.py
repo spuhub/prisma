@@ -4,6 +4,8 @@ import os.path
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
+from ..settings.env_tools import EnvTools
+
 class OverlayCoordinates (QtWidgets.QDialog):
 
     back_window = QtCore.pyqtSignal()
