@@ -3,7 +3,7 @@ import os
 from qgis import processing
 
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, QgsPrintLayout, QgsReadWriteContext
+from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, QgsPrintLayout, QgsReadWriteContext
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
@@ -230,7 +230,7 @@ class LayoutManager():
                                              self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada'])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_symbol(show_qgis_areas.geometryType(), self.result['operation_config']['shp'][index_1]['estiloCamadas'][0])
+            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), self.result['operation_config']['shp'][index_1]['estiloCamadas'][0])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
         else:
@@ -243,7 +243,7 @@ class LayoutManager():
                                              self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_symbol(show_qgis_areas.geometryType(), self.result['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2])
+            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), self.result['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -253,9 +253,7 @@ class LayoutManager():
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
-                 'style': 'solid'})
+            symbol = self.get_input_symbol(show_qgis_input.geometryType())
             show_qgis_input.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input)
 
@@ -264,9 +262,7 @@ class LayoutManager():
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
             show_qgis_input_standard.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
-                 'style': 'solid'})
+            symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
             show_qgis_input_standard.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input_standard)
         else:
@@ -274,9 +270,7 @@ class LayoutManager():
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
-                 'style': 'solid'})
+            symbol = self.get_input_symbol(show_qgis_input.geometryType())
             show_qgis_input.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input)
 
@@ -330,12 +324,17 @@ class LayoutManager():
         # Manipulação dos textos do layout
         self.handle_text(index_1, index_2)
 
+        if 'logradouro' not in feature_input_gdp:
+            feature_input_gdp['logradouro'] = "Ponto por Endereço ou Coordenada"
+
         if index_2 == None:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['shp'][index_1]['nomeFantasiaCamada']) + '.pdf'
         else:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]) + '.pdf'
 
         pdf_path = os.path.join(self.result['path_output'], pdf_name)
+
+        print(pdf_path)
 
         atlas = self.layout.atlas()
         map_atlas = atlas.layout()
@@ -382,8 +381,49 @@ class LayoutManager():
         layout.loadFromTemplate(document, QgsReadWriteContext())
         project.layoutManager().addLayout(layout)
 
-    def get_symbol(self, geometry_type, style):
+    # Estilização dinâmica para diferentes tipos de geometrias (Área de input)
+    def get_input_symbol(self, geometry_type):
         symbol = None
+
+        # Point
+        if geometry_type == 0:
+            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': '#616161'})
+        # Line String
+        if geometry_type == 1:
+            symbol = QgsLineSymbol.createSimple({"line_color": "#616161", "line_style": "solid", "width": "0.35"})
+        # Polígono
+        elif geometry_type == 2:
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                 'style': 'solid'})
+
+        return symbol
+
+    # Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação)
+    def get_input_standard_symbol(self, geometry_type):
+        symbol = None
+
+        # Point
+        if geometry_type == 0:
+            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': 'gray'})
+        # Line String
+        if geometry_type == 1:
+            symbol = QgsLineSymbol.createSimple({"line_color": "gray", "line_style": "solid", "width": "0.35"})
+        # Polígono
+        elif geometry_type == 2:
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
+                 'style': 'solid'})
+
+        return symbol
+
+    # Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação)
+    def get_feature_symbol(self, geometry_type, style):
+        symbol = None
+
+        # Point
+        if geometry_type == 0:
+            symbol = QgsMarkerSymbol.createSimple(style)
         # Line String
         if geometry_type == 1:
             symbol = QgsLineSymbol.createSimple(style)

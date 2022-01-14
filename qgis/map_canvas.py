@@ -1,5 +1,5 @@
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsRasterLayer, QgsCoordinateReferenceSystem
+from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol, QgsRasterLayer, QgsCoordinateReferenceSystem
 from qgis.utils import iface
 
 import geopandas as gpd
@@ -33,7 +33,7 @@ class MapCanvas():
             index += 1
 
             show_qgis_areas = QgsVectorLayer(area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
-            symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
+            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -48,7 +48,7 @@ class MapCanvas():
                 show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                  result['operation_config']['pg'][index_db][
                                                      'nomeFantasiaTabelasCamadas'][index_layer])
-                symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
                 show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
                 index_layer += 1
@@ -56,7 +56,7 @@ class MapCanvas():
 
         show_qgis_input = QgsVectorLayer(input.to_json(), "Lote")
 
-        symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35', 'style': 'solid'})
+        symbol = self.get_input_symbol(show_qgis_input.geometryType())
         show_qgis_input.renderer().setSymbol(symbol)
 
         QgsProject.instance().addMapLayer(show_qgis_input)
@@ -64,9 +64,7 @@ class MapCanvas():
         if len(input_standard) > 0:
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (padrão)")
 
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
-                 'style': 'solid'})
+            symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
             show_qgis_input_standard.renderer().setSymbol(symbol)
 
             QgsProject.instance().addMapLayer(show_qgis_input_standard)
@@ -114,7 +112,7 @@ class MapCanvas():
                 gdf_area = gdf_area.drop_duplicates()
                 show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
 
-                symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
+                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
                 print("Geometria: ", show_qgis_areas.geometryType())
                 show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
@@ -143,7 +141,7 @@ class MapCanvas():
                     show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
                                                      result['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
-                    symbol = self.get_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
                     print("Geometria: ", show_qgis_areas.geometryType())
                     show_qgis_areas.renderer().setSymbol(symbol)
                     QgsProject.instance().addMapLayer(show_qgis_areas)
@@ -156,7 +154,7 @@ class MapCanvas():
 
             show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Lote")
 
-            symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35', 'style': 'solid'})
+            symbol = self.get_input_symbol(show_qgis_input.geometryType())
             show_qgis_input.renderer().setSymbol(symbol)
 
             QgsProject.instance().addMapLayer(show_qgis_input)
@@ -192,9 +190,7 @@ class MapCanvas():
 
                 show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote (padrão)")
 
-                symbol = QgsFillSymbol.createSimple(
-                    {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
-                     'style': 'solid'})
+                symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
                 show_qgis_input_standard.renderer().setSymbol(symbol)
 
                 QgsProject.instance().addMapLayer(show_qgis_input_standard)
@@ -204,8 +200,47 @@ class MapCanvas():
             # Da zoom na camada de input
             iface.zoomToActiveLayer()
 
-    def get_symbol(self, geometry_type, style):
+    # Estilização dinâmica para diferentes tipos de geometrias (Área de input)
+    def get_input_symbol(self, geometry_type):
         symbol = None
+
+        # Point
+        if geometry_type == 0:
+            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': '#616161'})
+        # Line String
+        if geometry_type == 1:
+            symbol = QgsLineSymbol.createSimple({"line_color": "#616161", "line_style": "solid", "width": "0.35"})
+        # Polígono
+        elif geometry_type == 2:
+            symbol = QgsFillSymbol.createSimple(
+                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
+                 'style': 'solid'})
+
+        return symbol
+
+    # Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação)
+    def get_input_standard_symbol(self, geometry_type):
+        symbol = None
+
+        # Point
+        if geometry_type == 0:
+            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': 'gray'})
+        # Line String
+        if geometry_type == 1:
+            symbol = QgsLineSymbol.createSimple({"line_color": "gray", "line_style": "solid", "width": "0.35"})
+        # Polígono
+        elif geometry_type == 2:
+            symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
+
+        return symbol
+
+    # Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação)
+    def get_feature_symbol(self, geometry_type, style):
+        symbol = None
+
+        # Point
+        if geometry_type == 0:
+            symbol = QgsMarkerSymbol.createSimple(style)
         # Line String
         if geometry_type == 1:
             symbol = QgsLineSymbol.createSimple(style)

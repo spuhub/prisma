@@ -35,12 +35,10 @@ class OperationController:
             operation_config['input'] = input
             return operation_config
 
-        elif (self.operation_config['operation'] == 'address'):
-            pass
+        elif (operation_config['operation'] == 'coordinate'):
+            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
 
-        else:
-            # Point
-            pass
+            return operation_config
 
     # Monta uma lista de configurações para operação que será realizada
     def create_operation_config(self, operation_config, selected_items_bd, selected_items_shp):

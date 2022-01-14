@@ -41,7 +41,9 @@ class EnvTools:
         self.settings.beginGroup('Geocoding/currentServer')
         self.settings.setValue('current', id_server)
         self.settings.endGroup()
+        print("foi salvo:", id_server)
 
+    # Pega o serviço de geocodificação setado
     def get_current_geocoding_server(self):
         id_current = self.settings.value('Geocoding/currentServer/current')
         return id_current
@@ -52,6 +54,7 @@ class EnvTools:
         senha = self.settings.value('prisma/databases/' + base_id + '/senha')
         return [usuario, senha]
 
+    # Pega a chave do serviço de geoocodificação
     def get_key(self, service_name):
         self.settings.beginGroup('Geocoding/keys/' + service_name)
         return self.settings.value('key')

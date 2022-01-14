@@ -42,7 +42,7 @@
           <widget class="QLineEdit" name="txt_logradouro">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="accessibleName">
@@ -83,7 +83,7 @@
           <widget class="QLineEdit" name="txt_numero">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="accessibleName">
@@ -142,7 +142,7 @@
           <widget class="QLineEdit" name="txt_cidade">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="accessibleName">
@@ -183,7 +183,7 @@
           <widget class="QLineEdit" name="txt_uf">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="accessibleName">
@@ -222,6 +222,11 @@
          </item>
          <item>
           <widget class="QLineEdit" name="txt_cep">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="placeholderText">
             <string>CEP</string>
            </property>
@@ -249,7 +254,7 @@
           <widget class="QLineEdit" name="txt_lon">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="accessibleName">
@@ -290,7 +295,7 @@
           <widget class="QLineEdit" name="txt_lat">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="accessibleName">
@@ -319,30 +324,27 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
-          <widget class="QLabel" name="label_10">
+          <widget class="QLabel" name="label_11">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
-            <string>SRID</string>
+            <string>Sistema de coordenadas</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="refSysCombo">
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-           <property name="currentText">
-            <string>Sistema de coordenadas de referência</string>
-           </property>
-           <property name="placeholderText">
+          <widget class="QLineEdit" name="txt_epsg">
+           <property name="text">
             <string/>
            </property>
-           <item>
-            <property name="text">
-             <string>Sistema de coordenadas de referência</string>
-            </property>
-           </item>
+           <property name="placeholderText">
+            <string>Ex: EPSG:31982</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -350,6 +352,32 @@
       </layout>
      </widget>
     </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <spacer name="horizontalSpacer_16">
@@ -368,16 +396,21 @@
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
       <widget class="QLabel" name="label_7">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Faixa de proximidade</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="txt_raio">
+      <widget class="QLineEdit" name="txt_aproximacao">
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="accessibleName">
@@ -406,14 +439,14 @@
     </layout>
    </item>
    <item>
-    <spacer name="horizontalSpacer_17">
+    <spacer name="horizontalSpacer_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>385</width>
-       <height>18</height>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
