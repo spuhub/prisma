@@ -82,8 +82,6 @@ class SelectDatabases(QtWidgets.QDialog):
         if self.check_bd.isChecked():
             selected_items_bd = [item.text() for item in self.list_bd.selectedItems()]
 
-        # self.load_project()
-
         # Prepara operação que será realizada em formato dicionário
         oc = OperationController()
         self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_bd)

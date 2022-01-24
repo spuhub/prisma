@@ -22,14 +22,14 @@ class MapCanvas():
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
-        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
 
         # Carrega camadas shapefiles
         index = -1
         index_show_overlay = 0
-        input = input.to_crs(epsg='4674')
+        input = input.to_crs(epsg='4326')
         for area in gdf_selected_shp:
-            area = area.to_crs(epsg='4674')
+            area = area.to_crs(epsg='4326')
             index += 1
 
             show_qgis_areas = QgsVectorLayer(area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
@@ -87,16 +87,16 @@ class MapCanvas():
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
-        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4674"))
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
 
         # Exibe de sobreposição entre input e Shapefiles
         index = -1
         index_show_overlay = 0
         gdf_input = gpd.GeoDataFrame(columns = input.columns)
         print_input = False
-        input = input.to_crs(epsg='4674')
+        input = input.to_crs(epsg='4326')
         for area in gdf_selected_shp:
-            area = area.to_crs(epsg='4674')
+            area = area.to_crs(epsg='4326')
             index += 1
             gdf_area = gpd.GeoDataFrame(columns = area.columns)
             for indexArea, rowArea in area.iterrows():
@@ -160,8 +160,8 @@ class MapCanvas():
             QgsProject.instance().addMapLayer(show_qgis_input)
 
             if len(input_standard) > 0:
-                input_standard = input_standard.to_crs(4674)
-                # gdf_input = gdf_input.to_crs(4674)
+                input_standard = input_standard.to_crs(4326)
+                # gdf_input = gdf_input.to_crs(4326)
                 get_overlay_standard = gpd.GeoDataFrame(columns=input_standard.columns)
                 # Teste com shapefile
                 for area in gdf_selected_shp:

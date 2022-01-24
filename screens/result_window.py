@@ -76,7 +76,8 @@ class ResultWindow (QtWidgets.QDialog):
             cont = 0
             for layer in bd['nomeFantasiaTabelasCamadas']:
                 for rowIndex, row in gdf_result_db.iterrows():
-                    if row[str(layer)]:
+                    print(gdf_result_db)
+                    if str(str(layer)) in gdf_result_db and row[str(layer)] == True:
                         cont += 1
 
                 cellName = QtWidgets.QTableWidgetItem(str(layer))
