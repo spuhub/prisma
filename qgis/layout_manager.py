@@ -40,7 +40,8 @@ class LayoutManager():
         # self.handle_text()
 
     def process_layer(self):
-        input = self.result['input']
+        input = self.result['input_standard']
+        input_geographic = self.result['input']
         input = input.to_crs(crs=4326)
 
         input_standard = self.result['input_standard']
@@ -48,11 +49,7 @@ class LayoutManager():
         gdf_selected_db = self.result['gdf_selected_db']
 
         # Verifica fuso das features do input
-        input = self.get_utm_crs(input)
-
-        # Transforma a feição de input o crs em que está inserido dentro das Zonas UTM
-        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
-        # input = input.to_crs(crs = crs, epsg = input.iloc[0]['crs_feature'])
+        input['crs_feature'] = self.get_utm_crs(input_geographic)
 
         # Barra de progresso
         self.progress_bar.setRange(0, 100)
@@ -84,6 +81,8 @@ class LayoutManager():
 
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
+
+        input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
 
         if len(input_standard) > 0:
             input_standard = input_standard.to_crs(crs)
@@ -137,6 +136,8 @@ class LayoutManager():
 
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
+
+        input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
 
         # Cálculos de área de input e centroid feição de entrada
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
@@ -196,7 +197,7 @@ class LayoutManager():
                         # Faz parte de dois ou mais fusos horário
                         input.loc[indexInput, 'crs_feature'] = False
 
-        return input
+        return input['crs_feature']
 
     # Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF
     def load_layer(self, feature_input_gdp, input_standard, feature_area, feature_intersection, index_1, index_2):
@@ -432,3 +433,12 @@ class LayoutManager():
             symbol = QgsFillSymbol.createSimple(style)
 
         return symbol
+
+    # Adição de buffer de proximidade nos dados de input
+    def add_input_approximation(self, input, approximation):
+        # Transforma metros em graus
+        # approximation = approximation / 111319.5432
+
+        input_approximation = input.copy()
+        input_approximation['geometry'] = input['geometry'].buffer(approximation)
+        return input_approximation

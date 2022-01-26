@@ -343,7 +343,7 @@
             <string/>
            </property>
            <property name="placeholderText">
-            <string>Ex: EPSG:31982</string>
+            <string>Ex: 31982</string>
            </property>
           </widget>
          </item>
