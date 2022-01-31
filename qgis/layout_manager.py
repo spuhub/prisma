@@ -82,7 +82,8 @@ class LayoutManager():
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
 
-        input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
+        if 'aproximacao' in self.result['operation_config']:
+            input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
 
         if len(input_standard) > 0:
             input_standard = input_standard.to_crs(crs)
@@ -137,7 +138,8 @@ class LayoutManager():
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
 
-        input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
+        if 'aproximacao' in self.result['operation_config']:
+            input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
 
         # Cálculos de área de input e centroid feição de entrada
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
@@ -249,7 +251,7 @@ class LayoutManager():
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
-        if len(input_standard) > 0:
+        if 'aproximacao' in self.result['operation_config']:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
@@ -271,7 +273,7 @@ class LayoutManager():
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_input_symbol(show_qgis_input.geometryType())
+            symbol = self.get_input_standard_symbol(show_qgis_input.geometryType())
             show_qgis_input.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input)
 

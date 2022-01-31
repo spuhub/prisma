@@ -54,20 +54,27 @@ class MapCanvas():
                 index_layer += 1
             index_db += 1
 
-        show_qgis_input = QgsVectorLayer(input.to_json(), "Lote")
+        if 'aproximacao' in result['operation_config']:
+            show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
 
-        symbol = self.get_input_symbol(show_qgis_input.geometryType())
-        show_qgis_input.renderer().setSymbol(symbol)
+            symbol = self.get_input_symbol(show_qgis_input.geometryType())
+            show_qgis_input.renderer().setSymbol(symbol)
 
-        QgsProject.instance().addMapLayer(show_qgis_input)
+            QgsProject.instance().addMapLayer(show_qgis_input)
 
-        if len(input_standard) > 0:
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Lote (padrão)")
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
 
             symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
             show_qgis_input_standard.renderer().setSymbol(symbol)
 
             QgsProject.instance().addMapLayer(show_qgis_input_standard)
+        else:
+            show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
+
+            symbol = self.get_input_standard_symbol(show_qgis_input.geometryType())
+            show_qgis_input.renderer().setSymbol(symbol)
+
+            QgsProject.instance().addMapLayer(show_qgis_input)
 
         # Repaint the canvas map
         iface.mapCanvas().refresh()
@@ -150,45 +157,34 @@ class MapCanvas():
             index_db += 1
 
         if print_input:
-            gdf_input = gdf_input.drop_duplicates()
+            if 'aproximacao' in result['operation_config']:
+                gdf_input = gdf_input.drop_duplicates()
 
-            show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Lote")
+                show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Feição de Estudo/Sobreposição")
 
-            symbol = self.get_input_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
+                symbol = self.get_input_symbol(show_qgis_input.geometryType())
+                show_qgis_input.renderer().setSymbol(symbol)
 
-            QgsProject.instance().addMapLayer(show_qgis_input)
+                QgsProject.instance().addMapLayer(show_qgis_input)
 
-            if len(input_standard) > 0:
                 input_standard = input_standard.to_crs(4326)
                 # gdf_input = gdf_input.to_crs(4326)
-                get_overlay_standard = gpd.GeoDataFrame(columns=input_standard.columns)
-                # Teste com shapefile
-                for area in gdf_selected_shp:
-                    for indexArea, rowArea in area.iterrows():
-                        for indexInput, rowInput in input.iterrows():
-                            if rowInput['geometry'].intersection(rowArea['geometry']):
-                                get_overlay_standard = gpd.GeoDataFrame(pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
+                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db)
 
-                # Teste com banco de dados
-                index_db = 0
-                for db in gdf_selected_db:
-                    index_layer = 0
-                    for area in db:
-                        if 'geom' in area:
-                            area = area.drop(columns=['geom'])
+                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
 
-                        for indexInput, rowInput in input.iterrows():
-                            if rowInput['geometry'].intersection(rowArea['geometry']):
-                                get_overlay_standard = gpd.GeoDataFrame(
-                                    pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
-                        index_layer += 1
-                    index_db += 1
+                symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
+                show_qgis_input_standard.renderer().setSymbol(symbol)
 
-                get_overlay_standard = get_overlay_standard.drop_duplicates()
-                get_overlay_standard = get_overlay_standard.reset_index()
+                QgsProject.instance().addMapLayer(show_qgis_input_standard)
 
-                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Lote (padrão)")
+            else:
+                input_standard = input_standard.to_crs(4326)
+                # gdf_input = gdf_input.to_crs(4326)
+                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db)
+
+                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(),
+                                                          "Feição de Estudo/Sobreposição")
 
                 symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
                 show_qgis_input_standard.renderer().setSymbol(symbol)
@@ -199,6 +195,38 @@ class MapCanvas():
             iface.mapCanvas().refresh()
             # Da zoom na camada de input
             iface.zoomToActiveLayer()
+
+    def get_overlay_features(self, input, input_standard, gdf_selected_shp, gdf_selected_db):
+        get_overlay_standard = gpd.GeoDataFrame(columns=input_standard.columns)
+
+        # Teste com shapefile
+        for area in gdf_selected_shp:
+            for indexArea, rowArea in area.iterrows():
+                for indexInput, rowInput in input.iterrows():
+                    if rowInput['geometry'].intersection(rowArea['geometry']):
+                        get_overlay_standard = gpd.GeoDataFrame(
+                            pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
+
+        # Teste com banco de dados
+        index_db = 0
+        for db in gdf_selected_db:
+            index_layer = 0
+            for area in db:
+                if 'geom' in area:
+                    area = area.drop(columns=['geom'])
+
+                for indexInput, rowInput in input.iterrows():
+                    for indexArea, rowArea in area.iterrows():
+                        if rowInput['geometry'].intersection(rowArea['geometry']):
+                            get_overlay_standard = gpd.GeoDataFrame(
+                                pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
+                index_layer += 1
+            index_db += 1
+
+        get_overlay_standard = get_overlay_standard.drop_duplicates()
+        get_overlay_standard = get_overlay_standard.reset_index()
+
+        return get_overlay_standard
 
     # Estilização dinâmica para diferentes tipos de geometrias (Área de input)
     def get_input_symbol(self, geometry_type):

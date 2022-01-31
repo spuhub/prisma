@@ -34,21 +34,36 @@ class OverlayAddress (QtWidgets.QDialog):
 
         if self.txt_logradouro.text() != '' and self.txt_numero.text() != '' and self.txt_bairro.text() != '' and self.txt_cidade.text() != '' and self.txt_uf.text() != '':
            input = self.handle_address()
+
+           data = {"operation": "coordinate", "input": input}
+
+           # Caso usuário tenha inserido área de aproximação
+           if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+               data['aproximacao'] = float(self.txt_aproximacao.text())
+
+           self.hide()
+           self.continue_window.emit(data)
+
         elif self.txt_lat.text() != '' and self.txt_lon.text() != '' and self.txt_epsg.text() != '':
-            input = self.handle_coordinate()
+            if self.txt_epsg.text().isnumeric():
+                input = self.handle_coordinate()
+
+                data = {"operation": "coordinate", "input": input}
+
+                # Caso usuário tenha inserido área de aproximação
+                if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+                    data['aproximacao'] = float(self.txt_aproximacao.text())
+
+                self.hide()
+                self.continue_window.emit(data)
+            else:
+                iface.messageBar().pushMessage("Warning:",
+                                               "O campo Sistema de coordenadas deve ser preenchido somente com números.",
+                                               level=1)
         else:
             iface.messageBar().pushMessage("Warning:",
                                                 "Preencher todos os campos para pesquisa.",
                                                 level=1)
-
-        data = {"operation": "coordinate", "input": input}
-
-        # Caso usuário tenha inserido área de aproximação
-        if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-            data['aproximacao'] = float(self.txt_aproximacao.text())
-
-        self.hide()
-        self.continue_window.emit(data)
 
     def handle_address(self):
         try:
@@ -76,6 +91,7 @@ class OverlayAddress (QtWidgets.QDialog):
 
         points = gpd.points_from_xy([lon], [lat])
         epsg_coordinate = self.txt_epsg.text()
+        print(epsg_coordinate)
 
         dataframe = self.coordinate_to_geodataframe(points, epsg_coordinate)
         return dataframe
@@ -110,6 +126,8 @@ class OverlayAddress (QtWidgets.QDialog):
         return dataframe
 
     def coordinate_to_geodataframe(self, points, epsg):
+
+        epsg = "EPSG:" + epsg
 
         dataframe = gpd.GeoDataFrame([], geometry=points, crs=epsg)
         dataframe = dataframe.to_crs(4326)

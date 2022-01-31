@@ -39,11 +39,10 @@ class OverlayAnalisys():
         # Leitura do shapefile de input
         input = self.operation_config['input']
         input = input.to_crs(4326)
-        input_standard = []
+        input_standard = input.copy()
 
         # Cálculo do buffer de proximidade
         if 'aproximacao' in self.operation_config:
-            input_standard = input.copy()
             input = shp_handle.add_input_approximation(input, self.operation_config['aproximacao'])
 
         # Leitura de shapefiles de comparação
