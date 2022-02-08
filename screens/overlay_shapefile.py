@@ -1,6 +1,4 @@
-import sys
 import os.path
-
 import geopandas as gpd
 
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
@@ -8,7 +6,6 @@ from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-# from ..databases.shp_tools import ShpTools
 
 class OverlayShapefile (QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
@@ -23,6 +20,7 @@ class OverlayShapefile (QtWidgets.QDialog):
         self.btn_input.clicked.connect(self.handle_input)
         self.btn_continuar.clicked.connect(self.next)
 
+    # Exibe uma janela para o usuário selecionar o arquivo shapefile de entrada
     def handle_input(self):
         self.path_shp_input = QFileDialog.getOpenFileName(self, "Selecione um arquivo SHP de entrada", '*.shp')[0]
         self.txt_input.setText(self.path_shp_input)

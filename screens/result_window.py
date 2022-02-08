@@ -1,9 +1,7 @@
 import os.path
 
 from qgis.PyQt.QtWidgets import QFileDialog
-from PyQt5.QtCore import QObject
 
-from ..qgis.layout_manager import LayoutManager
 from ..qgis.map_canvas import MapCanvas
 
 from PyQt5 import QtCore, QtWidgets
@@ -23,7 +21,6 @@ class ResultWindow (QtWidgets.QDialog):
 
         self.progress_bar.setHidden(True)
 
-        # self.btn_output.clicked.connect(self.handle_output)
         self.btn_print_overlay_qgis.clicked.connect(self.print_overlay_qgis)
         self.btn_print_all_layers_qgis.clicked.connect(self.print_all_layers_qgis)
         self.btn_pdf_generator.clicked.connect(self.btn_report_generator)
@@ -33,9 +30,6 @@ class ResultWindow (QtWidgets.QDialog):
     # Exibe em uma lista a quantidade de sobreposições que se teve com determinada área
     def show_result(self):
         input = self.result['input']
-
-        gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
-        gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
 
         layers_bd = 0
         for i in self.result['operation_config']['pg']:
@@ -52,9 +46,15 @@ class ResultWindow (QtWidgets.QDialog):
         self.tbl_result.horizontalHeader().setStretchLastSection(True)
         self.tbl_result.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
+        self.overlay_counter_shp()
+        self.overlay_counter_pg()
+
+    # Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
+    # e realiza a inserção deste valor na tabela
+    def overlay_counter_shp(self):
         row_control = 0
-        # Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
-        # e realiza a inserção deste valor na tabela
+        gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
+
         for i in self.result['operation_config']['shp']:
             print(i)
             cont = 0
@@ -70,8 +70,12 @@ class ResultWindow (QtWidgets.QDialog):
 
             row_control += 1
 
-        # Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
-        # e realiza a inserção deste valor na tabela
+    # Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
+    # e realiza a inserção deste valor na tabela
+    def overlay_counter_pg(self):
+        row_control = 0
+        gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
+
         for bd in self.result['operation_config']['pg']:
             cont = 0
             for layer in bd['nomeFantasiaTabelasCamadas']:

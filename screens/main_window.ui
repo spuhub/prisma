@@ -130,7 +130,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_endereco">
+      <widget class="QPushButton" name="btn_ponto">
        <property name="enabled">
         <bool>true</bool>
        </property>

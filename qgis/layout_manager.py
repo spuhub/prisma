@@ -83,7 +83,7 @@ class LayoutManager():
         input.set_crs(crs, allow_override=True)
 
         if 'aproximacao' in self.result['operation_config']:
-            input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
+            input = self.utils.add_input_approximation_projected(input, self.result['operation_config']['aproximacao'])
 
         if len(input_standard) > 0:
             input_standard = input_standard.to_crs(crs)
@@ -139,7 +139,7 @@ class LayoutManager():
         input.set_crs(crs, allow_override=True)
 
         if 'aproximacao' in self.result['operation_config']:
-            input = self.add_input_approximation(input, self.result['operation_config']['aproximacao'])
+            input = self.utils.add_input_approximation_projected(input, self.result['operation_config']['aproximacao'])
 
         # Cálculos de área de input e centroid feição de entrada
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
@@ -305,15 +305,9 @@ class LayoutManager():
         rect = QgsRectangle(ms.fullExtent())
 
         main_map = self.layout.itemById('Planta_Principal')
-        localization_map = self.layout.itemById('Planta_Localizacao')
-        situation_map = self.layout.itemById('Planta_Situacao')
 
         ms.setExtent(rect)
         main_map.zoomToExtent(rect)
-
-        # localization_map.setScale(main_map.scale() * 1250)
-        # situation_map.zoomToExtent(rect)
-        # situation_map.setScale(main_map.scale() * 25)
 
         iface.mapCanvas().refresh()
         main_map.refresh()
@@ -435,12 +429,3 @@ class LayoutManager():
             symbol = QgsFillSymbol.createSimple(style)
 
         return symbol
-
-    # Adição de buffer de proximidade nos dados de input
-    def add_input_approximation(self, input, approximation):
-        # Transforma metros em graus
-        # approximation = approximation / 111319.5432
-
-        input_approximation = input.copy()
-        input_approximation['geometry'] = input['geometry'].buffer(approximation)
-        return input_approximation

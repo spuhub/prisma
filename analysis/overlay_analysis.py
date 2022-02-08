@@ -26,6 +26,7 @@ import geopandas as gpd
 
 from ..databases.db_connection import DbConnection
 from ..databases.shp_handle import ShpHandle
+from ..utils.utils import Utils
 
 class OverlayAnalisys():
 
@@ -35,6 +36,7 @@ class OverlayAnalisys():
     def OverlayAnalisys(self, operation_config):
         self.operation_config = operation_config
         shp_handle = ShpHandle()
+        utils = Utils()
 
         # Leitura do shapefile de input
         input = self.operation_config['input']
@@ -43,7 +45,7 @@ class OverlayAnalisys():
 
         # Cálculo do buffer de proximidade
         if 'aproximacao' in self.operation_config:
-            input = shp_handle.add_input_approximation(input, self.operation_config['aproximacao'])
+            input = utils.add_input_approximation_geographic(input, self.operation_config['aproximacao'])
 
         # Leitura de shapefiles de comparação
         gdf_selected_shp = shp_handle.read_selected_shp(self.operation_config['shp'])
@@ -57,7 +59,7 @@ class OverlayAnalisys():
             databases.append({'connection': DbConnection(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
                               'layers': db['tabelasCamadas']})
 
-        # Comparação de sobreposição entre input e Postgis
+        # Cria lista com as bases de dados dos bancos de dados que foram selecionadas para comparação
         gdf_selected_db = []
         for database in databases:
             layers_db = []

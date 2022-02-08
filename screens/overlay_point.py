@@ -11,38 +11,41 @@ from qgis.utils import iface
 
 from ..settings.env_tools import EnvTools
 
-class OverlayAddress (QtWidgets.QDialog):
+class OverlayPoint (QtWidgets.QDialog):
 
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal(dict)
 
     def __init__(self):
-        super(OverlayAddress, self).__init__()
-        loadUi(os.path.join(os.path.dirname(__file__), 'overlay_address.ui'), self)
+        super(OverlayPoint, self).__init__()
+        loadUi(os.path.join(os.path.dirname(__file__), 'overlay_point.ui'), self)
 
         self.btn_voltar.clicked.connect(self.back)
         self.btn_continuar.clicked.connect(self.next)
 
+        # Objeto que manipula dados armazenados na cache do QGis
         self.env_tools = EnvTools()
 
     def back(self):
         self.hide()
         self.back_window.emit()
 
+    # Faz o controle dos dados de input inseridos pelo usuário e monta a operação que será feita.
+    # dentro da variável data, que por sua vez possui uma estrutura de dicinário
     def next(self):
         input = []
 
         if self.txt_logradouro.text() != '' and self.txt_numero.text() != '' and self.txt_bairro.text() != '' and self.txt_cidade.text() != '' and self.txt_uf.text() != '':
-           input = self.handle_address()
+            input = self.handle_address()
 
-           data = {"operation": "coordinate", "input": input}
+            data = {"operation": "coordinate", "input": input}
 
-           # Caso usuário tenha inserido área de aproximação
-           if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-               data['aproximacao'] = float(self.txt_aproximacao.text())
+            # Caso usuário tenha inserido área de aproximação
+            if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+                data['aproximacao'] = float(self.txt_aproximacao.text())
 
-           self.hide()
-           self.continue_window.emit(data)
+            self.hide()
+            self.continue_window.emit(data)
 
         elif self.txt_lat.text() != '' and self.txt_lon.text() != '' and self.txt_epsg.text() != '':
             if self.txt_epsg.text().isnumeric():
@@ -62,9 +65,10 @@ class OverlayAddress (QtWidgets.QDialog):
                                                level=1)
         else:
             iface.messageBar().pushMessage("Warning:",
-                                                "Preencher todos os campos para pesquisa.",
-                                                level=1)
+                                           "Preencher todos os campos para pesquisa.",
+                                           level=1)
 
+    # Manipulação dos dados de endereço; Extração de pontos através de endereço
     def handle_address(self):
         try:
             address = (self.txt_logradouro.text() + ", " + self.txt_numero.text() + ", " + self.txt_cidade.text()
@@ -76,7 +80,6 @@ class OverlayAddress (QtWidgets.QDialog):
             key = ""
 
             points = self.get_points(address, current_geocoding, key)
-
             dataframe = self.address_to_geodataframe(points)
 
             # points = geocode(address, provider='google', api_key='AIzaSyD5FVX9EaxuM2ekd1t0ijtNE5BYq8D32io', user_agent='csc_user_ht', timeout=10)
@@ -85,17 +88,20 @@ class OverlayAddress (QtWidgets.QDialog):
         except():
             iface.messageBar().pushMessage("Error", "Endereço não encontrado ou serviço indisponível no momento.",
                                                 level=1)
+
+    # Processa os dados passados, retornando os pontos em estrutura de geodataframe
     def handle_coordinate(self):
         lat = self.txt_lat.text().replace(',', '.')
         lon = self.txt_lon.text().replace(',', '.')
 
+        # Cria o objeto de ponto através da longitude e latitude inseridas pelo usuário
         points = gpd.points_from_xy([lon], [lat])
         epsg_coordinate = self.txt_epsg.text()
-        print(epsg_coordinate)
 
         dataframe = self.coordinate_to_geodataframe(points, epsg_coordinate)
         return dataframe
 
+    # Serviço de geocodificação, funciona com Nominatim e Google maps
     def get_points(self, address, current_geocoding, key):
         points = None
         if current_geocoding[0] == "Google":
@@ -108,6 +114,7 @@ class OverlayAddress (QtWidgets.QDialog):
 
         return points
 
+    # Compila os dados inseridos e o ponto encontrado na estrutura de geodataframe
     def address_to_geodataframe(self, points):
         data = {
             'logradouro': self.txt_logradouro.text(),
@@ -125,6 +132,7 @@ class OverlayAddress (QtWidgets.QDialog):
 
         return dataframe
 
+    # Adatpa os pontos para estrutura de geodataframe
     def coordinate_to_geodataframe(self, points, epsg):
 
         epsg = "EPSG:" + epsg

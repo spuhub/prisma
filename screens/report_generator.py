@@ -59,8 +59,6 @@ class ReportGenerator(QtWidgets.QDialog):
     def report_generator(self):
         self.save_fields()
 
-
-
         # inserir aqui os outros codigos.
 
     def hidden_fields(self):

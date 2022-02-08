@@ -1,10 +1,9 @@
 from ..screens.main_window import MainWindow
 from ..settings.config_window import ConfigWindow
 from ..screens.result_window import ResultWindow
-from ..screens.overlay_address import OverlayAddress
+from ..screens.overlay_point import OverlayPoint
 from ..screens.overlay_feature import OverlayFeature
 from ..screens.overlay_shapefile import OverlayShapefile
-from ..screens.overlay_coordinates import OverlayCoordinates
 from ..screens.select_databases import SelectDatabases
 from ..screens.report_generator import ReportGenerator
 
@@ -18,10 +17,9 @@ class Controller:
     def show_main(self):
         self.main_window = MainWindow(self.iface)
         self.main_window.switch_config.connect(self.show_config)
-        self.main_window.switch_overlay_address.connect(self.show_overlay_address)
+        self.main_window.switch_overlay_point.connect(self.show_overlay_point)
         self.main_window.switch_overlay_feature.connect(self.show_overlay_feature)
         self.main_window.switch_overlay_shapefile.connect(self.show_overlay_shapefile)
-        self.main_window.switch_overlay_coordinates.connect(self.show_overlay_coordinates)
 
         if not self.first_start:
             self.first_start = True
@@ -32,11 +30,11 @@ class Controller:
         self.config_window.back_window.connect(self.show_main)
         self.config_window.show()
 
-    def show_overlay_address(self):
-        self.overlay_address_window = OverlayAddress()
-        self.overlay_address_window.back_window.connect(self.show_main)
-        self.overlay_address_window.continue_window.connect(self.show_select_databases)
-        self.overlay_address_window.show()
+    def show_overlay_point(self):
+        self.overlay_point_window = OverlayPoint()
+        self.overlay_point_window.back_window.connect(self.show_main)
+        self.overlay_point_window.continue_window.connect(self.show_select_databases)
+        self.overlay_point_window.show()
 
     def show_overlay_feature(self):
         self.overlay_feature_window = OverlayFeature(self.iface)
@@ -50,12 +48,6 @@ class Controller:
         self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
         self.overlay_shapefile_window.show()
 
-    def show_overlay_coordinates(self):
-        self.overlay_coordinates_window = OverlayCoordinates()
-        self.overlay_coordinates_window.back_window.connect(self.show_main)
-        self.overlay_coordinates_window.continue_window.connect(self.show_select_databases)
-        self.overlay_coordinates_window.show()
-
     def show_select_databases(self, operation_config):
         self.select_databases = SelectDatabases(operation_config)
         self.select_databases.cancel_window.connect(self.show_main)
@@ -64,8 +56,6 @@ class Controller:
 
     def show_report_generator(self, result):
         self.report_generator = ReportGenerator(result)
-        # self.report_generator.cancel_window.connect(self.show_main)
-        # self.report_generator.continue_window.connect(self.show_result_window)
         self.report_generator.show()
 
     def show_result_window(self, result):

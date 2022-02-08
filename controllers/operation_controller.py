@@ -1,9 +1,11 @@
 from ..settings.json_tools import JsonTools
-from ..settings.env_tools import  EnvTools
+from ..settings.env_tools import EnvTools
+
 from PyQt5.QtCore import QVariant
 
-import geopandas as gpd
-
+# Classe utilizada para criar um dicionário com especificações da operação que será feita.
+# Dentre as especificações estão: tipo de operação (shapefile, ponto, endereço, feição selecionada),
+# arquivos shapefile e bases de dados de bancos de dados selecionados para comparação.
 class OperationController:
     def __init__(self):
         self.json_tools = JsonTools()

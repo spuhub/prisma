@@ -23,12 +23,3 @@ class ShpHandle():
             gdf_selected_shp[shp].set_crs(allow_override=True, crs=4326) # tranforma dados para sistema de coordenadas de referência adotados como padrão no projeto (EPSG:4674)
 
         return gdf_selected_shp
-
-    # Adição de buffer de proximidade nos dados de input
-    def add_input_approximation(self, input, approximation):
-        # Transforma metros em graus
-        approximation = approximation / 111319.5432
-
-        input_approximation = input.copy()
-        input_approximation['geometry'] = input['geometry'].buffer(approximation)
-        return input_approximation

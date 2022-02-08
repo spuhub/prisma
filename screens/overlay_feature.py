@@ -35,15 +35,7 @@ class OverlayFeature (QtWidgets.QDialog):
         layer = self.iface.activeLayer()
         selected_features = layer.selectedFeatures()
 
-        # print("Fields: ", selected_features.fields().names())
-        # print("Atributes: ", selected_features.attributes())
-        # print("Geometry: ", selected_features[0].geometry())
-
-        # print(selected_features[0].staticMetaObject)
         input = gpd.GeoDataFrame.from_features(selected_features, crs = iface.activeLayer().sourceCrs().authid())
-
-        # input = input.set_geometry('geometry')
-        # input = input.explode()
 
         if 'cpf_cnpj' and 'logradouro' in input:
             self.hide()
