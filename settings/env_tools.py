@@ -32,19 +32,19 @@ class EnvTools:
         #self.settings.remove("")
         #print(self.settings.allKeys())
 
-    def store_keys(self, service_name, key):
-        self.settings.beginGroup('Geocoding/keys/' + service_name)
+    def store_keys(self, service_id, key):
+        self.settings.beginGroup('Geocoding/keys/' + service_id)
         self.settings.setValue('key', key)
         self.settings.endGroup()
 
-    def store_current_geocoding_server(self, id_server):
+    def store_current_geocoding_server(self, server_inf):
         self.settings.beginGroup('Geocoding/currentServer')
-        self.settings.setValue('current', id_server)
+        self.settings.setValue('current', server_inf)
         self.settings.endGroup()
 
     def get_current_geocoding_server(self):
-        id_current = self.settings.value('Geocoding/currentServer/current')
-        return id_current
+        server_inf = self.settings.value('Geocoding/currentServer/current')
+        return server_inf
 
     def get_credentials(self, base_id):
         #self.settings.beginGroup('PostgreSQL/databases/' + base_id)
@@ -52,8 +52,8 @@ class EnvTools:
         senha = self.settings.value('prisma/databases/' + base_id + '/senha')
         return [usuario, senha]
 
-    def get_key(self, service_name):
-        self.settings.beginGroup('Geocoding/keys/' + service_name)
+    def get_key(self, service_id):
+        self.settings.beginGroup('Geocoding/keys/' + service_id)
         return self.settings.value('key')
 
     def store_report_hearder(self, hearder_List):

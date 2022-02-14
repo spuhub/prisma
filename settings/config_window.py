@@ -216,8 +216,17 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def save_geocoding_key(self):
         current_opt = self.combo_box_servico_geocod.currentData()
+        current_opt_text = self.combo_box_servico_geocod.currentText()
         key = self.key_geo_cod.text()
+        self.credencials.store_current_geocoding_server([current_opt_text,current_opt])
         self.credencials.store_keys(str(current_opt), key)
+
+    def set_config(self):
+        current_op = self.credencials.get_current_geocoding_server()
+        current_key = self.credencials.get_key(current_op[1])
+        self.combo_box_servico_geocod(current_op[1])
+        self.key_geo_cod.setText(current_key)
+
 
     def back(self):
         self.hide()
