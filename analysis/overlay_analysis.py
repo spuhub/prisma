@@ -31,12 +31,11 @@ from ..utils.utils import Utils
 class OverlayAnalisys():
 
     def __init__(self):
-        pass
+        self.shp_handle = ShpHandle()
+        self.utils = Utils()
 
     def OverlayAnalisys(self, operation_config):
         self.operation_config = operation_config
-        shp_handle = ShpHandle()
-        utils = Utils()
 
         # Leitura do shapefile de input
         input = self.operation_config['input']
@@ -45,13 +44,16 @@ class OverlayAnalisys():
 
         # Cálculo do buffer de proximidade
         if 'aproximacao' in self.operation_config:
-            input = utils.add_input_approximation_geographic(input, self.operation_config['aproximacao'])
+            input = self.utils.add_input_approximation_geographic(input, self.operation_config['aproximacao'])
 
         # Leitura de shapefiles de comparação
-        gdf_selected_shp = shp_handle.read_selected_shp(self.operation_config['shp'])
+        gdf_selected_shp = self.shp_handle.read_selected_shp(self.operation_config['shp'])
 
+        scaled_input = self.utils.add_input_scale(input)
+        # Elimina feições de comparação distantes das feições de input
+        gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)
         # Comparação de sobreposição entre input e Shapefiles
-        overlay_shp = self.analisys_shapefiles(input, gdf_selected_shp)
+        overlay_shp = self.analisys_shp(input, gdf_selected_shp)
 
         # Configuração acesso banco de dados Postgis junto das camadas que serão utilizadas
         databases = []
@@ -65,8 +67,8 @@ class OverlayAnalisys():
             layers_db = []
             for layer in database['layers']:
 
-                gdf, crs = database['connection'].CalculateIntersectGPD(input, layer,
-                                                                         (str(input.crs)).replace('epsg:', ''))
+                gdf, crs = database['connection'].CalculateIntersectGPD(scaled_input, layer,
+                                                                         (str(scaled_input.crs)).replace('epsg:', ''))
                 gdf.crs = {'init': 'epsg:' + str(crs)}
                 layers_db.append(gpd.GeoDataFrame(gdf, crs=crs))
 
@@ -74,14 +76,14 @@ class OverlayAnalisys():
             gdf_selected_db.append(layers_db)
 
         # Comparação de sobreposição entre input e bases de dados de banco de dados
-        overlay_db = self.analysis_databases(input, gdf_selected_db)
+        overlay_db = self.analysis_db(input, gdf_selected_db)
 
         result = {'overlay_shp': overlay_shp, 'overlay_db': overlay_db, 'input': input,
                   'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
 
         return result
 
-    def analisys_shapefiles(self, input, gdf_selected_shp):
+    def analisys_shp(self, input, gdf_selected_shp):
         index = 0
         overlay_shp = input.copy()
         
@@ -95,7 +97,26 @@ class OverlayAnalisys():
             index += 1
         return overlay_shp
 
-    def analysis_databases(self, input, gdf_selected_db):
+    def eliminate_distant_features_shp(self, scaled_input, gdf_selected_shp):
+        index = 0
+
+        for i in range(len(gdf_selected_shp)):
+            gdf_selected_shp[i]['close_input'] = False
+            gdf_selected_shp[i] = gdf_selected_shp[i].to_crs(4326)
+            for indexArea, rowArea in gdf_selected_shp[i].iterrows():
+                for indexInput, rowInput in scaled_input.iterrows():
+                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                        gdf_selected_shp[i].loc[indexArea, 'close_input'] = True
+            index += 1
+
+        for i in range(len(gdf_selected_shp)):
+            # Exclui áreas que não foram classificadas como perto do input (sem sobreposição ao input escalado)
+            gdf_selected_shp[i] = gdf_selected_shp[i].query("close_input == True")
+            gdf_selected_shp[i] = gdf_selected_shp[i].drop(columns=['close_input'])
+
+        return gdf_selected_shp
+
+    def analysis_db(self, input, gdf_selected_db):
         index_db = 0
         overlay_db = input.copy()
         overlay_db['sobreposicao'] = False
@@ -114,3 +135,18 @@ class OverlayAnalisys():
 
             index_db += 1
         return overlay_db
+
+    def get_utm_crs(self, input, epsg_shp_dir):
+        input['crs_feature'] = None
+        epsg_shp = gpd.read_file(epsg_shp_dir)
+
+        for indexInput, rowInput in input.iterrows():
+            for indexEpsg, rowEpsg in epsg_shp.iterrows():
+                if (rowInput['geometry'].intersection(rowEpsg['geometry'])):
+                    if input.iloc[indexInput]['crs_feature'] == None:
+                        input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
+                    else:
+                        # Faz parte de dois ou mais fusos horário
+                        input.loc[indexInput, 'crs_feature'] = False
+
+        return input['crs_feature']

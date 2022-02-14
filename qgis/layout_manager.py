@@ -1,28 +1,29 @@
 import os
 
-from qgis import processing
-
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, QgsPrintLayout, QgsReadWriteContext
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
+from ..utils.utils import Utils
 from ..settings.env_tools import EnvTools
+from ..analysis.overlay_analysis import OverlayAnalisys
 
 import geopandas as gpd
 
 class LayoutManager():
     def __init__(self, result, progress_bar):
         super().__init__()
+        self.overlay_analysis = OverlayAnalisys()
+
         self.result = result
         self.progress_bar = progress_bar
+        self.utils = Utils()
 
         # Adiciona o layout ao projeto atual
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Planta_FolhaA3_Paisagem.qpt')
         self.add_template_to_project(template_dir)
 
-        # Armazena na variável o layout que acabou de ser adicionado
-        # ao projeto, permitindo a manipulação do mesmo
         self.layout = None
         self.atlas = None
         self.layers = []
@@ -30,16 +31,15 @@ class LayoutManager():
         # Diretório do shapefile para gerar dinamicamente os EPSG's
         self.epsg_shp_dir = os.path.join(os.path.dirname(__file__), '..\shapefiles\Zonas_UTM_BR-EPSG4326.shp')
 
-    def export_pdf(self):
+    """
+    Função onde se inicia a geração de PDF. A função chama funções de calculo de sobreposição de forma individual para 
+    cada feição de input. Ainda nesta função é extraida a zona UTM das feições de input e controle da barra de progresso.
+    """
+    def pdf_generator(self):
+        # Armazena na variável o layout que acabou de ser adicionado ao projeto, permitindo a manipulação do mesmo
         self.layout = QgsProject.instance().layoutManager().layoutByName("Planta_FolhaA3_Paisagem")
         self.atlas = self.layout.atlas()
 
-        # Armazena as camadas em self.layers e adiciona as camadas no QGis
-        self.process_layer()
-        # Manipulação dos textos do layout
-        # self.handle_text()
-
-    def process_layer(self):
         input = self.result['input_standard']
         input_geographic = self.result['input']
         input = input.to_crs(crs=4326)
@@ -48,8 +48,8 @@ class LayoutManager():
         gdf_selected_shp = self.result['gdf_selected_shp']
         gdf_selected_db = self.result['gdf_selected_db']
 
-        # Verifica fuso das features do input
-        input['crs_feature'] = self.get_utm_crs(input_geographic)
+        # Verifica em qual Zona UTM cada uma das feições está inserida
+        input['crs_feature'] = self.overlay_analysis.get_utm_crs(input_geographic, self.epsg_shp_dir)
 
         # Barra de progresso
         self.progress_bar.setRange(0, 100)
@@ -74,6 +74,12 @@ class LayoutManager():
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
 
+    """
+    Função compara a feição de input passada como parâmetro com bases de dados shapefiles selecionados.
+    :parâmetro input: Feição ou shapefile de input, caso possua zona de proximidade inserida pelo usuário, a mesma será armazenado nesta variável.
+    :parâmetro input_standard: Feição ou shapefile de input padrão isto é, sem zona de proximidade (caso necessário).
+    :parâmetro gdf_selected_shp: Shapefiles selecionados para comparação com a área de input.
+    """
     def calculation_shp(self, input, input_standard, gdf_selected_shp):
         input = input.reset_index()
 
@@ -119,16 +125,23 @@ class LayoutManager():
 
             intersection = gpd.GeoDataFrame(data, crs=input.crs)
 
+            # Gera planta pdf somente quando acontece sobreposição
             if len(intersection) > 0:
                 intersection.set_crs(allow_override=True, crs=crs)
 
-            if len(input_standard) > 0:
-                self.load_layer(input.iloc[[0]], input_standard.iloc[[0]], area, intersection, index, None)
-            else:
-                self.load_layer(input.iloc[[0]], input_standard, area, intersection, index, None)
+                if len(input_standard) > 0:
+                    self.load_layer(input.iloc[[0]], input_standard.iloc[[0]], area, intersection, index, None)
+                else:
+                    self.load_layer(input.iloc[[0]], input_standard, area, intersection, index, None)
 
             index += 1
 
+    """
+        Função compara a feição de input passada como parâmetro com bases de dados oriundas de bancos de dados.
+        :parâmetro input: Feição ou shapefile de input, caso possua zona de proximidade inserida pelo usuário, a mesma será armazenado nesta variável.
+        :parâmetro input_standard: Feição ou shapefile de input padrão isto é, sem zona de proximidade (caso necessário).
+        :parâmetro gdf_selected_shp: Bases de dados de banco(s) de dado selecionados para comparação com a área de input.
+        """
     def calculation_db(self, input, input_standard, gdf_selected_db):
         input = input.reset_index()
         intersection = []
@@ -174,34 +187,27 @@ class LayoutManager():
 
                 intersection = gpd.GeoDataFrame(data, crs = input.crs)
 
+                # Gera planta pdf somente quando acontece sobreposição
                 if len(intersection) > 0:
                     intersection.set_crs(allow_override=True, crs=crs)
 
-                if len(input_standard) > 0:
-                    self.load_layer(input.iloc[[0]], input_standard.iloc[[0]], area, intersection, index_db, index_layer)
-                else:
-                    self.load_layer(input.iloc[[0]], input_standard, area, intersection, index_db, index_layer)
+                    if len(input_standard) > 0:
+                        self.load_layer(input.iloc[[0]], input_standard.iloc[[0]], area, intersection, index_db, index_layer)
+                    else:
+                        self.load_layer(input.iloc[[0]], input_standard, area, intersection, index_db, index_layer)
 
                 index_layer += 1
             index_db += 1
 
-    def get_utm_crs(self, input):
-        input['crs_feature'] = None
-        epsg_shp = gpd.read_file(self.epsg_shp_dir)
-        # epsg_shp = epsg_shp.to_crs(epsg='4674')
-
-        for indexInput, rowInput in input.iterrows():
-            for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                if (rowInput['geometry'].intersection(rowEpsg['geometry'])):
-                    if input.iloc[indexInput]['crs_feature'] == None:
-                        input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                    else:
-                        # Faz parte de dois ou mais fusos horário
-                        input.loc[indexInput, 'crs_feature'] = False
-
-        return input['crs_feature']
-
-    # Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF
+    """
+        Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF.
+        :parâmetro feature_input_gdp: Feição que está sendo processada e será carregada para o QGis.
+        :parâmetro input_standard: Feição padrão isto é, sem zona de proximidade (caso necessário), que está sendo processada e será carregada para o QGis.
+        :parâmetro feature_area: Camada de comparação que está sendo processada.
+        :parâmetro feature_intersection: Camada de interseção (caso exista) e será carregada para o QGis.
+        :parâmetro index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        :parâmetro index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+    """
     def load_layer(self, feature_input_gdp, input_standard, feature_area, feature_intersection, index_1, index_2):
         # Remove camadas já impressas
         QgsProject.instance().removeAllMapLayers()
@@ -209,14 +215,7 @@ class LayoutManager():
 
         crs = (feature_input_gdp.iloc[0]['crs_feature'])
         # Forma de contornar problema do QGis, que alterava o extent da camada de forma incorreta
-        get_extent = feature_input_gdp.to_crs(crs)
         extent = feature_input_gdp.bounds
-
-        # Transforma todas camadas para EPSG geográfico, deixando a reprojeção para o QGis
-        # feature_input_gdp = feature_input_gdp.to_crs(crs)
-        # feature_area = feature_area.to_crs(crs)
-        # if len(feature_intersection) > 0:
-        #     feature_intersection = feature_intersection.to_crs(crs)
 
         # Altera o EPSG do projeto QGis
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
@@ -315,9 +314,15 @@ class LayoutManager():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.pdf_generator(feature_input_gdp, feature_area, index_1, index_2)
+        self.export_pdf(feature_input_gdp, index_1, index_2)
 
-    def pdf_generator(self, feature_input_gdp, feature_area, index_1, index_2):
+    """
+        Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
+        :parâmetro feature_input_gdp: Feição de input comparada 
+        :parâmetro index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        :parâmetro index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+    """
+    def export_pdf(self, feature_input_gdp, index_1, index_2):
         # Manipulação dos textos do layout
         self.handle_text(index_1, index_2)
 
@@ -345,6 +350,11 @@ class LayoutManager():
 
     QApplication.instance().processEvents()
 
+    """
+        Faz a manipulação de alguns dados textuais presentes no layout de impressão.
+        :parâmetro index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        :parâmetro index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+    """
     def handle_text(self, index_1, index_2):
 
         et = EnvTools()
@@ -362,7 +372,10 @@ class LayoutManager():
         else:
             title.setText('Caracterização: ' + self.result['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2])
 
-
+    """
+        Adiciona o template do layout ao projeto atual.
+        :parâmetro template_dir: Variável armazena o local do layout.
+    """
     def add_template_to_project(self, template_dir):
         project = QgsProject.instance()
         layout = QgsPrintLayout(project)
@@ -378,7 +391,10 @@ class LayoutManager():
         layout.loadFromTemplate(document, QgsReadWriteContext())
         project.layoutManager().addLayout(layout)
 
-    # Estilização dinâmica para diferentes tipos de geometrias (Área de input)
+    """
+        Estilização dinâmica para diferentes tipos de geometrias (Área de input).
+        :parâmetro geometry_type: Tipo de geometria da área de input (com ou se buffer de área de aproximação).
+    """
     def get_input_symbol(self, geometry_type):
         symbol = None
 
@@ -396,7 +412,10 @@ class LayoutManager():
 
         return symbol
 
-    # Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação)
+    """
+        Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação).
+        :parâmetro geometry_type: Tipo de geometria da área de input sem o buffer de aproximação.
+    """
     def get_input_standard_symbol(self, geometry_type):
         symbol = None
 
@@ -414,7 +433,10 @@ class LayoutManager():
 
         return symbol
 
-    # Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação)
+    """
+        Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação).
+        :parâmetro geometry_type: Tipo de geometria da área de comparação.
+    """
     def get_feature_symbol(self, geometry_type, style):
         symbol = None
 

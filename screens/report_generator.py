@@ -88,6 +88,6 @@ class ReportGenerator(QtWidgets.QDialog):
         self.result['path_output'] = self.path_output
 
         lm = LayoutManager(self.result, self.progress_bar)
-        lm.export_pdf()
+        lm.pdf_generator()
 
         self.hide()

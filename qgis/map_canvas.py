@@ -9,6 +9,12 @@ class MapCanvas():
     def __init__(self):
         pass
 
+    """
+        Função que printa todas as camadas que estão 
+        :parâmetro feature_input_gdp: Feição de input comparada 
+        :parâmetro index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        :parâmetro index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+    """
     def print_all_layers_qgis(self, result):
         input = result['input']
         input_standard = result['input_standard']
