@@ -1,7 +1,5 @@
 import os
 
-from qgis.core import QgsProject
-
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QFont
 from PyQt5.uic import loadUi
@@ -11,10 +9,18 @@ from ..analysis.overlay_analysis import OverlayAnalisys
 from ..controllers.operation_controller import OperationController
 
 class SelectDatabases(QtWidgets.QDialog):
+    """
+    Classe responsável por fazer o back-end da tela onde o usuário seleciona as bases de dados.
+    A partir dela, duas funções são chamadas: função da classe OperationController, que serve para montar um dicionário contendo as configurações da busca configurada pelo usuário,
+    e a função da classe OverlayAnalisys, que em geral, serve para contar quantas sobreposições aconteceram com cada camada e também eliminar áreas de comparação que estão distântes das feições de input.
+    """
     cancel_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal(dict)
 
     def __init__(self, operation_config):
+        """
+        Inicialização da classe.
+        """
         self.operation_config = operation_config
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
@@ -31,8 +37,10 @@ class SelectDatabases(QtWidgets.QDialog):
 
         self.load_lists()
 
-    # Adição de checkbox e estilização na lista de shapefiles e bancos de dados
     def load_lists(self):
+        """
+        Adição de checkbox e estilização na lista de shapefiles e bancos de dados
+        """
         for i in range(len(self.data_shp)):
             item = QtWidgets.QListWidgetItem(self.data_shp[i]['nome'])
             item.setFont(QFont('Arial', 10))
@@ -48,28 +56,37 @@ class SelectDatabases(QtWidgets.QDialog):
             self.list_bd.addItem(item)
 
     def handle_check_bd(self):
+        """
+        Habilita/desabilita tabela contendo base de dados de banco de dados
+        """
         if self.check_bd.isChecked():
             self.list_bd.setEnabled(True)
         else:
             self.list_bd.setEnabled(False)
 
     def handle_check_shp(self):
+        """
+        Habilita/desabilita tabela contendo base de dados de shapefiles
+        """
         if self.check_shp.isChecked():
             self.list_shp.setEnabled(True)
         else:
             self.list_shp.setEnabled(False)
 
-    def load_project(self):
-        project = QgsProject.instance()
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        print(BASE_DIR)
-        project.read(BASE_DIR + '/qgis/layouts/SPU-PRISMA_2.0_atlas.qgz')
-
     def cancel(self):
+        """
+        Retorna para tela anterior.
+        """
         self.hide()
         self.cancel_window.emit()
 
     def next(self):
+        """
+        Faz os tratamentos necessários para executar a busca de sobreposição: Verifica quais bases de comparação foram selecionadas
+        e as adiciona em vetores, cria um dicionário identificando que operação vai ser realizada e com quais bases de dados (OperationController),
+        faz busca de sobreposição para ver quantas feições se sobrepuseram e envia para tela de resultados um dicionário contendo camadas de input e comparação,
+        camadas sobrepostas, configuração da operação, etc..
+        """
         self.hide()
 
         selected_items_shp = []

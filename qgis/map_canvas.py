@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol, QgsRasterLayer, QgsCoordinateReferenceSystem
 from qgis.utils import iface
@@ -6,21 +7,26 @@ import geopandas as gpd
 import pandas as pd
 
 class MapCanvas():
+    """
+    Classe responsável por gerenciar o mostrador do QGIS. Utilizada somente para os dois botões presentes na tela de resultados do PRISMA.
+    Botões para mostrar todas as camadas comparadas e mostrar somente camadas sobrepostas.
+    """
     def __init__(self):
+        """Método construtor da classe."""
         pass
 
-    """
-        Função que printa todas as camadas que estão 
-        :parâmetro feature_input_gdp: Feição de input comparada 
-        :parâmetro index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
-        :parâmetro index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
-    """
-    def print_all_layers_qgis(self, result):
-        input = result['input']
-        input_standard = result['input_standard']
 
-        gdf_selected_shp = result['gdf_selected_shp']
-        gdf_selected_db = result['gdf_selected_db']
+    def print_all_layers_qgis(self, operation_config):
+        """
+        Função que printa no QGIS todas as camadas que estão sendo comparadas.
+
+        @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+        """
+        input = operation_config['input']
+        input_standard = operation_config['input_standard']
+
+        gdf_selected_shp = operation_config['gdf_selected_shp']
+        gdf_selected_db = operation_config['gdf_selected_db']
 
         # Carrega camada mundial do OpenStreetMap
         tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -38,8 +44,8 @@ class MapCanvas():
             area = area.to_crs(epsg='4326')
             index += 1
 
-            show_qgis_areas = QgsVectorLayer(area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
-            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
+            show_qgis_areas = QgsVectorLayer(area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
+            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
             show_qgis_areas.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -51,16 +57,17 @@ class MapCanvas():
                 if 'geom' in area:
                     area = area.drop(columns=['geom'])
 
-                show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                 result['operation_config']['pg'][index_db][
-                                                     'nomeFantasiaTabelasCamadas'][index_layer])
-                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
-                show_qgis_areas.renderer().setSymbol(symbol)
-                QgsProject.instance().addMapLayer(show_qgis_areas)
+                if len(area) > 0:
+                    show_qgis_areas = QgsVectorLayer(area.to_json(),
+                                                     operation_config['operation_config']['pg'][index_db][
+                                                         'nomeFantasiaTabelasCamadas'][index_layer])
+                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                    show_qgis_areas.renderer().setSymbol(symbol)
+                    QgsProject.instance().addMapLayer(show_qgis_areas)
                 index_layer += 1
             index_db += 1
 
-        if 'aproximacao' in result['operation_config']:
+        if 'aproximacao' in operation_config['operation_config']:
             show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
 
             symbol = self.get_input_symbol(show_qgis_input.geometryType())
@@ -87,12 +94,17 @@ class MapCanvas():
         # Da zoom na camada de input
         iface.zoomToActiveLayer()
 
-    def print_overlay_qgis(self, result):
-        input = result['input']
-        input_standard = result['input_standard']
+    def print_overlay_qgis(self, operation_config):
+        """
+        Função que printa no QGIS todas as camadas que apresentaram sobreposição entre camada de input e camadas selecionadas para comparação.
 
-        gdf_selected_shp = result['gdf_selected_shp']
-        gdf_selected_db = result['gdf_selected_db']
+        @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+        """
+        input = operation_config['input']
+        input_standard = operation_config['input_standard']
+
+        gdf_selected_shp = operation_config['gdf_selected_shp']
+        gdf_selected_db = operation_config['gdf_selected_db']
 
         # Carrega camada mundial do OpenStreetMap
         tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -123,9 +135,9 @@ class MapCanvas():
                 print_input = True
 
                 gdf_area = gdf_area.drop_duplicates()
-                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), result['operation_config']['shp'][index]['nomeFantasiaCamada'])
+                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
 
-                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['shp'][index]['estiloCamadas'][0])
+                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
                 print("Geometria: ", show_qgis_areas.geometryType())
                 show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
@@ -152,9 +164,9 @@ class MapCanvas():
                     gdf_area = gdf_area.drop_duplicates()
 
                     show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                     result['operation_config']['pg'][index_db][
+                                                     operation_config['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
-                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), result['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
+                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
                     print("Geometria: ", show_qgis_areas.geometryType())
                     show_qgis_areas.renderer().setSymbol(symbol)
                     QgsProject.instance().addMapLayer(show_qgis_areas)
@@ -163,7 +175,7 @@ class MapCanvas():
             index_db += 1
 
         if print_input:
-            if 'aproximacao' in result['operation_config']:
+            if 'aproximacao' in operation_config['operation_config']:
                 gdf_input = gdf_input.drop_duplicates()
 
                 show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Feição de Estudo/Sobreposição")
@@ -203,6 +215,14 @@ class MapCanvas():
             iface.zoomToActiveLayer()
 
     def get_overlay_features(self, input, input_standard, gdf_selected_shp, gdf_selected_db):
+        """
+        Verifica, entre camada de input e camadas selecionadas para comparação, quais possuem sobreposição.
+
+        @keyword input: Camada contendo feições de input.
+        @keyword input_standard: Camada contendo feições de input, porém se o buffer de proximidade (caso necessário).
+        @keyword gdf_selected_shp: Vetor de camadas shapefile selecionadas para comparação.
+        @keyword gdf_selected_db: Vetor de camadas de banco de dados selecionados para comparação.
+        """
         get_overlay_standard = gpd.GeoDataFrame(columns=input_standard.columns)
 
         # Teste com shapefile
@@ -234,8 +254,13 @@ class MapCanvas():
 
         return get_overlay_standard
 
-    # Estilização dinâmica para diferentes tipos de geometrias (Área de input)
     def get_input_symbol(self, geometry_type):
+        """
+        Estilização dinâmica para diferentes tipos de geometrias (Área de input).
+
+        @keyword geometry_type: Tipo de geometria da área de input (com ou se buffer de área de aproximação).
+        @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
+        """
         symbol = None
 
         # Point
@@ -252,8 +277,13 @@ class MapCanvas():
 
         return symbol
 
-    # Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação)
     def get_input_standard_symbol(self, geometry_type):
+        """
+        Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação).
+
+        @keyword geometry_type: Tipo de geometria da área de input sem o buffer de aproximação.
+        @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
+        """
         symbol = None
 
         # Point
@@ -268,8 +298,14 @@ class MapCanvas():
 
         return symbol
 
-    # Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação)
     def get_feature_symbol(self, geometry_type, style):
+        """
+        Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação).
+
+        @keyword geometry_type: Tipo de geometria da área de comparação.
+        @keyword style: Variável armazena o estilo que será usado para a projeção de uma determinada camada. Este estilo é obtido através do arquivo JSON de configuração.
+        @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
+        """
         symbol = None
 
         # Point

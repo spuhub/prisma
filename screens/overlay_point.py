@@ -12,11 +12,14 @@ from qgis.utils import iface
 from ..settings.env_tools import EnvTools
 
 class OverlayPoint (QtWidgets.QDialog):
-
+    """
+    Classe que manipula a tela de teste de sobreposição utilizando um ponto (lat e long) ou endereço inserido.
+    """
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal(dict)
 
     def __init__(self):
+        """Método construtor da classe."""
         super(OverlayPoint, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'overlay_point.ui'), self)
 
@@ -27,12 +30,18 @@ class OverlayPoint (QtWidgets.QDialog):
         self.env_tools = EnvTools()
 
     def back(self):
+        """
+        Retorna para tela anterior.
+        """
         self.hide()
         self.back_window.emit()
 
-    # Faz o controle dos dados de input inseridos pelo usuário e monta a operação que será feita.
-    # dentro da variável data, que por sua vez possui uma estrutura de dicinário
+
     def next(self):
+        """
+        Faz o controle dos dados de input inseridos pelo usuário e monta a operação que será feita.
+        dentro da variável data, que por sua vez possui uma estrutura de dicinário
+        """
         input = []
 
         if self.txt_logradouro.text() != '' and self.txt_numero.text() != '' and self.txt_bairro.text() != '' and self.txt_cidade.text() != '' and self.txt_uf.text() != '':
@@ -68,8 +77,12 @@ class OverlayPoint (QtWidgets.QDialog):
                                            "Preencher todos os campos para pesquisa.",
                                            level=1)
 
-    # Manipulação dos dados de endereço; Extração de pontos através de endereço
     def handle_address(self):
+        """
+            Manipulação dos dados de endereço; Extração de pontos através de endereço.
+
+            @return dataframe: Estrutura de geodataframe contendo o endereço e os pontos que representam aquele endereço.
+        """
         try:
             address = (self.txt_logradouro.text() + ", " + self.txt_numero.text() + ", " + self.txt_cidade.text()
                        + ", " + self.txt_uf.text() + ", Brasil")
@@ -89,8 +102,12 @@ class OverlayPoint (QtWidgets.QDialog):
             iface.messageBar().pushMessage("Error", "Endereço não encontrado ou serviço indisponível no momento.",
                                                 level=1)
 
-    # Processa os dados passados, retornando os pontos em estrutura de geodataframe
     def handle_coordinate(self):
+        """
+        Processa os dados passados, retornando os pontos em estrutura de geodataframe.
+
+        @return dataframe: Geodataframe conténdo os pontos passados pelo usuário.
+        """
         lat = self.txt_lat.text().replace(',', '.')
         lon = self.txt_lon.text().replace(',', '.')
 
@@ -101,8 +118,16 @@ class OverlayPoint (QtWidgets.QDialog):
         dataframe = self.coordinate_to_geodataframe(points, epsg_coordinate)
         return dataframe
 
-    # Serviço de geocodificação, funciona com Nominatim e Google maps
     def get_points(self, address, current_geocoding, key):
+        """
+        Serviço de geocodificação, funciona com Nominatim e Google maps
+
+        @keyword address: Endereço inserido pelo usuário.
+        @keyword current_geocoding: Serviço de geocodificação selecionado pelo usuário.
+        @keyword key: Caso necessária, chave que será utilizada para fazer o uso do serviço de geocodificação.
+        @return points: Pontos extraídos pelo serviço de geocodificação.
+        """
+
         points = None
         if current_geocoding[0] == "Google":
             print("Google")
@@ -114,8 +139,13 @@ class OverlayPoint (QtWidgets.QDialog):
 
         return points
 
-    # Compila os dados inseridos e o ponto encontrado na estrutura de geodataframe
     def address_to_geodataframe(self, points):
+        """
+        Compila os dados inseridos e o ponto encontrado na estrutura de geodataframe.
+
+        @keyword points: Pontos obtidos através do serviço de geocodificação.
+        @return dataframe: Estrutura de geodataframe contendo o endereço e os pontos que representam aquele endereço.
+        """
         data = {
             'logradouro': self.txt_logradouro.text(),
             'numero': self.txt_numero.text(),
@@ -132,9 +162,13 @@ class OverlayPoint (QtWidgets.QDialog):
 
         return dataframe
 
-    # Adatpa os pontos para estrutura de geodataframe
     def coordinate_to_geodataframe(self, points, epsg):
+        """
+        Adatpa os pontos para estrutura de geodataframe.
 
+        @keyword points: Ponto (lat e long) passado pelo usuário.
+        @return dataframe: Estrutura de geodataframe contendo os pontos passados pelo usuário.
+        """
         epsg = "EPSG:" + epsg
 
         dataframe = gpd.GeoDataFrame([], geometry=points, crs=epsg)

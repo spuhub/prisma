@@ -1,7 +1,5 @@
 import os.path
 
-from qgis.PyQt.QtWidgets import QFileDialog
-
 from ..qgis.map_canvas import MapCanvas
 
 from PyQt5 import QtCore, QtWidgets
@@ -10,12 +8,21 @@ from PyQt5.uic import loadUi
 import geopandas as gpd
 
 class ResultWindow (QtWidgets.QDialog):
+    """
+    Classe responsável por fazer o backend da tela de resultados, que exibe a quatidade de sobreposição que aconteceu entre a camada de input e camadas de comparação; Da ao usuário opção para
+    mostrar as camadas no mostrador do QGIS e também gerar os relatórios PDF.
+
+    """
     cancel_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
     report_generator_window = QtCore.pyqtSignal(dict)
 
     def __init__(self, result):
+        """
+        Método para inicialização da classe.
+        """
         self.result = result
+        self.row_control = 0
         super(ResultWindow, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'result_window.ui'), self)
 
@@ -27,8 +34,10 @@ class ResultWindow (QtWidgets.QDialog):
 
         self.show_result()
 
-    # Exibe em uma lista a quantidade de sobreposições que se teve com determinada área
     def show_result(self):
+        """
+        Exibe em uma lista a quantidade de sobreposições que se teve com determinada área
+        """
         input = self.result['input']
 
         layers_bd = 0
@@ -49,10 +58,12 @@ class ResultWindow (QtWidgets.QDialog):
         self.overlay_counter_shp()
         self.overlay_counter_pg()
 
-    # Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
-    # e realiza a inserção deste valor na tabela
+
     def overlay_counter_shp(self):
-        row_control = 0
+        """
+        Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
+        e realiza a inserção deste valor na tabela.
+        """
         gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
 
         for i in self.result['operation_config']['shp']:
@@ -63,17 +74,19 @@ class ResultWindow (QtWidgets.QDialog):
                     cont += 1
 
             cellName = QtWidgets.QTableWidgetItem(str(i['nome']))
-            self.tbl_result.setItem(row_control, 0, cellName)
+            self.tbl_result.setItem(self.row_control, 0, cellName)
 
             cellValue = QtWidgets.QTableWidgetItem(str(cont))
-            self.tbl_result.setItem(row_control, 1, cellValue)
+            self.tbl_result.setItem(self.row_control, 1, cellValue)
 
-            row_control += 1
+            self.row_control += 1
 
-    # Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
-    # e realiza a inserção deste valor na tabela
+
     def overlay_counter_pg(self):
-        row_control = 0
+        """
+        Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
+        e realiza a inserção deste valor na tabela
+        """
         gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
 
         for bd in self.result['operation_config']['pg']:
@@ -85,25 +98,30 @@ class ResultWindow (QtWidgets.QDialog):
                         cont += 1
 
                 cellName = QtWidgets.QTableWidgetItem(str(layer))
-                self.tbl_result.setItem(row_control, 0, cellName)
+                self.tbl_result.setItem(self.row_control, 0, cellName)
 
                 cellValue = QtWidgets.QTableWidgetItem(str(cont))
-                self.tbl_result.setItem(row_control, 1, cellValue)
+                self.tbl_result.setItem(self.row_control, 1, cellValue)
 
-                row_control += 1
-
-    def handle_output(self):
-        self.output = QFileDialog.getExistingDirectory(self, "Selecione a pasta de saída")
-        self.txt_output.setText(self.output)
+                self.row_control += 1
 
     def print_overlay_qgis(self):
+        """
+        Exibe no mostrador do QGIS somente feições que tiveram sobreposição.
+        """
         mc = MapCanvas()
         mc.print_overlay_qgis(self.result)
 
     def print_all_layers_qgis(self):
+        """
+        Exibe no mostrador do QGIS todas as feições das camadas comparadas.
+        """
         mc = MapCanvas()
         mc.print_all_layers_qgis(self.result)
 
     def btn_report_generator(self):
+        """
+        Função acionada quando o usuário pressiona o botão para gerar relatórios PDF.
+        """
         self.hide()
         self.report_generator_window.emit(self.result)

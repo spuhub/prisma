@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  
+
+  <head>
+    
+    <title>prisma.controllers.screen_controller.Controller</title>
+    <meta name="generator" content="pydoctor 21.12.1"> 
+        
+    </meta>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.75" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="apidocs.css" />
+    <link rel="stylesheet" type="text/css" href="extra.css" />
+</head>
+
+  <body>
+
+    
+
+    <nav class="navbar navbar-default">
+  
+  <div class="container">
+
+    <div class="navbar-header">
+      
+      <div class="navlinks">
+          <span class="navbar-brand">
+            prisma <a href="index.html">API Documentation</a>
+          </span>
+
+          <a href="moduleIndex.html">
+            Modules
+          </a>
+
+          <a href="classIndex.html">
+            Classes
+          </a>
+
+          <a href="nameIndex.html">
+            Names
+          </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+    
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1 class="class"><code><code><a href="prisma.html">prisma</a></code><wbr></wbr>.<code><a href="prisma.controllers.html">controllers</a></code><wbr></wbr>.<code><a href="prisma.controllers.screen_controller.html">screen_controller</a></code><wbr></wbr>.<code><a href="prisma.controllers.screen_controller.Controller.html">Controller</a></code></code></h1>
+        <div id="showPrivate">
+          <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+        </div>
+      </div>
+
+      <div class="categoryHeader">
+        class documentation
+      </div>
+
+      <div class="extrasDocstring">
+        <p><code><span class="py-keyword">class</span> <span class="py-defname">Controller</span>:</code></p>
+        <p><a href="classIndex.html#prisma.controllers.screen_controller.Controller">View In Hierarchy</a></p>
+      </div>
+
+      <div class="moduleDocstring">
+        <div>Classe que faz o controle das telas.</div>
+      </div>
+
+      <div id="splitTables">
+        <table class="children sortable" id="id10">
+  
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__init__">__init__</a></code></td>
+    <td>Método de inicialização da classe.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_config">show_config</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela de configuração do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_main">show_main</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela principal do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_overlay_feature">show_overlay_feature</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela de busca através de feições selecionadas do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_overlay_point">show_overlay_point</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela de busca por ponto do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_overlay_shapefile">show_overlay_shapefile</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela de busca através de input shapefile do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_report_generator">show_report_generator</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela onde o usuário insere os dados de cabeçalho e local onde devem ser gerados os relatórios PDF do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_result_window">show_result_window</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela de resultados do prisma.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#show_select_databases">show_select_databases</a></code></td>
+    <td>Função acionada (e também serve como controller) para mostrar a tela de seleção de bases de dados para comparação do prisma.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#config_window">config_window</a></code></td>
+    <td>Armazena a classe que manipula a tela de configuração.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#first_start">first_start</a></code></td>
+    <td>Após aparecer a primeira tela do Prisma, variável passa a ser True sempre. Serve para fazer o controle de telas.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#iface">iface</a></code></td>
+    <td>Variável para acessar métodos do QGIS.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#main_window">main_window</a></code></td>
+    <td>Armazena a classe que manipula a tela principal.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#overlay_feature_window">overlay_feature_window</a></code></td>
+    <td>Armazena a classe que manipula a tela para busca com feições selecionadas.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#overlay_point_window">overlay_point_window</a></code></td>
+    <td>Armazena a classe que manipula a tela para busca através de pontos.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#overlay_shapefile_window">overlay_shapefile_window</a></code></td>
+    <td>Armazena a classe que manipula a tela para busca com shapefile de input.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#report_generator">report_generator</a></code></td>
+    <td>Armazena a classe que manipula a tela para preencher dados de cabeçalho e diretório de saída dos relatórios PDF.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#result_window">result_window</a></code></td>
+    <td>Armazena a classe que manipula a tela de resultados de sobreposição.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#select_databases">select_databases</a></code></td>
+    <td>Armazena a classe que manipula a tela de seleção de bases de dados para comparação.</td>
+  </tr>
+</table>
+        
+
+          
+      </div>
+
+      <div id="childList">
+
+        <div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.__init__">
+    
+  </a>
+  <a name="__init__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__init__</span>(self, iface):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Método de inicialização da classe.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_config">
+    
+  </a>
+  <a name="show_config">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_config</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela de configuração do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_main">
+    
+  </a>
+  <a name="show_main">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_main</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela principal do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_overlay_feature">
+    
+  </a>
+  <a name="show_overlay_feature">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_overlay_feature</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela de busca através de feições selecionadas do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_overlay_point">
+    
+  </a>
+  <a name="show_overlay_point">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_overlay_point</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela de busca por ponto do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_overlay_shapefile">
+    
+  </a>
+  <a name="show_overlay_shapefile">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_overlay_shapefile</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela de busca através de input shapefile do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_report_generator">
+    
+  </a>
+  <a name="show_report_generator">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_report_generator</span>(self, result):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela onde o usuário insere os dados de cabeçalho e local onde devem ser gerados os relatórios PDF do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_result_window">
+    
+  </a>
+  <a name="show_result_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_result_window</span>(self, result):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela de resultados do prisma.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.show_select_databases">
+    
+  </a>
+  <a name="show_select_databases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">show_select_databases</span>(self, operation_config):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função acionada (e também serve como controller) para mostrar a tela de seleção de bases de dados para comparação do prisma.</div>
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.config_window">
+    
+  </a>
+  <a name="config_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">config_window</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela de configuração.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.first_start">
+    
+  </a>
+  <a name="first_start">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">first_start</span>: <code>bool</code> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Após aparecer a primeira tela do Prisma, variável passa a ser True sempre. Serve para fazer o controle de telas.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.iface">
+    
+  </a>
+  <a name="iface">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">iface</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Variável para acessar métodos do QGIS.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.main_window">
+    
+  </a>
+  <a name="main_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">main_window</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela principal.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.overlay_feature_window">
+    
+  </a>
+  <a name="overlay_feature_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">overlay_feature_window</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela para busca com feições selecionadas.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.overlay_point_window">
+    
+  </a>
+  <a name="overlay_point_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">overlay_point_window</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela para busca através de pontos.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.overlay_shapefile_window">
+    
+  </a>
+  <a name="overlay_shapefile_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">overlay_shapefile_window</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela para busca com shapefile de input.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.report_generator">
+    
+  </a>
+  <a name="report_generator">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">report_generator</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela para preencher dados de cabeçalho e diretório de saída dos relatórios PDF.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.result_window">
+    
+  </a>
+  <a name="result_window">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">result_window</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela de resultados de sobreposição.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.controllers.screen_controller.Controller.select_databases">
+    
+  </a>
+  <a name="select_databases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">select_databases</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena a classe que manipula a tela de seleção de bases de dados para comparação.</div>
+    
+  </div>
+</div>
+
+      </div>
+    </div>
+
+    <footer class="navbar navbar-default">
+  
+  <div class="container">
+    <a href="index.html">API Documentation</a> for prisma,
+  generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
+    21.12.1 at 2022-02-21 15:12:13.
+  </div>
+</footer>
+
+    <script src="pydoctor.js" type="text/javascript"></script>
+
+  </body>
+</html>

@@ -12,6 +12,7 @@ class OverlayShapefile (QtWidgets.QDialog):
     continue_window = QtCore.pyqtSignal(dict)
 
     def __init__(self, iface):
+        """Método construtor da classe."""
         self.iface = iface
         super(OverlayShapefile, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'overlay_shapefile.ui'), self)
@@ -20,17 +21,25 @@ class OverlayShapefile (QtWidgets.QDialog):
         self.btn_input.clicked.connect(self.handle_input)
         self.btn_continuar.clicked.connect(self.next)
 
-    # Exibe uma janela para o usuário selecionar o arquivo shapefile de entrada
     def handle_input(self):
+        """
+        Exibe uma janela para o usuário selecionar o arquivo shapefile de entrada
+        """
         self.path_shp_input = QFileDialog.getOpenFileName(self, "Selecione um arquivo SHP de entrada", '*.shp')[0]
         self.txt_input.setText(self.path_shp_input)
         return self.path_shp_input
 
     def back(self):
+        """
+        Retorna para tela anterior.
+        """
         self.hide()
         self.back_window.emit()
 
     def next(self):
+        """
+        Faz operações necessárias para iniciar o processo de busca de sobreposição através de um shapefile como input.
+        """
         self.path_input = self.txt_input.text()
         # Testa se o diretório do shp de entrada foi inserido
         if (self.path_input != ""):

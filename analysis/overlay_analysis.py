@@ -29,12 +29,26 @@ from ..databases.shp_handle import ShpHandle
 from ..utils.utils import Utils
 
 class OverlayAnalisys():
+    """
+    Classe utilizada para verificar quais áreas possuem sobreposição entre input de entrada e camadas de comparação.
 
+    @ivar operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+    @ivar shp_handle: Armazena classe para leitura de arquivos shapefile.
+    @ivar utils: Armazena classe contendo algumas funções úteis para o código.
+    """
     def __init__(self):
+        """Método construtor da classe."""
         self.shp_handle = ShpHandle()
         self.utils = Utils()
 
     def OverlayAnalisys(self, operation_config):
+        """
+        Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas.
+        Esta função é feita através da projeção geográfica.
+
+        @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+        @return result: Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.
+        """
         self.operation_config = operation_config
 
         # Leitura do shapefile de input
@@ -84,6 +98,13 @@ class OverlayAnalisys():
         return result
 
     def analisys_shp(self, input, gdf_selected_shp):
+        """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
+
+        @keyword input: Camada de input.
+        @keyword gdf_selected_shp: camadas shapefiles selecionadas para comparação.
+        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
+        """
+
         index = 0
         overlay_shp = input.copy()
         
@@ -97,26 +118,13 @@ class OverlayAnalisys():
             index += 1
         return overlay_shp
 
-    def eliminate_distant_features_shp(self, scaled_input, gdf_selected_shp):
-        index = 0
-
-        for i in range(len(gdf_selected_shp)):
-            gdf_selected_shp[i]['close_input'] = False
-            gdf_selected_shp[i] = gdf_selected_shp[i].to_crs(4326)
-            for indexArea, rowArea in gdf_selected_shp[i].iterrows():
-                for indexInput, rowInput in scaled_input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        gdf_selected_shp[i].loc[indexArea, 'close_input'] = True
-            index += 1
-
-        for i in range(len(gdf_selected_shp)):
-            # Exclui áreas que não foram classificadas como perto do input (sem sobreposição ao input escalado)
-            gdf_selected_shp[i] = gdf_selected_shp[i].query("close_input == True")
-            gdf_selected_shp[i] = gdf_selected_shp[i].drop(columns=['close_input'])
-
-        return gdf_selected_shp
-
     def analysis_db(self, input, gdf_selected_db):
+        """Verifica sobreposição entre camada de input e camadas de banco de dados selecionadas.
+
+        @keyword input: Camada de input.
+        @keyword gdf_selected_shp: Camadas de banco de dados selecionadas para comparação.
+        @return overlay_db: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
+        """
         index_db = 0
         overlay_db = input.copy()
         overlay_db['sobreposicao'] = False
@@ -136,7 +144,40 @@ class OverlayAnalisys():
             index_db += 1
         return overlay_db
 
+    def eliminate_distant_features_shp(self, scaled_input, gdf_selected_shp):
+        """Método utilizado para eliminar feições das camadas de comparação que estão distantes das feições de input.
+        Serve para melhorar o desempenho para processamentos futuros, como por exemplo geração de plantas PDF e mostrar áreas no mostrador do QGIS.
+        Vale ressaltar que essa função existe somente para shapefile pois, com banco de dados essa operação já acontece no lado do banco de dados
+
+        @keyword scaled_input: Camada de input, com o acrescimo da função escala para obter, através de teste de sobreposição, áreas próximas ao input.
+        @keyword gdf_selected_shp: Camadas de banco de dados selecionadas para comparação.
+        @return gdf_selected_shp: Retorna as camadas shapefiles contendo somente áreas próximas à camada de input.
+        """
+        index = 0
+
+        for i in range(len(gdf_selected_shp)):
+            gdf_selected_shp[i]['close_input'] = False
+            gdf_selected_shp[i] = gdf_selected_shp[i].to_crs(4326)
+            for indexArea, rowArea in gdf_selected_shp[i].iterrows():
+                for indexInput, rowInput in scaled_input.iterrows():
+                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                        gdf_selected_shp[i].loc[indexArea, 'close_input'] = True
+            index += 1
+
+        for i in range(len(gdf_selected_shp)):
+            # Exclui áreas que não foram classificadas como perto do input (sem sobreposição ao input escalado)
+            gdf_selected_shp[i] = gdf_selected_shp[i].query("close_input == True")
+            gdf_selected_shp[i] = gdf_selected_shp[i].drop(columns=['close_input'])
+
+        return gdf_selected_shp
+
     def get_utm_crs(self, input, epsg_shp_dir):
+        """Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.
+
+        @keyword input: Camada de input.
+        @keyword epsg_shp_dir: Armazena o caminho do diretório, dentro do Prisma, em que se encontra o shapefile contendo a camada de Zonas UTM.
+        @return input: Retorna coluna contendo a zona UTM em que se encontra cada feiçõa de input.
+        """
         input['crs_feature'] = None
         epsg_shp = gpd.read_file(epsg_shp_dir)
 

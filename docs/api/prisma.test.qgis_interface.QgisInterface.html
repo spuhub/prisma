@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  
+
+  <head>
+    
+    <title>prisma.test.qgis_interface.QgisInterface</title>
+    <meta name="generator" content="pydoctor 21.12.1"> 
+        
+    </meta>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.75" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="apidocs.css" />
+    <link rel="stylesheet" type="text/css" href="extra.css" />
+</head>
+
+  <body>
+
+    
+
+    <nav class="navbar navbar-default">
+  
+  <div class="container">
+
+    <div class="navbar-header">
+      
+      <div class="navlinks">
+          <span class="navbar-brand">
+            prisma <a href="index.html">API Documentation</a>
+          </span>
+
+          <a href="moduleIndex.html">
+            Modules
+          </a>
+
+          <a href="classIndex.html">
+            Classes
+          </a>
+
+          <a href="nameIndex.html">
+            Names
+          </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+    
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1 class="class"><code><code><a href="prisma.html">prisma</a></code><wbr></wbr>.<code><a href="prisma.test.html">test</a></code><wbr></wbr>.<code><a href="prisma.test.qgis_interface.html">qgis_interface</a></code><wbr></wbr>.<code><a href="prisma.test.qgis_interface.QgisInterface.html">QgisInterface</a></code></code></h1>
+        <div id="showPrivate">
+          <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+        </div>
+      </div>
+
+      <div class="categoryHeader">
+        class documentation
+      </div>
+
+      <div class="extrasDocstring">
+        <p><code><span class="py-keyword">class</span> <span class="py-defname">QgisInterface</span>(<span title="qgis.PyQt.QtCore.QObject">QObject</span>):</code></p>
+        <p><a href="classIndex.html#prisma.test.qgis_interface.QgisInterface">View In Hierarchy</a></p>
+      </div>
+
+      <div class="moduleDocstring">
+        <div><p>Class to expose QGIS objects and functions to plugins.</p>
+<p>This class is here for enabling us to run unit tests only, so most methods are simply stubs.</p>
+</div>
+      </div>
+
+      <div id="splitTables">
+        <table class="children sortable" id="id38">
+  
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__init__">__init__</a></code></td>
+    <td>Constructor :param canvas:</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#activeLayer">activeLayer</a></code></td>
+    <td>Get pointer to the active layer (layer selected in the legend).</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addDockWidget">addDockWidget</a></code></td>
+    <td>Add a dock widget to the main window.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addLayer">addLayer</a></code></td>
+    <td>Handle a layer being added to the registry so it shows up in canvas.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addLayers">addLayers</a></code></td>
+    <td>Handle layers being added to the registry so they show up in canvas.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addRasterLayer">addRasterLayer</a></code></td>
+    <td>Add a raster layer given a raster layer file name</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addToolBar">addToolBar</a></code></td>
+    <td>Add toolbar with specified name.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addToolBarIcon">addToolBarIcon</a></code></td>
+    <td>Add an icon to the plugins toolbar.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#addVectorLayer">addVectorLayer</a></code></td>
+    <td>Add a vector layer.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#legendInterface">legendInterface</a></code></td>
+    <td>Get the legend.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#mainWindow">mainWindow</a></code></td>
+    <td>Return a pointer to the main window.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#mapCanvas">mapCanvas</a></code></td>
+    <td>Return a pointer to the map canvas.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#newProject">newProject</a></code></td>
+    <td>Create new project.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#removeAllLayers">removeAllLayers</a></code></td>
+    <td>Remove layers from the canvas before they get deleted.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#removeToolBarIcon">removeToolBarIcon</a></code></td>
+    <td>Remove an action (icon) from the plugin toolbar.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#zoomFull">zoomFull</a></code></td>
+    <td>Zoom to the map full extent.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#zoomToActiveLayer">zoomToActiveLayer</a></code></td>
+    <td>Zoom to extent of active layer.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#zoomToNext">zoomToNext</a></code></td>
+    <td>Zoom to next view extent.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#zoomToPrevious">zoomToPrevious</a></code></td>
+    <td>Zoom to previous view extent.</td>
+  </tr><tr class="classvariable">
+    
+    <td>Class Variable</td>
+    <td><code><a href="#currentLayerChanged">currentLayerChanged</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#canvas">canvas</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#destCrs">destCrs</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+</table>
+        
+
+          
+      </div>
+
+      <div id="childList">
+
+        <div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.__init__">
+    
+  </a>
+  <a name="__init__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__init__</span>(self, canvas):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Constructor :param canvas:</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.activeLayer">
+    
+  </a>
+  <a name="activeLayer">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">activeLayer</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Get pointer to the active layer (layer selected in the legend).</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addDockWidget">
+    
+  </a>
+  <a name="addDockWidget">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">addDockWidget</span>(self, area, dock_widget):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Add a dock widget to the main window.</p>
+<p>:param area: Where in the ui the dock should be placed. :type area:</p>
+<p>:param dock_widget: A dock widget to add to the UI. :type dock_widget: QDockWidget</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addLayer">
+    
+  </a>
+  <a name="addLayer">
+    
+  </a>
+  <div class="functionHeader">
+    @pyqtSlot(<wbr></wbr><span class="rst-variable-quote">'</span><span class="rst-variable-string">QgsMapLayer</span><span class="rst-variable-quote">'</span>)<br />
+    <span class="py-keyword">def</span> <span class="py-defname">addLayer</span>(self, layer):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addLayers">
+    
+  </a>
+  <a name="addLayers">
+    
+  </a>
+  <div class="functionHeader">
+    @pyqtSlot(<wbr></wbr><span class="rst-variable-quote">'</span><span class="rst-variable-string">QStringList</span><span class="rst-variable-quote">'</span>)<br />
+    <span class="py-keyword">def</span> <span class="py-defname">addLayers</span>(self, layers):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addRasterLayer">
+    
+  </a>
+  <a name="addRasterLayer">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">addRasterLayer</span>(self, path, base_name):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Add a raster layer given a raster layer file name</p>
+<p>:param path: Path to layer. :type path: str</p>
+<p>:param base_name: Base name for layer. :type base_name: str</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addToolBar">
+    
+  </a>
+  <a name="addToolBar">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">addToolBar</span>(self, name):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Add toolbar with specified name.</p>
+<p>:param name: Name for the toolbar. :type name: str</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addToolBarIcon">
+    
+  </a>
+  <a name="addToolBarIcon">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">addToolBarIcon</span>(self, action):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Add an icon to the plugins toolbar.</p>
+<p>:param action: Action to add to the toolbar. :type action: QAction</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.addVectorLayer">
+    
+  </a>
+  <a name="addVectorLayer">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">addVectorLayer</span>(self, path, base_name, provider_key):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Add a vector layer.</p>
+<p>:param path: Path to layer. :type path: str</p>
+<p>:param base_name: Base name for layer. :type base_name: str</p>
+<p>:param provider_key: Provider key e.g. 'ogr' :type provider_key: str</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.legendInterface">
+    
+  </a>
+  <a name="legendInterface">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">legendInterface</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Get the legend.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.mainWindow">
+    
+  </a>
+  <a name="mainWindow">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">mainWindow</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Return a pointer to the main window.</p>
+<p>In case of QGIS it returns an instance of QgisApp.</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.mapCanvas">
+    
+  </a>
+  <a name="mapCanvas">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">mapCanvas</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Return a pointer to the map canvas.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.newProject">
+    
+  </a>
+  <a name="newProject">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">newProject</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Create new project.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.removeAllLayers">
+    
+  </a>
+  <a name="removeAllLayers">
+    
+  </a>
+  <div class="functionHeader">
+    @pyqtSlot()<br />
+    <span class="py-keyword">def</span> <span class="py-defname">removeAllLayers</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Remove layers from the canvas before they get deleted.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.removeToolBarIcon">
+    
+  </a>
+  <a name="removeToolBarIcon">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">removeToolBarIcon</span>(self, action):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Remove an action (icon) from the plugin toolbar.</p>
+<p>:param action: Action to add to the toolbar. :type action: QAction</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.zoomFull">
+    
+  </a>
+  <a name="zoomFull">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">zoomFull</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Zoom to the map full extent.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.zoomToActiveLayer">
+    
+  </a>
+  <a name="zoomToActiveLayer">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">zoomToActiveLayer</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Zoom to extent of active layer.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.zoomToNext">
+    
+  </a>
+  <a name="zoomToNext">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">zoomToNext</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Zoom to next view extent.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.zoomToPrevious">
+    
+  </a>
+  <a name="zoomToPrevious">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">zoomToPrevious</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Zoom to previous view extent.</div>
+  </div>
+</div><div class="baseclassvariable">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.currentLayerChanged">
+    
+  </a>
+  <a name="currentLayerChanged">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">currentLayerChanged</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.canvas">
+    
+  </a>
+  <a name="canvas">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">canvas</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.test.qgis_interface.QgisInterface.destCrs">
+    
+  </a>
+  <a name="destCrs">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">destCrs</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div>
+
+      </div>
+    </div>
+
+    <footer class="navbar navbar-default">
+  
+  <div class="container">
+    <a href="index.html">API Documentation</a> for prisma,
+  generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
+    21.12.1 at 2022-02-21 15:12:13.
+  </div>
+</footer>
+
+    <script src="pydoctor.js" type="text/javascript"></script>
+
+  </body>
+</html>

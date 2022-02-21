@@ -3,16 +3,35 @@ from ..settings.env_tools import EnvTools
 
 from PyQt5.QtCore import QVariant
 
-# Classe utilizada para criar um dicionário com especificações da operação que será feita.
-# Dentre as especificações estão: tipo de operação (shapefile, ponto, endereço, feição selecionada),
-# arquivos shapefile e bases de dados de bancos de dados selecionados para comparação.
+
 class OperationController:
+    """
+    Classe utilizada para criar um dicionário com especificações da operação que será feita.
+    Dentre as especificações estão: tipo de operação (shapefile, ponto, endereço, feição selecionada),
+    arquivos shapefile e bases de dados de bancos de dados selecionados para comparação.
+
+    @ivar data_bd: Armazena bases de dados de banco de dados vindos do arquivo de configuração JSON.
+    @ivar data_shp: Armazena bases de dados de shapefiles vindos do arquivo de configuração JSON.
+    @ivar json_tools: Classe para leitura de arquivos JSON.
+    """
     def __init__(self):
+        """
+        Método de inicialização da classe.
+        """
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
 
     def get_operation(self, operation_config, selected_items_shp, selected_items_bd):
+        """
+        Função que gera as configurações/especificações da busca de sobreposição que irá acontecer. Aqui é armazenado, em formado de dicionário, quais bases de dados serão de dados serão
+        utilizadas para a busca de sobreposição
+
+        @keyword operation_config: Dicionário contendo configurações/especificações de busca.
+        @keyword selected_items_bd: Vetor com bases de dados vindos de banco de dados que foram selecionados para comparação.
+        @keyword selected_items_shp: Vetor com bases de dados vindos de shapefiles que foram selecionados para comparação.
+        @return operation_config: Dicionário contendo configurações/especificações de busca.
+        """
         if (operation_config['operation'] == 'shapefile'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
 
@@ -42,8 +61,15 @@ class OperationController:
 
             return operation_config
 
-    # Monta uma lista de configurações para operação que será realizada
     def create_operation_config(self, operation_config, selected_items_bd, selected_items_shp):
+        """
+        Monta uma lista de configurações para operação que será realizada.
+
+        @keyword operation_config: Dicionário contendo configurações/especificações de busca.
+        @keyword selected_items_bd: Vetor com bases de dados vindos de banco de dados que foram selecionados para comparação.
+        @keyword selected_items_shp: Vetor com bases de dados vindos de shapefiles que foram selecionados para comparação.
+        @return operation_config: Dicionário contendo configurações/especificações de busca.
+        """
         operation_config['shp'] = []
         for i in self.data_shp:
             if(i['nome'] in selected_items_shp):

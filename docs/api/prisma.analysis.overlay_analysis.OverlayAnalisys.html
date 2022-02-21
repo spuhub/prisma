@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  
+
+  <head>
+    
+    <title>prisma.analysis.overlay_analysis.OverlayAnalisys</title>
+    <meta name="generator" content="pydoctor 21.12.1"> 
+        
+    </meta>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.75" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="apidocs.css" />
+    <link rel="stylesheet" type="text/css" href="extra.css" />
+</head>
+
+  <body>
+
+    
+
+    <nav class="navbar navbar-default">
+  
+  <div class="container">
+
+    <div class="navbar-header">
+      
+      <div class="navlinks">
+          <span class="navbar-brand">
+            prisma <a href="index.html">API Documentation</a>
+          </span>
+
+          <a href="moduleIndex.html">
+            Modules
+          </a>
+
+          <a href="classIndex.html">
+            Classes
+          </a>
+
+          <a href="nameIndex.html">
+            Names
+          </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+    
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1 class="class"><code><code><a href="prisma.html">prisma</a></code><wbr></wbr>.<code><a href="prisma.analysis.html">analysis</a></code><wbr></wbr>.<code><a href="prisma.analysis.overlay_analysis.html">overlay_analysis</a></code><wbr></wbr>.<code><a href="prisma.analysis.overlay_analysis.OverlayAnalisys.html">OverlayAnalisys</a></code></code></h1>
+        <div id="showPrivate">
+          <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+        </div>
+      </div>
+
+      <div class="categoryHeader">
+        class documentation
+      </div>
+
+      <div class="extrasDocstring">
+        <p><code><span class="py-keyword">class</span> <span class="py-defname">OverlayAnalisys</span>:</code></p>
+        <p><a href="classIndex.html#prisma.analysis.overlay_analysis.OverlayAnalisys">View In Hierarchy</a></p>
+      </div>
+
+      <div class="moduleDocstring">
+        <div>Classe utilizada para verificar quais áreas possuem sobreposição entre input de entrada e camadas de comparação.</div>
+      </div>
+
+      <div id="splitTables">
+        <table class="children sortable" id="id5">
+  
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__init__">__init__</a></code></td>
+    <td>Método construtor da classe.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#analisys_shp">analisys_shp</a></code></td>
+    <td>Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#analysis_db">analysis_db</a></code></td>
+    <td>Verifica sobreposição entre camada de input e camadas de banco de dados selecionadas.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#eliminate_distant_features_shp">eliminate_distant_features_shp</a></code></td>
+    <td>Método utilizado para eliminar feições das camadas de comparação que estão distantes das feições de input. Serve para melhorar o desempenho para processamentos futuros, como por exemplo geração de plantas PDF e mostrar áreas no mostrador do QGIS. Vale ressaltar que essa função existe somente para shapefile pois, com banco de dados essa operação já acontece no lado do banco de dados</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#get_utm_crs">get_utm_crs</a></code></td>
+    <td>Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#OverlayAnalisys">OverlayAnalisys</a></code></td>
+    <td>Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas. Esta função é feita através da projeção geográfica.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#operation_config">operation_config</a></code></td>
+    <td>Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#shp_handle">shp_handle</a></code></td>
+    <td>Armazena classe para leitura de arquivos shapefile.</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#utils">utils</a></code></td>
+    <td>Armazena classe contendo algumas funções úteis para o código.</td>
+  </tr>
+</table>
+        
+
+          
+      </div>
+
+      <div id="childList">
+
+        <div class="basemethod">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.__init__">
+    
+  </a>
+  <a name="__init__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__init__</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Método construtor da classe.</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.analisys_shp">
+    
+  </a>
+  <a name="analisys_shp">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">analisys_shp</span>(self, input, gdf_selected_shp):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">input</span></td><td class="fieldArgDesc">Camada de input.</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">gdf_selected_shp</span></td><td class="fieldArgDesc">camadas shapefiles selecionadas para comparação.</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.analysis_db">
+    
+  </a>
+  <a name="analysis_db">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">analysis_db</span>(self, input, gdf_selected_db):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Verifica sobreposição entre camada de input e camadas de banco de dados selecionadas.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">input</span></td><td class="fieldArgDesc">Camada de input.</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">gdf_selected_db</span></td><td class="fieldArgDesc"><span class="undocumented">Undocumented</span></td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">gdf_selected_shp</span></td><td class="fieldArgDesc">Camadas de banco de dados selecionadas para comparação.</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.eliminate_distant_features_shp">
+    
+  </a>
+  <a name="eliminate_distant_features_shp">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">eliminate_distant_features_shp</span>(self, scaled_input, gdf_selected_shp):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Método utilizado para eliminar feições das camadas de comparação que estão distantes das feições de input. Serve para melhorar o desempenho para processamentos futuros, como por exemplo geração de plantas PDF e mostrar áreas no mostrador do QGIS. Vale ressaltar que essa função existe somente para shapefile pois, com banco de dados essa operação já acontece no lado do banco de dados<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">scaled_input</span></td><td class="fieldArgDesc">Camada de input, com o acrescimo da função escala para obter, através de teste de sobreposição, áreas próximas ao input.</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">gdf_selected_shp</span></td><td class="fieldArgDesc">Camadas de banco de dados selecionadas para comparação.</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">Retorna as camadas shapefiles contendo somente áreas próximas à camada de input.</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.get_utm_crs">
+    
+  </a>
+  <a name="get_utm_crs">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">get_utm_crs</span>(self, input, epsg_shp_dir):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">input</span></td><td class="fieldArgDesc">Camada de input.</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">epsg_shp_dir</span></td><td class="fieldArgDesc">Armazena o caminho do diretório, dentro do Prisma, em que se encontra o shapefile contendo a camada de Zonas UTM.</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">Retorna coluna contendo a zona UTM em que se encontra cada feiçõa de input.</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.OverlayAnalisys">
+    
+  </a>
+  <a name="OverlayAnalisys">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">OverlayAnalisys</span>(self, operation_config):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas. Esta função é feita através da projeção geográfica.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">operation_config</span></td><td class="fieldArgDesc">Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.</td></tr></table></div>
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.operation_config">
+    
+  </a>
+  <a name="operation_config">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">operation_config</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.shp_handle">
+    
+  </a>
+  <a name="shp_handle">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">shp_handle</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena classe para leitura de arquivos shapefile.</div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="prisma.analysis.overlay_analysis.OverlayAnalisys.utils">
+    
+  </a>
+  <a name="utils">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">utils</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div>Armazena classe contendo algumas funções úteis para o código.</div>
+    
+  </div>
+</div>
+
+      </div>
+    </div>
+
+    <footer class="navbar navbar-default">
+  
+  <div class="container">
+    <a href="index.html">API Documentation</a> for prisma,
+  generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
+    21.12.1 at 2022-02-21 15:12:13.
+  </div>
+</footer>
+
+    <script src="pydoctor.js" type="text/javascript"></script>
+
+  </body>
+</html>

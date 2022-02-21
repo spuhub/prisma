@@ -9,11 +9,13 @@ from PyQt5.uic import loadUi
 from qgis.utils import iface
 
 class OverlayFeature (QtWidgets.QDialog):
+    """Classe que manipula a tela de teste de sobreposição através de uma feição selecionada do Prisma."""
 
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal(dict)
 
     def __init__(self, iface):
+        """Método construtor da classe."""
         self.iface = iface
         super(OverlayFeature, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'overlay_feature.ui'), self)
@@ -23,15 +25,26 @@ class OverlayFeature (QtWidgets.QDialog):
         self.get_selected_features()
 
     def back(self):
+        """
+        Retorna para tela anterior.
+        """
         self.hide()
         self.back_window.emit()
 
     def next(self):
+        """
+        Faz operações necessárias para iniciar o processo de busca de sobreposição através de uma feição selecionada.
+        """
         data = self.get_selected_features()
         self.hide()
         self.continue_window.emit(data)
 
     def get_selected_features(self):
+        """
+        Extrai informações sobre as feições selecionadas como input para teste de sobreposição.
+
+        @return data: Dados das feições selecionadas.
+        """
         layer = self.iface.activeLayer()
         selected_features = layer.selectedFeatures()
 
