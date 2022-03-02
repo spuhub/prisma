@@ -351,6 +351,7 @@ class LayoutManager():
         """
         # Manipulação dos textos do layout
         self.handle_text(index_1, index_2)
+        print(feature_input_gdp.columns)
 
         if 'logradouro' not in feature_input_gdp:
             feature_input_gdp['logradouro'] = "Ponto por Endereço ou Coordenada"

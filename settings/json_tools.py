@@ -1,7 +1,6 @@
 import os
 import json
 
-
 class JsonTools:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,7 +15,7 @@ class JsonTools:
         shp_list = []
 
         for base, data in self.json_config.items():
-            if data['tipo'] == 'shp':
+            if 'tipo' in data and data['tipo'] == 'shp':
                 shp_list.append(data)
 
         return shp_list
@@ -25,10 +24,27 @@ class JsonTools:
         shp_list = []
 
         for base, data in self.json_config.items():
-            if data['tipo'] == 'pg':
+            if 'tipo' in data and data['tipo'] == 'pg':
                 shp_list.append(data)
 
         return shp_list
+
+    def get_config_required(self):
+        required_list = []
+
+        required_layers = self.json_config['obrigatorio']
+
+        for key, data_required_layer in required_layers.items():
+            for base, data_json in self.json_config.items():
+                if data_required_layer[0] == base:
+                    if data_json['tipo'] == 'pg':
+                        data_json['tabelasCamadas'] = [data_required_layer[1]]
+                        data_json['nomeFantasiaTabelasCamadas'] = [data_required_layer[2]]
+                    else:
+                        data_json['nomeFantasiaCamada'] = [data_required_layer[2]]
+                    required_list.append(data_json)
+
+        return required_list
 
     def insert_database_pg(self, db_json_conf):
         dados = {}

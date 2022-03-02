@@ -49,7 +49,7 @@ class ResultWindow (QtWidgets.QDialog):
 
         # Configura quantidade de linhas e as colunas da tabela de resultados
         self.tbl_result.setColumnCount(2)
-        self.tbl_result.setRowCount(len(self.result['operation_config']['shp']) + layers_bd)
+        self.tbl_result.setRowCount(len(self.result['operation_config']['shp']) + len(self.result['operation_config']['pg']) + len(self.result['operation_config']['required']))
         self.tbl_result.setHorizontalHeaderLabels(['Camada', 'Sobreposições'])
 
         self.tbl_result.horizontalHeader().setStretchLastSection(True)
@@ -57,6 +57,7 @@ class ResultWindow (QtWidgets.QDialog):
 
         self.overlay_counter_shp()
         self.overlay_counter_pg()
+        self.overlay_counter_required()
 
 
     def overlay_counter_shp(self):
@@ -67,7 +68,6 @@ class ResultWindow (QtWidgets.QDialog):
         gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
 
         for i in self.result['operation_config']['shp']:
-            print(i)
             cont = 0
             for rowIndex, row in gdf_result_shp.iterrows():
                 if str(i['nome']) in gdf_result_shp and row[str(i['nome'])] == True:
@@ -93,7 +93,6 @@ class ResultWindow (QtWidgets.QDialog):
             cont = 0
             for layer in bd['nomeFantasiaTabelasCamadas']:
                 for rowIndex, row in gdf_result_db.iterrows():
-                    print(gdf_result_db)
                     if str(str(layer)) in gdf_result_db and row[str(layer)] == True:
                         cont += 1
 
@@ -104,6 +103,35 @@ class ResultWindow (QtWidgets.QDialog):
                 self.tbl_result.setItem(self.row_control, 1, cellValue)
 
                 self.row_control += 1
+
+    def overlay_counter_required(self):
+        """
+        Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
+        e realiza a inserção deste valor na tabela.
+        """
+        gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_required'])
+
+        for i in self.result['operation_config']['required']:
+            cont = 0
+
+            for rowIndex, row in gdf_result_shp.iterrows():
+                if i['tipo'] == 'shp':
+                    if str(i['nomeFantasiaCamada'][0]) in gdf_result_shp and row[str(i['nomeFantasiaCamada'][0])] == True:
+                        cont += 1
+                else:
+                    if str(i['nomeFantasiaTabelasCamadas'][0]) in gdf_result_shp and row[str(i['nomeFantasiaTabelasCamadas'][0])] == True:
+                        cont += 1
+
+            if 'nomeFantasiaCamada' in i:
+                cellName = QtWidgets.QTableWidgetItem(str(i['nomeFantasiaCamada'][0]))
+            else:
+                cellName = QtWidgets.QTableWidgetItem(str(i['nomeFantasiaTabelasCamadas'][0]))
+
+            self.tbl_result.setItem(self.row_control, 0, cellName)
+            cellValue = QtWidgets.QTableWidgetItem(str(cont))
+            self.tbl_result.setItem(self.row_control, 1, cellValue)
+
+            self.row_control += 1
 
     def print_overlay_qgis(self):
         """

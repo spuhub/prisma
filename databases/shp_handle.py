@@ -22,6 +22,7 @@ class ShpHandle():
         input.set_crs(allow_override=True, crs=4326) # tranforma dados para sistema de coordenadas de referência adotados como padrão no projeto (EPSG:4674)
 
         return input
+
     def read_selected_shp(self, selected_shapefiles):
         """
         Método que lê arquivos shapefiles selecionados para comparação.

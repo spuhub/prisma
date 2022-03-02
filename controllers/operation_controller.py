@@ -21,6 +21,7 @@ class OperationController:
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
+        self.data_required = self.json_tools.get_config_required()
 
     def get_operation(self, operation_config, selected_items_shp, selected_items_bd):
         """
@@ -34,8 +35,6 @@ class OperationController:
         """
         if (operation_config['operation'] == 'shapefile'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
-
-            return operation_config
 
         elif (operation_config['operation'] == 'feature'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
@@ -54,12 +53,12 @@ class OperationController:
                             input = input.drop(column, axis=1)
 
             operation_config['input'] = input
-            return operation_config
 
         elif (operation_config['operation'] == 'coordinate'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
 
-            return operation_config
+
+        return operation_config
 
     def create_operation_config(self, operation_config, selected_items_bd, selected_items_shp):
         """
@@ -85,5 +84,7 @@ class OperationController:
 
             if (i['nome'] in selected_items_bd):
                 operation_config['pg'].append(i)
+
+        operation_config['required'] = self.data_required
 
         return operation_config
