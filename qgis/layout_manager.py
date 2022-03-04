@@ -399,15 +399,15 @@ class LayoutManager():
         if index_2 == None:
             layer_name = self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']
             title.setText('Caracterização: ' + layer_name)
-            self.fill_observation(layer_name)
+            self.fill_observation(feature_input_gdp,layer_name)
         else:
             layer_name = self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]
             title.setText('Caracterização: ' + layer_name)
-            self.fill_observation(layer_name)
+            self.fill_observation(feature_input_gdp, layer_name)
 
-    def fill_observation(self, layer_name):
+    def fill_observation(self, feature_input_gdp, layer_name):
         input = self.operation_config['input']
-        print(input.columns)
+
         overlay_area = self.layout.itemById('CD_Compl_Obs1')
         lot_area = self.layout.itemById('CD_Compl_Obs2')
         overlay_uniao = self.layout.itemById('CD_Compl_Obs3')
@@ -420,7 +420,7 @@ class LayoutManager():
             overlay_area.setText("Lote não sobrepõe " + layer_name + ".")
 
         # Área da feição
-        lot_area.setText("Área total do imóvel: " + str(input.iloc[self.index_input].geometry.area) + " m².")
+        lot_area.setText("Área total do imóvel: " + str(feature_input_gdp['areaLote'][0]) + " m².")
 
         # Sobreposição com área da união
         if input.iloc[self.index_input]['Área Homologada'] == True:
