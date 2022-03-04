@@ -13,6 +13,7 @@ class JsonTools:
         return self.json_config
 
     def get_config_shapefile(self):
+
         shp_list = []
 
         for base, data in self.json_config.items():
@@ -31,6 +32,11 @@ class JsonTools:
         return shp_list
 
     def insert_database_pg(self, db_json_conf):
+        """
+        Isere um data base no Json.
+        :param db_json_conf:
+        :return: retorna o id da base inserida
+        """
         dados = {}
 
         with open(self.json_path, 'r') as f:
@@ -48,6 +54,12 @@ class JsonTools:
         return dbid
 
     def edit_database(self, db_id, db_json_new_conf):
+        """
+        Edita um base de dados cujo seu id é passado como paramentro
+        :param db_id: Id da base de dados a ser editada
+        :param db_json_new_conf: Json contendo as novas configurrações da base de dados
+        :return: void
+        """
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
 

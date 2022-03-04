@@ -7,6 +7,7 @@ from PyQt5.uic import loadUi
 from .config_layers import ConfigLayers
 from .json_tools import JsonTools
 from .env_tools import EnvTools
+from PyQt5.QtWidgets import QMessageBox
 
 from ..screens.report_generator import ReportGenerator
 
@@ -30,6 +31,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
+        self.test_conect.clicked.connect(self.message)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConfBase)
         self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
@@ -265,3 +267,13 @@ class ConfigWindow(QtWidgets.QDialog):
     def hiderheader(self):
         d = ReportGenerator()
         d.exec_()
+
+    def message(self):
+        msg = QMessageBox(self)
+
+       # msg.information(self, "Conexão com Banco de dados", "Conexão feita com sucesso!")
+       # msg.setIcon(QMessageBox.Information)
+        msg.critical(self, "Conexão com Banco de dados", "Falha ao conectar com o banco de dados!")
+        #msg.setIcon(QMessageBox.Critical)
+
+
