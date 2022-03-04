@@ -38,6 +38,7 @@ class LayoutManager():
         self.operation_config = operation_config
         self.progress_bar = progress_bar
         self.utils = Utils()
+        self.index_input = None
 
         # Adiciona o layout ao projeto atual
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Planta_FolhaA3_Paisagem.qpt')
@@ -59,6 +60,7 @@ class LayoutManager():
 
         input = self.operation_config['input_standard']
         input_geographic = self.operation_config['input']
+
         input = input.to_crs(crs=4326)
 
         input_standard = self.operation_config['input_standard']
@@ -80,6 +82,7 @@ class LayoutManager():
         for indexInput, rowInput in input.iterrows():
             # Caso rowInput['crs_feature'] for igual a False, significa que a feição faz parte de dois ou mais zonas
             # portanto, não é processado
+            self.index_input = indexInput
             if rowInput['crs_feature'] != False:
                 # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
                 if len(input_standard) > 0:
@@ -350,8 +353,7 @@ class LayoutManager():
         @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
         """
         # Manipulação dos textos do layout
-        self.handle_text(index_1, index_2)
-        print(feature_input_gdp.columns)
+        self.handle_text(feature_input_gdp, index_1, index_2)
 
         if 'logradouro' not in feature_input_gdp:
             feature_input_gdp['logradouro'] = "Ponto por Endereço ou Coordenada"
@@ -362,8 +364,6 @@ class LayoutManager():
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]) + '.pdf'
 
         pdf_path = os.path.join(self.operation_config['path_output'], pdf_name)
-
-        print(pdf_path)
 
         atlas = self.layout.atlas()
         """Armazena o atlas do layout de impressão carregado no projeto."""
@@ -379,7 +379,7 @@ class LayoutManager():
     QApplication.instance().processEvents()
 
 
-    def handle_text(self, index_1, index_2):
+    def handle_text(self, feature_input_gdp, index_1, index_2):
         """
         Faz a manipulação de alguns dados textuais presentes no layout de impressão.
 
@@ -397,9 +397,39 @@ class LayoutManager():
 
         title = self.layout.itemById('CD_Titulo')
         if index_2 == None:
-            title.setText('Caracterização: ' + self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada'])
+            layer_name = self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']
+            title.setText('Caracterização: ' + layer_name)
+            self.fill_observation(layer_name)
         else:
-            title.setText('Caracterização: ' + self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2])
+            layer_name = self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]
+            title.setText('Caracterização: ' + layer_name)
+            self.fill_observation(layer_name)
+
+    def fill_observation(self, layer_name):
+        input = self.operation_config['input']
+        print(input.columns)
+        overlay_area = self.layout.itemById('CD_Compl_Obs1')
+        lot_area = self.layout.itemById('CD_Compl_Obs2')
+        overlay_uniao = self.layout.itemById('CD_Compl_Obs3')
+        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs4')
+
+        # Sobreposição com área de comparação
+        if input.iloc[self.index_input][layer_name] == True:
+            overlay_area.setText("Lote sobrepõe " + layer_name + ".")
+        else:
+            overlay_area.setText("Lote não sobrepõe " + layer_name + ".")
+
+        # Área da feição
+        lot_area.setText("Área total do imóvel: " + str(input.iloc[self.index_input].geometry.area) + " m².")
+
+        # Sobreposição com área da união
+        if input.iloc[self.index_input]['Área Homologada'] == True:
+            overlay_uniao.setText("Lote sobrepõe Área Homologada da União.")
+        else:
+            overlay_uniao.setText("Lote não sobrepõe Área Homologada da União.")
+
+        overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(input.iloc[self.index_input]["Área Homologada_area"]) + " m².")
+
 
     def add_template_to_project(self, template_dir):
         """

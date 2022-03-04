@@ -23,7 +23,6 @@ class DataProcessing():
 
         # Leitura de shapefiles de comparação
         gdf_selected_shp = self.shp_handle.read_selected_shp(operation_config['shp'])
-
         scaled_input = self.utils.add_input_scale(input)
         # Elimina feições de comparação distantes das feições de input
         gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)

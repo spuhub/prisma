@@ -70,7 +70,7 @@ class ResultWindow (QtWidgets.QDialog):
         for i in self.result['operation_config']['shp']:
             cont = 0
             for rowIndex, row in gdf_result_shp.iterrows():
-                if str(i['nome']) in gdf_result_shp and row[str(i['nome'])] == True:
+                if str(i['nomeFantasiaCamada']) in gdf_result_shp and row[str(i['nomeFantasiaCamada'])] == True:
                     cont += 1
 
             cellName = QtWidgets.QTableWidgetItem(str(i['nome']))
@@ -110,7 +110,6 @@ class ResultWindow (QtWidgets.QDialog):
         e realiza a inserção deste valor na tabela.
         """
         gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_required'])
-
         for i in self.result['operation_config']['required']:
             cont = 0
 

@@ -24,6 +24,7 @@
 from ..utils.data_processing import DataProcessing
 
 import geopandas as gpd
+import pandas as pd
 
 class OverlayAnalisys():
     """
@@ -48,16 +49,18 @@ class OverlayAnalisys():
         self.operation_config = operation_config
         input, input_standard, gdf_selected_shp, gdf_selected_db, gdf_required = self.data_processing.data_preprocessing(self.operation_config)
 
+        input['Área Homologada_area'] = 0
+
         # Comparação de sobreposição entre input e Shapefiles
-        overlay_shp = self.analisys_shp(input, gdf_selected_shp)
+        input = self.analisys_shp(input, gdf_selected_shp)
 
         # Comparação de sobreposição entre input e bases de dados de banco de dados
-        overlay_db = self.analysis_db(input, gdf_selected_db)
+        input = self.analysis_db(input, gdf_selected_db)
 
         # Comparação de sobreposição entre input e bases de dados obrigatória
-        overlay_required = self.analysis_required(input, gdf_required, self.operation_config)
+        input = self.analysis_required(input, gdf_required, self.operation_config)
 
-        result = {'overlay_shp': overlay_shp, 'overlay_db': overlay_db, 'overlay_required': overlay_required, 'input': input,
+        result = {'overlay_shp': input, 'overlay_db': input, 'overlay_required': input, 'input': input,
                   'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db,
                   'gdf_required': gdf_required}
 
@@ -73,12 +76,15 @@ class OverlayAnalisys():
         index = 0
         overlay_shp = input.copy()
         for area in gdf_selected_shp:
-            overlay_shp[self.operation_config['shp'][index]['nome']] = False
+            overlay_shp[self.operation_config['shp'][index]['nomeFantasiaCamada']] = False
             area = area.to_crs(4326)
             for indexArea, rowArea in area.iterrows():
                 for indexInput, rowInput in input.iterrows():
                     if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nome']] = True
+                        overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nomeFantasiaCamada']] = True
+                        if str(input.geom_type) == str(area.geom_type):
+                            overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+
             index += 1
         return overlay_shp
 
@@ -95,6 +101,7 @@ class OverlayAnalisys():
         for db in gdf_selected_db:
             index_layer = 0
             for layer_db in db:
+                overlay_db[self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = False
                 layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
                 layer_db = layer_db.to_crs(4326)
                 for indexArea, rowArea in layer_db.iterrows():
@@ -102,6 +109,10 @@ class OverlayAnalisys():
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
                             overlay_db.loc[indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
                                     index_layer]] = True
+                            if str(input.geom_type) == str(layer_db.geom_type):
+                                overlay_db.loc[
+                                    indexInput, str(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
+                                        index_layer] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
 
                 index_layer += 1
 
@@ -124,7 +135,12 @@ class OverlayAnalisys():
                 for indexArea, rowArea in area.iterrows():
                     for indexInput, rowInput in input.iterrows():
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_required.loc[indexInput, self.operation_config['required'][index]['nomeFantasiaCamada']] = True
+                            overlay_required.loc[
+                                indexInput, self.operation_config['required'][index]['nomeFantasiaCamada']] = True
+                            if str(input.geom_type) == str(area.geom_type):
+                                overlay_required.loc[
+                                    indexInput, str(self.operation_config['required'][index]['nomeFantasiaCamada'] + "_area")] += (
+                                    rowArea['geometry'].intersection(rowInput['geometry'])).area
             else:
                 overlay_required[self.operation_config['required'][index]['nomeFantasiaTabelasCamadas']] = False
                 area.geometry = gpd.GeoSeries.from_wkt(area['geometry'])
@@ -134,6 +150,11 @@ class OverlayAnalisys():
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
                             overlay_required.loc[
                                 indexInput, self.operation_config['required'][index]['nomeFantasiaTabelasCamadas']] = True
+                            if str(input.geom_type) == str(area.geom_type):
+                                overlay_required.loc[
+                                    indexInput, str(self.operation_config['required'][index][
+                                        'nomeFantasiaTabelasCamadas'] + "_area")] += (
+                                    rowArea['geometry'].intersection(rowInput['geometry'])).area
             index += 1
 
         return overlay_required
