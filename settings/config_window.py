@@ -10,6 +10,7 @@ from .env_tools import EnvTools
 from PyQt5.QtWidgets import QMessageBox
 
 from ..screens.report_generator import ReportGenerator
+from ..databases.db_connection import DbConnection
 
 
 class ConfigWindow(QtWidgets.QDialog):
@@ -270,10 +271,25 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def message(self):
         msg = QMessageBox(self)
+        #nome_base= self.nome_base.text()
+        host = self.host.text()
+        porta = self.porta.text()
+        base_de_dados = self.base_de_dados.text()
+        usuario = self.usuario.text()
+        senha = self.senha.text()
 
-       # msg.information(self, "Conexão com Banco de dados", "Conexão feita com sucesso!")
-       # msg.setIcon(QMessageBox.Information)
-        msg.critical(self, "Conexão com Banco de dados", "Falha ao conectar com o banco de dados!")
-        #msg.setIcon(QMessageBox.Critical)
+        try:
+            conn = DbConnection(host, porta, base_de_dados, usuario, senha)
+            if conn.testConnection():
+                msg.information(self, "Conexão com Banco de dados", "Conexão feita com sucesso!")
+            else:
+                msg.critical(self, "Conexão com Banco de dados", "Falha ao conectar com o banco de dados!")
+
+        except Exception as error:
+            msg.critical(self, "Conexão com Banco de dados", "Falha ao conectar com o banco de dados!")
+
+
+
+
 
 

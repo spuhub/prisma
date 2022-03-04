@@ -50,7 +50,7 @@ class DbConnection:
         self.user = user
         self.password = password
 
-        # try:
+        #try:
         #print (self.nameConect)
         #print (self.host,self.port, self.db, self.user, self.password)
 
@@ -296,6 +296,16 @@ class DbConnection:
             dataTypeDic[table] = tp
 
         return dataTypeDic
+
+    def testConnection(self,):
+        try:
+            cur = self.conn.cursor()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            return False
+
+
 
     # def GETtStatesName(self):
     #     sql = "SELECT nome_valor FROM dominio.sigla_uf ORDER BY id_codigo ASC "
