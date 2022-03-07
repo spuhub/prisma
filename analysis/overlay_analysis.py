@@ -47,7 +47,7 @@ class OverlayAnalisys():
         @return result: Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.
         """
         self.operation_config = operation_config
-        input, input_standard, gdf_selected_shp, gdf_selected_db, gdf_required = self.data_processing.data_preprocessing(self.operation_config)
+        input, input_standard, gdf_selected_shp, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(self.operation_config)
 
         input['Área Homologada_area'] = 0
 
@@ -58,11 +58,10 @@ class OverlayAnalisys():
         input = self.analysis_db(input, gdf_selected_db)
 
         # Comparação de sobreposição entre input e bases de dados obrigatória
-        input = self.analysis_required(input, gdf_required, self.operation_config)
+        # input = self.analysis_required(input, gdf_required, self.operation_config)
 
         result = {'overlay_shp': input, 'overlay_db': input, 'overlay_required': input, 'input': input,
-                  'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db,
-                  'gdf_required': gdf_required}
+                  'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
 
         return result
 

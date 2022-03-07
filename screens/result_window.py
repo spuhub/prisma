@@ -57,7 +57,7 @@ class ResultWindow (QtWidgets.QDialog):
 
         self.overlay_counter_shp()
         self.overlay_counter_pg()
-        self.overlay_counter_required()
+        # self.overlay_counter_required()
 
 
     def overlay_counter_shp(self):
@@ -67,7 +67,11 @@ class ResultWindow (QtWidgets.QDialog):
         """
         gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
 
+
         for i in self.result['operation_config']['shp']:
+            if type(i['nomeFantasiaCamada']) is list:
+                i['nomeFantasiaCamada'] = i['nomeFantasiaCamada'][0]
+
             cont = 0
             for rowIndex, row in gdf_result_shp.iterrows():
                 if str(i['nomeFantasiaCamada']) in gdf_result_shp and row[str(i['nomeFantasiaCamada'])] == True:
@@ -90,6 +94,7 @@ class ResultWindow (QtWidgets.QDialog):
         gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
 
         for bd in self.result['operation_config']['pg']:
+            print(bd['nomeFantasiaTabelasCamadas'])
             cont = 0
             for layer in bd['nomeFantasiaTabelasCamadas']:
                 for rowIndex, row in gdf_result_db.iterrows():

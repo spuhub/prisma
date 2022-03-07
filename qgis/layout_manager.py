@@ -131,7 +131,8 @@ class LayoutManager():
 
             # Soma da área de interseção feita com feição de input e atual área comparada
             # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-            input.loc[0, self.operation_config['operation_config']['shp'][index]['nome']] = gpd.overlay(input, area).area.sum()
+            input.loc[0, self.operation_config['operation_config']['shp'][index]['nomeFantasiaCamada']] = gpd.overlay(input, area).area.sum()
+            print(self.operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'] + ": " + str(gpd.overlay(input, area).area.sum()))
 
             data = []
             # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e feição
@@ -157,7 +158,6 @@ class LayoutManager():
                     self.load_layer(input.iloc[[0]], input_standard, area, intersection, index, None)
 
             index += 1
-
 
     def calculation_db(self, input, input_standard, gdf_selected_db):
         """
@@ -412,6 +412,10 @@ class LayoutManager():
         lot_area = self.layout.itemById('CD_Compl_Obs2')
         overlay_uniao = self.layout.itemById('CD_Compl_Obs3')
         overlay_uniao_area = self.layout.itemById('CD_Compl_Obs4')
+        texto1 = self.layout.itemById('CD_Compl_Obs5')
+        texto2 = self.layout.itemById('CD_Compl_Obs6')
+        texto1.setText("")
+        texto2.setText("")
 
         # Sobreposição com área de comparação
         if input.iloc[self.index_input][layer_name] == True:
@@ -423,13 +427,12 @@ class LayoutManager():
         lot_area.setText("Área total do imóvel: " + str(feature_input_gdp['areaLote'][0]) + " m².")
 
         # Sobreposição com área da união
-        if input.iloc[self.index_input]['Área Homologada'] == True:
+        if input.iloc[self.index_input]['Área Homologada'] > 0:
             overlay_uniao.setText("Lote sobrepõe Área Homologada da União.")
         else:
             overlay_uniao.setText("Lote não sobrepõe Área Homologada da União.")
 
-        overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(input.iloc[self.index_input]["Área Homologada_area"]) + " m².")
-
+        overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(feature_input_gdp.loc[0, 'Área Homologada']) + " m².")
 
     def add_template_to_project(self, template_dir):
         """

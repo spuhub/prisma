@@ -29,9 +29,9 @@ class DataProcessing():
         # Aquisição dos dados vindos de banco de dados
         gdf_selected_db = self.get_db_layers(scaled_input, operation_config['pg'])
         # Cria Geodataframe selecionados como bases de dados obrigatórios
-        gdf_required = self.get_required_layers(scaled_input, operation_config['required'])
+        gdf_selected_shp, gdf_selected_db, operation_config = self.get_required_layers(scaled_input, operation_config, gdf_selected_shp, gdf_selected_db)
 
-        return input, input_standard, gdf_selected_shp, gdf_selected_db, gdf_required
+        return input, input_standard, gdf_selected_shp, gdf_selected_db, operation_config
 
     def get_db_layers(self, scaled_input, operation_config):
         """
@@ -59,16 +59,19 @@ class DataProcessing():
 
         return gdf_selected_db
 
-    def get_required_layers(self, scaled_input, operation_config):
-        gdf_required = []
-        for i in operation_config:
-            if i['tipo'] == 'shp':
-                gdf_required.append(self.shp_handle.read_selected_shp([i]))
+    def get_required_layers(self, scaled_input, operation_config, gdf_selected_shp, gdf_selected_db):
+        for i in range(len(operation_config['required'])):
+            if operation_config['required'][i]['tipo'] == 'shp':
+                operation_config['shp'].append(operation_config['required'][i])
+                get_shp = self.shp_handle.read_selected_shp([operation_config['required'][i]])[0]
+                gdf_selected_shp.append(get_shp)
             else:
-                gdf_required.append(self.get_db_layers(scaled_input, [i]))
+                operation_config['pg'].append(operation_config['required'][i])
+                get_db = self.get_db_layers(scaled_input, [operation_config['required'][i]])[0]
+                gdf_selected_db.append(get_db)
 
-        gdf_required = self.to_list(gdf_required)
-        return gdf_required
+        # gdf_required = self.to_list(gdf_required)
+        return gdf_selected_shp, gdf_selected_db, operation_config
 
     def eliminate_distant_features_shp(self, scaled_input, gdf_selected_shp):
         """Método utilizado para eliminar feições das camadas de comparação que estão distantes das feições de input.
