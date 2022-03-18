@@ -5,9 +5,23 @@ class Utils():
         """
         Método de inicialização da classe.
         """
-        pass
 
     def add_input_approximation_geographic(self, input, approximation):
+        """
+        Adição de buffer de proximidade nos dados de input (EPSG's geográficos).
+
+        @keyword input: Camada de input inserida pelo usuário.
+        @keyword approximation: Buffer de aproximação inserido pelo usuário.
+        @return input: Camada de input contendo o buffer de aproximação inserido.
+        """
+
+        # Transforma metros em graus
+        approximation = approximation / 111319.5432
+
+        input['geometry'] = input['geometry'].buffer(approximation)
+        return input
+
+    def add_layers_approximation_geographic(self, layer, approximation, operation_config):
         """
         Adição de buffer de proximidade nos dados de input (EPSG's geográficos).
 

@@ -5,8 +5,10 @@ from PyQt5.QtGui import QFont
 from PyQt5.uic import loadUi
 
 from ..settings.json_tools import JsonTools
+from ..utils.data_processing import DataProcessing
 from ..analysis.overlay_analysis import OverlayAnalisys
 from ..controllers.operation_controller import OperationController
+
 
 class SelectDatabases(QtWidgets.QDialog):
     """
@@ -22,6 +24,7 @@ class SelectDatabases(QtWidgets.QDialog):
         Inicialização da classe.
         """
         self.operation_config = operation_config
+        self.data_processing = DataProcessing()
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
@@ -102,12 +105,17 @@ class SelectDatabases(QtWidgets.QDialog):
         oc = OperationController()
         self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_bd)
 
+        # Leitura e manipulação dos dados
+        input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(
+            self.operation_config)
+
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        gdf_result = overlay_analysis.overlay_analysis(self.operation_config)
+        gdf_result = overlay_analysis.overlay_analysis(input, input_standard, gdf_selected_shp, gdf_selected_db, self.operation_config)
 
         data = {'overlay_shp': gdf_result['overlay_shp'], 'overlay_db': gdf_result['overlay_db'], 'overlay_required': gdf_result['overlay_required'],
                   'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
-                  'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
+                  'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_shp_standard': gdf_selected_shp_standard,
+                  'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
 
         self.continue_window.emit(data)

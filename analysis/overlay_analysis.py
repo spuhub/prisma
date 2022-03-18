@@ -21,10 +21,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from ..utils.data_processing import DataProcessing
+from ..utils.utils import Utils
 
 import geopandas as gpd
-import pandas as pd
 
 class OverlayAnalisys():
     """
@@ -36,9 +35,9 @@ class OverlayAnalisys():
     """
     def __init__(self):
         """Método construtor da classe."""
-        self.data_processing = DataProcessing()
+        self.utils = Utils()
 
-    def overlay_analysis(self, operation_config):
+    def overlay_analysis(self, input, input_standard, gdf_selected_shp, gdf_selected_db, operation_config):
         """
         Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas.
         Esta função é feita através da projeção geográfica.
@@ -47,7 +46,8 @@ class OverlayAnalisys():
         @return result: Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.
         """
         self.operation_config = operation_config
-        input, input_standard, gdf_selected_shp, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(self.operation_config)
+
+        # gdf_buffered_shp, gdf_buffered_pg = self.handle_approximation_layers()
 
         input['Área Homologada_area'] = 0
 
@@ -56,9 +56,6 @@ class OverlayAnalisys():
 
         # Comparação de sobreposição entre input e bases de dados de banco de dados
         input = self.analysis_db(input, gdf_selected_db)
-
-        # Comparação de sobreposição entre input e bases de dados obrigatória
-        # input = self.analysis_required(input, gdf_required, self.operation_config)
 
         result = {'overlay_shp': input, 'overlay_db': input, 'overlay_required': input, 'input': input,
                   'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
@@ -118,45 +115,14 @@ class OverlayAnalisys():
             index_db += 1
         return overlay_db
 
-    def analysis_required(self, input, gdf_required, operation_config):
-        """Verifica sobreposição entre camada de input e camadas obrigatórias.
+    def handle_approximation_layers(self, gdf_buffered_shp, gdf_buffered_pg):
+        for index, value in enumerate(self.operation_config['shp']):
+            if 'aproximacao' in self.operation_config['shp'][index]:
+                gdf_buffered_shp[index] = self.utils.add_input_approximation_geographic(gdf_buffered_shp, self.operation_config['shp'][index][0])
 
-        @keyword input: Camada de input.
-        @keyword gdf_required: Camadas obrigatórias para comparação.
-        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
-        """
-        index = 0
-        overlay_required = input.copy()
-        for area in gdf_required:
-            if operation_config['required'][index]['tipo'] == 'shp':
-                overlay_required[self.operation_config['required'][index]['nomeFantasiaCamada']] = False
-                area = area.to_crs(4326)
-                for indexArea, rowArea in area.iterrows():
-                    for indexInput, rowInput in input.iterrows():
-                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_required.loc[
-                                indexInput, self.operation_config['required'][index]['nomeFantasiaCamada']] = True
-                            if str(input.geom_type) == str(area.geom_type):
-                                overlay_required.loc[
-                                    indexInput, str(self.operation_config['required'][index]['nomeFantasiaCamada'] + "_area")] += (
-                                    rowArea['geometry'].intersection(rowInput['geometry'])).area
-            else:
-                overlay_required[self.operation_config['required'][index]['nomeFantasiaTabelasCamadas']] = False
-                area.geometry = gpd.GeoSeries.from_wkt(area['geometry'])
-                area = area.to_crs(4326)
-                for indexArea, rowArea in area.iterrows():
-                    for indexInput, rowInput in input.iterrows():
-                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_required.loc[
-                                indexInput, self.operation_config['required'][index]['nomeFantasiaTabelasCamadas']] = True
-                            if str(input.geom_type) == str(area.geom_type):
-                                overlay_required.loc[
-                                    indexInput, str(self.operation_config['required'][index][
-                                        'nomeFantasiaTabelasCamadas'] + "_area")] += (
-                                    rowArea['geometry'].intersection(rowInput['geometry'])).area
-            index += 1
-
-        return overlay_required
+        for index, value in enumerate(self.operation_config['pg']):
+            if 'aproximacao' in self.operation_config['pg'][index]:
+                gdf_buffered_pg[index] = self.utils.add_input_approximation_geographic(gdf_buffered_pg[index], self.operation_config['pg'][index])
 
     def get_utm_crs(self, input, epsg_shp_dir):
         """Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.

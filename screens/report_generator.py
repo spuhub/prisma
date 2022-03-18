@@ -43,7 +43,6 @@ class ReportGenerator(QtWidgets.QDialog):
         self.envtools.store_report_hearder(field)
 
     def fill_fields(self):
-        print(self.envtools.get_report_hearder())
         field = self.envtools.get_report_hearder()
         if "ministerio" in field:
             self.ministerio.setText(field["ministerio"])

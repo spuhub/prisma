@@ -171,7 +171,7 @@ class DbConnection:
             return t
 
         # return a geodataframe with intersects with  polygono
-    def CalculateIntersectGPD(self, input, tableName, sridLayer):
+    def CalculateIntersectGPD(self, input, tableName, approximation, sridLayer):
 
         t = []
         if self.GEtNumberLineOfTable(tableName) > 0:
@@ -185,10 +185,18 @@ class DbConnection:
                 # sql = "select *, ST_AsText(geom) as geometry from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + rowInput['geometry'].to_wkt() + "'," + str(
                 #     sridLayer) + ")," + str(sridTable) + " ))"
 
-                sql = "select ST_AsText(ST_Transform(ta.geom," + str(sridTable) + ")," + str(sridLayer) + \
-                      ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('"\
-                    + rowInput['geometry'].to_wkt() + "'," + str(
-                    sridLayer) + ")," + str(sridTable) + " ))"
+                sql = ""
+                if approximation == None:
+                    sql = "select ST_AsText(ST_Transform(ta.geom," + str(sridTable) + ")," + str(sridLayer) + \
+                          ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('"\
+                        + rowInput['geometry'].to_wkt() + "'," + str(
+                        sridLayer) + ")," + str(sridTable) + " ))"
+                else:
+                    sql = "select ST_AsText(ST_Transform(ST_Buffer(ta.geom, " + str(approximation) + ", 16)," + str(
+                        sridTable) + ")," + str(sridLayer) + \
+                          ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('" \
+                          + rowInput['geometry'].to_wkt() + "'," + str(
+                        sridLayer) + ")," + str(sridTable) + " ))"
                 self.conn.set_client_encoding('utf-8')
                 gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
 

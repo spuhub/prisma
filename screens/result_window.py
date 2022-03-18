@@ -94,7 +94,6 @@ class ResultWindow (QtWidgets.QDialog):
         gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
 
         for bd in self.result['operation_config']['pg']:
-            print(bd['nomeFantasiaTabelasCamadas'])
             cont = 0
             for layer in bd['nomeFantasiaTabelasCamadas']:
                 for rowIndex, row in gdf_result_db.iterrows():

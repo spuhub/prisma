@@ -23,15 +23,22 @@ class DataProcessing():
 
         # Leitura de shapefiles de comparação
         gdf_selected_shp = self.shp_handle.read_selected_shp(operation_config['shp'])
+
         scaled_input = self.utils.add_input_scale(input)
-        # Elimina feições de comparação distantes das feições de input
-        gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)
         # Aquisição dos dados vindos de banco de dados
         gdf_selected_db = self.get_db_layers(scaled_input, operation_config['pg'])
         # Cria Geodataframe selecionados como bases de dados obrigatórios
         gdf_selected_shp, gdf_selected_db, operation_config = self.get_required_layers(scaled_input, operation_config, gdf_selected_shp, gdf_selected_db)
+        gdf_selected_shp_standard = gdf_selected_shp.copy()
 
-        return input, input_standard, gdf_selected_shp, gdf_selected_db, operation_config
+        for index, layer in enumerate(gdf_selected_shp):
+            if 'aproximacao' in operation_config['shp'][index]:
+                gdf_selected_shp[index] = self.utils.add_input_approximation_geographic(layer, operation_config['shp'][index]['aproximacao'][0])
+
+        # Elimina feições de comparação distantes das feições de input
+        gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)
+
+        return input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_db, operation_config
 
     def get_db_layers(self, scaled_input, operation_config):
         """
@@ -40,16 +47,24 @@ class DataProcessing():
         # Configuração acesso banco de dados Postgis junto das camadas que serão utilizadas
         databases = []
         for db in operation_config:
-            databases.append(
-                {'connection': DbConnection(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
-                 'layers': db['tabelasCamadas']})
+            if 'aproximacao' in db:
+                databases.append(
+                    {'connection': DbConnection(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
+                     'layers': db['tabelasCamadas'], 'buffer': db['aproximacao']})
+            else:
+                databases.append(
+                    {'connection': DbConnection(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
+                     'layers': db['tabelasCamadas'], 'buffer': None})
 
         # Cria lista com as bases de dados dos bancos de dados que foram selecionadas para comparação
         gdf_selected_db = []
-        for database in databases:
+        for index_db, database in enumerate(databases):
             layers_db = []
-            for layer in database['layers']:
-                gdf, crs = database['connection'].CalculateIntersectGPD(scaled_input, layer,
+            for index, layer in enumerate(database['layers']):
+                approximation = None
+                if database['buffer'] != None:
+                    approximation = database['buffer'][index] / 111319.5432
+                gdf, crs = database['connection'].CalculateIntersectGPD(scaled_input, layer, approximation,
                                                                         (str(scaled_input.crs)).replace('epsg:', ''))
                 gdf.crs = {'init': 'epsg:' + str(crs)}
 
