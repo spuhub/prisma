@@ -2,7 +2,6 @@
 import os
 
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.PyQt.QtGui import QFont
 from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, \
     QgsLineSymbol, QgsMarkerSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, \
     QgsPrintLayout, QgsReadWriteContext, QgsPalLayerSettings, QgsTextFormat, QgsVectorLayerSimpleLabeling
@@ -14,7 +13,7 @@ from ..settings.env_tools import EnvTools
 from ..analysis.overlay_analysis import OverlayAnalisys
 
 import geopandas as gpd
-import shapely.geometry
+from shapely.geometry import Polygon, Point, LineString
 
 class LayoutManager():
     """Classe responsável por fazer a manipulação do Layout de impressão. Contém métodos para fazer o controle das feições carregadas para impressão,
@@ -104,14 +103,14 @@ class LayoutManager():
             # portanto, não é processado
             if rowInput['crs_feature'] != False:
                 gdf_input = self.calculation_required(input.iloc[[indexInput]], gdf_required)
-                gdf_line_input = self.explode_layer_line(gdf_input)
+                gdf_point_input, gdf_line_input = self.explode_input(gdf_input)
                 # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
                 if len(input_standard) > 0:
-                    self.calculation_shp(gdf_input, gdf_line_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
-                    self.calculation_db(gdf_input, gdf_line_input, input_standard.iloc[[indexInput]], gdf_selected_db, gdf_required)
+                    self.calculation_shp(gdf_input, gdf_line_input, gdf_point_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
+                    self.calculation_db(gdf_input, gdf_line_input, gdf_point_input, input_standard.iloc[[indexInput]], gdf_selected_db, gdf_required)
                 else:
-                    self.calculation_shp(gdf_input, gdf_line_input, input_standard, gdf_selected_shp, gdf_required)
-                    self.calculation_db(gdf_input, gdf_line_input, input_standard, gdf_selected_db, gdf_required)
+                    self.calculation_shp(gdf_input, gdf_line_input, gdf_point_input, input_standard, gdf_selected_shp, gdf_required)
+                    self.calculation_db(gdf_input, gdf_line_input, gdf_point_input, input_standard, gdf_selected_db, gdf_required)
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
 
@@ -182,40 +181,44 @@ class LayoutManager():
 
         return input
 
-    def explode_layer_line(self, gdf_input):
-        line_segs = gpd.GeoSeries(
-            gdf_input["geometry"]
-                .apply(
-                lambda g: [g]
-                if isinstance(g, shapely.geometry.Polygon)
-                else [p for p in g.geoms]
-            )
-                .apply(
-                lambda l: [
-                    shapely.geometry.LineString([c1, c2])
-                    for p in l
-                    for c1, c2 in zip(p.exterior.coords, list(p.exterior.coords)[1:])
-                ]
-            )
-                .explode()
-        )
+    def explode_input(self, gdf_input):
+        geometry = gdf_input.iloc[0]['geometry']
 
-        line_segs = gpd.GeoDataFrame(geometry=gpd.GeoSeries(line_segs), crs = gdf_input.crs)
-        line_segs = line_segs.set_geometry('geometry')
+        geometry_points = []
+        geometry_lines = []
 
-        line_segs['length_line'] = None
-        line_segs = line_segs.reset_index()
+        if geometry.type == 'Polygon':
+            all_coords = geometry.exterior.coords
 
-        for index, row in line_segs.iterrows():
-            round_number = line_segs.iloc[index]["geometry"].length
-            format_value = f'{round_number:_.2f}'
-            format_value = format_value.replace('.', ',').replace('_', '.')
+            for coord in all_coords:
+                geometry_points.append(Point(coord))
 
-            line_segs.loc[index, 'length_line'] = str(format_value) + " m²"
+            for i in range(1, len(all_coords)):
+                geometry_lines.append(LineString([all_coords[i - 1], all_coords[i]]))
 
-        return line_segs
+        # if geometry.type in ['Point', 'LineString']:
+        #   print()
+        #   return list(geometry.xy[0]), list(geometry.xy[1])
 
-    def calculation_shp(self, input, gdf_line_input, input_standard, gdf_selected_shp, gdf_required):
+        if geometry.type == 'MultiPolygon':
+            all_coords = []
+            for ea in geometry:
+                all_coords.append(list(ea.exterior.coords))
+
+            for polygon in all_coords:
+                for coord in polygon:
+                    geometry_points.append(Point(coord))
+
+            for polygon in all_coords:
+                for i in range(1, len(polygon)):
+                    geometry_lines.append(LineString([polygon[i - 1], polygon[i]]))
+
+        gdf_geometry_points = gpd.GeoDataFrame(geometry=geometry_points, crs=gdf_input.crs)
+        gdf_geometry_lines = gpd.GeoDataFrame(geometry=geometry_lines, crs=gdf_input.crs)
+
+        return gdf_geometry_points, gdf_geometry_lines
+
+    def calculation_shp(self, input, gdf_line_input, gdf_point_input, input_standard, gdf_selected_shp, gdf_required):
         """
         Função compara a feição de input passada como parâmetro com bases de dados shapefiles selecionados. Para cada área de comparação
         comparada com a feição de input, chama a função handle_layers, responsável por gerar as camadas no QGIS.
@@ -229,10 +232,6 @@ class LayoutManager():
 
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
-
-        if 'aproximacao' in self.operation_config['operation_config']:
-            input = self.utils.add_input_approximation_projected(input, self.operation_config['operation_config'][
-                'aproximacao'])
 
         if len(input_standard) > 0:
             input_standard = input_standard.to_crs(crs)
@@ -276,13 +275,13 @@ class LayoutManager():
                 intersection.set_crs(allow_override=True, crs=crs)
 
                 if len(input_standard) > 0:
-                    self.handle_layers(input.iloc[[0]], gdf_line_input, input_standard.iloc[[0]], area, intersection, gdf_required, index, None)
+                    self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area, intersection, gdf_required, index, None)
                 else:
-                    self.handle_layers(input.iloc[[0]], gdf_line_input, input_standard, area, intersection, gdf_required, index, None)
+                    self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection, gdf_required, index, None)
 
             index += 1
 
-    def calculation_db(self, input, gdf_line_input, input_standard, gdf_selected_db, gdf_required):
+    def calculation_db(self, input, gdf_line_input, gdf_point_input, input_standard, gdf_selected_db, gdf_required):
         """
         Função compara a feição de input passada como parâmetro com bases de dados oriundas de bancos de dados. Para cada área de comparação
         comparada com a feição de input, chama a função handle_layers, responsável por gerar as camadas no QGIS.
@@ -297,10 +296,6 @@ class LayoutManager():
 
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
-
-        if 'aproximacao' in self.operation_config['operation_config']:
-            input = self.utils.add_input_approximation_projected(input, self.operation_config['operation_config'][
-                'aproximacao'])
 
         # Cálculos de área de input e centroid feição de entrada
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].area
@@ -340,15 +335,15 @@ class LayoutManager():
                     intersection.set_crs(allow_override=True, crs=crs)
 
                     if len(input_standard) > 0:
-                        self.handle_layers(input.iloc[[0]], gdf_line_input, input_standard.iloc[[0]], area, intersection, gdf_required, index_db,
+                        self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area, intersection, gdf_required, index_db,
                                         index_layer)
                     else:
-                        self.handle_layers(input.iloc[[0]], gdf_line_input, input_standard, area, intersection, gdf_required, index_db, index_layer)
+                        self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection, gdf_required, index_db, index_layer)
 
                 index_layer += 1
             index_db += 1
 
-    def handle_layers(self, feature_input_gdp, gdf_line_input, input_standard, feature_area, feature_intersection, gdf_required, index_1, index_2):
+    def handle_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard, feature_area, feature_intersection, gdf_required, index_1, index_2):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -472,21 +467,24 @@ class LayoutManager():
         QApplication.instance().processEvents()
 
         layer = iface.activeLayer()
-        pal_layer = QgsPalLayerSettings()
-        text_format = QgsTextFormat()
+        if layer.name() == 'Linhas':
+            qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\medidas_lotes.qml')
+            layer.loadNamedStyle(qml_style_dir)
+            layer.triggerRepaint()
 
-        text_format.setFont(QFont("Arial", 10))
-        text_format.setSize(10)
+        # Camada de vértices
+        show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
+        show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-        pal_layer.setFormat(text_format)
-        pal_layer.fieldName = "length_line"
-        pal_layer.isExpression = True
-        pal_layer.enabled = True
-        pal_layer.placement = QgsPalLayerSettings.Line
-        labels = QgsVectorLayerSimpleLabeling(pal_layer)
-        layer.setLabeling(labels)
-        layer.setLabelsEnabled(True)
-        layer.triggerRepaint()
+        QgsProject.instance().addMapLayer(show_qgis_vertices)
+
+        QApplication.instance().processEvents()
+
+        layer = iface.activeLayer()
+        if layer.name() == 'Vértices':
+            qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
+            layer.loadNamedStyle(qml_style_dir)
+            layer.triggerRepaint()
 
         # Posiciona a tela do QGis no extent da área de entrada
         for layer in QgsProject.instance().mapLayers().values():
