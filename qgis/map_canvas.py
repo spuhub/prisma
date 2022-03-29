@@ -44,10 +44,12 @@ class MapCanvas():
             area = area.to_crs(epsg='4326')
             index += 1
 
-            show_qgis_areas = QgsVectorLayer(area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
-            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
-            show_qgis_areas.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_areas)
+            if len(area) > 0:
+                show_qgis_areas = QgsVectorLayer(area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
+                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
+                                                 operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
+                show_qgis_areas.renderer().setSymbol(symbol)
+                QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e Postgis
         index_db = 0
@@ -105,7 +107,6 @@ class MapCanvas():
 
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
-        gdf_required = operation_config['gdf_required']
 
         # Carrega camada mundial do OpenStreetMap
         tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -139,7 +140,7 @@ class MapCanvas():
                 show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
 
                 symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
-                print("Geometria: ", show_qgis_areas.geometryType())
+
                 show_qgis_areas.renderer().setSymbol(symbol)
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
@@ -168,55 +169,11 @@ class MapCanvas():
                                                      operation_config['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
                     symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
-                    print("Geometria: ", show_qgis_areas.geometryType())
                     show_qgis_areas.renderer().setSymbol(symbol)
                     QgsProject.instance().addMapLayer(show_qgis_areas)
 
                 index_layer += 1
             index_db += 1
-
-        # Exibe de sobreposição entre input e áreas obrigatórias
-        index = -1
-        index_show_overlay = 0
-        gdf_input = gpd.GeoDataFrame(columns=input.columns)
-        print_input = False
-        input = input.to_crs(epsg='4326')
-        for area in gdf_required:
-            area = area.to_crs(epsg='4326')
-            index += 1
-            gdf_area = gpd.GeoDataFrame(columns=area.columns)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        gdf_input.loc[index_show_overlay] = rowInput
-                        gdf_area.loc[index_show_overlay] = rowArea
-                        index_show_overlay += 1
-
-            if len(gdf_area) > 0:
-                print_input = True
-
-                if 'geom' in gdf_area:
-                    gdf_area = gdf_area.drop(columns=['geom'])
-
-                gdf_area = gdf_area.drop_duplicates()
-                if 'nomeFantasiaCamada' in operation_config['operation_config']['required'][index]:
-                    show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                     operation_config['operation_config']['required'][index][
-                                                         'nomeFantasiaCamada'][0])
-
-                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                     operation_config['operation_config']['required'][index][
-                                                         'estiloCamadas'][0])
-                else:
-                    show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                     operation_config['operation_config']['required'][index][
-                                                         'nomeFantasiaTabelasCamadas'][0])
-                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                     operation_config['operation_config']['required'][index][
-                                                         'estiloTabelasCamadas'][0])
-                print("Geometria: ", show_qgis_areas.geometryType())
-                show_qgis_areas.renderer().setSymbol(symbol)
-                QgsProject.instance().addMapLayer(show_qgis_areas)
 
         if print_input:
             if 'aproximacao' in operation_config['operation_config']:
@@ -231,7 +188,7 @@ class MapCanvas():
 
                 input_standard = input_standard.to_crs(4326)
                 # gdf_input = gdf_input.to_crs(4326)
-                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db, gdf_required)
+                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db)
 
                 show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
 
@@ -243,7 +200,7 @@ class MapCanvas():
             else:
                 input_standard = input_standard.to_crs(4326)
                 # gdf_input = gdf_input.to_crs(4326)
-                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db, gdf_required)
+                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db)
 
                 show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(),
                                                           "Feição de Estudo/Sobreposição")
@@ -258,7 +215,7 @@ class MapCanvas():
             # Da zoom na camada de input
             iface.zoomToActiveLayer()
 
-    def get_overlay_features(self, input, input_standard, gdf_selected_shp, gdf_selected_db, gdf_required):
+    def get_overlay_features(self, input, input_standard, gdf_selected_shp, gdf_selected_db):
         """
         Verifica, entre camada de input e camadas selecionadas para comparação, quais possuem sobreposição.
 
@@ -292,16 +249,6 @@ class MapCanvas():
                                 pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
                 index_layer += 1
             index_db += 1
-
-        # Teste com áreas obrigatórias
-        i = 0
-        for area in gdf_required:
-            i += 1
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if rowInput['geometry'].intersection(rowArea['geometry']):
-                        get_overlay_standard = gpd.GeoDataFrame(
-                            pd.concat([get_overlay_standard, input_standard.iloc[[indexInput]]]))
 
         get_overlay_standard = get_overlay_standard.drop_duplicates()
         get_overlay_standard = get_overlay_standard.reset_index()
@@ -363,13 +310,13 @@ class MapCanvas():
         symbol = None
 
         # Point
-        if geometry_type == 0:
+        if geometry_type == 0 or geometry_type == 4:
             symbol = QgsMarkerSymbol.createSimple(style)
         # Line String
-        if geometry_type == 1:
+        elif geometry_type == 1 or geometry_type == 5:
             symbol = QgsLineSymbol.createSimple(style)
         # Polígono
-        elif geometry_type == 2:
+        elif geometry_type == 2 or geometry_type == 6:
             symbol = QgsFillSymbol.createSimple(style)
 
         return symbol

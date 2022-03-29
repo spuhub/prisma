@@ -214,6 +214,9 @@ class LayoutManager():
                     geometry_lines.append(LineString([polygon[i - 1], polygon[i]]))
 
         gdf_geometry_points = gpd.GeoDataFrame(geometry=geometry_points, crs=gdf_input.crs)
+        # Remover o último vértice, para não ficar dois pontos no mesmo lugar
+        gdf_geometry_points = gdf_geometry_points[:-1]
+
         gdf_geometry_lines = gpd.GeoDataFrame(geometry=geometry_lines, crs=gdf_input.crs)
 
         return gdf_geometry_points, gdf_geometry_lines
@@ -359,13 +362,13 @@ class LayoutManager():
         # Forma de contornar problema do QGis, que alterava o extent da camada de forma incorreta
         extent = feature_input_gdp.bounds
 
-        # Altera o EPSG do projeto QGis
-        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-        QApplication.instance().processEvents()
-
         if self.required_layers_loaded == False:
             self.load_required_layers(gdf_required, crs)
             self.required_layers_loaded = True
+
+        # Altera o EPSG do projeto QGis
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+        QApplication.instance().processEvents()
 
         self.remove_layers()
 
@@ -454,37 +457,15 @@ class LayoutManager():
         show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
         show_qgis_quota.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-        symbol = self.get_feature_symbol(show_qgis_quota.geometryType(), {
-                "line_style": "solid",
-                "line_color": "black",
-                "width_border": "0.35",
-                "style": "solid",
-                "color": "red"
-            })
-        show_qgis_quota.renderer().setSymbol(symbol)
-        QgsProject.instance().addMapLayer(show_qgis_quota)
-
-        QApplication.instance().processEvents()
-
-        layer = iface.activeLayer()
-        if layer.name() == 'Linhas':
-            qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\medidas_lotes.qml')
-            layer.loadNamedStyle(qml_style_dir)
-            layer.triggerRepaint()
+        QgsProject.instance().addMapLayer(show_qgis_quota, False)
+        self.root.insertLayer(0, show_qgis_quota)
 
         # Camada de vértices
         show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
         show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-        QgsProject.instance().addMapLayer(show_qgis_vertices)
-
-        QApplication.instance().processEvents()
-
-        layer = iface.activeLayer()
-        if layer.name() == 'Vértices':
-            qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
-            layer.loadNamedStyle(qml_style_dir)
-            layer.triggerRepaint()
+        QgsProject.instance().addMapLayer(show_qgis_vertices, False)
+        self.root.insertLayer(0, show_qgis_vertices)
 
         # Posiciona a tela do QGis no extent da área de entrada
         for layer in QgsProject.instance().mapLayers().values():
@@ -496,6 +477,16 @@ class LayoutManager():
                 self.atlas.setCoverageLayer(layer)
                 self.atlas.changed
                 self.layers = layer
+
+            elif layer.name() == 'Linhas':
+                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\medidas_lotes.qml')
+                layer.loadNamedStyle(qml_style_dir)
+                layer.triggerRepaint()
+
+            elif layer.name() == 'Vértices':
+                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
+                layer.loadNamedStyle(qml_style_dir)
+                layer.triggerRepaint()
 
         # Configurações no QGis para gerar os relatórios PDF
         ms = QgsMapSettings()
@@ -527,23 +518,24 @@ class LayoutManager():
             area = area.to_crs(crs)
             area = area.set_crs(crs, allow_override = True)
 
-            show_qgis_areas = None
-            if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                             self.operation_config['operation_config']['required'][index][
-                                                 'nomeFantasiaCamada'])
-            else:
-                show_qgis_areas = QgsVectorLayer(area.to_json(),
+            if len(area) > 0:
+                show_qgis_areas = None
+                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                    show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                  self.operation_config['operation_config']['required'][index][
-                                                     'nomeFantasiaTabelasCamadas'][0])
+                                                     'nomeFantasiaCamada'])
+                else:
+                    show_qgis_areas = QgsVectorLayer(area.to_json(),
+                                                     self.operation_config['operation_config']['required'][index][
+                                                         'nomeFantasiaTabelasCamadas'][0])
 
-            show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+                show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                             self.operation_config['operation_config']['required'][index]['estiloCamadas'][
-                                                 0])
-            show_qgis_areas.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_areas)
+                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
+                                                 self.operation_config['operation_config']['required'][index]['estiloCamadas'][
+                                                     0])
+                show_qgis_areas.renderer().setSymbol(symbol)
+                QgsProject.instance().addMapLayer(show_qgis_areas)
 
             index += 1
 
@@ -720,13 +712,13 @@ class LayoutManager():
         symbol = None
 
         # Point
-        if geometry_type == 0:
+        if geometry_type == 0 or geometry_type == 4:
             symbol = QgsMarkerSymbol.createSimple(style)
         # Line String
-        if geometry_type == 1:
+        elif geometry_type == 1 or geometry_type == 5:
             symbol = QgsLineSymbol.createSimple(style)
         # Polígono
-        elif geometry_type == 2:
+        elif geometry_type == 2 or geometry_type == 6:
             symbol = QgsFillSymbol.createSimple(style)
 
         return symbol

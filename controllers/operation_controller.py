@@ -46,7 +46,6 @@ class OperationController:
             columns = list(input)
 
             for i in range(len(input)):
-                print("i: ", i)
                 for column in columns:
                     if column in input:
                         if type(input.iloc[i][column]) == QVariant:
@@ -75,6 +74,7 @@ class OperationController:
                 operation_config['shp'].append(i)
 
         operation_config['pg'] = []
+
         for i in self.data_bd:
             et = EnvTools()
             login = et.get_credentials(i['id'])
