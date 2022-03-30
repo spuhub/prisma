@@ -131,29 +131,29 @@ class ConfigLayers(QtWidgets.QDialog):
         itemCellClass = QTableWidgetItem(str(shp.type).replace("0", "").replace(" ", ""))
         self.table_layers.setItem(0, 3, itemCellClass)
 
-        self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
-        self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
+        #self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
+        #self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
 
-        self.objects_tipo_camada_base.append(
-            self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
-        self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
+        #self.objects_tipo_camada_base.append(
+         #   self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
+        #self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
 
         self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(0) + "-" + str(6)))
-        self.table_layers.setCellWidget(0, 6, self.objects_estilo_linhas[0])
+        self.table_layers.setCellWidget(0, 4, self.objects_estilo_linhas[0])
 
         self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(0) + "-" + str(7), "black"))
-        self.table_layers.setCellWidget(0, 7, self.objects_cor_linhas[0])
+        self.table_layers.setCellWidget(0, 5, self.objects_cor_linhas[0])
 
         self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8),0.25))
-        self.table_layers.setCellWidget(0, 8, self.objects_espessura_linhas[0])
+        self.table_layers.setCellWidget(0, 6, self.objects_espessura_linhas[0])
 
         self.objects_preenchimento.append(
             self.create_ComboBox_preenchimento("preenchimento" + "-" + str(0) + "-" + str(9)))
-        self.table_layers.setCellWidget(0, 9, self.objects_preenchimento[0])
+        self.table_layers.setCellWidget(0, 7, self.objects_preenchimento[0])
 
         self.objects_cor_preenchimento.append(
             self.create_Color_Select("corPreenchimento" + "-" + str(0) + "-" + str(10), self.generate_color()))
-        self.table_layers.setCellWidget(0, 10, self.objects_cor_preenchimento[0])
+        self.table_layers.setCellWidget(0, 8, self.objects_cor_preenchimento[0])
 
     def fill_table_bd(self):
 
@@ -227,12 +227,12 @@ class ConfigLayers(QtWidgets.QDialog):
             itemCellClass = QTableWidgetItem(dataTables[tabelasGeom[i]])
             self.table_layers.setItem(i, 3, itemCellClass)
 
-            self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(i), False))
-            self.table_layers.setCellWidget(i, 4, self.objects_vai_usar_camada_base[i])
+            #self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(i), False))
+            #self.table_layers.setCellWidget(i, 4, self.objects_vai_usar_camada_base[i])
 
 
-            self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
-            self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
+            #self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
+            #self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
 
             style = {}
 
@@ -247,14 +247,14 @@ class ConfigLayers(QtWidgets.QDialog):
                 indexQcombo = self.objects_estilo_linhas[i].findData("line_style")
                 self.objects_estilo_linhas[i].setCurrentIndex(indexQcombo)
 
-            self.table_layers.setCellWidget(i, 6, self.objects_estilo_linhas[i])
+            self.table_layers.setCellWidget(i, 4, self.objects_estilo_linhas[i])
 
             lineColor = "black"
             if "line_color" in style:
                 lineColor = style["line_color"]
 
             self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7),lineColor))
-            self.table_layers.setCellWidget(i, 7, self.objects_cor_linhas[i])
+            self.table_layers.setCellWidget(i, 5, self.objects_cor_linhas[i])
 
             espeLine = 0.25
 
@@ -262,18 +262,18 @@ class ConfigLayers(QtWidgets.QDialog):
                 espeLine = float(style["width_border"])
 
             self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8), espeLine))
-            self.table_layers.setCellWidget(i, 8, self.objects_espessura_linhas[i])
+            self.table_layers.setCellWidget(i, 6, self.objects_espessura_linhas[i])
 
 
             self.objects_preenchimento.append(self.create_ComboBox_preenchimento("preenchimento" + "-" + str(i) + "-" + str(9)))
-            self.table_layers.setCellWidget(i, 9, self.objects_preenchimento[i])
+            self.table_layers.setCellWidget(i, 7, self.objects_preenchimento[i])
 
             fillColor = self.generate_color()
 
             if "color" in style:
                 fillColor = style["color"]
             self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
-            self.table_layers.setCellWidget(i, 10, self.objects_cor_preenchimento[i])
+            self.table_layers.setCellWidget(i, 8, self.objects_cor_preenchimento[i])
 
     def save_base_pg(self):
         idbd = self.id_current_db

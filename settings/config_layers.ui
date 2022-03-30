@@ -97,30 +97,6 @@
      </column>
      <column>
       <property name="text">
-       <string>É Camada de Base</string>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Tipo Camada Base</string>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
        <string>Estilo Linha</string>
       </property>
       <property name="font">
