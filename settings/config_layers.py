@@ -43,6 +43,7 @@ class ConfigLayers(QtWidgets.QDialog):
         self.objects_tables_disponiveis = []
         self.objects_tipo_tables_disponiveis = []
         self.objects_nome_fantasia = []
+        self.objects_buffer = []
 
         self.fill_table()
         self.btn_layer_cancelar.clicked.connect(self.back)
@@ -76,6 +77,13 @@ class ConfigLayers(QtWidgets.QDialog):
         return cb
 
     def create_espessura_box(self, id_object, value):
+        dsb = QDoubleSpinBox()
+        dsb.setValue(value)
+        dsb.setObjectName(id_object)
+        dsb.setSingleStep(0.1)
+        return dsb
+
+    def create_buffer_box(self, id_object, value):
         dsb = QDoubleSpinBox()
         dsb.setValue(value)
         dsb.setObjectName(id_object)
@@ -274,6 +282,10 @@ class ConfigLayers(QtWidgets.QDialog):
                 fillColor = style["color"]
             self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
             self.table_layers.setCellWidget(i, 8, self.objects_cor_preenchimento[i])
+
+            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(11), espeLine))
+            self.table_layers.setCellWidget(i, 9, self.objects_buffer[i])
+
 
     def save_base_pg(self):
         idbd = self.id_current_db
