@@ -185,6 +185,8 @@ class LayoutManager():
         geometry = gdf_input.iloc[0]['geometry']
 
         geometry_points = []
+        coord_x = []
+        coord_y = []
         geometry_lines = []
 
         if geometry.type == 'Polygon':
@@ -192,6 +194,8 @@ class LayoutManager():
 
             for coord in all_coords:
                 geometry_points.append(Point(coord))
+                coord_x.append(list(coord)[0])
+                coord_y.append(list(coord)[1])
 
             for i in range(1, len(all_coords)):
                 geometry_lines.append(LineString([all_coords[i - 1], all_coords[i]]))
@@ -208,12 +212,16 @@ class LayoutManager():
             for polygon in all_coords:
                 for coord in polygon:
                     geometry_points.append(Point(coord))
+                    coord_x.append(list(coord)[0])
+                    coord_y.append(list(coord)[1])
 
             for polygon in all_coords:
                 for i in range(1, len(polygon)):
                     geometry_lines.append(LineString([polygon[i - 1], polygon[i]]))
 
-        gdf_geometry_points = gpd.GeoDataFrame(geometry=geometry_points, crs=gdf_input.crs)
+        data = list(zip(coord_x, coord_y, geometry_points))
+
+        gdf_geometry_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data, crs=gdf_input.crs)
         # Remover o último vértice, para não ficar dois pontos no mesmo lugar
         gdf_geometry_points = gdf_geometry_points[:-1]
 
@@ -494,6 +502,11 @@ class LayoutManager():
         rect = QgsRectangle(ms.fullExtent())
 
         main_map = self.layout.itemById('Planta_Principal')
+        situation_map = self.layout.itemById('Planta_Situacao')
+        localization_map = self.layout.itemById('Planta_Localizacao')
+
+        print(type(situation_map))
+        print(type(localization_map))
 
         ms.setExtent(rect)
         main_map.zoomToExtent(rect)
