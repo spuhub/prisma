@@ -7,11 +7,11 @@
   <head>
     
     <title>prisma.settings.config_window.ConfigWindow</title>
-    <meta name="generator" content="pydoctor 21.12.1"> 
+    <meta name="generator" content="pydoctor 22.4.0"> 
         
     </meta>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.75" />
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="apidocs.css" />
     <link rel="stylesheet" type="text/css" href="extra.css" />
@@ -28,21 +28,98 @@
     <div class="navbar-header">
       
       <div class="navlinks">
-          <span class="navbar-brand">
-            prisma <a href="index.html">API Documentation</a>
+        <span class="navbar-brand">
+          prisma <a href="index.html">API Documentation</a>
+        </span>
+
+        <a href="moduleIndex.html">
+          Modules
+        </a>
+
+        <a href="classIndex.html">
+          Classes
+        </a>
+
+        <a href="nameIndex.html">
+          Names
+        </a>
+
+        <div id="search-box-container">
+          <div class="input-group">
+            <input id="search-box" type="search" name="search-query" placeholder="Search..." aria-label="Search" minlength="2" class="form-control" autocomplete="off" />
+            
+            <span class="input-group-btn">
+              <a style="display: none;" class="btn btn-default" id="search-clear-button" title="Clear" onclick="clearSearch()"><img src="fonts/x-circle.svg" alt="Clear" /></a>
+              <a class="btn btn-default" id="search-help-button" title="Help" onclick="toggleSearchHelpText()"><img src="fonts/info.svg" alt="Help" /></a>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="search-results-container" style="display: none;">
+        
+        <div id="search-buttons">
+          <span class="label label-default" id="search-docstrings-button">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="toggle-search-in-docstrings-checkbox" value="false" onclick="toggleSearchInDocstrings()">
+              search in docstrings
+            </input>
+          </label>
           </span>
+          
+        </div>
+        
+        <noscript>
+            <h1>Cannot search: JavaScript is not supported/enabled in your browser.</h1>
+        </noscript>
 
-          <a href="moduleIndex.html">
-            Modules
-          </a>
+        <div class="hint" id="search-help-box">
+          <p class="rst-last">
+      
+            Search bar offers the following options:
+            <ul>   
+                <li>
+                  <strong>Term presence.</strong> The below example searches for documents that 
+                    must contain “foo”, might contain “bar” and must not contain “baz”: <code>+foo bar -baz</code>
+                </li> 
 
-          <a href="classIndex.html">
-            Classes
-          </a>
+                <li>
+                  <strong>Wildcards.</strong> The below example searches for documents with words beginning with “foo”: <code>foo*</code>
+                </li> 
 
-          <a href="nameIndex.html">
-            Names
-          </a>
+                <li>
+                  <strong>Search in specific fields.</strong> The following search matches all objects 
+                  in "twisted.mail" that matches “search”: <code>+qname:twisted.mail.* +search</code>
+
+                  <p>
+                    Possible fields: 'name', 'qname' (fully qualified name), 'docstring', and 'kind'.
+                    Last two fields are only applicable if "search in docstrings" is enabled.
+                  </p>
+                </li>
+
+                <li>
+                  <strong>Fuzzy matches.</strong> The following search matches all documents 
+                  that have a word within 1 edit distance of “foo”: <code>foo~1</code>
+                </li>
+            </ul>
+
+          </p>
+        </div>
+
+        <div id="search-status"> </div>
+
+        <div class="warning" id="search-warn-box" style="display: none;">
+          <p class="rst-last"><span id="search-warn"></span></p>
+        </div>
+
+        <table id="search-results">
+          <!-- Filled dynamically by JS -->
+        </table>
+        
+        <div style="margin-top: 8px;">
+          <p>Results provided by <a href="https://lunrjs.com">Lunr.js</a></p>
+        </div>
       </div>
 
     </div>
@@ -54,7 +131,7 @@
     <div class="container">
 
       <div class="page-header">
-        <h1 class="class"><code><code><a href="prisma.html">prisma</a></code><wbr></wbr>.<code><a href="prisma.settings.html">settings</a></code><wbr></wbr>.<code><a href="prisma.settings.config_window.html">config_window</a></code><wbr></wbr>.<code><a href="prisma.settings.config_window.ConfigWindow.html">ConfigWindow</a></code></code></h1>
+        <h1 class="class"><code><code><a href="index.html" class="internal-link">prisma</a></code><wbr></wbr>.<code><a href="prisma.settings.html" class="internal-link" title="prisma.settings">settings</a></code><wbr></wbr>.<code><a href="prisma.settings.config_window.html" class="internal-link" title="prisma.settings.config_window">config_window</a></code><wbr></wbr>.<code><a href="prisma.settings.config_window.ConfigWindow.html" class="internal-link" title="prisma.settings.config_window.ConfigWindow">ConfigWindow</a></code></code></h1>
         <div id="showPrivate">
           <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
         </div>
@@ -65,152 +142,162 @@
       </div>
 
       <div class="extrasDocstring">
-        <p><code><span class="py-keyword">class</span> <span class="py-defname">ConfigWindow</span>(<span title="PyQt5.QtWidgets.QDialog">QtWidgets.QDialog</span>):</code></p>
+        <p><code><span class="py-keyword">class</span> <span class="py-defname">ConfigWindow</span>(QtWidgets.QDialog):</code></p>
         <p><a href="classIndex.html#prisma.settings.config_window.ConfigWindow">View In Hierarchy</a></p>
       </div>
 
       <div class="moduleDocstring">
-        <div><p class="undocumented">Undocumented</p></div>
+        <div>Classe reponsavel por manipular a janela de configuração principal</div>
       </div>
 
       <div id="splitTables">
-        <table class="children sortable" id="id31">
+        <table class="children sortable" id="id46">
   
   
   <tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#__init__">__init__</a></code></td>
+    <td><code><a href="#__init__" class="internal-link" title="prisma.settings.config_window.ConfigWindow.__init__">__init__</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#back">back</a></code></td>
+    <td><code><a href="#back" class="internal-link" title="prisma.settings.config_window.ConfigWindow.back">back</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#fill_combo_box_base">fill_combo_box_base</a></code></td>
+    <td><code><a href="#fill_combo_box_base" class="internal-link" title="prisma.settings.config_window.ConfigWindow.fill_combo_box_base">fill​_combo​_box​_base</a></code></td>
+    <td>Preenche o combox com bases PostgreSQl cadastradas e presentes no Json de configuração. @return: void</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#fill_combo_box_geocoding_server" class="internal-link" title="prisma.settings.config_window.ConfigWindow.fill_combo_box_geocoding_server">fill​_combo​_box​_geocoding​_server</a></code></td>
+    <td>Preenche combobox com as opções de Servidores de Geocodificação. @return:</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#fill_combo_box_shp" class="internal-link" title="prisma.settings.config_window.ConfigWindow.fill_combo_box_shp">fill​_combo​_box​_shp</a></code></td>
+    <td>Preenche o combox com bases ShapeFile cadastradas e presentes no Json de configuração. @return:</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#fill_text_fields_base" class="internal-link" title="prisma.settings.config_window.ConfigWindow.fill_text_fields_base">fill​_text​_fields​_base</a></code></td>
+    <td>Função responsavel por buscar no Json de configurações as iformações da base de dados Postgres, Selecionadaa no combobox e preencher os campos do formulario na interfasse grafica. @return: void</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#fill_text_fields_shp" class="internal-link" title="prisma.settings.config_window.ConfigWindow.fill_text_fields_shp">fill​_text​_fields​_shp</a></code></td>
+    <td>Função responsável por buscar no Json de configurações as informações da base de dados Shapefile, Selecionadaa no combobox e preencher os campos do formulario na interfasse gráfica. @return:  void</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#hideLayerConfBase" class="internal-link" title="prisma.settings.config_window.ConfigWindow.hideLayerConfBase">hide​Layer​Conf​Base</a></code></td>
+    <td>Renderisa a janela de configuração de camadas das bases PostgreSQL. @return: void</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#hideLayerConfShp" class="internal-link" title="prisma.settings.config_window.ConfigWindow.hideLayerConfShp">hide​Layer​Conf​Shp</a></code></td>
+    <td>Renderisa a janela de configuração de camadas das bases Shapefile. @return: void</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#hiderheader" class="internal-link" title="prisma.settings.config_window.ConfigWindow.hiderheader">hiderheader</a></code></td>
+    <td></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#message" class="internal-link" title="prisma.settings.config_window.ConfigWindow.message">message</a></code></td>
+    <td>Testa se a conexão com o banco de dado foi feita com sucesso. @return: void.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#next" class="internal-link" title="prisma.settings.config_window.ConfigWindow.next">next</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#fill_combo_box_geocoding_server">fill_combo_box_geocoding_server</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#save_bd_config_json" class="internal-link" title="prisma.settings.config_window.ConfigWindow.save_bd_config_json">save​_bd​_config​_json</a></code></td>
+    <td>Método responsável pegar da interface as informações configuração de base de dados do PostgreSQL e salvar no Json de configuração. @return: void</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#fill_combo_box_shp">fill_combo_box_shp</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#save_geocoding_key" class="internal-link" title="prisma.settings.config_window.ConfigWindow.save_geocoding_key">save​_geocoding​_key</a></code></td>
+    <td>Método responsável por pegar a chave do servidor de Geocodificação digitado na interface e salvar na chache do QGIS. @return: void</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#fill_text_fields_base">fill_text_fields_base</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#save_settings" class="internal-link" title="prisma.settings.config_window.ConfigWindow.save_settings">save​_settings</a></code></td>
+    <td>Salva as configurações de PosgreSQL e ShapeFile no Json de configuração. Executa os metodos: "save_bd_config_json" e "save_shp_config_json" @return:</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#fill_text_fields_shp">fill_text_fields_shp</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#save_shp_config_json" class="internal-link" title="prisma.settings.config_window.ConfigWindow.save_shp_config_json">save​_shp​_config​_json</a></code></td>
+    <td>Método responsável pegar da interface as informações configuração de base de dados Shapefile e salvar no Json de configuração. @return:</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#hideLayerConfBase">hideLayerConfBase</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#search_base_pg" class="internal-link" title="prisma.settings.config_window.ConfigWindow.search_base_pg">search​_base​_pg</a></code></td>
+    <td>Busca as configurações de uma base de dados PostgreSQL apartir do seu ID @param id_base: ID da base dados @return:</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#hideLayerConfShp">hideLayerConfShp</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#search_base_shp" class="internal-link" title="prisma.settings.config_window.ConfigWindow.search_base_shp">search​_base​_shp</a></code></td>
+    <td>Busca as configurações de uma base de dados Shapefile a partir do seu ID. @param id_base: ID da base dados @return:</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#hiderheader">hiderheader</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#search_index_base_pg" class="internal-link" title="prisma.settings.config_window.ConfigWindow.search_index_base_pg">search​_index​_base​_pg</a></code></td>
+    <td>Busca o index as configurações de uma base de dados Postgres no vetor de configurações "source_databases"  a partir do seu ID. @param id_base: @return: void</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#next">next</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><code><a href="#search_index_base_shp" class="internal-link" title="prisma.settings.config_window.ConfigWindow.search_index_base_shp">search​_index​_base​_shp</a></code></td>
+    <td>Busca o index as configurações de uma base de dados Shapefile no vetor de configurações "source_shp"  a partir do seu ID. @param id_base: ID da base dados @return:</td>
   </tr><tr class="method">
     
     <td>Method</td>
-    <td><code><a href="#save_bd_config_json">save_bd_config_json</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
+    <td><code><a href="#set_config" class="internal-link" title="prisma.settings.config_window.ConfigWindow.set_config">set​_config</a></code></td>
+    <td>Método responsável por pegar a nova chave do servidor de Geocodificação digitado na interface e modificar/salvar na chache do QGIS. @return: void</td>
+  </tr><tr class="classvariable">
     
-    <td>Method</td>
-    <td><code><a href="#save_geocoding_key">save_geocoding_key</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    <td>Method</td>
-    <td><code><a href="#save_settings">save_settings</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    <td>Method</td>
-    <td><code><a href="#save_shp_config_json">save_shp_config_json</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    <td>Method</td>
-    <td><code><a href="#search_base_pg">search_base_pg</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    <td>Method</td>
-    <td><code><a href="#search_base_shp">search_base_shp</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    <td>Method</td>
-    <td><code><a href="#search_index_base_pg">search_index_base_pg</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    <td>Method</td>
-    <td><code><a href="#search_index_base_shp">search_index_base_shp</a></code></td>
+    <td>Class Variable</td>
+    <td><code><a href="#back_window" class="internal-link" title="prisma.settings.config_window.ConfigWindow.back_window">back​_window</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="classvariable">
     
     <td>Class Variable</td>
-    <td><code><a href="#back_window">back_window</a></code></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="classvariable">
-    
-    <td>Class Variable</td>
-    <td><code><a href="#continue_window">continue_window</a></code></td>
+    <td><code><a href="#continue_window" class="internal-link" title="prisma.settings.config_window.ConfigWindow.continue_window">continue​_window</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="instancevariable">
     
     <td>Instance Variable</td>
-    <td><code><a href="#credencials">credencials</a></code></td>
+    <td><code><a href="#credencials" class="internal-link" title="prisma.settings.config_window.ConfigWindow.credencials">credencials</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="instancevariable">
     
     <td>Instance Variable</td>
-    <td><code><a href="#newbdID">newbdID</a></code></td>
+    <td><code><a href="#newbdID" class="internal-link" title="prisma.settings.config_window.ConfigWindow.newbdID">newbd​ID</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="instancevariable">
     
     <td>Instance Variable</td>
-    <td><code><a href="#newshpID">newshpID</a></code></td>
+    <td><code><a href="#newshpID" class="internal-link" title="prisma.settings.config_window.ConfigWindow.newshpID">newshp​ID</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="instancevariable">
     
     <td>Instance Variable</td>
-    <td><code><a href="#setings">setings</a></code></td>
+    <td><code><a href="#setings" class="internal-link" title="prisma.settings.config_window.ConfigWindow.setings">setings</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="instancevariable">
     
     <td>Instance Variable</td>
-    <td><code><a href="#source_databases">source_databases</a></code></td>
+    <td><code><a href="#source_databases" class="internal-link" title="prisma.settings.config_window.ConfigWindow.source_databases">source​_databases</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="instancevariable">
     
     <td>Instance Variable</td>
-    <td><code><a href="#source_shp">source_shp</a></code></td>
+    <td><code><a href="#source_shp" class="internal-link" title="prisma.settings.config_window.ConfigWindow.source_shp">source​_shp</a></code></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr>
 </table>
@@ -276,7 +363,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Preenche o combox com bases PostgreSQl cadastradas e presentes no Json de configuração.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -295,7 +382,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Preenche combobox com as opções de Servidores de Geocodificação.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -314,7 +401,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Preenche o combox com bases ShapeFile cadastradas e presentes no Json de configuração.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -333,7 +420,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Função responsavel por buscar no Json de configurações as iformações da base de dados Postgres, Selecionadaa no combobox e preencher os campos do formulario na interfasse grafica.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -352,7 +439,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Função responsável por buscar no Json de configurações as informações da base de dados Shapefile, Selecionadaa no combobox e preencher os campos do formulario na interfasse gráfica.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -371,7 +458,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Renderisa a janela de configuração de camadas das bases PostgreSQL.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -390,7 +477,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Renderisa a janela de configuração de camadas das bases Shapefile.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -409,7 +496,26 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div><table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.settings.config_window.ConfigWindow.message">
+    
+  </a>
+  <a name="message">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">message</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Testa se a conexão com o banco de dado foi feita com sucesso.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void.</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -447,7 +553,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Método responsável pegar da interface as informações configuração de base de dados do PostgreSQL e salvar no Json de configuração.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -466,7 +572,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Método responsável por pegar a chave do servidor de Geocodificação digitado na interface e salvar na chache do QGIS.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -485,7 +591,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Salva as configurações de PosgreSQL e ShapeFile no Json de configuração. Executa os metodos: "save_bd_config_json" e "save_shp_config_json"<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -504,7 +610,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Método responsável pegar da interface as informações configuração de base de dados Shapefile e salvar no Json de configuração.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -523,7 +629,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Busca as configurações de uma base de dados PostgreSQL apartir do seu ID<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">id​_base</span></td><td class="fieldArgDesc">ID da base dados</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -542,7 +648,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Busca as configurações de uma base de dados Shapefile a partir do seu ID.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">id​_base</span></td><td class="fieldArgDesc">ID da base dados</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -561,7 +667,7 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Busca o index as configurações de uma base de dados Postgres no vetor de configurações "source_databases"  a partir do seu ID.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">id​_base</span></td><td class="fieldArgDesc"></td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="basemethod">
   
@@ -580,7 +686,26 @@
   <div class="docstring functionBody">
     
     
-    <div><p class="undocumented">Undocumented</p></div>
+    <div>Busca o index as configurações de uma base de dados Shapefile no vetor de configurações "source_shp"  a partir do seu ID.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">id​_base</span></td><td class="fieldArgDesc">ID da base dados</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2"></td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="prisma.settings.config_window.ConfigWindow.set_config">
+    
+  </a>
+  <a name="set_config">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">set_config</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div>Método responsável por pegar a nova chave do servidor de Geocodificação digitado na interface e modificar/salvar na chache do QGIS.<table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td colspan="2">void</td></tr></table></div>
   </div>
 </div><div class="baseclassvariable">
   
@@ -748,12 +873,20 @@
     </div>
 
     <footer class="navbar navbar-default">
+
   
   <div class="container">
     <a href="index.html">API Documentation</a> for prisma,
   generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
-    21.12.1 at 2022-02-21 15:12:13.
+    22.4.0 at 2022-04-04 23:02:29.
   </div>
+
+  <!-- Search related scripts needs to be loaded at the end of HTML 
+    parsing not to introduce overhead and display HTML data asap -->
+  <script src="ajax.js" type="text/javascript"></script>
+  <script src="searchlib.js" type="text/javascript"></script>
+  <script src="search.js" type="text/javascript"></script>
+
 </footer>
 
     <script src="pydoctor.js" type="text/javascript"></script>
