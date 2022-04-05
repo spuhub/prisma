@@ -15,7 +15,7 @@ from ..databases.db_connection import DbConnection
 
 class ConfigWindow(QtWidgets.QDialog):
 
-    """Classe reposavel por manipular a janela de configuração principal"""
+    """Classe reponsavel por manipular a janela de configuração principal"""
 
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
@@ -45,7 +45,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def save_bd_config_json(self):
         """
         Método responsável pegar da interface as informações configuração de base de dados do PostgreSQL e salvar no Json de configuração.
-        :return: void
+        @return: void
         """
         confg_dic = {}
         id_current_db = self.combo_box_base.currentData()
@@ -87,7 +87,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def save_settings(self):
         """
         Salva as configurações de PosgreSQL e ShapeFile no Json de configuração. Executa os metodos: "save_bd_config_json" e "save_shp_config_json"
-        :return:
+        @return:
         """
         self.save_bd_config_json()
         self.save_shp_config_json()
@@ -95,7 +95,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def save_shp_config_json(self):
         """
         Método responsável pegar da interface as informações configuração de base de dados Shapefile e salvar no Json de configuração.
-        :return:
+        @return:
         """
         id_current_db = self.combo_box_shp.currentData()
         current_config = self.search_base_shp(id_current_db)
@@ -135,7 +135,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def fill_combo_box_base(self):
         """
         Preenche o combox com bases PostgreSQl cadastradas e presentes no Json de configuração.
-        :return: void
+        @return: void
         """
         self.combo_box_base.setItemData(0, "0")
         if len(self.source_databases) > 0:
@@ -145,7 +145,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def fill_combo_box_shp(self):
         """
         Preenche o combox com bases ShapeFile cadastradas e presentes no Json de configuração.
-        :return:
+        @return:
         """
         self.combo_box_shp.setItemData(0, "0")
         if len(self.source_shp) > 0:
@@ -155,8 +155,8 @@ class ConfigWindow(QtWidgets.QDialog):
     def search_base_pg(self, id_base):
         """
         Busca as configurações de uma base de dados PostgreSQL apartir do seu ID
-        :param id_base: ID da base dados
-        :return:
+        @param id_base: ID da base dados
+        @return:
         """
         config = {}
         for item in self.source_databases:
@@ -168,8 +168,8 @@ class ConfigWindow(QtWidgets.QDialog):
     def search_base_shp(self, id_base):
         """
         Busca as configurações de uma base de dados Shapefile a partir do seu ID.
-        :param id_base: ID da base dados
-        :return:
+        @param id_base: ID da base dados
+        @return:
         """
         config = {}
         for item in self.source_shp:
@@ -181,8 +181,8 @@ class ConfigWindow(QtWidgets.QDialog):
     def search_index_base_shp(self, id_base):
         """
         Busca o index as configurações de uma base de dados Shapefile no vetor de configurações "source_shp"  a partir do seu ID.
-        :param id_base: ID da base dados
-        :return:
+        @param id_base: ID da base dados
+        @return:
         """
         idex = 0
         for item in self.source_shp:
@@ -194,8 +194,8 @@ class ConfigWindow(QtWidgets.QDialog):
     def search_index_base_pg(self, id_base):
         """
         Busca o index as configurações de uma base de dados Postgres no vetor de configurações "source_databases"  a partir do seu ID.
-        :param id_base:
-        :return: void
+        @param id_base:
+        @return: void
         """
         idex = 0
         # cont=0
@@ -210,7 +210,7 @@ class ConfigWindow(QtWidgets.QDialog):
         """
         Função responsavel por buscar no Json de configurações as iformações da base de dados Postgres, Selecionadaa no
         combobox e preencher os campos do formulario na interfasse grafica.
-        :return: void
+        @return: void
         """
         current_id = self.combo_box_base.currentData()
         current_config = self.search_base_pg(current_id)
@@ -245,7 +245,7 @@ class ConfigWindow(QtWidgets.QDialog):
         """
         Função responsável por buscar no Json de configurações as informações da base de dados Shapefile, Selecionadaa no
         combobox e preencher os campos do formulario na interfasse gráfica.
-        :return:  void
+        @return:  void
         """
         current_id = self.combo_box_shp.currentData()
         current_config = self.search_base_shp(current_id)
@@ -268,7 +268,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def fill_combo_box_geocoding_server(self):
         """
         Preenche combobox com as opções de Servidores de Geocodificação.
-        :return:
+        @return:
         """
         self.combo_box_servico_geocod.addItem("Google", 0)
         self.combo_box_servico_geocod.addItem("Nominatim (OpenStreetMap)", 1)
@@ -277,7 +277,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def save_geocoding_key(self):
         """
         Método responsável por pegar a chave do servidor de Geocodificação digitado na interface e salvar na chache do QGIS.
-        :return: void
+        @return: void
         """
         current_opt = self.combo_box_servico_geocod.currentData()
         current_opt_text = self.combo_box_servico_geocod.currentText()
@@ -288,7 +288,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def set_config(self):
         """
         Método responsável por pegar a nova chave do servidor de Geocodificação digitado na interface e modificar/salvar na chache do QGIS.
-        :return: void
+        @return: void
         """
         current_op = self.credencials.get_current_geocoding_server()
         current_key = self.credencials.get_key(current_op[1])
@@ -307,7 +307,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def hideLayerConfBase(self):
         """
         Renderisa a janela de configuração de camadas das bases PostgreSQL.
-        :return: void
+        @return: void
         """
 
         self.save_settings()
@@ -325,7 +325,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         """
         Renderisa a janela de configuração de camadas das bases Shapefile.
-        :return: void
+        @return: void
         """
         self.save_settings()
         id_current_shp = self.combo_box_shp.currentData()
@@ -341,7 +341,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def hiderheader(self):
         """
 
-        :return:
+        @return:
         """
         d = ReportGenerator()
         d.exec_()
@@ -349,7 +349,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def message(self):
         """
         Testa se a conexão com o banco de dado foi feita com sucesso.
-        :return: void.
+        @return: void.
         """
         msg = QMessageBox(self)
         host = self.host.text()

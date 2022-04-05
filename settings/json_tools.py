@@ -14,7 +14,7 @@ class JsonTools:
     def get_json(self):
         """
         Retorna o Json de configuração.
-        :return: Json de configuração
+        @return: Json de configuração
         """
         return self.json_config
 
@@ -22,7 +22,7 @@ class JsonTools:
 
         """
         Retorna uma lista com as configurações de bases em ShapeFile.
-        :return: Lista com as configurações.
+        @return: Lista com as configurações.
         """
         shp_list = []
 
@@ -36,7 +36,7 @@ class JsonTools:
 
         """
         Retorna uma lista com as configurações de bases em PostgreSQL.
-        :return: Lista com as configurações.
+        @return: Lista com as configurações.
         """
         shp_list = []
 
@@ -66,8 +66,8 @@ class JsonTools:
     def insert_database_pg(self, db_json_conf):
         """
         Insere as configurações de um banco de dados PostgreSQL no Json.
-        :param db_json_conf: Json com as configurações do banco de dados
-        :return: retorna o id da base inserida
+        @param db_json_conf: Json com as configurações do banco de dados
+        @return: retorna o id da base inserida
         """
         dados = {}
 
@@ -88,9 +88,9 @@ class JsonTools:
     def edit_database(self, db_id, db_json_new_conf):
         """
         Edita um base de dados no PostgreSQL cujo seu id é passado como parametro
-        :param db_id: Id da base de dados a ser editada
-        :param db_json_new_conf: Json contendo as novas configurações da base de dados
-        :return: void
+        @param db_id: Id da base de dados a ser editada
+        @param db_json_new_conf: Json contendo as novas configurações da base de dados
+        @return: void
         """
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
@@ -105,7 +105,7 @@ class JsonTools:
 
         """
         Retorna os nomes de todas as bases de dados (PG/SHP) dentro do JSON de Configuração
-        :return: Json de com os nomes
+        @return: Json de com os nomes
         """
 
         source_data = {}
@@ -123,8 +123,8 @@ class JsonTools:
     def get_source_data(self, id_base):
         """
         Rettorna as configurações de uma fonte de dados apartir de seu ID
-        :param id_base: Id da base de dados (postgresql ou SHP)
-        :return: Json com as configurações de base de dados
+        @param id_base: Id da base de dados (postgresql ou SHP)
+        @return: Json com as configurações de base de dados
         """
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
@@ -132,7 +132,7 @@ class JsonTools:
     def get_camadas_base_obrigatoria (self):
         """
         Retorna todas as camadas obrigatórias.
-        :return: Json com as camadas obigatórias
+        @return: Json com as camadas obigatórias
         """
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
@@ -144,8 +144,8 @@ class JsonTools:
     def set_camadas_base_obrigatoria (self, new_conf):
         """
         Edita o valor de uma camada obigratria
-        :param new_conf: ´Json coma as nova configurações de valor : {<Tipo camada> : {nome da base, nome da camada }}
-        :return:
+        @param new_conf: ´Json coma as nova configurações de valor : {<Tipo camada> : {nome da base, nome da camada }}
+        @return:
         """
         with open(self.json_path, 'r') as f:
             dados = json.load(f)

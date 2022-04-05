@@ -52,7 +52,7 @@ class ConfigLayers(QtWidgets.QDialog):
     def fill_table(self):
         """
         Método responsavel por preencher a tabela com as informações de configuração de cada camda
-        :return: void
+        @return: void
         """
         if self.tipoFonte == "shp":
             self.fill_table_shp()
@@ -62,8 +62,8 @@ class ConfigLayers(QtWidgets.QDialog):
     def create_combobox_line_style(self, id_object):
         """
         Cria e preenche um combobox com os tipos de Linhas.
-        :param id_object: um valor para servir de ID do combobox criado.
-        :return: void.
+        @param id_object: um valor para servir de ID do combobox criado.
+        @return: void.
         """
         cb = QComboBox()
         cb.setObjectName(id_object)
@@ -77,8 +77,8 @@ class ConfigLayers(QtWidgets.QDialog):
     def create_comboBox_tipo_camada_base(self, id_object):
         """
         Cria e preenche um combobox com os tipos de camadas bases.
-        :param id_object: um valor para servir de ID do combobox criado.
-        :return: void.
+        @param id_object: um valor para servir de ID do combobox criado.
+        @return: void.
         """
         cb = QComboBox()
         cb.setObjectName(id_object)
@@ -94,9 +94,9 @@ class ConfigLayers(QtWidgets.QDialog):
 
         """
         Cria e preenche um objeto para digitar a espessura da linha.
-        :param id_object: um valor para servir de ID do objeto criado.
-        :param value: valor padrão do do objeteo.
-        :return: void.
+        @param id_object: um valor para servir de ID do objeto criado.
+        @param value: valor padrão do do objeteo.
+        @return: void.
         """
         dsb = QDoubleSpinBox()
         dsb.setValue(value)
@@ -107,9 +107,9 @@ class ConfigLayers(QtWidgets.QDialog):
     def create_buffer_box(self, id_object, value):
         """
         Cria e preenche um SpinBox para digitar o tamanho do buffer.
-        :param id_object: um valor para servir de ID do objeto criado.
-        :param value: valor padrão do do objeto.
-        :return: void.
+        @param id_object: um valor para servir de ID do objeto criado.
+        @param value: valor padrão do do objeto.
+        @return: void.
         """
         dsb = QDoubleSpinBox()
         dsb.setValue(value)
@@ -120,8 +120,8 @@ class ConfigLayers(QtWidgets.QDialog):
     def create_ComboBox_preenchimento(self, id_object):
         """
         Cria e preenche um combobox com os tipos de preenchimento de camadas bases.
-        :param id_object: um valor para servir de ID do combobox criado.
-        :return: void.
+        @param id_object: um valor para servir de ID do combobox criado.
+        @return: void.
         """
         cb = QComboBox()
         cb.setObjectName(id_object)
@@ -131,9 +131,9 @@ class ConfigLayers(QtWidgets.QDialog):
     def create_Color_Select(self, id_object, corDefalt):
         """
         Cria um Color Button para seleção de cores.
-        :param id_object:  um valor para servir de ID do objeto criado.
-        :param corDefalt: Cor padrão.
-        :return:
+        @param id_object:  um valor para servir de ID do objeto criado.
+        @param corDefalt: Cor padrão.
+        @return:
         """
 
         co = QgsColorButton()
@@ -145,9 +145,9 @@ class ConfigLayers(QtWidgets.QDialog):
     def create_usar_check(self, id_object, ischeck):
         """
         Cria Um checkbox para selecionar uma camada para ser usada.
-        :param id_object:  um valor para servir de ID do objeto criado.
-        :param ischeck: Valor true/false para dizer se vai ficar marcado ou não.
-        :return:
+        @param id_object:  um valor para servir de ID do objeto criado.
+        @param ischeck: Valor true/false para dizer se vai ficar marcado ou não.
+        @return:
         """
         b1 = QCheckBox(" ")
         b1.setChecked(ischeck)
@@ -157,7 +157,7 @@ class ConfigLayers(QtWidgets.QDialog):
     def generate_color(self):
         """
         Gera cores de forma aleatória.
-        :return: retorna o valor da cor em Hexadecimal.
+        @return: retorna o valor da cor em Hexadecimal.
         """
         color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])]
         return color[0]
@@ -167,7 +167,7 @@ class ConfigLayers(QtWidgets.QDialog):
         """
         Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
         ShapeFile.
-        :return: void
+        @return: void
         """
         shpHandle = ShpHandle()
         print(self.id_current_db)
@@ -223,7 +223,7 @@ class ConfigLayers(QtWidgets.QDialog):
         """
         Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
         PostgreSQL.
-        :return: void
+        @return: void
         """
         #print(self.id_current_db)
         idbd = self.id_current_db
@@ -350,7 +350,7 @@ class ConfigLayers(QtWidgets.QDialog):
     def save_base_pg(self):
         """
         Método responsável por Gravar as configurações das camadas de uma base de dados PostgreSQL
-        :return: void
+        @return: void
         """
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
@@ -400,7 +400,7 @@ class ConfigLayers(QtWidgets.QDialog):
     def save_base_shp(self):
         """
         Método responsável por Gravar as configurações das camadas de uma base de dados Shapefile
-        :return: void.
+        @return: void.
         """
         idbd = self.id_current_db
         print ("Currente-shp2223: ",  idbd)
