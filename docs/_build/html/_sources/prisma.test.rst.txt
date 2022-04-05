@@ -1,0 +1,70 @@
+prisma.test package
+===================
+
+Submodules
+----------
+
+prisma.test.qgis\_interface module
+----------------------------------
+
+.. automodule:: prisma.test.qgis_interface
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+prisma.test.test\_init module
+-----------------------------
+
+.. automodule:: prisma.test.test_init
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+prisma.test.test\_prisma\_dialog module
+---------------------------------------
+
+.. automodule:: prisma.test.test_prisma_dialog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+prisma.test.test\_qgis\_environment module
+------------------------------------------
+
+.. automodule:: prisma.test.test_qgis_environment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+prisma.test.test\_resources module
+----------------------------------
+
+.. automodule:: prisma.test.test_resources
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+prisma.test.test\_translations module
+-------------------------------------
+
+.. automodule:: prisma.test.test_translations
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+prisma.test.utilities module
+----------------------------
+
+.. automodule:: prisma.test.utilities
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: prisma.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

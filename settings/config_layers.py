@@ -43,18 +43,28 @@ class ConfigLayers(QtWidgets.QDialog):
         self.objects_tables_disponiveis = []
         self.objects_tipo_tables_disponiveis = []
         self.objects_nome_fantasia = []
+        self.objects_buffer = []
 
         self.fill_table()
         self.btn_layer_cancelar.clicked.connect(self.back)
         self.btn_layer_salvar.clicked.connect(self.next)
 
     def fill_table(self):
+        """
+        Método responsavel por preencher a tabela com as informações de configuração de cada camda
+        :return: void
+        """
         if self.tipoFonte == "shp":
             self.fill_table_shp()
         if self.tipoFonte == "bd":
             self.fill_table_bd()
 
     def create_combobox_line_style(self, id_object):
+        """
+        Cria e preenche um combobox com os tipos de Linhas.
+        :param id_object: um valor para servir de ID do combobox criado.
+        :return: void.
+        """
         cb = QComboBox()
         cb.setObjectName(id_object)
         cb.addItem("________________________", "solid")
@@ -65,6 +75,11 @@ class ConfigLayers(QtWidgets.QDialog):
         return cb
 
     def create_comboBox_tipo_camada_base(self, id_object):
+        """
+        Cria e preenche um combobox com os tipos de camadas bases.
+        :param id_object: um valor para servir de ID do combobox criado.
+        :return: void.
+        """
         cb = QComboBox()
         cb.setObjectName(id_object)
         cb.addItem("LPM Homologada", "lpm_homologada")
@@ -76,6 +91,26 @@ class ConfigLayers(QtWidgets.QDialog):
         return cb
 
     def create_espessura_box(self, id_object, value):
+
+        """
+        Cria e preenche um objeto para digitar a espessura da linha.
+        :param id_object: um valor para servir de ID do objeto criado.
+        :param value: valor padrão do do objeteo.
+        :return: void.
+        """
+        dsb = QDoubleSpinBox()
+        dsb.setValue(value)
+        dsb.setObjectName(id_object)
+        dsb.setSingleStep(0.1)
+        return dsb
+
+    def create_buffer_box(self, id_object, value):
+        """
+        Cria e preenche um SpinBox para digitar o tamanho do buffer.
+        :param id_object: um valor para servir de ID do objeto criado.
+        :param value: valor padrão do do objeto.
+        :return: void.
+        """
         dsb = QDoubleSpinBox()
         dsb.setValue(value)
         dsb.setObjectName(id_object)
@@ -83,12 +118,24 @@ class ConfigLayers(QtWidgets.QDialog):
         return dsb
 
     def create_ComboBox_preenchimento(self, id_object):
+        """
+        Cria e preenche um combobox com os tipos de preenchimento de camadas bases.
+        :param id_object: um valor para servir de ID do combobox criado.
+        :return: void.
+        """
         cb = QComboBox()
         cb.setObjectName(id_object)
         cb.addItem("solid", "solid")
         return cb
 
     def create_Color_Select(self, id_object, corDefalt):
+        """
+        Cria um Color Button para seleção de cores.
+        :param id_object:  um valor para servir de ID do objeto criado.
+        :param corDefalt: Cor padrão.
+        :return:
+        """
+
         co = QgsColorButton()
         co.setObjectName(id_object)
         c = QColor(corDefalt)
@@ -96,16 +143,32 @@ class ConfigLayers(QtWidgets.QDialog):
         return co
 
     def create_usar_check(self, id_object, ischeck):
+        """
+        Cria Um checkbox para selecionar uma camada para ser usada.
+        :param id_object:  um valor para servir de ID do objeto criado.
+        :param ischeck: Valor true/false para dizer se vai ficar marcado ou não.
+        :return:
+        """
         b1 = QCheckBox(" ")
         b1.setChecked(ischeck)
         b1.setObjectName(id_object)
         return b1
 
     def generate_color(self):
+        """
+        Gera cores de forma aleatória.
+        :return: retorna o valor da cor em Hexadecimal.
+        """
         color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])]
         return color[0]
 
     def fill_table_shp(self):
+
+        """
+        Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
+        ShapeFile.
+        :return: void
+        """
         shpHandle = ShpHandle()
         print(self.id_current_db)
 
@@ -131,32 +194,37 @@ class ConfigLayers(QtWidgets.QDialog):
         itemCellClass = QTableWidgetItem(str(shp.type).replace("0", "").replace(" ", ""))
         self.table_layers.setItem(0, 3, itemCellClass)
 
-        self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
-        self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
+        #self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
+        #self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
 
-        self.objects_tipo_camada_base.append(
-            self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
-        self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
+        #self.objects_tipo_camada_base.append(
+         #   self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
+        #self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
 
         self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(0) + "-" + str(6)))
-        self.table_layers.setCellWidget(0, 6, self.objects_estilo_linhas[0])
+        self.table_layers.setCellWidget(0, 4, self.objects_estilo_linhas[0])
 
         self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(0) + "-" + str(7), "black"))
-        self.table_layers.setCellWidget(0, 7, self.objects_cor_linhas[0])
+        self.table_layers.setCellWidget(0, 5, self.objects_cor_linhas[0])
 
         self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8),0.25))
-        self.table_layers.setCellWidget(0, 8, self.objects_espessura_linhas[0])
+        self.table_layers.setCellWidget(0, 6, self.objects_espessura_linhas[0])
 
         self.objects_preenchimento.append(
             self.create_ComboBox_preenchimento("preenchimento" + "-" + str(0) + "-" + str(9)))
-        self.table_layers.setCellWidget(0, 9, self.objects_preenchimento[0])
+        self.table_layers.setCellWidget(0, 7, self.objects_preenchimento[0])
 
         self.objects_cor_preenchimento.append(
             self.create_Color_Select("corPreenchimento" + "-" + str(0) + "-" + str(10), self.generate_color()))
-        self.table_layers.setCellWidget(0, 10, self.objects_cor_preenchimento[0])
+        self.table_layers.setCellWidget(0, 8, self.objects_cor_preenchimento[0])
 
     def fill_table_bd(self):
 
+        """
+        Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
+        PostgreSQL.
+        :return: void
+        """
         #print(self.id_current_db)
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
@@ -227,12 +295,12 @@ class ConfigLayers(QtWidgets.QDialog):
             itemCellClass = QTableWidgetItem(dataTables[tabelasGeom[i]])
             self.table_layers.setItem(i, 3, itemCellClass)
 
-            self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(i), False))
-            self.table_layers.setCellWidget(i, 4, self.objects_vai_usar_camada_base[i])
+            #self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(i), False))
+            #self.table_layers.setCellWidget(i, 4, self.objects_vai_usar_camada_base[i])
 
 
-            self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
-            self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
+            #self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
+            #self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
 
             style = {}
 
@@ -247,14 +315,14 @@ class ConfigLayers(QtWidgets.QDialog):
                 indexQcombo = self.objects_estilo_linhas[i].findData("line_style")
                 self.objects_estilo_linhas[i].setCurrentIndex(indexQcombo)
 
-            self.table_layers.setCellWidget(i, 6, self.objects_estilo_linhas[i])
+            self.table_layers.setCellWidget(i, 4, self.objects_estilo_linhas[i])
 
             lineColor = "black"
             if "line_color" in style:
                 lineColor = style["line_color"]
 
             self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7),lineColor))
-            self.table_layers.setCellWidget(i, 7, self.objects_cor_linhas[i])
+            self.table_layers.setCellWidget(i, 5, self.objects_cor_linhas[i])
 
             espeLine = 0.25
 
@@ -262,20 +330,28 @@ class ConfigLayers(QtWidgets.QDialog):
                 espeLine = float(style["width_border"])
 
             self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8), espeLine))
-            self.table_layers.setCellWidget(i, 8, self.objects_espessura_linhas[i])
+            self.table_layers.setCellWidget(i, 6, self.objects_espessura_linhas[i])
 
 
             self.objects_preenchimento.append(self.create_ComboBox_preenchimento("preenchimento" + "-" + str(i) + "-" + str(9)))
-            self.table_layers.setCellWidget(i, 9, self.objects_preenchimento[i])
+            self.table_layers.setCellWidget(i, 7, self.objects_preenchimento[i])
 
             fillColor = self.generate_color()
 
             if "color" in style:
                 fillColor = style["color"]
             self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
-            self.table_layers.setCellWidget(i, 10, self.objects_cor_preenchimento[i])
+            self.table_layers.setCellWidget(i, 8, self.objects_cor_preenchimento[i])
+
+            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(11), espeLine))
+            self.table_layers.setCellWidget(i, 9, self.objects_buffer[i])
+
 
     def save_base_pg(self):
+        """
+        Método responsável por Gravar as configurações das camadas de uma base de dados PostgreSQL
+        :return: void
+        """
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
         print(type(config))
@@ -322,6 +398,10 @@ class ConfigLayers(QtWidgets.QDialog):
         self.setings02.edit_database(self.id_current_db,config)
 
     def save_base_shp(self):
+        """
+        Método responsável por Gravar as configurações das camadas de uma base de dados Shapefile
+        :return: void.
+        """
         idbd = self.id_current_db
         print ("Currente-shp2223: ",  idbd)
         config = self.search_base_shp(self.id_current_db)
@@ -337,9 +417,6 @@ class ConfigLayers(QtWidgets.QDialog):
         config["estiloCamadas"] = [c]
 
         self.setings02.edit_database(idbd,config)
-
-
-
 
     def search_base_pg(self, id_base):
         config = {}

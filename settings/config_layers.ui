@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1285</width>
+    <width>1312</width>
     <height>740</height>
    </rect>
   </property>
@@ -97,30 +97,6 @@
      </column>
      <column>
       <property name="text">
-       <string>É Camada de Base</string>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Tipo Camada Base</string>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
        <string>Estilo Linha</string>
       </property>
       <property name="font">
@@ -166,6 +142,17 @@
      <column>
       <property name="text">
        <string>Cor do Preenchimento</string>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Faixa de Proximidade (metros)</string>
       </property>
       <property name="font">
        <font>

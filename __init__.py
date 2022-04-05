@@ -22,6 +22,35 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+from __future__ import absolute_import
+
+import os
+import sys
+
+
+currentDirectoryPath = os.path.dirname(__file__)
+#print currentDirectoryPath
+
+libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/site-packages')
+#print libraryDirectoryPath
+sys.path.append(libraryDirectoryPath)
+
+libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/distutils')
+#print libraryDirectoryPath
+#name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib\distutils'
+sys.path.append(libraryDirectoryPath)
+
+libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib')
+#print libraryDirectoryPath
+#name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib'
+sys.path.append(libraryDirectoryPath)
+
+libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/distutils')
+#print libraryDirectoryPath
+#name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib\distutils'
+
+
+sys.path.append(libraryDirectoryPath)
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
