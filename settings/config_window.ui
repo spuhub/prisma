@@ -459,33 +459,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_2">
-            <item>
-             <property name="text">
-              <string>Area Especial</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Dominio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Seguranca</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Municipio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Massa Dagua</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_2"/>
           </item>
          </layout>
         </widget>
@@ -533,33 +507,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_4">
-            <item>
-             <property name="text">
-              <string>Area Especial</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Dominio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Seguranca</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Municipio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Massa Dagua</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_4"/>
           </item>
          </layout>
         </widget>
@@ -607,33 +555,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_6">
-            <item>
-             <property name="text">
-              <string>Area Especial</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Dominio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Seguranca</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Municipio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Massa Dagua</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_6"/>
           </item>
          </layout>
         </widget>
@@ -681,33 +603,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_8">
-            <item>
-             <property name="text">
-              <string>Area Especial</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Dominio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Seguranca</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Municipio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Massa Dagua</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_8"/>
           </item>
          </layout>
         </widget>
@@ -755,33 +651,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_10">
-            <item>
-             <property name="text">
-              <string>Area Especial</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Dominio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Seguranca</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Municipio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Massa Dagua</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_10"/>
           </item>
          </layout>
         </widget>
@@ -829,33 +699,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_12">
-            <item>
-             <property name="text">
-              <string>Area Especial</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Dominio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Faixa Seguranca</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Municipio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Massa Dagua</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_12"/>
           </item>
          </layout>
         </widget>
