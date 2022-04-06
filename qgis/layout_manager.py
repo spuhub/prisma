@@ -475,6 +475,8 @@ class LayoutManager():
         QgsProject.instance().addMapLayer(show_qgis_vertices, False)
         self.root.insertLayer(0, show_qgis_vertices)
 
+        layers_localization_map = []
+        layers_situation_map = []
         # Posiciona a tela do QGis no extent da área de entrada
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() == 'Feição de Estudo/Sobreposição':
@@ -485,6 +487,16 @@ class LayoutManager():
                 self.atlas.setCoverageLayer(layer)
                 self.atlas.changed
                 self.layers = layer
+
+                layers_localization_map.append(layer)
+                layers_situation_map.append(layer)
+
+            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada':
+                layers_situation_map.append(layer)
+
+            elif layer.name() == 'OpenStreetMap':
+                layers_localization_map.append(layer)
+                layers_situation_map.append(layer)
 
             elif layer.name() == 'Linhas':
                 qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\medidas_lotes.qml')
@@ -505,8 +517,10 @@ class LayoutManager():
         situation_map = self.layout.itemById('Planta_Situacao')
         localization_map = self.layout.itemById('Planta_Localizacao')
 
-        print(type(situation_map))
-        print(type(localization_map))
+        situation_map.setLayers(layers_situation_map)
+        localization_map.setLayers(layers_localization_map)
+        situation_map.refresh()
+        localization_map.refresh()
 
         ms.setExtent(rect)
         main_map.zoomToExtent(rect)
