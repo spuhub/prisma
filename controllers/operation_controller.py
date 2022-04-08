@@ -12,7 +12,7 @@ class OperationController:
 
     @ivar data_bd: Armazena bases de dados de banco de dados vindos do arquivo de configuração JSON.
     @ivar data_shp: Armazena bases de dados de shapefiles vindos do arquivo de configuração JSON.
-    @ivar json_tools: Classe para leitura de arquivos JSON.
+    @ivar json_tools: Classe para leitura de arquivos JSON. comoposwmoa
     """
     def __init__(self):
         """
