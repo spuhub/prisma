@@ -24,6 +24,8 @@ class Linestrings():
         self.atlas = None
         self.index_input = None
 
+        self.gdp_area_homologada = []
+
         self.layers = []
         self.root = QgsProject.instance().layerTreeRoot()
 
@@ -32,9 +34,7 @@ class Linestrings():
         self.atlas = atlas
         self.layout = layout
 
-        # Extrai vértices e linhas do polígono que está sendo comparado
-        gdf_point_input, gdf_line_input = self.explode_input(input)
-
+        input = self.calculation_required(input, gdf_required)
         # Cálculos de área e centroid da feição de input
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].length
         input.loc[0, 'ctr_lat'] = input.iloc[0]['geometry'].centroid.y
@@ -49,80 +49,77 @@ class Linestrings():
             input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
                 index_2]] = gpd.overlay(input, area).length.sum()
 
-        data = []
-        # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e feição
-        # da atual área que está sendo comparada. Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
-        for indexArea, rowArea in area.iterrows():
-            if (input.iloc[0]['geometry'].intersection(rowArea['geometry'])):
-                data.append({
-                    'areaLote': input.iloc[0]['geometry'].intersection(rowArea['geometry']).length,
-                    'ctr_lat': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.y,
-                    'ctr_long': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.x,
-                    'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
-                })
+        # Extrai vértices onde as linhas se interceptam
+        interseption_points = input.unary_union.intersection(area.unary_union)
 
-        intersection = gpd.GeoDataFrame(data, crs=input.crs)
-
-        # Gera planta pdf somente quando acontece sobreposição
-        if len(intersection) > 0:
-            intersection.set_crs(allow_override=True, crs=input.crs)
-
-        if len(input_standard) > 0:
-            self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
-                               intersection, gdf_required, index_1, index_2)
-        else:
-            self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
-                               gdf_required, index_1, index_2)
-
-    def explode_input(self, gdf_input):
-        geometry = gdf_input.iloc[0]['geometry']
-
-        geometry_points = []
         coord_x = []
         coord_y = []
-        geometry_lines = []
 
-        if geometry.type == 'Polygon':
-            all_coords = geometry.exterior.coords
+        # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
+        if interseption_points.is_empty:
+            return None
+        else:
+            for coord in interseption_points:
+                coord_x.append(coord.x)
+                coord_y.append(coord.y)
 
-            for coord in all_coords:
-                geometry_points.append(Point(coord))
-                coord_x.append(list(coord)[0])
-                coord_y.append(list(coord)[1])
+            data = list(zip(coord_x, coord_y, interseption_points))
+            gdf_interseption_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data,
+                                                       crs=input.crs)
+            gdf_interseption_points = gdf_interseption_points.reset_index()
 
-            for i in range(1, len(all_coords)):
-                geometry_lines.append(LineString([all_coords[i - 1], all_coords[i]]))
+            print("Pontos de interseptação: ", gdf_interseption_points)
 
-        # if geometry.type in ['Point', 'LineString']:
-        #   print()
-        #   return list(geometry.xy[0]), list(geometry.xy[1])
+            if len(input_standard) > 0:
+                self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], area,
+                                   gdf_interseption_points, gdf_required, index_1, index_2)
+            else:
+                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points,
+                                   gdf_required, index_1, index_2)
 
-        if geometry.type == 'MultiPolygon':
-            all_coords = []
-            for ea in geometry:
-                all_coords.append(list(ea.exterior.coords))
+        # gdf_geometry_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data, crs=input.crs)
+        # gdf_geometry_lines = gpd.GeoDataFrame(geometry=geometry_lines, crs=gdf_input.crs)
+        #
+        # return gdf_geometry_points, gdf_geometry_lines
 
-            for polygon in all_coords:
-                for coord in polygon:
-                    geometry_points.append(Point(coord))
-                    coord_x.append(list(coord)[0])
-                    coord_y.append(list(coord)[1])
+    def calculation_required(self, input, gdf_required):
 
-            for polygon in all_coords:
-                for i in range(1, len(polygon)):
-                    geometry_lines.append(LineString([polygon[i - 1], polygon[i]]))
+        input = input.reset_index()
 
-        data = list(zip(coord_x, coord_y, geometry_points))
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
 
-        gdf_geometry_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data, crs=gdf_input.crs)
-        # Remover o último vértice, para não ficar dois pontos no mesmo lugar
-        gdf_geometry_points = gdf_geometry_points[:-1]
+        input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
 
-        gdf_geometry_lines = gpd.GeoDataFrame(geometry=geometry_lines, crs=gdf_input.crs)
+        if 'aproximacao' in self.operation_config['operation_config']:
+            input = self.utils.add_input_approximation_projected(input, self.operation_config['operation_config'][
+                'aproximacao'])
 
-        return gdf_geometry_points, gdf_geometry_lines
+        index = 0
+        # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
+        for area in gdf_required:
+            area = area.to_crs(crs)
+            area.set_crs(allow_override=True, crs=crs)
 
-    def handle_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard, feature_area, feature_intersection, gdf_required, index_1, index_2):
+            # Soma da área de interseção feita com feição de input e atual área comparada
+            # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
+            if self.operation_config['operation_config']['required'][index]['nome'] == 'Área união homologada':
+                self.gdp_area_homologada = gpd.overlay(input, area)
+
+            if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                    input, area).length.sum()
+
+            else:
+                input.loc[0, self.operation_config['operation_config']['required'][index][
+                    'nomeFantasiaTabelasCamadas']] = gpd.overlay(
+                    input, length).area.sum()
+
+            index += 1
+
+        return input
+
+    def handle_layers(self, feature_input_gdp, input_standard, feature_area, feature_gdf_interseption_points, gdf_required, index_1, index_2):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -130,7 +127,7 @@ class Linestrings():
         @keyword feature_input_gdp: Feição que está sendo processada e será carregada para o QGis.
         @keyword input_standard: Feição padrão isto é, sem zona de proximidade (caso necessário), que está sendo processada e será carregada para o QGis.
         @keyword feature_area: Camada de comparação que está sendo processada.
-        @keyword feature_intersection: Camada de interseção (caso exista) e será carregada para o QGis.
+        @keyword feature_gdf_interseption_points: Camada de interseção (caso exista) e será carregada para o QGis.
         @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
         @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
         """
@@ -154,16 +151,12 @@ class Linestrings():
         # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, )
 
         # Carrega as áreas de intersecção no Qgis
-        if len(feature_intersection) > 0:
-            show_qgis_intersection = QgsVectorLayer(feature_intersection.to_json(), "Sobreposição")
-            show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+        if len(feature_gdf_interseption_points) > 0:
+            show_qgis_gdf_interseption_points = QgsVectorLayer(feature_gdf_interseption_points.to_json(), "Interseções")
+            show_qgis_gdf_interseption_points.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': 'yellow', 'width_border': '0,35',
-                 'style': 'solid'})
-            show_qgis_intersection.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_intersection)
+            QgsProject.instance().addMapLayer(show_qgis_gdf_interseption_points, False)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_gdf_interseption_points)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
@@ -229,20 +222,6 @@ class Linestrings():
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
 
-        # Camada de cotas
-        show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
-        show_qgis_quota.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-        QgsProject.instance().addMapLayer(show_qgis_quota, False)
-        self.root.insertLayer(0, show_qgis_quota)
-
-        # Camada de vértices
-        show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
-        show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-        QgsProject.instance().addMapLayer(show_qgis_vertices, False)
-        self.root.insertLayer(0, show_qgis_vertices)
-
         layers_localization_map = []
         layers_situation_map = []
         # Posiciona a tela do QGis no extent da área de entrada
@@ -266,12 +245,7 @@ class Linestrings():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'Linhas':
-                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\medidas_lotes.qml')
-                layer.loadNamedStyle(qml_style_dir)
-                layer.triggerRepaint()
-
-            elif layer.name() == 'Vértices':
+            elif layer.name() == 'Interseções':
                 qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
                 layer.loadNamedStyle(qml_style_dir)
                 layer.triggerRepaint()
@@ -418,7 +392,7 @@ class Linestrings():
         # Área da feição
         format_value = f'{feature_input_gdp["areaLote"][0]:_.2f}'
         format_value = format_value.replace('.', ',').replace('_', '.')
-        lot_area.setText("Comprimento total da linha: " + str(format_value) + " m².")
+        lot_area.setText("Comprimento total da linha: " + str(format_value) + " metros em " + str(len(feature_input_gdp.explode())) + " segmentos.")
 
         # Sobreposição com área da união
         if input.iloc[self.index_input]['Área Homologada'] > 0:
@@ -429,7 +403,7 @@ class Linestrings():
         if 'Área Homologada' in feature_input_gdp:
             format_value = f'{feature_input_gdp.iloc[0]["Área Homologada"]:_.2f}'
             format_value = format_value.replace('.', ',').replace('_', '.')
-            overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(format_value) + " m².")
+            overlay_uniao_area.setText("Sobreposição Área Homologada: " + str(format_value) + " metros em " + str(len(self.gdp_area_homologada.explode())) + " segmentos.")
 
     def add_template_to_project(self, template_dir):
         """

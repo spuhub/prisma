@@ -107,7 +107,7 @@ class LayoutManager():
             # Caso rowInput['crs_feature'] for igual a False, significa que a feição faz parte de dois ou mais zonas
             # portanto, não é processado
             if rowInput['crs_feature'] != False:
-                gdf_input = self.calculation_required(input.iloc[[indexInput]], gdf_required)
+                gdf_input = self.get_feature_with_crs(input.iloc[[indexInput]])
                 # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
                 if len(input_standard) > 0:
                     self.calculation_shp(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
@@ -117,6 +117,14 @@ class LayoutManager():
                     self.calculation_db(gdf_input, input_standard, gdf_selected_db, gdf_required)
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
+
+    def get_feature_with_crs(self, input):
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
+
+        input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
+
+        return input
 
     def get_required_layers(self, gdf_selected_shp, gdf_selected_db):
         """
@@ -151,39 +159,6 @@ class LayoutManager():
 
         self.operation_config['operation_config']['pg'] = new_operation_config
         return gdf_required, gdf_selected_shp, gdf_selected_db
-
-    def calculation_required(self, input, gdf_required):
-
-        input = input.reset_index()
-
-        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
-
-        input = input.to_crs(crs)
-        input.set_crs(crs, allow_override=True)
-
-        if 'aproximacao' in self.operation_config['operation_config']:
-            input = self.utils.add_input_approximation_projected(input, self.operation_config['operation_config'][
-                'aproximacao'])
-
-        index = 0
-        # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
-        for area in gdf_required:
-            area = area.to_crs(crs)
-            area.set_crs(allow_override=True, crs=crs)
-
-            # Soma da área de interseção feita com feição de input e atual área comparada
-            # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-            if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
-                    input, area).area.sum()
-            else:
-                input.loc[0, self.operation_config['operation_config']['required'][index][
-                    'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                    input, area).area.sum()
-
-            index += 1
-
-        return input
 
     def explode_input(self, gdf_input):
         geometry = gdf_input.iloc[0]['geometry']
@@ -296,7 +271,6 @@ class LayoutManager():
                 # area.crs = {'init':'epsg:4674'}
                 area = area.to_crs(crs)
                 area.set_crs(allow_override=True, crs=crs)
-
                 if len(area) > 0:
                     if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                         'geometry'].type in ['Polygon', 'MultiPolygon']:
@@ -307,7 +281,7 @@ class LayoutManager():
                         'geometry'].type in ['Linestring', 'MultiLinestring']:
                         self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, index_db,
                                                                    index_layer, self.atlas, self.layout, self.index_input)
-
+                print(self.index_input)
                 index_layer += 1
             index_db += 1
 

@@ -173,6 +173,7 @@ class ConfigLayers(QtWidgets.QDialog):
         print(self.id_current_db)
 
         config = self.search_base_shp(self.id_current_db)
+        print(config)
         nomereal = config["diretorioLocal"].replace("\\", "/").split("/").pop().split(".")[0]
         #print("caminho", config["diretorioLocal"])
 

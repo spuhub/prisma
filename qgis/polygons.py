@@ -32,6 +32,7 @@ class Polygons():
         self.atlas = atlas
         self.layout = layout
 
+        input = self.calculation_required(input, gdf_required)
         # Extrai vértices e linhas do polígono que está sendo comparado
         gdf_point_input, gdf_line_input = self.explode_input(input)
 
@@ -73,6 +74,40 @@ class Polygons():
         else:
             self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
                                gdf_required, index_1, index_2)
+
+    def calculation_required(self, input, gdf_required):
+
+        input = input.reset_index()
+
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
+
+        input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
+
+        if 'aproximacao' in self.operation_config['operation_config']:
+            input = self.utils.add_input_approximation_projected(input, self.operation_config['operation_config'][
+                'aproximacao'])
+
+        index = 0
+        # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
+        for area in gdf_required:
+            area = area.to_crs(crs)
+            area.set_crs(allow_override=True, crs=crs)
+
+            # Soma da área de interseção feita com feição de input e atual área comparada
+            # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
+            print(input)
+            if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                    input, area).area.sum()
+            else:
+                input.loc[0, self.operation_config['operation_config']['required'][index][
+                    'nomeFantasiaTabelasCamadas']] = gpd.overlay(
+                    input, area).area.sum()
+
+            index += 1
+
+        return input
 
     def explode_input(self, gdf_input):
         geometry = gdf_input.iloc[0]['geometry']
@@ -267,7 +302,7 @@ class Polygons():
                 layers_situation_map.append(layer)
 
             elif layer.name() == 'Linhas':
-                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\medidas_lotes.qml')
+                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Linhas_de_Cota_L.qml')
                 layer.loadNamedStyle(qml_style_dir)
                 layer.triggerRepaint()
 
