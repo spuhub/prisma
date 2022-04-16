@@ -24,6 +24,8 @@ class Polygons():
         self.atlas = None
         self.index_input = None
 
+        self.utils = Utils()
+
         self.layers = []
         self.root = QgsProject.instance().layerTreeRoot()
 

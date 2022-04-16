@@ -205,7 +205,7 @@ class DbConnection:
 
             return gdf, sridTable
         else:
-            return t
+            return [], None
 
     def CAlculateIntersectByPoint(self, pointCoord, tableName, sridPoint, raio):
         t = []

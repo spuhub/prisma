@@ -26,6 +26,8 @@ class Linestrings():
 
         self.gdp_area_homologada = []
 
+        self.utils = Utils()
+
         self.layers = []
         self.root = QgsProject.instance().layerTreeRoot()
 
