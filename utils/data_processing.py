@@ -72,7 +72,6 @@ class DataProcessing():
                     layers_db.append(gpd.GeoDataFrame(gdf, crs=crs))
 
             gdf_selected_db.append(layers_db)
-
         return gdf_selected_db
 
     def get_required_layers(self, scaled_input, operation_config, gdf_selected_shp, gdf_selected_db):

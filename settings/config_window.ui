@@ -170,7 +170,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="perios_referencia_base">
+            <widget class="QLineEdit" name="periodos_referencia_base">
              <property name="placeholderText">
               <string>Periodo de Referência</string>
              </property>

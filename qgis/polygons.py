@@ -7,6 +7,7 @@ from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, 
     QgsPrintLayout, QgsReadWriteContext, QgsPalLayerSettings, QgsTextFormat, QgsVectorLayerSimpleLabeling
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
+from PyQt5.QtCore import Qt
 
 from ..utils.utils import Utils
 from ..settings.env_tools import EnvTools
@@ -27,6 +28,7 @@ class Polygons():
         self.utils = Utils()
 
         self.layers = []
+        self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
     def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input):
@@ -78,7 +80,6 @@ class Polygons():
                                gdf_required, index_1, index_2)
 
     def calculation_required(self, input, gdf_required):
-
         input = input.reset_index()
 
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
@@ -93,19 +94,23 @@ class Polygons():
         index = 0
         # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
         for area in gdf_required:
-            area = area.to_crs(crs)
-            area.set_crs(allow_override=True, crs=crs)
+            if len(area) > 0:
+                if isinstance(area, list):
+                    area = area[0].to_crs(crs)
+                else:
+                    area = area.to_crs(crs)
+                area = area.to_crs(crs)
+                area.set_crs(allow_override=True, crs=crs)
 
-            # Soma da área de interseção feita com feição de input e atual área comparada
-            # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-            print(input)
-            if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
-                    input, area).area.sum()
-            else:
-                input.loc[0, self.operation_config['operation_config']['required'][index][
-                    'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                    input, area).area.sum()
+                # Soma da área de interseção feita com feição de input e atual área comparada
+                # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
+                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                    input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                        input, area).area.sum()
+                else:
+                    input.loc[0, self.operation_config['operation_config']['required'][index][
+                        'nomeFantasiaTabelasCamadas']] = gpd.overlay(
+                        input, area).area.sum()
 
             index += 1
 
@@ -129,10 +134,6 @@ class Polygons():
 
             for i in range(1, len(all_coords)):
                 geometry_lines.append(LineString([all_coords[i - 1], all_coords[i]]))
-
-        # if geometry.type in ['Point', 'LineString']:
-        #   print()
-        #   return list(geometry.xy[0]), list(geometry.xy[1])
 
         if geometry.type == 'MultiPolygon':
             all_coords = []
@@ -329,9 +330,9 @@ class Polygons():
 
         ms.setExtent(rect)
         main_map.zoomToExtent(rect)
-
         iface.mapCanvas().refresh()
         main_map.refresh()
+        self.rect_main_map = main_map.extent()
 
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
@@ -347,27 +348,39 @@ class Polygons():
 
         index = 0
         for area in gdf_required:
-            area = area.to_crs(crs)
-            area = area.set_crs(crs, allow_override = True)
-
             if len(area) > 0:
-                show_qgis_areas = None
-                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                    show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                 self.operation_config['operation_config']['required'][index][
-                                                     'nomeFantasiaCamada'])
+                if isinstance(area, list):
+                    area = area[0].to_crs(crs)
                 else:
-                    show_qgis_areas = QgsVectorLayer(area.to_json(),
+                    area = area.to_crs(crs)
+
+                area = area.set_crs(crs, allow_override = True)
+
+                if len(area) > 0:
+                    show_qgis_areas = None
+                    symbol = None
+                    if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                        show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                      self.operation_config['operation_config']['required'][index][
-                                                         'nomeFantasiaTabelasCamadas'][0])
+                                                         'nomeFantasiaCamada'])
+                        symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
+                                                         self.operation_config['operation_config']['required'][index][
+                                                             'estiloCamadas'][
+                                                             0])
+                    else:
+                        if 'geom' in area:
+                            area = area.drop(columns=['geom'])
+                        show_qgis_areas = QgsVectorLayer(area.to_json(),
+                                                         self.operation_config['operation_config']['required'][index][
+                                                             'nomeFantasiaTabelasCamadas'][0])
+                        symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
+                                                         self.operation_config['operation_config']['required'][index][
+                                                             'estiloTabelasCamadas'][
+                                                             0])
 
-                show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                 self.operation_config['operation_config']['required'][index]['estiloCamadas'][
-                                                     0])
-                show_qgis_areas.renderer().setSymbol(symbol)
-                QgsProject.instance().addMapLayer(show_qgis_areas)
+                    show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+                    show_qgis_areas.renderer().setSymbol(symbol)
+                    QgsProject.instance().addMapLayer(show_qgis_areas)
 
             index += 1
 
@@ -433,6 +446,53 @@ class Polygons():
             layer_name = self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]
             title.setText('Caracterização: ' + layer_name)
             self.fill_observation(feature_input_gdp, layer_name)
+
+        self.fill_data_source()
+
+    def fill_data_source(self):
+        layers_appearing = []
+        prisma_layers = ['Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas']
+        fild_data_source = self.layout.itemById('CD_FonteDados')
+
+        all_layers = [layer for layer in QgsProject.instance().mapLayers().values()]
+        for layer in all_layers:
+            if self.rect_main_map.intersects(layer.extent()):
+                layers_appearing.append(layer.name())
+
+        print_layers = [value for value in layers_appearing if value not in prisma_layers]
+        data_source = self.get_data_source(print_layers)
+
+        text = ''
+        for item in print_layers:
+            if item != 'OpenStreetMap':
+                text += item + ": " + data_source[item][0] + " (" + data_source[item][1] +"), "
+            else:
+                text += "OpenStreetMap: Nominatim (2022)."
+
+        fild_data_source.setText(text)
+
+    def get_data_source(self, layers_name):
+        data_source = {}
+        for name in layers_name:
+            for x in self.operation_config['operation_config']['shp']:
+                if name == x['nomeFantasiaCamada']:
+                    data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['operation_config']['pg']:
+                for x_layers in x['nomeFantasiaTabelasCamadas']:
+                    if name == x_layers:
+                        data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['operation_config']['required']:
+                if 'nomeFantasiaCamada' in x:
+                    if name == x['nomeFantasiaCamada']:
+                        data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+                else:
+                    for x_layers in x['nomeFantasiaTabelasCamadas']:
+                        if name == x_layers:
+                            data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+        return data_source
 
     def fill_observation(self, feature_input_gdp, layer_name):
         input = self.operation_config['input']

@@ -62,7 +62,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["porta"] = self.porta.text()
         confg_dic["baseDeDados"] = self.base_de_dados.text()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_base.text()
-        confg_dic["periosReferencia"] = self.perios_referencia_base.text()
+        confg_dic["periodosReferencia"] = self.periodos_referencia_base.text()
         confg_dic["dataAquisicao"] = self.data_aquisicao_base.text()
 
         if self.combo_box_base.currentData() == "0":
@@ -110,7 +110,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["urlDowload"] = self.url_dowload.text()
         confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
-        confg_dic["periosReferencia"] = self.periodo_referencia_shp.text()
+        confg_dic["periodosReferencia"] = self.periodo_referencia_shp.text()
         confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
 
         if self.combo_box_shp.currentData() == "0":
@@ -222,7 +222,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.porta.setText(current_config["porta"])
             self.base_de_dados.setText(current_config["baseDeDados"])
             self.orgao_responsavel_base.setText(current_config["orgaoResponsavel"])
-            self.perios_referencia_base.setText(current_config["periosReferencia"])
+            self.periodos_referencia_base.setText(current_config["periodosReferencia"])
             self.data_aquisicao_base.setText(current_config["dataAquisicao"])
 
             cred = self.credencials.get_credentials(current_id)
@@ -236,7 +236,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.porta.clear()
             self.base_de_dados.clear()
             self.orgao_responsavel_base.clear()
-            self.perios_referencia_base.clear()
+            self.periodos_referencia_base.clear()
             self.data_aquisicao_base.clear()
             self.usuario.clear()
             self.senha.clear()
@@ -254,7 +254,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.url_dowload.setText(current_config["urlDowload"])
             self.diretorioLocalshp.setFilePath(current_config["diretorioLocal"])
             self.orgao_responsavel_shp.setText(current_config["orgaoResponsavel"])
-            self.periodo_referencia_shp.setText(current_config["periosReferencia"])
+            self.periodo_referencia_shp.setText(current_config["periodosReferencia"])
             self.data_aquisicao_shp.setText(current_config["dataAquisicao"])
 
         if current_id == "0":

@@ -145,12 +145,12 @@ class LayoutManager():
                 new_operation_config.append(base)
 
         self.operation_config['operation_config']['shp'] = new_operation_config
-        new_operation_config = []
 
+        new_operation_config = []
         shift = 0
         for index, base in enumerate(self.operation_config['operation_config']['pg']):
-            for base_name in list_required:
-                if base['nomeFantasiaTabelasCamadas'] == base_name:
+            for name in base['nomeFantasiaTabelasCamadas']:
+                if name in list_required:
                     self.operation_config['operation_config']['required'].append(base)
                     gdf_required.append(gdf_selected_db.pop(index - shift))
                     shift += 1
@@ -178,10 +178,6 @@ class LayoutManager():
 
             for i in range(1, len(all_coords)):
                 geometry_lines.append(LineString([all_coords[i - 1], all_coords[i]]))
-
-        # if geometry.type in ['Point', 'LineString']:
-        #   print()
-        #   return list(geometry.xy[0]), list(geometry.xy[1])
 
         if geometry.type == 'MultiPolygon':
             all_coords = []
@@ -281,7 +277,6 @@ class LayoutManager():
                         'geometry'].type in ['Linestring', 'MultiLinestring']:
                         self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, index_db,
                                                                    index_layer, self.atlas, self.layout, self.index_input)
-                print(self.index_input)
                 index_layer += 1
             index_db += 1
 
