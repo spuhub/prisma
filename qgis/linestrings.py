@@ -25,6 +25,7 @@ class Linestrings():
         self.index_input = None
 
         self.gdp_area_homologada = []
+        self.rect_main_map = None
 
         self.utils = Utils()
 
@@ -58,9 +59,8 @@ class Linestrings():
         coord_y = []
 
         # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
-        if interseption_points.is_empty:
-            return None
-        else:
+        gdf_interseption_points = []
+        if not interseption_points.is_empty:
             for coord in interseption_points:
                 coord_x.append(coord.x)
                 coord_y.append(coord.y)
@@ -72,12 +72,13 @@ class Linestrings():
 
             print("Pontos de interseptação: ", gdf_interseption_points)
 
-            if len(input_standard) > 0:
-                self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], area,
-                                   gdf_interseption_points, gdf_required, index_1, index_2)
-            else:
-                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points,
-                                   gdf_required, index_1, index_2)
+        if len(input_standard) > 0:
+            self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], area,
+                               gdf_interseption_points, gdf_required, index_1, index_2)
+        else:
+            self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points,
+                               gdf_required, index_1, index_2)
+
 
         # gdf_geometry_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data, crs=input.crs)
         # gdf_geometry_lines = gpd.GeoDataFrame(geometry=geometry_lines, crs=gdf_input.crs)
@@ -100,22 +101,23 @@ class Linestrings():
         index = 0
         # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
         for area in gdf_required:
-            area = area.to_crs(crs)
-            area.set_crs(allow_override=True, crs=crs)
+            if len(area) > 0:
+                area = area.to_crs(crs)
+                area.set_crs(allow_override=True, crs=crs)
 
-            # Soma da área de interseção feita com feição de input e atual área comparada
-            # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-            if self.operation_config['operation_config']['required'][index]['nome'] == 'Área união homologada':
-                self.gdp_area_homologada = gpd.overlay(input, area)
+                # Soma da área de interseção feita com feição de input e atual área comparada
+                # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
+                if self.operation_config['operation_config']['required'][index]['nome'] == 'Área união homologada':
+                    self.gdp_area_homologada = gpd.overlay(input, area)
 
-            if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
-                    input, area).length.sum()
+                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                    input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                        input, area).length.sum()
 
-            else:
-                input.loc[0, self.operation_config['operation_config']['required'][index][
-                    'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                    input, length).area.sum()
+                else:
+                    input.loc[0, self.operation_config['operation_config']['required'][index][
+                        'nomeFantasiaTabelasCamadas']] = gpd.overlay(
+                        input, length).area.sum()
 
             index += 1
 
@@ -271,6 +273,7 @@ class Linestrings():
 
         iface.mapCanvas().refresh()
         main_map.refresh()
+        self.rect_main_map = main_map.extent()
 
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
@@ -286,10 +289,9 @@ class Linestrings():
 
         index = 0
         for area in gdf_required:
-            area = area.to_crs(crs)
-            area = area.set_crs(crs, allow_override = True)
-
             if len(area) > 0:
+                area = area.to_crs(crs)
+                area = area.set_crs(crs, allow_override=True)
                 show_qgis_areas = None
                 if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
                     show_qgis_areas = QgsVectorLayer(area.to_json(),
@@ -372,6 +374,57 @@ class Linestrings():
             layer_name = self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]
             title.setText('Caracterização: ' + layer_name)
             self.fill_observation(feature_input_gdp, layer_name)
+
+        self.fill_data_source()
+
+    def fill_data_source(self):
+        layers_appearing = []
+        prisma_layers = ['Feição de Estudo/Sobreposição', 'Interseções', 'Vértices', 'Linhas']
+        fild_data_source = self.layout.itemById('CD_FonteDados')
+
+        all_layers = [layer for layer in QgsProject.instance().mapLayers().values()]
+        for layer in all_layers:
+            if self.rect_main_map.intersects(layer.extent()):
+                layers_appearing.append(layer.name())
+
+        print_layers = [value for value in layers_appearing if value not in prisma_layers]
+        data_source = self.get_data_source(print_layers)
+
+        text = ''
+        for item in print_layers:
+            if item != 'OpenStreetMap':
+                text_item = data_source[item][0] + " (" + data_source[item][1] + "), "
+                if text_item not in text:
+                    text += text_item
+
+        text += "Nominatim (2022)."
+
+        print(text)
+
+        fild_data_source.setText(text)
+
+    def get_data_source(self, layers_name):
+        data_source = {}
+        for name in layers_name:
+            for x in self.operation_config['operation_config']['shp']:
+                if name == x['nomeFantasiaCamada']:
+                    data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['operation_config']['pg']:
+                for x_layers in x['nomeFantasiaTabelasCamadas']:
+                    if name == x_layers:
+                        data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['operation_config']['required']:
+                if 'nomeFantasiaCamada' in x:
+                    if name == x['nomeFantasiaCamada']:
+                        data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+                else:
+                    for x_layers in x['nomeFantasiaTabelasCamadas']:
+                        if name == x_layers:
+                            data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+        return data_source
 
     def fill_observation(self, feature_input_gdp, layer_name):
         input = self.operation_config['input']

@@ -465,9 +465,13 @@ class Polygons():
         text = ''
         for item in print_layers:
             if item != 'OpenStreetMap':
-                text += item + ": " + data_source[item][0] + " (" + data_source[item][1] +"), "
-            else:
-                text += "OpenStreetMap: Nominatim (2022)."
+                text_item = data_source[item][0] + " (" + data_source[item][1] +"), "
+                if text_item not in text:
+                    text += text_item
+
+        text += "OpenStreetMap: Nominatim (2022)."
+
+        print(text)
 
         fild_data_source.setText(text)
 
