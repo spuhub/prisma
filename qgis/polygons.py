@@ -451,7 +451,7 @@ class Polygons():
 
     def fill_data_source(self):
         layers_appearing = []
-        prisma_layers = ['Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas']
+        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas']
         fild_data_source = self.layout.itemById('CD_FonteDados')
 
         all_layers = [layer for layer in QgsProject.instance().mapLayers().values()]
