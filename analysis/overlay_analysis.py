@@ -49,16 +49,15 @@ class OverlayAnalisys():
 
         # gdf_buffered_shp, gdf_buffered_pg = self.handle_approximation_layers()
 
-        input['Área Homologada_area'] = 0
-
+        # input['Área Homologada_area'] = 0
         # Comparação de sobreposição entre input e Shapefiles
         input = self.analisys_shp(input, gdf_selected_shp)
 
         # Comparação de sobreposição entre input e bases de dados de banco de dados
         input = self.analysis_db(input, gdf_selected_db)
 
-        result = {'overlay_shp': input, 'overlay_db': input, 'overlay_required': input, 'input': input,
-                  'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp, 'gdf_selected_db': gdf_selected_db}
+        result = {'input': input,'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp,
+                  'gdf_selected_db': gdf_selected_db}
 
         return result
 
@@ -78,8 +77,8 @@ class OverlayAnalisys():
                 for indexInput, rowInput in input.iterrows():
                     if (rowArea['geometry'].intersection(rowInput['geometry'])):
                         overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nomeFantasiaCamada']] = True
-                        if str(input.geom_type) == str(area.geom_type):
-                            overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+                        # if str(input.geom_type) == str(area.geom_type):
+                        #     overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
 
             index += 1
         return overlay_shp
@@ -93,7 +92,7 @@ class OverlayAnalisys():
         """
         index_db = 0
         overlay_db = input.copy()
-        overlay_db['sobreposicao'] = False
+        # overlay_db['sobreposicao'] = False
         for db in gdf_selected_db:
             index_layer = 0
             for layer_db in db:
@@ -105,10 +104,10 @@ class OverlayAnalisys():
                         if (rowArea['geometry'].intersection(rowInput['geometry'])):
                             overlay_db.loc[indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
                                     index_layer]] = True
-                            if str(input.geom_type) == str(layer_db.geom_type):
-                                overlay_db.loc[
-                                    indexInput, str(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
-                                        index_layer] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+                            # if str(input.geom_type) == str(layer_db.geom_type):
+                            #     overlay_db.loc[
+                            #         indexInput, str(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
+                            #             index_layer] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
 
                 index_layer += 1
 

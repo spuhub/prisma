@@ -65,7 +65,7 @@ class ResultWindow (QtWidgets.QDialog):
         Faz a contagem de quantas sobreposições aconteceram com as áreas de shapefile selecionadas
         e realiza a inserção deste valor na tabela.
         """
-        gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_shp'])
+        gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['input'])
 
 
         for i in self.result['operation_config']['shp']:
@@ -91,7 +91,7 @@ class ResultWindow (QtWidgets.QDialog):
         Faz a contagem de quantas sobreposições aconteceram com as áreas de banco de dados selecionados
         e realiza a inserção deste valor na tabela
         """
-        gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['overlay_db'])
+        gdf_result_db = gpd.GeoDataFrame.from_dict(self.result['input'])
 
         for bd in self.result['operation_config']['pg']:
             cont = 0
