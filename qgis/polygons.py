@@ -332,6 +332,7 @@ class Polygons():
         main_map.zoomToExtent(rect)
         iface.mapCanvas().refresh()
         main_map.refresh()
+        QApplication.instance().processEvents()
         self.rect_main_map = main_map.extent()
 
         # Tamanho do mapa no layout
@@ -450,16 +451,12 @@ class Polygons():
         self.fill_data_source()
 
     def fill_data_source(self):
-        layers_appearing = []
         prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas']
-        fild_data_source = self.layout.itemById('CD_FonteDados')
+        field_data_source = self.layout.itemById('CD_FonteDados')
 
-        all_layers = [layer for layer in QgsProject.instance().mapLayers().values()]
-        for layer in all_layers:
-            if self.rect_main_map.intersects(layer.extent()):
-                layers_appearing.append(layer.name())
+        all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
+        print_layers = [value for value in all_layers if value not in prisma_layers]
 
-        print_layers = [value for value in layers_appearing if value not in prisma_layers]
         data_source = self.get_data_source(print_layers)
 
         text = ''
@@ -469,11 +466,9 @@ class Polygons():
                 if text_item not in text:
                     text += text_item
 
-        text += "OpenStreetMap: Nominatim (2022)."
-
-        print(text)
-
-        fild_data_source.setText(text)
+        text += "Nominatim (2022)."
+        self.rect_main_map = None
+        field_data_source.setText(text)
 
     def get_data_source(self, layers_name):
         data_source = {}
