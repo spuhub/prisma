@@ -15,24 +15,28 @@ from ..analysis.overlay_analysis import OverlayAnalisys
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
+from PyPDF2 import PdfFileReader, PdfFileMerger
+from datetime import datetime
+from .polygon_required import PolygonRequired
+
 
 class Polygons():
     def __init__(self, operation_config):
         self.operation_config = operation_config
 
-        self.required_layers_loaded = False
         self.layout = None
         self.atlas = None
         self.index_input = None
 
         self.utils = Utils()
+        self.time = None
+        self.pd = PolygonRequired(self.operation_config)
 
         self.layers = []
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
     def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input):
-        self.index_input = index_input
         self.atlas = atlas
         self.layout = layout
 
@@ -54,6 +58,16 @@ class Polygons():
             input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
                 index_2]] = gpd.overlay(input, area).area.sum()
 
+        # Pega o tempo em que o processamento da feição atual se inicia
+        # Utilizado para gerar os nomes únicos na hora de exportar o PDF
+        if index_input != self.index_input:
+            self.index_input = index_input
+            date_and_time = datetime.now()
+            self.time = date_and_time.strftime('%d-%m-%Y_%H-%M-%S')
+            # Gera o layout PDF com a área de entrada e áreas da união
+            self.pd.polygon_required_layers(input, input_standard, gdf_line_input, gdf_point_input, self.index_input,
+                                            self.time, self.atlas, self.layout)
+
         data = []
         # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e feição
         # da atual área que está sendo comparada. Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
@@ -72,12 +86,12 @@ class Polygons():
         if len(intersection) > 0:
             intersection.set_crs(allow_override=True, crs=input.crs)
 
-        if len(input_standard) > 0:
-            self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
-                               intersection, gdf_required, index_1, index_2)
-        else:
-            self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
-                               gdf_required, index_1, index_2)
+            if len(input_standard) > 0:
+                self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
+                                   intersection, gdf_required, index_1, index_2)
+            else:
+                self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
+                                   gdf_required, index_1, index_2)
 
     def calculation_required(self, input, gdf_required):
         input = input.reset_index()
@@ -160,7 +174,7 @@ class Polygons():
 
         return gdf_geometry_points, gdf_geometry_lines
 
-    def handle_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard, feature_area, feature_intersection, gdf_required, index_1, index_2):
+    def handle_comparasion_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard, feature_area, feature_intersection, gdf_required, index_1, index_2):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -175,10 +189,6 @@ class Polygons():
         crs = (feature_input_gdp.iloc[0]['crs_feature'])
         # Forma de contornar problema do QGis, que alterava o extent da camada de forma incorreta
         extent = feature_input_gdp.bounds
-
-        if self.required_layers_loaded == False:
-            self.load_required_layers(gdf_required, crs)
-            self.required_layers_loaded = True
 
         # Altera o EPSG do projeto QGis
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
@@ -340,50 +350,130 @@ class Polygons():
 
         self.export_pdf(feature_input_gdp, index_1, index_2)
 
-    def load_required_layers(self, gdf_required, crs):
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
-        QgsProject.instance().addMapLayer(layer)
+    def handle_required_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard):
+        """
+        Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
+        está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
+
+        @keyword feature_input_gdp: Feição que está sendo processada e será carregada para o QGis.
+        @keyword input_standard: Feição padrão isto é, sem zona de proximidade (caso necessário), que está sendo processada e será carregada para o QGis.
+        @keyword feature_area: Camada de comparação que está sendo processada.
+        @keyword feature_intersection: Camada de interseção (caso exista) e será carregada para o QGis.
+        @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        """
+        crs = (feature_input_gdp.iloc[0]['crs_feature'])
+        # Forma de contornar problema do QGis, que alterava o extent da camada de forma incorreta
+        extent = feature_input_gdp.bounds
+
+        # Altera o EPSG do projeto QGis
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
         QApplication.instance().processEvents()
 
-        index = 0
-        for area in gdf_required:
-            if len(area) > 0:
-                if isinstance(area, list):
-                    area = area[0].to_crs(crs)
-                else:
-                    area = area.to_crs(crs)
+        self.remove_layers()
 
-                area = area.set_crs(crs, allow_override = True)
+        # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
+        if 'aproximacao' in self.operation_config['operation_config']:
+            # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
+            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
+            show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-                if len(area) > 0:
-                    show_qgis_areas = None
-                    symbol = None
-                    if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                        show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                     self.operation_config['operation_config']['required'][index][
-                                                         'nomeFantasiaCamada'])
-                        symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                         self.operation_config['operation_config']['required'][index][
-                                                             'estiloCamadas'][
-                                                             0])
-                    else:
-                        if 'geom' in area:
-                            area = area.drop(columns=['geom'])
-                        show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                         self.operation_config['operation_config']['required'][index][
-                                                             'nomeFantasiaTabelasCamadas'][0])
-                        symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                         self.operation_config['operation_config']['required'][index][
-                                                             'estiloTabelasCamadas'][
-                                                             0])
+            symbol = self.get_input_symbol(show_qgis_input.geometryType())
+            show_qgis_input.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_input, False)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
 
-                    show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-                    show_qgis_areas.renderer().setSymbol(symbol)
-                    QgsProject.instance().addMapLayer(show_qgis_areas)
+            input_standard = input_standard.to_crs(crs)
+            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(),
+                                                      "Feição de Estudo/Sobreposição (padrão)")
+            show_qgis_input_standard.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            index += 1
+            symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
+            show_qgis_input_standard.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_input_standard)
+        else:
+            # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
+            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
+            show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+            symbol = self.get_input_standard_symbol(show_qgis_input.geometryType())
+            show_qgis_input.renderer().setSymbol(symbol)
+            QgsProject.instance().addMapLayer(show_qgis_input, False)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+
+        # Camada de cotas
+        show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
+        show_qgis_quota.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+        QgsProject.instance().addMapLayer(show_qgis_quota, False)
+        self.root.insertLayer(0, show_qgis_quota)
+
+        # Camada de vértices
+        show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
+        show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+        QgsProject.instance().addMapLayer(show_qgis_vertices, False)
+        self.root.insertLayer(0, show_qgis_vertices)
+
+        layers_localization_map = []
+        layers_situation_map = []
+        # Posiciona a tela do QGis no extent da área de entrada
+        for layer in QgsProject.instance().mapLayers().values():
+            if layer.name() == 'Feição de Estudo/Sobreposição':
+                rect = QgsRectangle(extent['minx'], extent['miny'], extent['maxx'], extent['maxy'])
+                # Aqui está sendo contornado o erro de transformação, comentado no comeco desta função
+                layer.setExtent(rect)
+                self.atlas.setEnabled(True)
+                self.atlas.setCoverageLayer(layer)
+                self.atlas.changed
+                self.layers = layer
+
+                layers_localization_map.append(layer)
+                layers_situation_map.append(layer)
+
+            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada':
+                layers_situation_map.append(layer)
+
+            elif layer.name() == 'OpenStreetMap':
+                layers_localization_map.append(layer)
+                layers_situation_map.append(layer)
+
+            elif layer.name() == 'Linhas':
+                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Linhas_de_Cota_L.qml')
+                layer.loadNamedStyle(qml_style_dir)
+                layer.triggerRepaint()
+
+            elif layer.name() == 'Vértices':
+                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
+                layer.loadNamedStyle(qml_style_dir)
+                layer.triggerRepaint()
+
+        # Configurações no QGis para gerar os relatórios PDF
+        ms = QgsMapSettings()
+        ms.setLayers([self.layers])
+        rect = QgsRectangle(ms.fullExtent())
+
+        main_map = self.layout.itemById('Planta_Principal')
+        situation_map = self.layout.itemById('Planta_Situacao')
+        localization_map = self.layout.itemById('Planta_Localizacao')
+
+        situation_map.setLayers(layers_situation_map)
+        localization_map.setLayers(layers_localization_map)
+        situation_map.refresh()
+        localization_map.refresh()
+
+        ms.setExtent(rect)
+        main_map.zoomToExtent(rect)
+        iface.mapCanvas().refresh()
+        main_map.refresh()
+        QApplication.instance().processEvents()
+        self.rect_main_map = main_map.extent()
+
+        # Tamanho do mapa no layout
+        main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
+
+        self.export_pdf(feature_input_gdp, None, None)
 
     def export_pdf(self, feature_input_gdp, index_1, index_2):
         """
@@ -399,11 +489,13 @@ class Polygons():
         if 'logradouro' not in feature_input_gdp:
             feature_input_gdp['logradouro'] = "Ponto por Endereço ou Coordenada"
 
-        if index_2 == None:
-            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(
+        if index_1 == None and index_2 == None:
+            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_AreasObrigatorias.pdf'
+        elif index_2 == None:
+            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_' + str(
                 self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']) + '.pdf'
         else:
-            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(
+            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_' + str(
                 self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
                     index_2]) + '.pdf'
 
@@ -420,7 +512,24 @@ class Polygons():
             QgsLayoutExporter.exportToPdf(atlas, pdf_path,
                                           settings=pdf_settings)
 
-    QApplication.instance().processEvents()
+        self.merge_pdf(pdf_name)
+
+    def merge_pdf(self, pdf_name):
+        pdf_name = "_".join(pdf_name.split("_", 3)[:3])
+        print(pdf_name)
+        # files_dir = os.path.normpath(files_dir)
+        # print(files_dir)
+        pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
+        merger = PdfFileMerger()
+
+        for filename in pdf_files:
+            merger.append(PdfFileReader(os.path.join(self.operation_config['path_output'], filename), "rb"))
+
+        merger.write(os.path.join(self.operation_config['path_output'], pdf_name + ".pdf"))
+
+        for filename in os.listdir(self.operation_config['path_output']):
+            if pdf_name in filename and filename.count("_") > 2:
+                os.remove(self.operation_config['path_output'] + "/" + filename)
 
     def handle_text(self, feature_input_gdp, index_1, index_2):
         """
