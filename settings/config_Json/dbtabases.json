@@ -465,18 +465,18 @@
     "base15": {
         "id": "base15",
         "tipo": "shp",
-        "nome": "\u00c1rea de linha",
+        "nome": "Shapefile de linhas",
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\linestring_2.shp",
         "orgaoResponsavel": "SPU",
         "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
-        "nomeFantasiaCamada": "\u00c1rea de linha",
+        "nomeFantasiaCamada": "Shapefile de linhas",
         "TipoTabelasDisponiveis": "Linestring",
         "estiloCamadas": [
             {
                 "line_style": "solid",
-                "line_color": "black",
+                "line_color": "red",
                 "width_border": "0.35",
                 "style": "solid",
                 "color": "red"
@@ -498,7 +498,7 @@
         "tipo": "shp",
         "nome": "MultiLinestring",
         "urlDowload": "..",
-        "diretorioLocal": "C:\\Users\\vinir\\Desktop\\shapefile_polyline.shp",
+        "diretorioLocal": "C:\\Users\\vinir\\Documents\\shapefile_polyline.shp",
         "orgaoResponsavel": "..",
         "periodosReferencia": "..",
         "dataAquisicao": "..",
