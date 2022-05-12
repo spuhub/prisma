@@ -134,12 +134,20 @@ class JsonTools:
         Retorna todas as camadas obrigatórias.
         @return: Json com as camadas obigatórias
         """
+        config = {}
+        config["lpm_homologada"] = ["","",""]
+        config["ltm_homologada"]  = ["","",""]
+        config["area_homologada"]  = ["","",""]
+        config["lpm_nao_homologada"]  = ["","",""]
+        config["ltm_nao_homologada"]  = ["","",""]
+        config["area_nao_homologada"] = ["","",""]
+
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
         if "obrigatorio" in dados:
             return dados["obrigatorio"]
         else:
-            return {}
+            return config
 
     def set_camadas_base_obrigatoria (self, new_conf):
         """
@@ -153,6 +161,8 @@ class JsonTools:
 
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
+
+
 
 if __name__ == '__main__':
     d = JsonTools()

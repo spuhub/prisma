@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -252,7 +252,7 @@
          <item>
           <widget class="QPushButton" name="testar_base_carregar_camadas">
            <property name="text">
-            <string>Carregar e Configurar Camadas</string>
+            <string>Configurar Camadas</string>
            </property>
           </widget>
          </item>
@@ -405,7 +405,7 @@
        <item>
         <widget class="QPushButton" name="testar_shp_carregar_camadas">
          <property name="text">
-          <string>Testar Conexão e Carregar Camada</string>
+          <string>Configurar Camada</string>
          </property>
         </widget>
        </item>
@@ -430,13 +430,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox">
-            <item>
-             <property name="text">
-              <string>Usucapiao - Área Especial</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_base_lpm_hom"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_2">
@@ -459,7 +453,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_2"/>
+           <widget class="QComboBox" name="comboBox_camada_lpm_hom"/>
           </item>
          </layout>
         </widget>
@@ -478,13 +472,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_3">
-            <item>
-             <property name="text">
-              <string>Usucapiao - Área Especial</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_base_lpm_n_hom"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_6">
@@ -507,13 +495,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_4"/>
+           <widget class="QComboBox" name="comboBox_camada_lpm_n_hom"/>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="groupBox_base_ltm_hom">
          <property name="title">
           <string>LTM Homologada</string>
          </property>
@@ -526,13 +514,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_5">
-            <item>
-             <property name="text">
-              <string>Usucapiao - Área Especial</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_base_ltm_hom"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_3">
@@ -555,7 +537,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_6"/>
+           <widget class="QComboBox" name="comboBox_camada_ltm_hom"/>
           </item>
          </layout>
         </widget>
@@ -574,13 +556,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_7">
-            <item>
-             <property name="text">
-              <string>Usucapiao - Área Especial</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_base_ltm_n_hom"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_4">
@@ -603,7 +579,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_8"/>
+           <widget class="QComboBox" name="comboBox_camada_ltm_n_hom"/>
           </item>
          </layout>
         </widget>
@@ -622,13 +598,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_9">
-            <item>
-             <property name="text">
-              <string>Usucapiao - Área Especial</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_base_area_uniao"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_5">
@@ -651,7 +621,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_10"/>
+           <widget class="QComboBox" name="comboBox_camada_area_uniao"/>
           </item>
          </layout>
         </widget>
@@ -670,13 +640,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_11">
-            <item>
-             <property name="text">
-              <string>Usucapiao - Área Especial</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="comboBox_base_area_uniao_n_hom"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_7">
@@ -699,7 +663,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox_12"/>
+           <widget class="QComboBox" name="comboBox_camada_area_uniao_n_hom"/>
           </item>
          </layout>
         </widget>
