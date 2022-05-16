@@ -142,11 +142,5 @@ class OverlayAnalisys():
                     if area>areamaior:
                         input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
                         areamaior=area
-                print(indexInput)
-                print(indexEpsg)
-                print(area)
-                print(areamaior)
-
-
 
         return input['crs_feature']
