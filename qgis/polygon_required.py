@@ -12,11 +12,13 @@ from PyQt5.QtCore import Qt
 from ..utils.utils import Utils
 from ..settings.env_tools import EnvTools
 from ..analysis.overlay_analysis import OverlayAnalisys
+from .memorial import gerardoc
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
 from PyPDF2 import PdfFileReader, PdfFileMerger
 from datetime import datetime
+
 
 
 class PolygonRequired():
@@ -105,7 +107,9 @@ class PolygonRequired():
         self.root.insertLayer(0, show_qgis_quota)
 
         # Camada de vértices
-        show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
+        # Remover o último vértice, para não ficar dois pontos no mesmo lugar
+        show_gdf_point_input = gdf_point_input[:-1]
+        show_qgis_vertices = QgsVectorLayer(show_gdf_point_input.to_json(), "Vértices")
         show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
         QgsProject.instance().addMapLayer(show_qgis_vertices, False)
@@ -168,9 +172,9 @@ class PolygonRequired():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.export_pdf(feature_input_gdp)
+        self.export_pdf(feature_input_gdp, gdf_point_input)
 
-    def export_pdf(self, feature_input_gdp):
+    def export_pdf(self, feature_input_gdp, gdf_point_input):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 
@@ -198,6 +202,7 @@ class PolygonRequired():
             QgsLayoutExporter.exportToPdf(atlas, pdf_path,
                                           settings=pdf_settings)
 
+        gerardoc(feature_input_gdp, gdf_point_input, pdf_name, pdf_path)
         self.merge_pdf(pdf_name)
 
     def merge_pdf(self, pdf_name):

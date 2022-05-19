@@ -167,9 +167,6 @@ class Polygons():
         data = list(zip(coord_x, coord_y, geometry_points))
 
         gdf_geometry_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data, crs=gdf_input.crs)
-        # Remover o último vértice, para não ficar dois pontos no mesmo lugar
-        gdf_geometry_points = gdf_geometry_points[:-1]
-
         gdf_geometry_lines = gpd.GeoDataFrame(geometry=geometry_lines, crs=gdf_input.crs)
 
         return gdf_geometry_points, gdf_geometry_lines
@@ -285,7 +282,9 @@ class Polygons():
         self.root.insertLayer(0, show_qgis_quota)
 
         # Camada de vértices
-        show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
+        # Remover o último vértice, para não ficar dois pontos no mesmo lugar
+        show_gdf_point_input = gdf_point_input[:-1]
+        show_qgis_vertices = QgsVectorLayer(show_gdf_point_input.to_json(), "Vértices")
         show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
         QgsProject.instance().addMapLayer(show_qgis_vertices, False)
@@ -348,7 +347,7 @@ class Polygons():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.export_pdf(feature_input_gdp, index_1, index_2)
+        self.export_pdf(feature_input_gdp, gdf_point_input, index_1, index_2)
 
     def handle_required_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard):
         """
@@ -475,7 +474,7 @@ class Polygons():
 
         self.export_pdf(feature_input_gdp, None, None)
 
-    def export_pdf(self, feature_input_gdp, index_1, index_2):
+    def export_pdf(self, feature_input_gdp, gdf_point_input, index_1, index_2):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 

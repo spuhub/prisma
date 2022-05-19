@@ -41,6 +41,8 @@ class Linestrings():
         self.layout = layout
 
         input = self.calculation_required(input, gdf_required)
+        # Extrai vértices da linha que está sendo comparada
+        gdf_point_input = self.explode_input(input)
         # Cálculos de área e centroid da feição de input
         input.loc[0, 'areaLote'] = input.iloc[0]['geometry'].length
         input.loc[0, 'ctr_lat'] = input.iloc[0]['geometry'].centroid.y
@@ -55,22 +57,13 @@ class Linestrings():
             input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
                 index_2]] = gpd.overlay(input, area).length.sum()
 
-        # Pega o tempo em que o processamento da feição atual se inicia
-        # Utilizado para gerar os nomes únicos na hora de exportar o PDF
-        if index_input != self.index_input:
-            self.index_input = index_input
-            date_and_time = datetime.now()
-            self.time = date_and_time.strftime('%d-%m-%Y_%H-%M-%S')
-            # Gera o layout PDF com a área de entrada e áreas da união
-            self.lr.linestring_required_layers(input, input_standard, self.gpd_area_homologada, self.index_input, self.time, self.atlas, self.layout)
-
-        # Extrai vértices onde as linhas se interceptam
+        # # Extrai vértices onde as linhas se interceptam
         interseption_points = input.unary_union.intersection(area.unary_union)
 
         coord_x = []
         coord_y = []
-        # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
         gdf_interseption_points = []
+        # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
         if not interseption_points.is_empty:
             for coord in interseption_points:
                 coord_x.append(coord.x)
@@ -81,13 +74,21 @@ class Linestrings():
                                                        crs=input.crs)
             gdf_interseption_points = gdf_interseption_points.reset_index()
 
-            print("Pontos de interseção: ", gdf_interseption_points)
+        # Pega o tempo em que o processamento da feição atual se inicia
+        # Utilizado para gerar os nomes únicos na hora de exportar o PDF
+        if index_input != self.index_input:
+            self.index_input = index_input
+            date_and_time = datetime.now()
+            self.time = date_and_time.strftime('%d-%m-%Y_%H-%M-%S')
+            # Gera o layout PDF com a área de entrada e áreas da união
+            self.lr.linestring_required_layers(input, input_standard, gdf_point_input, self.gpd_area_homologada, self.index_input, self.time, self.atlas, self.layout)
 
+        if not interseption_points.is_empty:
             if len(input_standard) > 0:
                 self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], area,
-                                   gdf_interseption_points, gdf_required, index_1, index_2)
+                                   gdf_point_input, gdf_required, index_1, index_2)
             else:
-                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points,
+                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_point_input,
                                    gdf_required, index_1, index_2)
 
     def calculation_required(self, input, gdf_required):
@@ -127,6 +128,39 @@ class Linestrings():
             index += 1
 
         return input
+
+    def explode_input(self, gdf_input):
+        geometry = gdf_input.iloc[0]['geometry']
+
+        geometry_points = []
+        coord_x = []
+        coord_y = []
+
+        if geometry.type == 'LineString':
+            all_coords = geometry.coords
+
+            for coord in all_coords:
+                geometry_points.append(Point(coord))
+                coord_x.append(list(coord)[0])
+                coord_y.append(list(coord)[1])
+
+        if geometry.type == 'MultiLineString':
+            all_coords = []
+            for ea in geometry:
+                all_coords.append(list(ea.coords))
+
+            for polygon in all_coords:
+                for coord in polygon:
+                    geometry_points.append(Point(coord))
+                    coord_x.append(list(coord)[0])
+                    coord_y.append(list(coord)[1])
+
+        data = list(zip(coord_x, coord_y, geometry_points))
+
+        gdf_geometry_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data, crs=gdf_input.crs)
+        # Remover o último vértice, para não ficar dois pontos no mesmo lugar
+
+        return gdf_geometry_points
 
     def handle_layers(self, feature_input_gdp, input_standard, feature_area, feature_gdf_interseption_points, gdf_required, index_1, index_2):
         """
@@ -279,9 +313,9 @@ class Linestrings():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.export_pdf(feature_input_gdp, index_1, index_2)
+        self.export_pdf(feature_input_gdp, feature_gdf_interseption_points, index_1, index_2)
 
-    def export_pdf(self, feature_input_gdp, index_1, index_2):
+    def export_pdf(self, feature_input_gdp, feature_gdf_interseption_points, index_1, index_2):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 
@@ -322,9 +356,7 @@ class Linestrings():
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        print(pdf_name)
-        # files_dir = os.path.normpath(files_dir)
-        # print(files_dir)
+
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
         merger = PdfFileMerger()
 
@@ -441,7 +473,12 @@ class Linestrings():
         if 'Área Homologada' in feature_input_gdp:
             format_value = f'{feature_input_gdp.iloc[0]["Área Homologada"]:_.2f}'
             format_value = format_value.replace('.', ',').replace('_', '.')
-            overlay_uniao_area.setText("Sobreposição Área Homologada: " + str(format_value) + " metros em " + str(len(self.gpd_area_homologada.explode())) + " segmentos.")
+
+            if len(self.gpd_area_homologada) > 0:
+                overlay_uniao_area.setText("Sobreposição Área Homologada: " + str(format_value) + " metros em " + str(
+                    len(self.gpd_area_homologada.explode())) + " segmentos.")
+            else:
+                overlay_uniao_area.setText("Sobreposição Área Homologada: 0 metros em 0 segmentos.")
 
     def add_template_to_project(self, template_dir):
         """

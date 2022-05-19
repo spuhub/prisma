@@ -12,6 +12,7 @@ from PyQt5.QtCore import Qt
 from ..utils.utils import Utils
 from ..settings.env_tools import EnvTools
 from ..analysis.overlay_analysis import OverlayAnalisys
+from .memorial import gerardoc
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
@@ -36,7 +37,7 @@ class LinestringRequired():
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
-    def linestring_required_layers(self, input, input_standard, gpd_area_homologada, index_input, time, atlas, layout):
+    def linestring_required_layers(self, input, input_standard, gdf_interseption_points, gpd_area_homologada, index_input, time, atlas, layout):
         self.gpd_area_homologada = gpd_area_homologada
         self.time = time
         self.index_input = index_input
@@ -44,11 +45,11 @@ class LinestringRequired():
         self.layout = layout
 
         if len(input_standard) > 0:
-            self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]])
+            self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], gdf_interseption_points)
         else:
-            self.handle_layers(input.iloc[[0]], input_standard)
+            self.handle_layers(input.iloc[[0]], input_standard, gdf_interseption_points)
 
-    def handle_layers(self, feature_input_gdp, input_standard):
+    def handle_layers(self, feature_input_gdp, input_standard, gdf_interseption_points):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -152,9 +153,9 @@ class LinestringRequired():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.export_pdf(feature_input_gdp)
+        self.export_pdf(feature_input_gdp, gdf_interseption_points)
 
-    def export_pdf(self, feature_input_gdp):
+    def export_pdf(self, feature_input_gdp, gdf_interseption_points):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 
@@ -182,13 +183,12 @@ class LinestringRequired():
             QgsLayoutExporter.exportToPdf(atlas, pdf_path,
                                           settings=pdf_settings)
 
+        gerardoc(feature_input_gdp, gdf_interseption_points, pdf_name, pdf_path)
         self.merge_pdf(pdf_name)
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        print(pdf_name)
-        # files_dir = os.path.normpath(files_dir)
-        # print(files_dir)
+
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
         merger = PdfFileMerger()
 
@@ -296,7 +296,13 @@ class LinestringRequired():
         if 'Área Homologada' in feature_input_gdp:
             format_value = f'{feature_input_gdp.iloc[0]["Área Homologada"]:_.2f}'
             format_value = format_value.replace('.', ',').replace('_', '.')
-            overlay_uniao_area.setText("Sobreposição Área Homologada: " + str(format_value) + " metros em " + str(len(self.gpd_area_homologada.explode())) + " segmentos.")
+
+            if len(self.gpd_area_homologada) > 0:
+                overlay_uniao_area.setText("Sobreposição Área Homologada: " + str(format_value) + " metros em " + str(
+                    len(self.gpd_area_homologada.explode())) + " segmentos.")
+            else:
+                overlay_uniao_area.setText("Sobreposição Área Homologada: 0 metros em 0 segmentos.")
+
 
     def add_template_to_project(self, template_dir):
         """
