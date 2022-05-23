@@ -202,7 +202,7 @@ class PolygonRequired():
             QgsLayoutExporter.exportToPdf(atlas, pdf_path,
                                           settings=pdf_settings)
 
-        gerardoc(feature_input_gdp, gdf_point_input, pdf_name, pdf_path)
+        gerardoc(feature_input_gdp, gdf_point_input, pdf_name, pdf_path, self.layout, self.operation_config)
         self.merge_pdf(pdf_name)
 
     def merge_pdf(self, pdf_name):

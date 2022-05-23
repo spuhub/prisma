@@ -7,47 +7,53 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table as TablePDF, TableStyle
 from datetime import date
 from reportlab.lib.units import mm
+from ..settings.env_tools import EnvTools
 import os
 import geopandas as gpd
 import numpy as np
 
 
-def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path):
+def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_config):
     Story = []
 
-    texto_titulo = ["MINISTERIO DA ECONOMIA - ME \n", "Secretaria Especial de Desestatização, Desenvestimento de Mercado - SEDDM \n",
-                    "Secretaria de Coordenação e Governança do Patrimonio da União - SPU",
-                    "Superintendencia do Patrimonio da União no Estado de Santa Catarina - SPU/SC",
-                    "Praça XV de novembro, 336 - Centro - Fronrianópilis/SC - CEP: 88.010-400",
-                    "email:atendimentospusc@economia.gov.br - Fone:(48) 3251-8200" ]
-    
-    titulo_memorial_descr = "Memorial Descritivo"
+    et = EnvTools()
+    headers = et.get_report_hearder()
 
-    ocupante_imovel = "UNIÃO FEDERAL -BASE AEREA DE FLORIANOPOLIS"
-    cpf_cnpj = "00394429000968"
-    endereco = "AVN CEL BANDEIRA MAIA, 1026"
-    municipio_uf = "FLORIANOPOLIS -SC"
-    area_total = "5524199.85"
-    centroide = "E 739743.09m - N 6935739.47m"
+    texto_titulo = [str(headers['ministerio']) + '\n', str(headers['secretariaEspecial']) + '\n',
+                    str(headers['secretaria']),
+                    str(headers['superintendencia']),
+                    str(headers['setor'])]
+
+    titulo_memorial_descr = 'MEMORIAL DESCRITIVO'
+
+    ocupante_imovel = layout.itemById('CD_Compl_Ocupante').currentText()
+    cpf_cnpj = layout.itemById('CD_Compl_CPF_CNPJ').currentText()
+    endereco = layout.itemById('CD_Compl_Logradouro').currentText()
+    municipio_uf = layout.itemById('CD_Compl_Municipio').currentText()
+    area_total = str(layout.itemById('CD_Compl_Obs2').currentText())
+    area_total = area_total[22:-4]
+    centroide = str(layout.itemById('CD_Centroide').currentText())
+    centroide = centroide.split('Y')
+    txt_centroide = centroide[0][:-2] + '; Y'+ centroide[1]
+    sobreposicao_uniao = str(layout.itemById('CD_Compl_Obs4').currentText())
+    sobreposicao_uniao = sobreposicao_uniao[41:-4]
     perimetro_total = '000'
     
     titulo_descricao = "descrição"
 
+    utm_zone = str(layout.itemById('CD_SRC').currentText())
+    utm_zone = utm_zone[36:]
+
     Descrição = "Inicia-se a descrição dessa poligonal fechada no vértice 0, " \
                 "conforme tabela abaixo, onde todas as coordenadas descritas estão " \
                 "georreferenciadas ao Sistema Geodésico Brasileiro, projetadas no sistema " \
-                "UTM, Meridiano Central -51, Fuso 22 Sul e tendo como Datum SIRGAS 2000, sendo: "
+                "UTM, Fuso " + utm_zone + " e tendo como Datum SIRGAS 2000, sendo: "
 
-    
-
-    nome_arquivo_saida = "saida.pdf"
     pdf_path = pdf_path.replace(".pdf", "_Memorial.pdf")
 
     #rodape_cidade = "Florianópolis/SC,"
     tabela = [["Vertice", "Coordenada X", "Coordenada Y"]]
 
-    print(gdf_vertices)
-    print(type(gdf_vertices))
     for index, row in gdf_vertices.iterrows():
         aux = [index, row['coord_x'], row['coord_y']]
         tabela.append(aux)
@@ -72,8 +78,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path):
          Paragraph(texto_titulo[1], styles["titulo_secun"]),
          Paragraph(texto_titulo[2], styles["titulo_secun"]),
          Paragraph(texto_titulo[3], styles["titulo_secun"]),
-         Paragraph(texto_titulo[4], styles["titulo_secun"]),
-         Paragraph(texto_titulo[5], styles["titulo_secun"])]
+         Paragraph(texto_titulo[4], styles["titulo_secun"])]
 
     cabecalho_titulo = TablePDF([[im, grupo_titulo, im2]], colWidths = (30 * mm, 130 * mm, 42 * mm), rowHeights=(5 * mm))
     Story.append(cabecalho_titulo)
@@ -94,8 +99,8 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path):
     t = TablePDF(dataCabecalho, rowHeights=(5 * mm))
     Story.append(t)
 
-    dataCabecalho = [["Endereço: " + endereco ], ["Municipio/UF: " + municipio_uf], ["Área total do Imóvel(m²) : " + area_total + " m²", "Perimetro Total (m): " + perimetro_total],
-                     ["Área da União (m²): " + area_total + " m²", "Centroide: " + centroide]]
+    dataCabecalho = [["Endereço: " + endereco ], ["Municipio/UF: " + municipio_uf], ["Área total do Imóvel: " + area_total + " m²", "Perimetro Total (m): " + perimetro_total],
+                     ["Sobreposição Área da União: " + sobreposicao_uniao + " m²", "Centroide: " + txt_centroide]]
     t = TablePDF(dataCabecalho, colWidths = (76 * mm, 100*mm), rowHeights= 4 *[5 * mm])
     Story.append(t)
 
