@@ -140,6 +140,7 @@ class ConfigLayers(QtWidgets.QDialog):
         co.setObjectName(id_object)
         c = QColor(corDefalt)
         co.setColor(c)
+        co.setAllowOpacity(True)
         return co
 
     def create_usar_check(self, id_object, ischeck):
@@ -219,6 +220,10 @@ class ConfigLayers(QtWidgets.QDialog):
             self.create_Color_Select("corPreenchimento" + "-" + str(0) + "-" + str(10), self.generate_color()))
         self.table_layers.setCellWidget(0, 8, self.objects_cor_preenchimento[0])
 
+        defaltFaixaProximidade = 0.25
+        self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(0) + "-" + str(11), defaltFaixaProximidade))
+        self.table_layers.setCellWidget(0, 9, self.objects_buffer[0])
+
     def fill_table_bd(self):
 
         """
@@ -241,6 +246,7 @@ class ConfigLayers(QtWidgets.QDialog):
         nomeFantasiaTabelasCamadas =[]
         descricaoTabelasCamadas = []
         estiloTabelasCamadas = []
+        aproximacao=[]
 
         if "TabelasDisponiveis" in config:
             tabelasGeom = config["TabelasDisponiveis"]
@@ -259,6 +265,8 @@ class ConfigLayers(QtWidgets.QDialog):
 
         if "estiloTabelasCamadas" in config:
             estiloTabelasCamadas = config["estiloTabelasCamadas"]
+        if "aproximacao" in config:
+            aproximacao = config["aproximacao"]
 
         self.objects_tables_disponiveis = tabelasGeom
         self.objects_tipo_tables_disponiveis = dataTables.values()
@@ -344,7 +352,15 @@ class ConfigLayers(QtWidgets.QDialog):
             self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
             self.table_layers.setCellWidget(i, 8, self.objects_cor_preenchimento[i])
 
-            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(11), espeLine))
+            defalt_aproximacao = 0.25
+
+            if tabelasGeom[i] in tabelasCamadas:
+                itemidex = tabelasCamadas.index(tabelasGeom[i])
+                print("itemindex",itemidex)
+                if(len(aproximacao) !=0):
+                    defalt_aproximacao = aproximacao[itemidex]
+
+            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(11), defalt_aproximacao))
             self.table_layers.setCellWidget(i, 9, self.objects_buffer[i])
 
 
@@ -366,6 +382,15 @@ class ConfigLayers(QtWidgets.QDialog):
                 aux.append(self.objects_tables_disponiveis[i])
 
         config["tabelasCamadas"] = aux
+
+        aux=[]
+
+        for i in range(len(self.objects_tables_disponiveis)):
+            if self.objects_vai_usar[i].checkState():
+                aux.append(self.objects_buffer[i].value())
+
+        config["aproximacao"] = aux
+        print("Aproximacao aqui: ",config["aproximacao"])
 
         aux = []
 
@@ -416,6 +441,9 @@ class ConfigLayers(QtWidgets.QDialog):
              "color": self.objects_cor_preenchimento[0].color().name()}
 
         config["estiloCamadas"] = [c]
+
+        config["aproximacao"] = [self.objects_buffer[0].value()]
+
 
         self.setings02.edit_database(idbd,config)
 
