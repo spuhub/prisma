@@ -134,12 +134,12 @@ class OverlayAnalisys():
         epsg_shp = gpd.read_file(epsg_shp_dir)
 
         for indexInput, rowInput in input.iterrows():
+            areamaior=0
             for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                if (rowInput['geometry'].intersection(rowEpsg['geometry'])):
-                    if input.iloc[indexInput]['crs_feature'] == None:
+                area=rowInput['geometry'].intersection(rowEpsg['geometry']).area
+                if area>0:
+                    if area>areamaior:
                         input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                    else:
-                        # Faz parte de dois ou mais fusos horário
-                        input.loc[indexInput, 'crs_feature'] = False
+                        areamaior=area
 
         return input['crs_feature']
