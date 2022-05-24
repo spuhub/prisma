@@ -9,7 +9,7 @@
         "usuario": "postgres",
         "senha": "postgres",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "TabelasDisponiveis": [
             "area_especial",
@@ -67,7 +67,7 @@
         "urlDowload": "spu.com",
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "nomeFantasiaCamada": "\u00c1rea Quilombola",
         "estiloCamadas": [
@@ -87,7 +87,7 @@
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021"
     },
     "base4": {
@@ -97,7 +97,7 @@
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021"
     },
     "base5": {
@@ -107,7 +107,7 @@
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "nomeFantasiaCamada": "Faixa Rodovi\u00e1ria",
         "estiloCamadas": [
@@ -127,7 +127,7 @@
         "urlDowload": "www.google.com",
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "nomeFantasiaCamada": "Faixa Ferrovi\u00e1ria",
         "estiloCamadas": [
@@ -148,7 +148,7 @@
         "porta": "5450",
         "baseDeDados": "usucapiao",
         "orgaoResponsavel": "SPU",
-        "periosReferencia": "10/11/2021",
+        "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "TabelasDisponiveis": [
             "faixa_dominio",
