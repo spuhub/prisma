@@ -355,7 +355,9 @@ class ConfigLayers(QtWidgets.QDialog):
 
             if tabelasGeom[i] in tabelasCamadas:
                 itemidex = tabelasCamadas.index(tabelasGeom[i])
-                defalt_aproximacao = aproximacao[itemidex]
+                print("itemindex",itemidex)
+                if(len(aproximacao) !=0):
+                    defalt_aproximacao = aproximacao[itemidex]
 
             self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(11), defalt_aproximacao))
             self.table_layers.setCellWidget(i, 9, self.objects_buffer[i])
