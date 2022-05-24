@@ -181,6 +181,7 @@ class DbConnection:
             sridTable = self.GEtSridTable(tableName)
             gdf = gpd.GeoDataFrame([], crs=sridTable)
 
+            input = input.to_wkt()
             for indexInput, rowInput in input.iterrows():
                 # sql = "select *, ST_AsText(geom) as geometry from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + rowInput['geometry'].to_wkt() + "'," + str(
                 #     sridLayer) + ")," + str(sridTable) + " ))"
@@ -189,13 +190,13 @@ class DbConnection:
                 if approximation == None:
                     sql = "select ST_AsText(ST_Transform(ta.geom," + str(sridTable) + ")," + str(sridLayer) + \
                           ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('"\
-                        + rowInput['geometry'].to_wkt() + "'," + str(
+                        + rowInput['geometry'] + "'," + str(
                         sridLayer) + ")," + str(sridTable) + " ))"
                 else:
                     sql = "select ST_AsText(ST_Transform(ST_Buffer(ta.geom, " + str(approximation) + ", 16)," + str(
                         sridTable) + ")," + str(sridLayer) + \
                           ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('" \
-                          + rowInput['geometry'].to_wkt() + "'," + str(
+                          + rowInput['geometry'] + "'," + str(
                         sridLayer) + ")," + str(sridTable) + " ))"
                 self.conn.set_client_encoding('utf-8')
                 gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
@@ -205,7 +206,7 @@ class DbConnection:
 
             return gdf, sridTable
         else:
-            return t
+            return [], None
 
     def CAlculateIntersectByPoint(self, pointCoord, tableName, sridPoint, raio):
         t = []
@@ -236,7 +237,6 @@ class DbConnection:
         cur.execute(sql)
         rows = cur.fetchall()
 
-        print(rows)
         return rows
 
 

@@ -66,12 +66,12 @@ class DataProcessing():
                     approximation = database['buffer'][index] / 111319.5432
                 gdf, crs = database['connection'].CalculateIntersectGPD(scaled_input, layer, approximation,
                                                                         (str(scaled_input.crs)).replace('epsg:', ''))
-                gdf.crs = {'init': 'epsg:' + str(crs)}
+                if len(gdf) > 0 and crs != None:
+                    gdf.crs = {'init': 'epsg:' + str(crs)}
 
-                layers_db.append(gpd.GeoDataFrame(gdf, crs=crs))
+                    layers_db.append(gpd.GeoDataFrame(gdf, crs=crs))
 
             gdf_selected_db.append(layers_db)
-
         return gdf_selected_db
 
     def get_required_layers(self, scaled_input, operation_config, gdf_selected_shp, gdf_selected_db):
@@ -98,13 +98,12 @@ class DataProcessing():
         @return gdf_selected_shp: Retorna as camadas shapefiles contendo somente áreas próximas à camada de input.
         """
         index = 0
-
         for i in range(len(gdf_selected_shp)):
             gdf_selected_shp[i]['close_input'] = False
             gdf_selected_shp[i] = gdf_selected_shp[i].to_crs(4326)
             for indexArea, rowArea in gdf_selected_shp[i].iterrows():
                 for indexInput, rowInput in scaled_input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                    if (rowInput['geometry'].intersection(rowArea['geometry'])):
                         gdf_selected_shp[i].loc[indexArea, 'close_input'] = True
             index += 1
 

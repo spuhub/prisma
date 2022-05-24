@@ -55,5 +55,5 @@ class Utils():
         """
         scaled_input = input.copy()
 
-        scaled_input.geometry = scaled_input.scale(50, 50)
+        scaled_input.geometry = scaled_input.geometry.buffer(0.05)
         return scaled_input
