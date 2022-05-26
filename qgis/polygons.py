@@ -63,7 +63,7 @@ class Polygons():
         if index_input != self.index_input:
             self.index_input = index_input
             date_and_time = datetime.now()
-            self.time = date_and_time.strftime('%d-%m-%Y_%H-%M-%S')
+            self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
             # Gera o layout PDF com a área de entrada e áreas da união
             self.pd.polygon_required_layers(input, input_standard, gdf_line_input, gdf_point_input, self.index_input,
                                             self.time, self.atlas, self.layout)
