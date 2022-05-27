@@ -50,6 +50,9 @@
         ],
         "TipoTabelasDisponiveis": [
             "Polygon",
+            "Polygon",
+            "Polygon",
+            "Polygon",
             "Polygon"
         ],
         "tabelasCamadas": [
@@ -107,6 +110,10 @@
             "massa_dagua"
         ],
         "TipoTabelasDisponiveis": [
+            "Polygon",
+            "Polygon",
+            "Polygon",
+            "Polygon",
             "Polygon"
         ],
         "tabelasCamadas": [
@@ -155,14 +162,18 @@
         "periodosReferencia": "10/11/2021",
         "dataAquisicao": "10/11/2021",
         "TabelasDisponiveis": [
-            "area_especial",
+            "trecho_ferroviario",
             "faixa_dominio",
             "faixa_seguranca",
             "municipio",
             "massa_dagua"
         ],
         "TipoTabelasDisponiveis": [
-            "Linestring"
+            "Linestring",
+            "Polygon",
+            "Polygon",
+            "Polygon",
+            "Polygon"
         ],
         "tabelasCamadas": [
             "trecho_ferroviario"
@@ -215,7 +226,11 @@
             "massa_dagua"
         ],
         "TipoTabelasDisponiveis": [
-            "MultiPolygon"
+            "MultiPolygon",
+            "Polygon",
+            "Polygon",
+            "Polygon",
+            "Polygon"
         ],
         "tabelasCamadas": [
             "trecho_rodoviario"
