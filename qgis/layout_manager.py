@@ -103,26 +103,23 @@ class LayoutManager():
         # chamam a função de exportar pdf
         for indexInput, rowInput in input.iterrows():
             self.index_input = indexInput
-            # Caso rowInput['crs_feature'] for igual a False, significa que a feição faz parte de dois ou mais zonas
-            # portanto, não é processado
-            if rowInput['crs_feature'] != False:
-                if indexInput == 0:
+            if indexInput == 0:
+                self.load_required_layers(gdf_required, rowInput['crs_feature'])
+            else:
+                # Caso feição atual tenha crs diferente, remove todas camadas e gera novamente
+                if input.iloc[indexInput-1]['crs_feature'] != rowInput['crs_feature']:
+                    QgsProject.instance().removeAllMapLayers()
+                    QApplication.instance().processEvents()
                     self.load_required_layers(gdf_required, rowInput['crs_feature'])
-                else:
-                    # Caso feição atual tenha crs diferente, remove todas camadas e gera novamente
-                    if input.iloc[indexInput-1]['crs_feature'] != rowInput['crs_feature']:
-                        QgsProject.instance().removeAllMapLayers()
-                        QApplication.instance().processEvents()
-                        self.load_required_layers(gdf_required, rowInput['crs_feature'])
 
-                gdf_input = self.get_feature_with_crs(input.iloc[[indexInput]])
-                # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
-                if len(input_standard) > 0:
-                    self.calculation_shp(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
-                    self.calculation_db(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_db, gdf_required)
-                else:
-                    self.calculation_shp(gdf_input, input_standard, gdf_selected_shp, gdf_required)
-                    self.calculation_db(gdf_input, input_standard, gdf_selected_db, gdf_required)
+            gdf_input = self.get_feature_with_crs(input.iloc[[indexInput]])
+            # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
+            if len(input_standard) > 0:
+                self.calculation_shp(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
+                self.calculation_db(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_db, gdf_required)
+            else:
+                self.calculation_shp(gdf_input, input_standard, gdf_selected_shp, gdf_required)
+                self.calculation_db(gdf_input, input_standard, gdf_selected_db, gdf_required)
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
 
