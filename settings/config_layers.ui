@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1312</width>
-    <height>740</height>
+    <width>1403</width>
+    <height>691</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,6 +153,17 @@
      <column>
       <property name="text">
        <string>Faixa de Proximidade (metros)</string>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Mais Informações</string>
       </property>
       <property name="font">
        <font>

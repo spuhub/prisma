@@ -3,7 +3,7 @@ import os.path
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidgetItem, QComboBox, QDoubleSpinBox, QCheckBox
+from PyQt5.QtWidgets import QTableWidgetItem, QComboBox, QDoubleSpinBox, QCheckBox, QToolButton
 from PyQt5.uic import loadUi
 from qgis.gui import QgsSymbolButton, QgsColorButton
 
@@ -223,6 +223,11 @@ class ConfigLayers(QtWidgets.QDialog):
         defaltFaixaProximidade = 0.25
         self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(0) + "-" + str(11), defaltFaixaProximidade))
         self.table_layers.setCellWidget(0, 9, self.objects_buffer[0])
+
+        self.btn = QToolButton()
+        self.btn.setText("...")
+        self.table_layers.setCellWidget(0, 10, self.btn)
+
 
     def fill_table_bd(self):
 
