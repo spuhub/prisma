@@ -154,5 +154,4 @@ class ResultWindow (QtWidgets.QDialog):
         """
         Função acionada quando o usuário pressiona o botão para gerar relatórios PDF.
         """
-        self.hide()
         self.report_generator_window.emit(self.result)

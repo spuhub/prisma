@@ -191,16 +191,19 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_layer_salvar">
+      <widget class="QPushButton" name="btn_layer_cancelar">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
-        <string>Salvar</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_layer_cancelar">
+      <widget class="QPushButton" name="btn_layer_salvar">
        <property name="text">
-        <string>Cancelar</string>
+        <string>Salvar</string>
        </property>
       </widget>
      </item>

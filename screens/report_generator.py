@@ -76,7 +76,7 @@ class ReportGenerator(QtWidgets.QDialog):
         self.label_process.setHidden(False)
 
     def handle_output(self):
-        self.path_output = QFileDialog.getExistingDirectory(self, "SELECIONE A PASTA DE SAÍDA")
+        self.path_output = QFileDialog.getExistingDirectory(self, "Selecione a pasta de saída")
         self.line_output.setText(self.path_output)
         return self.path_output
 
@@ -85,6 +85,9 @@ class ReportGenerator(QtWidgets.QDialog):
         self.hidden_fields()
 
         self.result['path_output'] = self.path_output
+
+        self.btn_voltar.setHidden(True)
+        self.btn_continuar.setHidden(True)
 
         lm = LayoutManager(self.result, self.progress_bar)
         lm.pdf_generator()
