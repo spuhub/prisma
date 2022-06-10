@@ -135,7 +135,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.newshpID = id
                 print("New id", id)
                 self.source_shp.append(confg_dic)
-                self.combo_box_base.addItem(self.nome_shp.text(), id)
+                self.combo_box_shp.addItem(self.nome_shp.text(), id)
                 #msg.information(self, "ShapeFile", "Shapefile adcionado com sucesso!")
                 self.combo_box_shp.setCurrentText(self.nome_shp.text())
                 # self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
