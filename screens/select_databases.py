@@ -28,6 +28,7 @@ class SelectDatabases(QtWidgets.QDialog):
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
+        self.json = self.json_tools.get_json()
 
         super(SelectDatabases, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'select_databases.ui'), self)
@@ -44,19 +45,42 @@ class SelectDatabases(QtWidgets.QDialog):
         """
         Adição de checkbox e estilização na lista de shapefiles e bancos de dados
         """
-        for i in range(len(self.data_shp)):
-            item = QtWidgets.QListWidgetItem(self.data_shp[i]['nome'])
-            item.setFont(QFont('Arial', 10))
-            item.setSizeHint(QtCore.QSize(20, 30))
-            item.setFlags(item.flags())
-            self.list_shp.addItem(item)
+        required_shp = []
+        required_pg = []
 
-        for i in range(len(self.data_bd)):
-            item = QtWidgets.QListWidgetItem(self.data_bd[i]['nome'])
-            item.setFont(QFont('Arial', 10))
-            item.setSizeHint(QtCore.QSize(20, 30))
-            item.setFlags(item.flags())
-            self.list_bd.addItem(item)
+        for key, data in self.json['obrigatorio'].items():
+            if data[1] == '':
+                required_shp.append(data)
+            else:
+                required_pg.append(data)
+
+        for i in range(len(self.data_shp)):
+            is_required = False
+            for x in required_shp:
+                if x[0] == self.data_shp[i]['id']:
+                    is_required = True
+
+            if is_required == False:
+                item = QtWidgets.QListWidgetItem(self.data_shp[i]['nome'])
+                item.setFont(QFont('Arial', 10))
+                item.setSizeHint(QtCore.QSize(20, 30))
+                item.setFlags(item.flags())
+                self.list_shp.addItem(item)
+
+        for db in range(len(self.data_bd)):
+            for db_layers in range(len(self.data_bd[db]['nomeFantasiaTabelasCamadas'])):
+                is_required = False
+                for x in required_pg:
+                    if x[0] == self.data_bd[db]['id'] and x[1] == self.data_bd[db]['tabelasCamadas'][db_layers]:
+                        is_required = True
+
+                if is_required == False:
+                    item = QtWidgets.QListWidgetItem(
+                        self.data_bd[db]['nomeFantasiaTabelasCamadas'][db_layers] + ' (' + self.data_bd[db]['nome'] + ')')
+                    item.setFont(QFont('Arial', 10))
+                    item.setSizeHint(QtCore.QSize(20, 30))
+                    item.setFlags(item.flags())
+                    self.list_bd.addItem(item)
 
     def handle_check_bd(self):
         """

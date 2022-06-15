@@ -57,11 +57,13 @@
         ],
         "tabelasCamadas": [
             "municipio",
-            "area_especial"
+            "area_especial",
+            "massa_dagua"
         ],
         "nomeFantasiaTabelasCamadas": [
             "Munic\u00edpio",
-            "\u00c1rea especial"
+            "\u00c1rea especial",
+            "Massa D'água"
         ],
         "descricaoTabelasCamadas": [
             "E de ferrovia",
@@ -80,8 +82,8 @@
                 "line_style": "dash dot",
                 "line_color": "red",
                 "width_border": "0.2",
-                "style": "cross",
-                "color": ""
+                "style": "solid",
+                "color": "red"
             },
             {
                 "line_style": "dash dot",
@@ -117,10 +119,12 @@
             "Polygon"
         ],
         "tabelasCamadas": [
-            "area_especial"
+            "area_especial",
+            "massa_dagua"
         ],
         "nomeFantasiaTabelasCamadas": [
-            "\u00c1rea Especial"
+            "\u00c1rea Especial",
+            "Massa D'água"
         ],
         "descricaoTabelasCamadas": [
             "E de ferrovia",

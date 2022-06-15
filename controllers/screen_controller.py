@@ -40,9 +40,9 @@ class Controller:
         self.main_window.switch_overlay_feature.connect(self.show_overlay_feature)
         self.main_window.switch_overlay_shapefile.connect(self.show_overlay_shapefile)
 
-        if not self.first_start:
-            self.first_start = True
-            self.main_window.show()
+        # if not self.first_start:
+        # self.first_start = True
+        self.main_window.show()
 
     def show_config(self):
         """
