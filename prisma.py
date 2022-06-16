@@ -182,7 +182,7 @@ class Prisma:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&SPU-PRISMA v2.0'),
+                self.tr(u'&SPUGeo'),
                 action)
             self.iface.removeToolBarIcon(action)
 
