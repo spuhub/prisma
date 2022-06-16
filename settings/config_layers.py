@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidgetItem, QComboBox, QDoubleSpinBox, QCheckBox, QToolButton
 from PyQt5.uic import loadUi
-from qgis.gui import QgsSymbolButton, QgsColorButton
+from qgis.gui import QgsSymbolButton, QgsColorButton, QgsFileWidget
 
 # from .config_window import ConfigWindow
 from .json_tools import JsonTools
@@ -35,15 +35,17 @@ class ConfigLayers(QtWidgets.QDialog):
         self.objects_vai_usar = []
         self.objects_vai_usar_camada_base = []
         self.objects_tipo_camada_base = []
-        self.objects_estilo_linhas = []
-        self.objects_cor_linhas = []
-        self.objects_espessura_linhas = []
-        self.objects_preenchimento = []
-        self.objects_cor_preenchimento = []
+        self.objects_estilo_linhas = [] #
+        self.objects_cor_linhas = []#
+        self.objects_espessura_linhas = []#
+        self.objects_preenchimento = []#
+        self.objects_cor_preenchimento = []#
         self.objects_tables_disponiveis = []
         self.objects_tipo_tables_disponiveis = []
         self.objects_nome_fantasia = []
         self.objects_buffer = []
+        self.objects_file_style = []
+        self.objects_button_mais_infor = []
 
         self.fill_table()
         self.btn_layer_cancelar.clicked.connect(self.back)
@@ -54,55 +56,55 @@ class ConfigLayers(QtWidgets.QDialog):
         Método responsavel por preencher a tabela com as informações de configuração de cada camda
         @return: void
         """
-        if self.tipoFonte == "shp":
-            self.fill_table_shp()
+        # if self.tipoFonte == "shp":
+        #     self.fill_table_shp()
         if self.tipoFonte == "bd":
             self.fill_table_bd()
 
-    def create_combobox_line_style(self, id_object):
-        """
-        Cria e preenche um combobox com os tipos de Linhas.
-        @param id_object: um valor para servir de ID do combobox criado.
-        @return: void.
-        """
-        cb = QComboBox()
-        cb.setObjectName(id_object)
-        cb.addItem("________________________", "solid")
-        cb.addItem("-..-..-..-..-..-..-..-..", "dash dot dot")
-        cb.addItem("__.__.__.__.__.__.__.__", "dash dot")
-        cb.addItem(".......................", "dot")
-        cb.addItem("-----------------------", "dash")
-        return cb
+    # def create_combobox_line_style(self, id_object):
+    #     """
+    #     Cria e preenche um combobox com os tipos de Linhas.
+    #     @param id_object: um valor para servir de ID do combobox criado.
+    #     @return: void.
+    #     """
+    #     cb = QComboBox()
+    #     cb.setObjectName(id_object)
+    #     cb.addItem("________________________", "solid")
+    #     cb.addItem("-..-..-..-..-..-..-..-..", "dash dot dot")
+    #     cb.addItem("__.__.__.__.__.__.__.__", "dash dot")
+    #     cb.addItem(".......................", "dot")
+    #     cb.addItem("-----------------------", "dash")
+    #     return cb
 
-    def create_comboBox_tipo_camada_base(self, id_object):
-        """
-        Cria e preenche um combobox com os tipos de camadas bases.
-        @param id_object: um valor para servir de ID do combobox criado.
-        @return: void.
-        """
-        cb = QComboBox()
-        cb.setObjectName(id_object)
-        cb.addItem("LPM Homologada", "lpm_homologada")
-        cb.addItem("LTM Homologada", "ltm_homologada")
-        cb.addItem("LPM Não Homologada", "lpm_nao_homologada")
-        cb.addItem("LTM Não Homologada", "ltm_nao_homologada")
-        cb.addItem("Área da União - Homologada", "area_homologada")
-        cb.addItem("Área da União - Não Homologada", "area_nao_homologada")
-        return cb
+    # def create_comboBox_tipo_camada_base(self, id_object):
+    #     """
+    #     Cria e preenche um combobox com os tipos de camadas bases.
+    #     @param id_object: um valor para servir de ID do combobox criado.
+    #     @return: void.
+    #     """
+    #     cb = QComboBox()
+    #     cb.setObjectName(id_object)
+    #     cb.addItem("LPM Homologada", "lpm_homologada")
+    #     cb.addItem("LTM Homologada", "ltm_homologada")
+    #     cb.addItem("LPM Não Homologada", "lpm_nao_homologada")
+    #     cb.addItem("LTM Não Homologada", "ltm_nao_homologada")
+    #     cb.addItem("Área da União - Homologada", "area_homologada")
+    #     cb.addItem("Área da União - Não Homologada", "area_nao_homologada")
+    #     return cb
 
-    def create_espessura_box(self, id_object, value):
-
-        """
-        Cria e preenche um objeto para digitar a espessura da linha.
-        @param id_object: um valor para servir de ID do objeto criado.
-        @param value: valor padrão do do objeteo.
-        @return: void.
-        """
-        dsb = QDoubleSpinBox()
-        dsb.setValue(value)
-        dsb.setObjectName(id_object)
-        dsb.setSingleStep(0.1)
-        return dsb
+    # def create_espessura_box(self, id_object, value):
+    #
+    #     """
+    #     Cria e preenche um objeto para digitar a espessura da linha.
+    #     @param id_object: um valor para servir de ID do objeto criado.
+    #     @param value: valor padrão do do objeteo.
+    #     @return: void.
+    #     """
+    #     dsb = QDoubleSpinBox()
+    #     dsb.setValue(value)
+    #     dsb.setObjectName(id_object)
+    #     dsb.setSingleStep(0.1)
+    #     return dsb
 
     def create_buffer_box(self, id_object, value):
         """
@@ -117,16 +119,16 @@ class ConfigLayers(QtWidgets.QDialog):
         dsb.setSingleStep(0.1)
         return dsb
 
-    def create_ComboBox_preenchimento(self, id_object):
-        """
-        Cria e preenche um combobox com os tipos de preenchimento de camadas bases.
-        @param id_object: um valor para servir de ID do combobox criado.
-        @return: void.
-        """
-        cb = QComboBox()
-        cb.setObjectName(id_object)
-        cb.addItem("solid", "solid")
-        return cb
+    # def create_ComboBox_preenchimento(self, id_object):
+    #     """
+    #     Cria e preenche um combobox com os tipos de preenchimento de camadas bases.
+    #     @param id_object: um valor para servir de ID do combobox criado.
+    #     @return: void.
+    #     """
+    #     cb = QComboBox()
+    #     cb.setObjectName(id_object)
+    #     cb.addItem("solid", "solid")
+    #     return cb
 
     def create_Color_Select(self, id_object, corDefalt):
         """
@@ -155,6 +157,19 @@ class ConfigLayers(QtWidgets.QDialog):
         b1.setObjectName(id_object)
         return b1
 
+    def create_filePath(self, id_object):
+
+        btn = QgsFileWidget()
+        btn.setObjectName(id_object)
+        return btn
+
+    def create_button_mais_inf(self, id_object):
+
+        btn = QToolButton()
+        btn.setObjectName(id_object)
+        btn.setText("...")
+        return btn
+
     def generate_color(self):
         """
         Gera cores de forma aleatória.
@@ -163,70 +178,70 @@ class ConfigLayers(QtWidgets.QDialog):
         color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])]
         return color[0]
 
-    def fill_table_shp(self):
-
-        """
-        Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
-        ShapeFile.
-        @return: void
-        """
-        shpHandle = ShpHandle()
-        print(self.id_current_db)
-
-        config = self.search_base_shp(self.id_current_db)
-        print(config)
-        nomereal = config["diretorioLocal"].replace("\\", "/").split("/").pop().split(".")[0]
-        #print("caminho", config["diretorioLocal"])
-
-        shp = shpHandle.read_shp_input(config["diretorioLocal"])
-        #print("tipe",shp.type)
-
-        self.table_layers.setRowCount(1)
-        self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(0), True))
-        self.table_layers.setCellWidget(0, 0, self.objects_vai_usar[0]) # Qt::AlignHCenter
-
-        itemCellClass = QTableWidgetItem(nomereal)
-        self.table_layers.setItem(0, 1, itemCellClass)
-
-        nome = config["nome"].replace("_", " ").replace("-", " ").title()
-        self.objects_nome_fantasia.append(nome)
-        itemCellClass = QTableWidgetItem(nome)
-        self.table_layers.setItem(0, 2, itemCellClass)
-
-        itemCellClass = QTableWidgetItem(str(shp.type).replace("0", "").replace(" ", ""))
-        self.table_layers.setItem(0, 3, itemCellClass)
-
-        #self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
-        #self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
-
-        #self.objects_tipo_camada_base.append(
-         #   self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
-        #self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
-
-        self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(0) + "-" + str(6)))
-        self.table_layers.setCellWidget(0, 4, self.objects_estilo_linhas[0])
-
-        self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(0) + "-" + str(7), "black"))
-        self.table_layers.setCellWidget(0, 5, self.objects_cor_linhas[0])
-
-        self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8),0.25))
-        self.table_layers.setCellWidget(0, 6, self.objects_espessura_linhas[0])
-
-        self.objects_preenchimento.append(
-            self.create_ComboBox_preenchimento("preenchimento" + "-" + str(0) + "-" + str(9)))
-        self.table_layers.setCellWidget(0, 7, self.objects_preenchimento[0])
-
-        self.objects_cor_preenchimento.append(
-            self.create_Color_Select("corPreenchimento" + "-" + str(0) + "-" + str(10), self.generate_color()))
-        self.table_layers.setCellWidget(0, 8, self.objects_cor_preenchimento[0])
-
-        defaltFaixaProximidade = 0.25
-        self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(0) + "-" + str(11), defaltFaixaProximidade))
-        self.table_layers.setCellWidget(0, 9, self.objects_buffer[0])
-
-        self.btn = QToolButton()
-        self.btn.setText("...")
-        self.table_layers.setCellWidget(0, 10, self.btn)
+    # def fill_table_shp(self):
+    #
+    #     """
+    #     Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
+    #     ShapeFile.
+    #     @return: void
+    #     """
+    #     shpHandle = ShpHandle()
+    #     print(self.id_current_db)
+    #
+    #     config = self.search_base_shp(self.id_current_db)
+    #     print(config)
+    #     nomereal = config["diretorioLocal"].replace("\\", "/").split("/").pop().split(".")[0]
+    #     #print("caminho", config["diretorioLocal"])
+    #
+    #     shp = shpHandle.read_shp_input(config["diretorioLocal"])
+    #     #print("tipe",shp.type)
+    #
+    #     self.table_layers.setRowCount(1)
+    #     self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(0), True))
+    #     self.table_layers.setCellWidget(0, 0, self.objects_vai_usar[0]) # Qt::AlignHCenter
+    #
+    #     itemCellClass = QTableWidgetItem(nomereal)
+    #     self.table_layers.setItem(0, 1, itemCellClass)
+    #
+    #     nome = config["nome"].replace("_", " ").replace("-", " ").title()
+    #     self.objects_nome_fantasia.append(nome)
+    #     itemCellClass = QTableWidgetItem(nome)
+    #     self.table_layers.setItem(0, 2, itemCellClass)
+    #
+    #     itemCellClass = QTableWidgetItem(str(shp.type).replace("0", "").replace(" ", ""))
+    #     self.table_layers.setItem(0, 3, itemCellClass)
+    #
+    #     #self.objects_vai_usar_camada_base.append(self.create_usar_check("check-camada-base" + str(0), False))
+    #     #self.table_layers.setCellWidget(0, 4, self.objects_vai_usar_camada_base[0])
+    #
+    #     #self.objects_tipo_camada_base.append(
+    #      #   self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(0) + "-" + str(5)))
+    #     #self.table_layers.setCellWidget(0, 5, self.objects_tipo_camada_base[0])
+    #
+    #     self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(0) + "-" + str(6)))
+    #     self.table_layers.setCellWidget(0, 4, self.objects_estilo_linhas[0])
+    #
+    #     self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(0) + "-" + str(7), "black"))
+    #     self.table_layers.setCellWidget(0, 5, self.objects_cor_linhas[0])
+    #
+    #     self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(0) + "-" + str(8),0.25))
+    #     self.table_layers.setCellWidget(0, 6, self.objects_espessura_linhas[0])
+    #
+    #     self.objects_preenchimento.append(
+    #         self.create_ComboBox_preenchimento("preenchimento" + "-" + str(0) + "-" + str(9)))
+    #     self.table_layers.setCellWidget(0, 7, self.objects_preenchimento[0])
+    #
+    #     self.objects_cor_preenchimento.append(
+    #         self.create_Color_Select("corPreenchimento" + "-" + str(0) + "-" + str(10), self.generate_color()))
+    #     self.table_layers.setCellWidget(0, 8, self.objects_cor_preenchimento[0])
+    #
+    #     defaltFaixaProximidade = 0.25
+    #     self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(0) + "-" + str(11), defaltFaixaProximidade))
+    #     self.table_layers.setCellWidget(0, 9, self.objects_buffer[0])
+    #
+    #     self.btn = QToolButton()
+    #     self.btn.setText("...")
+    #     self.table_layers.setCellWidget(0, 10, self.btn)
 
 
     def fill_table_bd(self):
@@ -316,46 +331,47 @@ class ConfigLayers(QtWidgets.QDialog):
             #self.objects_tipo_camada_base.append(self.create_comboBox_tipo_camada_base("tipobase" + "-" + str(i) + "-" + str(5)))
             #self.table_layers.setCellWidget(i, 5, self.objects_tipo_camada_base[i])
 
-            style = {}
+            #style = {}
 
-            if tabelasGeom[i] in tabelasCamadas:
-                itemidex = tabelasCamadas.index(tabelasGeom[i])
-                style = estiloTabelasCamadas[itemidex]
-
-
-            self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(i) + "-" + str(6)))
-
-            if "line_style" in style:
-                indexQcombo = self.objects_estilo_linhas[i].findData("line_style")
-                self.objects_estilo_linhas[i].setCurrentIndex(indexQcombo)
-
-            self.table_layers.setCellWidget(i, 4, self.objects_estilo_linhas[i])
-
-            lineColor = "black"
-            if "line_color" in style:
-                lineColor = style["line_color"]
-
-            self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7),lineColor))
-            self.table_layers.setCellWidget(i, 5, self.objects_cor_linhas[i])
-
-            espeLine = 0.25
-
-            if "width_border" in style:
-                espeLine = float(style["width_border"])
-
-            self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8), espeLine))
-            self.table_layers.setCellWidget(i, 6, self.objects_espessura_linhas[i])
+            #if tabelasGeom[i] in tabelasCamadas:
+             #   itemidex = tabelasCamadas.index(tabelasGeom[i])
+              #  style = estiloTabelasCamadas[itemidex]
 
 
-            self.objects_preenchimento.append(self.create_ComboBox_preenchimento("preenchimento" + "-" + str(i) + "-" + str(9)))
-            self.table_layers.setCellWidget(i, 7, self.objects_preenchimento[i])
+            #self.objects_estilo_linhas.append(self.create_combobox_line_style("tipolinha" + "-" + str(i) + "-" + str(6)))
 
-            fillColor = self.generate_color()
+            #if "line_style" in style:
+             #   indexQcombo = self.objects_estilo_linhas[i].findData("line_style")
+              #  self.objects_estilo_linhas[i].setCurrentIndex(indexQcombo)
 
-            if "color" in style:
-                fillColor = style["color"]
-            self.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
-            self.table_layers.setCellWidget(i, 8, self.objects_cor_preenchimento[i])
+            #self.table_layers.setCellWidget(i, 4, self.objects_estilo_linhas[i])
+
+            #lineColor = "black"
+            #if "line_color" in style:
+
+             #   lineColor = style["line_color"]
+
+            #self.objects_cor_linhas.append(self.create_Color_Select("corLinha" + "-" + str(i) + "-" + str(7),lineColor))
+            #self.table_layers.setCellWidget(i, 5, self.objects_cor_linhas[i])
+
+            #espeLine = 0.25
+
+            #if "width_border" in style:
+             #   espeLine = float(style["width_border"])
+
+            #self.objects_espessura_linhas.append(self.create_espessura_box("espessura" + "-" + str(i) + "-" + str(8), espeLine))
+            #self.table_layers.setCellWidget(i, 6, self.objects_espessura_linhas[i])
+
+
+            #self.objects_preenchimento.append(self.create_ComboBox_preenchimento("preenchimento" + "-" + str(i) + "-" + str(9)))
+            #self.table_layers.setCellWidget(i, 7, self.objects_preenchimento[i])
+
+            #fillColor = self.generate_color()
+
+            #if "color" in style:
+             #   fillColor = style["color"]
+            #s#elf.objects_cor_preenchimento.append(self.create_Color_Select("corPreenchimento" + "-" + str(i) + "-" + str(10), fillColor))
+            #s#elf.table_layers.setCellWidget(i, 8, self.objects_cor_preenchimento[i])
 
             defalt_aproximacao = 0.25
 
@@ -365,8 +381,16 @@ class ConfigLayers(QtWidgets.QDialog):
                 if(len(aproximacao) !=0):
                     defalt_aproximacao = aproximacao[itemidex]
 
-            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(11), defalt_aproximacao))
-            self.table_layers.setCellWidget(i, 9, self.objects_buffer[i])
+            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(4), defalt_aproximacao))
+            self.table_layers.setCellWidget(i, 4, self.objects_buffer[i])
+
+            self.objects_file_style.append(self.create_filePath("filepath" + "-" + str(i) + "-" + str(5)))
+            self.table_layers.setCellWidget(i, 5, self.objects_file_style[i])
+
+
+            self.objects_button_mais_infor.append(self.create_button_mais_inf("mais_infor" + "-" + str(i) + "-" + str(6)))
+            self.table_layers.setCellWidget(i, 6, self.objects_button_mais_infor[i])
+
 
 
     def save_base_pg(self):
@@ -428,29 +452,29 @@ class ConfigLayers(QtWidgets.QDialog):
         print(config)
         self.setings02.edit_database(self.id_current_db,config)
 
-    def save_base_shp(self):
-        """
-        Método responsável por Gravar as configurações das camadas de uma base de dados Shapefile
-        @return: void.
-        """
-        idbd = self.id_current_db
-        print ("Currente-shp2223: ",  idbd)
-        config = self.search_base_shp(self.id_current_db)
-
-        config["nomeFantasiaCamada"] = self.objects_nome_fantasia[0]
-
-        c = {"line_style": self.objects_estilo_linhas[0].currentData(),
-             "line_color": self.objects_cor_linhas[0].color().name(),
-             "width_border": str(self.objects_espessura_linhas[0].value()),
-             "style": self.objects_preenchimento[0].currentData(),
-             "color": self.objects_cor_preenchimento[0].color().name()}
-
-        config["estiloCamadas"] = [c]
-
-        config["aproximacao"] = [self.objects_buffer[0].value()]
-
-
-        self.setings02.edit_database(idbd,config)
+    # def save_base_shp(self):
+    #     """
+    #     Método responsável por Gravar as configurações das camadas de uma base de dados Shapefile
+    #     @return: void.
+    #     """
+    #     idbd = self.id_current_db
+    #     print ("Currente-shp2223: ",  idbd)
+    #     config = self.search_base_shp(self.id_current_db)
+    #
+    #     config["nomeFantasiaCamada"] = self.objects_nome_fantasia[0]
+    #
+    #     c = {"line_style": self.objects_estilo_linhas[0].currentData(),
+    #          "line_color": self.objects_cor_linhas[0].color().name(),
+    #          "width_border": str(self.objects_espessura_linhas[0].value()),
+    #          "style": self.objects_preenchimento[0].currentData(),
+    #          "color": self.objects_cor_preenchimento[0].color().name()}
+    #
+    #     config["estiloCamadas"] = [c]
+    #
+    #     config["aproximacao"] = [self.objects_buffer[0].value()]
+    #
+    #
+    #     self.setings02.edit_database(idbd,config)
 
     def search_base_pg(self, id_base):
         config = {}
@@ -493,13 +517,14 @@ class ConfigLayers(QtWidgets.QDialog):
         # print(self.testefill.symbol)
         #print(self.bt.color().name())
 
-        if self.tipoFonte == "shp":
-            self.save_base_shp()
+        #if self.tipoFonte == "shp":
+         #   self.save_base_shp()
+
         if self.tipoFonte == "bd":
             self.save_base_pg()
 
         self.hide()
         self.continue_window.emit()
 
-    def pr(self):
-        print(self.testefill.symbol)
+    #def pr(self):
+     #   print(self.testefill.symbol)

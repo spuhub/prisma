@@ -6,14 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1403</width>
-    <height>691</height>
+    <width>1021</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Configurações de Camadas</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Camadas disponiveis na base de dado:</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QTableWidget" name="table_layers">
      <property name="gridStyle">
@@ -72,6 +84,9 @@
         <bold>true</bold>
        </font>
       </property>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
+      </property>
      </column>
      <column>
       <property name="text">
@@ -82,6 +97,9 @@
         <weight>75</weight>
         <bold>true</bold>
        </font>
+      </property>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -94,60 +112,8 @@
         <bold>true</bold>
        </font>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Estilo Linha</string>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Cor da linha</string>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Espessura da Linha</string>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Preenchimento</string>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Cor do Preenchimento</string>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -160,6 +126,23 @@
         <bold>true</bold>
        </font>
       </property>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Estilo</string>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
+      </property>
      </column>
      <column>
       <property name="text">
@@ -171,19 +154,10 @@
         <bold>true</bold>
        </font>
       </property>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
+      </property>
      </column>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Camadas disponiveis na base de dado:</string>
-     </property>
     </widget>
    </item>
    <item>

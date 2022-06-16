@@ -26,7 +26,8 @@
             "Line"
         ],
         "tabelasCamadas": [
-            "area_especial"
+            "area_especial",
+            "faixa_dominio"
         ],
         "nomeFantasiaTabelasCamadas": [
             "\u00c1rea Especial"
@@ -271,258 +272,26 @@
             "base1",
             "area_especial",
             "\u00c1rea N\u00e3o Homologada"
+        ],
+        "lltm_nao_homologada": [
+            "base1",
+            "area_especial",
+            "LLTM N\u00e3o Homologada"
+        ],
+        "lltm_homologada": [
+            "base1",
+            "area_especial",
+            "LLTM Homologada"
+        ],
+        "lmeo_homologada": [
+            "base1",
+            "faixa_dominio",
+            "LMEO Homologada"
+        ],
+        "lmeo_nao_homologada": [
+            "base1",
+            "area_especial",
+            "LMEO N\u00e3o Homologada"
         ]
-    },
-    "base9": {
-        "id": "base9",
-        "tipo": "shp",
-        "nome": "test1",
-        "urlDowload": "12",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "21",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base10": {
-        "id": "base10",
-        "tipo": "shp",
-        "nome": "test1",
-        "urlDowload": "12",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "21",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base11": {
-        "id": "base11",
-        "tipo": "pg",
-        "nome": "12",
-        "host": "12",
-        "porta": "12",
-        "baseDeDados": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base12": {
-        "id": "base12",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base13": {
-        "id": "base13",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base14": {
-        "id": "base14",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base15": {
-        "id": "base15",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base16": {
-        "id": "base16",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base17": {
-        "id": "base17",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "12",
-        "periodosReferencia": "12",
-        "dataAquisicao": "12"
-    },
-    "base18": {
-        "id": "base18",
-        "tipo": "shp",
-        "nome": "12",
-        "urlDowload": "12",
-        "diretorioLocal": "12",
-        "orgaoResponsavel": "",
-        "periodosReferencia": "",
-        "dataAquisicao": ""
-    },
-    "base19": {
-        "id": "base19",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base20": {
-        "id": "base20",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base21": {
-        "id": "base21",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base22": {
-        "id": "base22",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base23": {
-        "id": "base23",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base24": {
-        "id": "base24",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base25": {
-        "id": "base25",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base26": {
-        "id": "base26",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base27": {
-        "id": "base27",
-        "tipo": "pg",
-        "nome": "t",
-        "host": "t",
-        "porta": "t",
-        "baseDeDados": "t",
-        "orgaoResponsavel": "t",
-        "periodosReferencia": "t",
-        "dataAquisicao": "t"
-    },
-    "base28": {
-        "id": "base28",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base29": {
-        "id": "base29",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base30": {
-        "id": "base30",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base31": {
-        "id": "base31",
-        "tipo": "shp",
-        "nome": "121",
-        "urlDowload": "121",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "121",
-        "dataAquisicao": "121"
-    },
-    "base32": {
-        "id": "base32",
-        "tipo": "shp",
-        "nome": "gui",
-        "urlDowload": "gui",
-        "diretorioLocal": "aew",
-        "orgaoResponsavel": "wew",
-        "periodosReferencia": "wew",
-        "dataAquisicao": "wew"
-    },
-    "base33": {
-        "id": "base33",
-        "tipo": "shp",
-        "nome": "gui2",
-        "urlDowload": "gui2",
-        "diretorioLocal": "aew",
-        "orgaoResponsavel": "121",
-        "periodosReferencia": "1212",
-        "dataAquisicao": "121"
     }
 }

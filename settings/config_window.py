@@ -37,7 +37,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.btn_salvar.clicked.connect(self.save_settings)
         self.test_conect.clicked.connect(self.message)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConfBase)
-        self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
+        #self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
         self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
 
@@ -47,6 +47,11 @@ class ConfigWindow(QtWidgets.QDialog):
         self.comboBox_base_ltm_n_hom.currentIndexChanged.connect(self.add_action_ltm_nao_homologada)
         self.comboBox_base_area_uniao.currentIndexChanged.connect(self.add_action_area_uniao)
         self.comboBox_base_area_uniao_n_hom.currentIndexChanged.connect(self.add_action_area_uniao_n_hom)
+
+        self.comboBox_base_lltm_n_hom.currentIndexChanged.connect(self.add_action_lltm_n_hom)
+        self.comboBox_base_lltm_hom.currentIndexChanged.connect(self.add_action_lltm_hom)
+        self.comboBox_base_lmeo_hom.currentIndexChanged.connect(self.add_action_lmeo_hom)
+        self.comboBox_base_lmeo_n_hom.currentIndexChanged.connect(self.add_action_lmeo_n_hom)
 
     # self.btext.clicked.connect(self.hiderheader)
 
@@ -386,6 +391,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def fill_mandatory_layers_from_json_conf(self):
         camada_obrig = self.setings.get_camadas_base_obrigatoria()
+        print(camada_obrig)
         pg = self.source_databases
         shp = self.source_shp
 
@@ -396,6 +402,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_ltm_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
             self.comboBox_base_area_uniao.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
             self.comboBox_base_area_uniao_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lltm_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lltm_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lmeo_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
 
         for item in self.source_shp:
             self.comboBox_base_lpm_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
@@ -404,6 +414,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_ltm_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
             self.comboBox_base_area_uniao.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
             self.comboBox_base_area_uniao_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lltm_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lltm_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lmeo_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
 
         base_config = self.search_base_pg(camada_obrig["lpm_homologada"][0])
 
@@ -513,8 +527,81 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.comboBox_camada_area_uniao_n_hom.clear()
                 self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
                 self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
             print(base_config["nome"])
             self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"])
+            base_config = self.search_base_pg(camada_obrig["lltm_nao_homologada"][0])
+
+            if base_config == {}:
+                base_config = self.search_base_shp(camada_obrig["lltm_nao_homologada"][0])
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lltm_n_hom.clear()
+                for item_camada in base_config["TabelasDisponiveis"]:
+                    self.comboBox_camada_lltm_n_hom.addItem(item_camada)
+                self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_base_lltm_n_hom.clear()
+                self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
+                self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+            print(base_config["nome"])
+            self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"])
+            base_config = self.search_base_pg(camada_obrig["lltm_homologada"][0])
+
+            if base_config == {}:
+                base_config = self.search_base_shp(camada_obrig["lltm_homologada"][0])
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lltm_hom.clear()
+                for item_camada in base_config["TabelasDisponiveis"]:
+                    self.comboBox_camada_lltm_hom.addItem(item_camada)
+                self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_base_lltm_hom.clear()
+                self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
+                self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+            print(base_config["nome"])
+            self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"])
+            base_config = self.search_base_pg(camada_obrig["lmeo_nao_homologada"][0])
+
+            if base_config == {}:
+                base_config = self.search_base_shp(camada_obrig["lmeo_nao_homologada"][0])
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lmeo_n_hom.clear()
+                for item_camada in base_config["TabelasDisponiveis"]:
+                    self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
+                self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_base_lmeo_n_hom.clear()
+                self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
+                self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+            print(base_config["nome"])
+            self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"])
+            base_config = self.search_base_pg(camada_obrig["lmeo_homologada"][0])
+
+            if base_config == {}:
+                base_config = self.search_base_shp(camada_obrig["lmeo_homologada"][0])
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lmeo_hom.clear()
+                for item_camada in base_config["TabelasDisponiveis"]:
+                    self.comboBox_camada_lmeo_hom.addItem(item_camada)
+                self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_base_lmeo_hom.clear()
+                self.comboBox_camada_lmeo_hom.addItem(base_config["nome"])
+                self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+            print(base_config["nome"])
+            self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"])
 
     def fill_mandatory_layers_not_json(self):
 
@@ -524,6 +611,10 @@ class ConfigWindow(QtWidgets.QDialog):
         self.comboBox_base_ltm_n_hom.clear()
         self.comboBox_base_area_uniao.clear()
         self.comboBox_base_area_uniao_n_hom.clear()
+        self.comboBox_base_lltm_n_hom.clear()
+        self.comboBox_base_lltm_hom.clear()
+        self.comboBox_base_lmeo_hom.clear()
+        self.comboBox_base_lmeo_n_hom.clear()
 
         for item in self.source_databases:
             self.comboBox_base_lpm_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
@@ -532,6 +623,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_ltm_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
             self.comboBox_base_area_uniao.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
             self.comboBox_base_area_uniao_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lltm_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lltm_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lmeo_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
+            self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", item["id"])
 
         for item in self.source_shp:
             self.comboBox_base_lpm_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
@@ -540,6 +635,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_ltm_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
             self.comboBox_base_area_uniao.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
             self.comboBox_base_area_uniao_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lltm_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lltm_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lmeo_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
+            self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", item["id"])
 
     def fill_mandatory_layers(self):
         camada_obrig = self.setings.get_camadas_base_obrigatoria()
@@ -641,6 +740,70 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_area_uniao_n_hom.clear()
             self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
 
+    def add_action_lltm_n_hom(self):
+        id_base_selec = self.comboBox_base_lltm_n_hom.currentData()
+        base_config = self.search_base_pg(id_base_selec)
+
+        if base_config == {}:
+            base_config = self.search_base_shp(id_base_selec)
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lltm_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lltm_n_hom.addItem(item_camada)
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lltm_n_hom.clear()
+            self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
+
+    def add_action_lltm_hom(self):
+        id_base_selec = self.comboBox_base_lltm_hom.currentData()
+        base_config = self.search_base_pg(id_base_selec)
+
+        if base_config == {}:
+            base_config = self.search_base_shp(id_base_selec)
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lltm_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lltm_hom.addItem(item_camada)
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lltm_hom.clear()
+            self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
+
+    def add_action_lmeo_n_hom(self):
+        id_base_selec = self.comboBox_base_lmeo_n_hom.currentData()
+        base_config = self.search_base_pg(id_base_selec)
+
+        if base_config == {}:
+            base_config = self.search_base_shp(id_base_selec)
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lmeo_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lmeo_n_hom.clear()
+            self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
+
+    def add_action_lmeo_hom(self):
+        id_base_selec = self.comboBox_base_lmeo_hom.currentData()
+        base_config = self.search_base_pg(id_base_selec)
+
+        if base_config == {}:
+            base_config = self.search_base_shp(id_base_selec)
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lmeo_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lmeo_hom.addItem(item_camada)
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lmeo_hom.clear()
+            self.comboBox_camada_lmeo_hom.addItem(base_config["nome"])
+
     def save_mandatory_layers(self):
 
         config = {}
@@ -652,20 +815,36 @@ class ConfigWindow(QtWidgets.QDialog):
         current_camada = self.comboBox_camada_lpm_n_hom.currentText()
         config["lpm_nao_homologada"] = [current_base, current_camada, "LPM Não Homologada"]
 
-        current_base = self.comboBox_base_ltm_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())
+        current_base = self.comboBox_base_ltm_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())
         current_camada = self.comboBox_camada_ltm_hom.currentText()
         config["ltm_homologada"] = [current_base, current_camada, "LTM Homologada"]
 
-        current_base = self.comboBox_base_ltm_n_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())
+        current_base = self.comboBox_base_ltm_n_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())
         current_camada = self.comboBox_camada_ltm_n_hom.currentText()
         config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
 
-        current_base = self.comboBox_base_area_uniao.itemData(self.comboBox_base_lpm_n_hom.currentIndex())
+        current_base = self.comboBox_base_area_uniao.itemData(self.comboBox_base_area_uniao.currentIndex())
         current_camada = self.comboBox_camada_area_uniao.currentText()
         config["area_homologada"] = [current_base, current_camada, "Área Homologada"]
 
-        current_base = self.comboBox_base_area_uniao_n_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())
+        current_base = self.comboBox_base_area_uniao_n_hom.itemData(self.comboBox_base_area_uniao_n_hom.currentIndex())
         current_camada = self.comboBox_camada_area_uniao_n_hom.currentText()
         config["area_nao_homologada"] = [current_base, current_camada, "Área Não Homologada"]
+
+        current_base = self.comboBox_base_lltm_n_hom.itemData(self.comboBox_base_lltm_n_hom.currentIndex())
+        current_camada = self.comboBox_camada_lltm_n_hom.currentText()
+        config["lltm_nao_homologada"] = [current_base, current_camada, "LLTM Não Homologada"]
+
+        current_base = self.comboBox_base_lltm_hom.itemData(self.comboBox_base_lltm_hom.currentIndex())
+        current_camada = self.comboBox_camada_lltm_hom.currentText()
+        config["lltm_homologada"] = [current_base, current_camada, "LLTM Homologada"]
+
+        current_base = self.comboBox_base_lmeo_hom.itemData(self.comboBox_base_lmeo_hom.currentIndex())
+        current_camada = self.comboBox_camada_lmeo_hom.currentText()
+        config["lmeo_homologada"] = [current_base, current_camada, "LMEO Homologada"]
+
+        current_base = self.comboBox_base_lmeo_n_hom.itemData(self.comboBox_base_lmeo_n_hom.currentIndex())
+        current_camada = self.comboBox_camada_lmeo_n_hom.currentText()
+        config["lmeo_nao_homologada"] = [current_base, current_camada, "LMEO Não Homologada"]
 
         self.setings.set_camadas_base_obrigatoria(config)
