@@ -3,6 +3,7 @@ import os.path
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
+from qgis.utils import reloadPlugin
 
 class MainWindow (QtWidgets.QDialog):
     """Classe que manipula a tela principal do Prisma."""
@@ -17,13 +18,17 @@ class MainWindow (QtWidgets.QDialog):
         """Método construtor da classe."""
         self.iface = iface
         super(MainWindow, self).__init__()
-        loadUi(os.path.join(os.path.dirname(__file__), 'main_window.ui'), self)
+        self.ui = loadUi(os.path.join(os.path.dirname(__file__), 'main_window.ui'), self)
 
         self.btn_config.clicked.connect(self.go_to_config)
         self.btn_ponto.clicked.connect(self.go_to_point)
         self.btn_feicao.clicked.connect(self.go_to_feature)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
+        self.ui.closeEvent = self.close_event
+
+    def close_event(self, a):
+        reloadPlugin('prisma')
 
     def go_to_shapefile(self):
         """Abre tela com busca de sobreposição utilizando arquivos shapefiles."""

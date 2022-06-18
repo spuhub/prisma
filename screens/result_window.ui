@@ -102,6 +102,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_print_all_layers_qgis">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Gerar todas camadas no QGis</string>
        </property>
@@ -109,6 +112,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_print_overlay_qgis">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Gerar camadas sobrepostas no QGis</string>
        </property>

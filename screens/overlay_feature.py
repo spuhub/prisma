@@ -50,12 +50,11 @@ class OverlayFeature (QtWidgets.QDialog):
 
         input = gpd.GeoDataFrame.from_features(selected_features, crs = iface.activeLayer().sourceCrs().authid())
 
-        if 'cpf_cnpj' and 'logradouro' in input:
-            self.hide()
-            data = {"operation": "feature", "input": input}
+        self.hide()
+        data = {"operation": "feature", "input": input}
 
-            # Caso usuário tenha inserido área de aproximação
-            if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-                data['aproximacao'] = float(self.txt_aproximacao.text())
+        # Caso usuário tenha inserido área de aproximação
+        if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
+            data['aproximacao'] = float(self.txt_aproximacao.text())
 
-            return data
+        return data

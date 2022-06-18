@@ -481,6 +481,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_voltar">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Voltar</string>
        </property>
@@ -488,6 +491,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_continuar">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
        <property name="text">
         <string>Continuar</string>
        </property>

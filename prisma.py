@@ -67,11 +67,12 @@ class Prisma:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Prisma')
+        self.menu = self.tr(u'&SPUGeo')
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+        self.controller = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -169,7 +170,7 @@ class Prisma:
         icon_path = ':/plugins/prisma/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u''),
+            text=self.tr(u'SPU-PRISMA v2.0'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -181,7 +182,7 @@ class Prisma:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Prisma'),
+                self.tr(u'&SPUGeo'),
                 action)
             self.iface.removeToolBarIcon(action)
 
@@ -194,13 +195,13 @@ class Prisma:
         if self.first_start == True:
             self.first_start = False
 
-        controller = Controller(self.iface)
+            self.controller = Controller(self.iface)
 
-        # app = QtWidgets.QApplication(sys.argv)
-        # show the dialog
-        controller.show_main()
+            # app = QtWidgets.QApplication(sys.argv)
+            # show the dialog
+            self.controller.show_main()
         # Run the dialog event loop
-        result = controller.main_window.exec_()
+        result = self.controller.main_window.exec_()
         # # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and

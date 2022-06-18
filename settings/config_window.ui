@@ -244,6 +244,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="test_conect">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string>Testar Conexão</string>
            </property>
@@ -251,6 +254,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="testar_base_carregar_camadas">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string>Configurar Camadas</string>
            </property>
@@ -404,6 +410,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="testar_shp_carregar_camadas">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="text">
           <string>Configurar Camada</string>
          </property>
@@ -769,16 +778,19 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_salvar">
+      <widget class="QPushButton" name="btn_cancelar">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
-        <string>Salvar</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_cancelar">
+      <widget class="QPushButton" name="btn_salvar">
        <property name="text">
-        <string>Cancelar</string>
+        <string>Salvar</string>
        </property>
       </widget>
      </item>

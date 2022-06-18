@@ -80,6 +80,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -191,6 +194,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_voltar">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Cancelar</string>
        </property>

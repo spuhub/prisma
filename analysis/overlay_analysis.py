@@ -133,13 +133,26 @@ class OverlayAnalisys():
         input['crs_feature'] = None
         epsg_shp = gpd.read_file(epsg_shp_dir)
 
-        for indexInput, rowInput in input.iterrows():
-            areamaior=0
-            for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                area=rowInput['geometry'].intersection(rowEpsg['geometry']).area
-                if area>0:
-                    if area>areamaior:
-                        input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                        areamaior=area
+        # Caso input seja polígonos
+        if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon']:
+            for indexInput, rowInput in input.iterrows():
+                areamaior = 0
+                for indexEpsg, rowEpsg in epsg_shp.iterrows():
+                    area = rowInput['geometry'].intersection(rowEpsg['geometry']).area
+                    if area > 0:
+                        if area > areamaior:
+                            input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
+                            areamaior = area
+
+        # Caso input seja linhas
+        elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString']:
+            for indexInput, rowInput in input.iterrows():
+                areamaior = 0
+                for indexEpsg, rowEpsg in epsg_shp.iterrows():
+                    area = rowInput['geometry'].intersection(rowEpsg['geometry']).length
+                    if area > 0:
+                        if area > areamaior:
+                            input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
+                            areamaior = area
 
         return input['crs_feature']

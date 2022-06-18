@@ -75,6 +75,11 @@ class OperationController:
 
         operation_config['pg'] = []
 
+        handled_items_db = []
+        for value in selected_items_bd:
+            handled_value = value.replace(')', '').split(' (')
+            handled_items_db.append(handled_value)
+
         for i in self.data_bd:
             et = EnvTools()
             login = et.get_credentials(i['id'])
@@ -82,8 +87,24 @@ class OperationController:
             i['usuario'] = login[0]
             i['senha'] = login[1]
 
-            if (i['nome'] in selected_items_bd):
-                operation_config['pg'].append(i)
+            for key, layer in enumerate(i['nomeFantasiaTabelasCamadas']):
+                for layer_req in handled_items_db:
+                    if i['nome'] == layer_req[1] and layer == layer_req[0]:
+                        operation_config['pg'].append(dict(i))
+                        print(operation_config['pg'][-1])
+                        operation_config['pg'][-1]['nomeFantasiaTabelasCamadas'] = [layer]
+                        operation_config['pg'][-1]['tabelasCamadas'] = [i['tabelasCamadas'][key]]
+                        operation_config['pg'][-1]['estiloTabelasCamadas'] = [i['estiloTabelasCamadas'][key]]
+
+        for i in self.data_required:
+            if i['tipo'] == 'pg':
+                for x in self.data_bd:
+                    if i['id'] == x['id']:
+                        et = EnvTools()
+                        login = et.get_credentials(i['id'])
+
+                        i['usuario'] = login[0]
+                        i['senha'] = login[1]
 
         operation_config['required'] = self.data_required
 
