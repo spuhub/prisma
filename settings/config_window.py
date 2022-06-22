@@ -131,6 +131,18 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
         confg_dic["periodosReferencia"] = self.periodo_referencia_shp.text()
         confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
+        stryle = [{
+             "line_style": "solid",
+                "line_color": "#000000",
+                "width_border": "0.25",
+                "style": "solid",
+                "color": "#f3050d",
+                "stylePath":self.style_path.filePath()
+        }
+        ]
+
+        confg_dic["estiloCamadas"] = stryle
+
 
         #msg = QMessageBox(self)
 
@@ -279,6 +291,8 @@ class ConfigWindow(QtWidgets.QDialog):
             self.orgao_responsavel_shp.setText(current_config["orgaoResponsavel"])
             self.periodo_referencia_shp.setText(current_config["periodosReferencia"])
             self.data_aquisicao_shp.setText(current_config["dataAquisicao"])
+            style = current_config["estiloCamadas"][0]
+            self.style_path.setFilePath(style["stylePath"])
 
         if current_id == "0":
             self.nome_shp.clear()
@@ -452,197 +466,174 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
 
         if base_config["tipo"] == "shp":
-            self.comboBox_base_lltm_hom.clear()
+            self.comboBox_camada_lltm_hom.clear()
             self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
             self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
 
         self.comboBox_camada_lltm_hom.setCurrentText(camada_obrig["lltm_homologada"][1])
 
+        #LMEO homologada
 
+        base_config = self.search_base_pg(camada_obrig["lmeo_homologada"][0])
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["lmeo_homologada"][0])
 
-        # base_config = self.search_base_pg(camada_obrig["lpm_homologada"][0])
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lmeo_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lmeo_hom.addItem(item_camada)
+
+            self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lmeo_hom.clear()
+            self.comboBox_camada_lmeo_hom.addItem(base_config["nome"])
+            self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_camada_lmeo_hom.setCurrentText(camada_obrig["lmeo_homologada"][1])
+
+        #LPM Homologada
+
+        base_config = self.search_base_pg(camada_obrig["lpm_homologada"][0])
+
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["lpm_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lpm_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lpm_hom.addItem(item_camada)
+
+            self.comboBox_base_lpm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lpm_hom.clear()
+            self.comboBox_camada_lpm_hom.addItem(base_config["nome"])
+            self.comboBox_base_lpm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_camada_lpm_hom.setCurrentText(camada_obrig["lpm_homologada"][1])
+
+        #LTM Homologada
+        base_config = self.search_base_pg(camada_obrig["ltm_homologada"][0])
+
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["ltm_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_ltm_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_ltm_hom.addItem(item_camada)
+
+            self.comboBox_base_ltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_ltm_hom.clear()
+            self.comboBox_camada_ltm_hom.addItem(base_config["nome"])
+            self.comboBox_base_ltm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_camada_ltm_hom.setCurrentText(camada_obrig["ltm_homologada"][1])
+
+        #Area da União não homologada
+
+        base_config = self.search_base_pg(camada_obrig["area_nao_homologada"][0])
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["area_nao_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_area_uniao_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
+
+            self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_area_uniao_n_hom.clear()
+            self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
+            self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_base_area_uniao_n_hom.setCurrentText(camada_obrig["area_nao_homologada"][1])
+
+        #LLTM não homologada
+
+        base_config = self.search_base_pg(camada_obrig["lltm_nao_homologada"][0])
+
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["lltm_nao_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lltm_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lltm_n_hom.addItem(item_camada)
+
+            self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
         #
-        # if base_config == {}:
-        #     base_config = self.search_base_shp(camada_obrig["lpm_homologada"][0])
-        #
-        # if 'tipo' in base_config:
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_lpm_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_lpm_hom.addItem(item_camada)
-            #
-            #     self.comboBox_base_lpm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_camada_lpm_hom.clear()
-            #     self.comboBox_camada_lpm_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_lpm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lltm_n_hom.clear()
+            self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
+            self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
 
-            # base_config = self.search_base_pg(camada_obrig["lpm_nao_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["lpm_nao_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_lpm_n_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_lpm_n_hom.addItem(item_camada)
-            #
-            #     self.comboBox_base_lpm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_camada_lpm_n_hom.clear()
-            #     self.comboBox_camada_lpm_n_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_lpm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_lpm_n_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["ltm_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["ltm_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_ltm_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_ltm_hom.addItem(item_camada)
-            #     self.comboBox_base_ltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_camada_ltm_hom.clear()
-            #     self.comboBox_camada_ltm_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_ltm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_ltm_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["ltm_nao_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["ltm_nao_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_ltm_n_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_ltm_n_hom.addItem(item_camada)
-            #     self.comboBox_base_ltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_camada_ltm_n_hom.clear()
-            #     self.comboBox_camada_ltm_n_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_ltm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_ltm_n_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["area_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["area_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_area_uniao.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_area_uniao.addItem(item_camada)
-            #     self.comboBox_base_area_uniao.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_camada_area_uniao.clear()
-            #     self.comboBox_camada_area_uniao.addItem(base_config["nome"])
-            #     self.comboBox_base_area_uniao.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_area_uniao.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["area_nao_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["area_nao_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_area_uniao_n_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
-            #     self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_camada_area_uniao_n_hom.clear()
-            #     self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["lltm_nao_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["lltm_nao_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_lltm_n_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_lltm_n_hom.addItem(item_camada)
-            #     self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_base_lltm_n_hom.clear()
-            #     self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["lltm_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["lltm_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_lltm_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_lltm_hom.addItem(item_camada)
-            #     self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_base_lltm_hom.clear()
-            #     self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["lmeo_nao_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["lmeo_nao_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_lmeo_n_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
-            #     self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_base_lmeo_n_hom.clear()
-            #     self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"])
-            # base_config = self.search_base_pg(camada_obrig["lmeo_homologada"][0])
-            #
-            # if base_config == {}:
-            #     base_config = self.search_base_shp(camada_obrig["lmeo_homologada"][0])
-            #
-            # if base_config["tipo"] == "pg":
-            #     self.comboBox_camada_lmeo_hom.clear()
-            #     for item_camada in base_config["TabelasDisponiveis"]:
-            #         self.comboBox_camada_lmeo_hom.addItem(item_camada)
-            #     self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-            #
-            # if base_config["tipo"] == "shp":
-            #     self.comboBox_base_lmeo_hom.clear()
-            #     self.comboBox_camada_lmeo_hom.addItem(base_config["nome"])
-            #     self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            #
-            # print(base_config["nome"])
-            # self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"])
+        self.comboBox_camada_lltm_n_hom.setCurrentText(camada_obrig["lltm_nao_homologada"][1])
+
+        #LPM não homologada
+
+        base_config = self.search_base_pg(camada_obrig["lpm_nao_homologada"][0])
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["lpm_nao_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lpm_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lpm_n_hom.addItem(item_camada)
+
+            self.comboBox_base_lpm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_lpm_n_hom.clear()
+            self.comboBox_camada_lpm_n_hom.addItem(base_config["nome"])
+            self.comboBox_base_lpm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_camada_lpm_n_hom.setCurrentText(camada_obrig["lpm_nao_homologada"][1])
+
+        #LEMEO não homologada
+
+        base_config = self.search_base_pg(camada_obrig["lmeo_nao_homologada"][0])
+
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["lmeo_nao_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_lmeo_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
+
+            self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_base_lmeo_n_hom.clear()
+            self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
+            self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_camada_lmeo_n_hom.setCurrentText(camada_obrig["lmeo_nao_homologada"][1])
+
+        #LTM não homologada
+
+        base_config = self.search_base_pg(camada_obrig["ltm_nao_homologada"][0])
+        if base_config == {}:
+            base_config = self.search_base_shp(camada_obrig["ltm_nao_homologada"][0])
+
+        if base_config["tipo"] == "pg":
+            self.comboBox_camada_ltm_n_hom.clear()
+            for item_camada in base_config["TabelasDisponiveis"]:
+                self.comboBox_camada_ltm_n_hom.addItem(item_camada)
+            self.comboBox_base_ltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+
+        if base_config["tipo"] == "shp":
+            self.comboBox_camada_ltm_n_hom.clear()
+            self.comboBox_camada_ltm_n_hom.addItem(base_config["nome"])
+            self.comboBox_base_ltm_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+
+        self.comboBox_camada_ltm_n_hom.setCurrentText(camada_obrig["ltm_nao_homologada"][1])
+
 
     def fill_mandatory_layers_not_json(self):
 

@@ -77,7 +77,8 @@
                 "line_color": "#000000",
                 "width_border": "0.25",
                 "style": "solid",
-                "color": "#f3050d"
+                "color": "#f3050d",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp"
             }
         ]
     },
@@ -89,7 +90,17 @@
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
         "orgaoResponsavel": "SPU",
         "periodosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021"
+        "dataAquisicao": "10/11/2021",
+        "estiloCamadas": [
+            {
+                "line_style": "solid",
+                "line_color": "black",
+                "width_border": "0.35",
+                "style": "solid",
+                "color": "red",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp"
+            }
+        ]
     },
     "base4": {
         "id": "base4",
@@ -99,7 +110,17 @@
         "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp",
         "orgaoResponsavel": "SPU",
         "periodosReferencia": "10/11/2021",
-        "dataAquisicao": "10/11/2021"
+        "dataAquisicao": "10/11/2021",
+        "estiloCamadas": [
+            {
+                "line_style": "solid",
+                "line_color": "black",
+                "width_border": "0.35",
+                "style": "solid",
+                "color": "red",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp"
+            }
+        ]
     },
     "base5": {
         "id": "base5",
@@ -117,7 +138,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Faixa_Dominio_Ferrovia_A.shp"
             }
         ]
     },
