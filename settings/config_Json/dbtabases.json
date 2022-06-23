@@ -41,7 +41,7 @@
         "orgaoResponsavel": "SPU Municipio",
         "periodosReferencia": "15/10/2023",
         "dataAquisicao": "10/11/2021",
-        "aproximacao": [0, 200, 0],
+        "aproximacao": [0, 0, 0],
         "TabelasDisponiveis": [
             "area_especial",
             "faixa_dominio",

@@ -95,6 +95,7 @@ class OperationController:
                         operation_config['pg'][-1]['nomeFantasiaTabelasCamadas'] = [layer]
                         operation_config['pg'][-1]['tabelasCamadas'] = [i['tabelasCamadas'][key]]
                         operation_config['pg'][-1]['estiloTabelasCamadas'] = [i['estiloTabelasCamadas'][key]]
+                        operation_config['pg'][-1]['aproximacao'] = [i['aproximacao'][key]]
 
         for i in self.data_required:
             if i['tipo'] == 'pg':
