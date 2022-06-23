@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -368,9 +368,19 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="periodo_referencia_shp">
-           <property name="placeholderText">
-            <string>Periodo de Referência</string>
+          <widget class="QgsDateTimeEdit" name="periodo_referencia_shp">
+           <property name="dateTime">
+            <datetime>
+             <hour>0</hour>
+             <minute>0</minute>
+             <second>0</second>
+             <year>2022</year>
+             <month>6</month>
+             <day>20</day>
+            </datetime>
+           </property>
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
            </property>
           </widget>
          </item>
@@ -386,9 +396,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="data_aquisicao_shp">
-           <property name="placeholderText">
-            <string>Data de Aquisição</string>
+          <widget class="QgsDateTimeEdit" name="data_aquisicao_shp">
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
            </property>
           </widget>
          </item>
@@ -799,6 +809,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>qgsdatetimeedit.h</header>
+  </customwidget>
   <customwidget>
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>

@@ -124,8 +124,14 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["urlDowload"] = self.url_dowload.text()
         confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
-        confg_dic["periodosReferencia"] = self.periodo_referencia_shp.text()
-        confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
+
+        dt = self.periodo_referencia_shp.dateTime()
+        dt_string = dt.toString(self.periodo_referencia_shp.displayFormat())
+        confg_dic["periodosReferencia"] = dt_string
+
+        dt = self.data_aquisicao_shp.dateTime()
+        dt_string = dt.toString(self.data_aquisicao_shp.displayFormat())
+        confg_dic["dataAquisicao"] = dt_string
 
         #msg = QMessageBox(self)
 
@@ -272,8 +278,14 @@ class ConfigWindow(QtWidgets.QDialog):
             self.url_dowload.setText(current_config["urlDowload"])
             self.diretorioLocalshp.setFilePath(current_config["diretorioLocal"])
             self.orgao_responsavel_shp.setText(current_config["orgaoResponsavel"])
-            self.periodo_referencia_shp.setText(current_config["periodosReferencia"])
-            self.data_aquisicao_shp.setText(current_config["dataAquisicao"])
+
+            get_date = current_config["periodosReferencia"].split("/")
+            date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+            self.periodo_referencia_shp.setDate(date)
+
+            get_date = current_config["dataAquisicao"].split("/")
+            date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+            self.data_aquisicao_shp.setDate(date)
 
         if current_id == "0":
             self.nome_shp.clear()

@@ -570,7 +570,7 @@ class Polygons():
         text = ''
         for item in print_layers:
             if item != 'OpenStreetMap':
-                text_item = data_source[item][0] + " (" + data_source[item][1] +"), "
+                text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
                 if text_item not in text:
                     text += text_item
 
