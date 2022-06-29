@@ -128,7 +128,7 @@ class ConfigLayers(QtWidgets.QDialog):
         PostgreSQL.
         @return: void
         """
-        #print(self.id_current_db)
+        print(self.id_current_db)
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
 
@@ -162,8 +162,8 @@ class ConfigLayers(QtWidgets.QDialog):
 
         if "estiloTabelasCamadas" in config:
             estiloTabelasCamadas = config["estiloTabelasCamadas"]
-        if "aproximacao" in config:
-            aproximacao = config["aproximacao"]
+        #if "aproximacao" in config:
+         #   aproximacao = config["aproximacao"]
 
         self.objects_tables_disponiveis = tabelasGeom
         self.objects_tipo_tables_disponiveis = dataTables.values()
@@ -173,8 +173,9 @@ class ConfigLayers(QtWidgets.QDialog):
         # itemCellClass = QTableWidgetItem(classe)
 
         for i in range(nb_row):
-
+            index_checkUsar = -1
             if tabelasGeom[i] in tabelasCamadas:
+                index_checkUsar = tabelasCamadas.index(tabelasGeom[i])
                 self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(i), True))
             else:
                 self.objects_vai_usar.append(self.create_usar_check("check-usar" + str(i), False))
@@ -201,25 +202,30 @@ class ConfigLayers(QtWidgets.QDialog):
             itemCellClass = QTableWidgetItem(dataTables[tabelasGeom[i]])
             self.table_layers.setItem(i, 3, itemCellClass)
 
-            defalt_aproximacao = 0.25
+            defalt_proximidade = 0.25
 
-            if tabelasGeom[i] in tabelasCamadas:
-                itemidex = tabelasCamadas.index(tabelasGeom[i])
-                print("itemindex",itemidex)
-                if(len(aproximacao) !=0):
-                    defalt_aproximacao = aproximacao[itemidex]
-
-            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(4), defalt_aproximacao))
-            self.table_layers.setCellWidget(i, 4, self.objects_buffer[i])
 
             self.objects_file_style.append(self.create_filePath("filepath" + "-" + str(i) + "-" + str(5)))
             self.table_layers.setCellWidget(i, 5, self.objects_file_style[i])
 
+            if tabelasGeom[i] in tabelasCamadas:
+                itemidex = tabelasCamadas.index(tabelasGeom[i])
+                #print("itemindex",itemidex)
+                itemidex_aux = tabelasCamadas.index(tabelasGeom[i])
+                if(len(estiloTabelasCamadas) !=0):
+                    faixa_proximidade = estiloTabelasCamadas[itemidex]["faixaProximidade"]
 
-            self.objects_button_mais_infor.append(self.create_button_mais_inf("mais_infor" + "-" + str(i) + "-" + str(6)))
+                    defalt_proximidade = faixa_proximidade
+                    print("faixa proximidade",faixa_proximidade)
+
+                    self.objects_file_style[i].setFilePath(estiloTabelasCamadas[itemidex]["stylePath"])
+
+            self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(4), defalt_proximidade))
+            self.table_layers.setCellWidget(i, 4, self.objects_buffer[i])
+
+            self.objects_button_mais_infor.append(self.create_button_mais_inf("maisinfor" + "_" + str(i) + "_" + str(6) + "_" + str(index_checkUsar)))
             self.table_layers.setCellWidget(i, 6, self.objects_button_mais_infor[i])
             self.objects_button_mais_infor[i].clicked.connect(self.exec_more_infor)
-
 
 
     def save_base_pg(self):
@@ -327,7 +333,14 @@ class ConfigLayers(QtWidgets.QDialog):
         self.continue_window.emit()
 
     def exec_more_infor(self):
-        d = LayerInfor()
+
+        btn = self.sender()
+        print("MEU DEUS", btn.objectName())
+
+        btn_name = btn.objectName()
+        btn_name_array = btn_name.split("_")
+        index_infor = btn_name_array[3]
+        d = LayerInfor(self.id_current_db, int(index_infor))
         d.exec_()
         btn = self.sender()
         print("MEU DEUS",btn.objectName())

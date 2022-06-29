@@ -76,6 +76,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_base.text()
         confg_dic["periodosReferencia"] = self.periodos_referencia_base.text()
         confg_dic["dataAquisicao"] = self.data_aquisicao_base.text()
+        confg_dic["descricao"] = self.textEdit_bd.toPlainText()
        # msg = QMessageBox(self)
         if self.combo_box_base.currentData() == "0":
             if confg_dic["nome"] != "" and confg_dic["host"] != "" and confg_dic["porta"] != "" and confg_dic["baseDeDados"] != "":
@@ -129,15 +130,24 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["urlDowload"] = self.url_dowload.text()
         confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
-        confg_dic["periodosReferencia"] = self.periodo_referencia_shp.text()
-        confg_dic["dataAquisicao"] = self.data_aquisicao_shp.text()
+
+        dt = self.periodo_referencia_shp.dateTime()
+        dt_string = dt.toString(self.periodo_referencia_shp.displayFormat())
+        confg_dic["periodosReferencia"] = dt_string
+
+        dt = self.data_aquisicao_shp.dateTime()
+        dt_string = dt.toString(self.data_aquisicao_shp.displayFormat())
+        confg_dic["dataAquisicao"] = dt_string
+
+        confg_dic["descricao"] = self.textEdit_shp.toPlainText()
         stryle = [{
              "line_style": "solid",
                 "line_color": "#000000",
                 "width_border": "0.25",
                 "style": "solid",
                 "color": "#f3050d",
-                "stylePath":self.style_path.filePath()
+                "stylePath" : self.style_path.filePath(),
+                "faixaProximidade" : self.faixa_proximidade.value()
         }
         ]
 
@@ -251,7 +261,7 @@ class ConfigWindow(QtWidgets.QDialog):
         current_config = self.search_base_pg(current_id)
 
         if current_id != "0":
-            print("cuureereree ====", current_id)
+            #print("cuureereree ====", current_id)
             self.nome_base.setText(current_config["nome"])
             self.host.setText(current_config["host"])
             self.porta.setText(current_config["porta"])
@@ -259,9 +269,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.orgao_responsavel_base.setText(current_config["orgaoResponsavel"])
             self.periodos_referencia_base.setText(current_config["periodosReferencia"])
             self.data_aquisicao_base.setText(current_config["dataAquisicao"])
+            self.textEdit_bd.setText(current_config["descricao"])
 
             cred = self.credencials.get_credentials(current_id)
-            print("creed ", cred)
+            #print("creed ", cred)
             self.usuario.setText(cred[0])
             self.senha.setText(cred[1])
 
@@ -289,10 +300,19 @@ class ConfigWindow(QtWidgets.QDialog):
             self.url_dowload.setText(current_config["urlDowload"])
             self.diretorioLocalshp.setFilePath(current_config["diretorioLocal"])
             self.orgao_responsavel_shp.setText(current_config["orgaoResponsavel"])
-            self.periodo_referencia_shp.setText(current_config["periodosReferencia"])
-            self.data_aquisicao_shp.setText(current_config["dataAquisicao"])
+
+            get_date = current_config["periodosReferencia"].split("/")
+            date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+            self.periodo_referencia_shp.setDate(date)
+
+            get_date = current_config["dataAquisicao"].split("/")
+            date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+            self.data_aquisicao_shp.setDate(date)
+
             style = current_config["estiloCamadas"][0]
             self.style_path.setFilePath(style["stylePath"])
+            self.textEdit_shp.setText(current_config["descricao"])
+            self.faixa_proximidade.setValue(style["faixaProximidade"])
 
         if current_id == "0":
             self.nome_shp.clear()
@@ -345,7 +365,7 @@ class ConfigWindow(QtWidgets.QDialog):
         Renderisa a janela de configuração de camadas das bases PostgreSQL.
         @return: void
         """
-
+        self.save_settings()
         id_current_db = self.combo_box_base.currentData()
 
         if id_current_db == "0":

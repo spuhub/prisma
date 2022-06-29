@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>722</width>
-    <height>278</height>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,9 +44,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="periodos_referencia_base">
-         <property name="placeholderText">
-          <string>Periodo de Referência</string>
+        <widget class="QgsDateTimeEdit" name="periodos_referencia_base">
+         <property name="displayFormat">
+          <string>dd/MM/yyyy</string>
          </property>
         </widget>
        </item>
@@ -62,9 +62,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="data_aquisicao_base">
-         <property name="placeholderText">
-          <string>Data de Aquisição</string>
+        <widget class="QgsDateTimeEdit" name="data_aquisicao_base">
+         <property name="displayFormat">
+          <string>dd/MM/yyyy</string>
          </property>
         </widget>
        </item>
@@ -104,6 +104,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>qgsdatetimeedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
