@@ -200,5 +200,30 @@
                 "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_2_4_Terreno_Sujeito_Inundacao_A.sld"
             }
         ]
+    },
+    "base4": {
+        "id": "base4",
+        "tipo": "shp",
+        "nome": "area militar",
+        "nomeFantasiaCamada": "area militar",
+        "urlDowload": "gpc.com",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "orgaoResponsavel": "casa",
+        "aproximacao": [
+            3.0
+        ],
+        "periodosReferencia": "02/06/2022",
+        "dataAquisicao": "02/06/2022",
+        "descricao": "121212",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
+            }
+        ]
     }
 }
