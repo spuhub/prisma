@@ -13,6 +13,7 @@ from ..settings.env_tools import EnvTools
 from ..analysis.overlay_analysis import OverlayAnalisys
 from .polygons import Polygons
 from .linestrings import Linestrings
+from .overlay_report_polygons import OverlayReportPolygons
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
@@ -50,8 +51,13 @@ class LayoutManager():
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Planta_FolhaA3_Paisagem.qpt')
         self.add_template_to_project(template_dir)
 
+        # Folha de rosto
+        template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Relatorio_FolhaA4_Retrato.qpt')
+        self.add_template_to_project(template_dir)
+
         self.layout = None
         self.atlas = None
+        self.overlay_report = OverlayReportPolygons()
         self.layers = []
 
         self.polygons = Polygons(self.operation_config)
