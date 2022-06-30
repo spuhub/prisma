@@ -1,15 +1,16 @@
 {
-    "base1": {
-        "id": "base1",
+    "obrigatorio": {},
+    "base2": {
+        "id": "base2",
         "tipo": "pg",
-        "nome": "Base Usucapiao",
+        "nome": "b1",
         "host": "localhost",
         "porta": "5450",
         "baseDeDados": "usucapiao",
-        "orgaoResponsavel": "casa7",
-        "periodosReferencia": "21/11/2022",
-        "dataAquisicao": "21/11/2022",
-        "descricao": "teste base",
+        "orgaoResponsavel": "casa",
+        "periodosReferencia": "30/06/2022",
+        "dataAquisicao": "30/06/2022",
+        "descricao": "1212",
         "TabelasDisponiveis": [
             "faixa_dominio",
             "faixa_seguranca",
@@ -43,40 +44,56 @@
             "ST_Polygon"
         ],
         "tabelasCamadas": [
-            "faixa_dominio",
             "area_especial",
             "municipio",
             "trecho_ferroviario",
-            "trecho_rodoviario",
             "unidade_federacao",
             "massa_dagua"
         ],
         "aproximacao": [
+            0.4,
             0.0,
-            0.15,
-            0.45,
-            0.45,
-            0.55,
-            0.55,
-            0.55
+            0.0,
+            0.0,
+            0.0
         ],
         "nomeFantasiaTabelasCamadas": [
-            "Faixa Dominio",
             "Area Especial",
             "Municipio",
             "Trecho Ferroviario",
-            "Trecho Rodoviario",
             "Unidade Federacao",
             "Massa Dagua"
         ],
-        "descricaoTabelasCamadas": [
-            "Builder",
-            "Builder",
-            "Builder",
-            "Builder",
-            "Builder",
-            "Builder",
-            "Builder"
+        "maisInformacoesTabelas": [
+            {},
+            {},
+            {
+                "orgaoResponsavel": "12121",
+                "periodosReferencia": "30/06/2022",
+                "dataAquisicao": "30/06/2022",
+                "descricao": "2121"
+            },
+            {},
+            {
+                "orgaoResponsavel": "Muni",
+                "periodosReferencia": "30/06/2022",
+                "dataAquisicao": "30/06/2022",
+                "descricao": "muni"
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+                "orgaoResponsavel": "adadada",
+                "periodosReferencia": "30/06/2022",
+                "dataAquisicao": "30/06/2022",
+                "descricao": "dafdad"
+            }
         ],
         "estiloTabelasCamadas": [
             {
@@ -93,7 +110,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
+                "stylePath": ""
             },
             {
                 "line_style": "",
@@ -101,7 +118,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_2_3_Massa_Dagua_A.sld"
+                "stylePath": ""
             },
             {
                 "line_style": "",
@@ -109,7 +126,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_2_Ponto_Cotado_Altimetrico_P.sld"
+                "stylePath": ""
             },
             {
                 "line_style": "",
@@ -117,112 +134,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_6_Elemento_Fisiografico_Natural_P.sld"
-            },
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_6_1_Estrut_Apoio_Transporte_P.sld"
-            },
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_6_4_Trecho_Ferroviario_L.sld"
-            }
-        ],
-        "maisInformacoesTabelas": [
-            {
-                "orgaoResponsavel": "Casa0567",
-                "periodosReferencia": "29/06/2022",
-                "dataAquisicao": "29/06/2022",
-                "descricao": "aqui45567"
-            },
-            {
-                "orgaoResponsavel": "casa2",
-                "periodosReferencia": "29/06/2022",
-                "dataAquisicao": "29/06/2022",
-                "descricao": "teste2"
-            },
-            {},
-            {},
-            {},
-            {}
-        ]
-    },
-    "obrigatorio": {
-        "area_homologada": [
-            "base3",
-            "Quilombo",
-            "\u00c1rea Homologada"
-        ],
-        "lmeo_homologada": [
-            "base1",
-            "area_especial",
-            "LMEO Homologada"
-        ],
-        "lltm_homologada": [
-            "base1",
-            "faixa_dominio",
-            "LLTM Homologada"
-        ],
-        "lpm_homologada": [
-            "base1",
-            "faixa_dominio",
-            "LPM Homologada"
-        ]
-    },
-    "base3": {
-        "id": "base3",
-        "tipo": "shp",
-        "nome": "Quilombo",
-        "urlDowload": "url",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
-        "orgaoResponsavel": "casa",
-        "aproximacao": [
-            9.0
-        ],
-        "periodosReferencia": "29/06/2022",
-        "dataAquisicao": "29/06/2022",
-        "descricao": "ssesdd",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_2_4_Terreno_Sujeito_Inundacao_A.sld"
-            }
-        ]
-    },
-    "base4": {
-        "id": "base4",
-        "tipo": "shp",
-        "nome": "area militar",
-        "nomeFantasiaCamada": "area militar",
-        "urlDowload": "gpc.com",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "casa",
-        "aproximacao": [
-            3.0
-        ],
-        "periodosReferencia": "02/06/2022",
-        "dataAquisicao": "02/06/2022",
-        "descricao": "121212",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
+                "stylePath": ""
             }
         ]
     }
