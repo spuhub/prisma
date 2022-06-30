@@ -235,7 +235,7 @@ class Linestrings():
                                              self.operation_config['operation_config']['shp'][index_1][
                                                  'nomeFantasiaCamada'])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-            show_qgis_areas.loadSldStyle(operation_config['operation_config']['shp'][index_1]['estiloCamadas'][0]['stylePath'])
+            show_qgis_areas.loadSldStyle(self.operation_config['operation_config']['shp'][index_1]['estiloCamadas'][0]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
         else:
@@ -249,7 +249,7 @@ class Linestrings():
                                                  'nomeFantasiaTabelasCamadas'][index_2])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            show_qgis_areas.loadSldStyle(operation_config['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2]['stylePath'])
+            show_qgis_areas.loadSldStyle(self.operation_config['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
 

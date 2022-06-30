@@ -165,8 +165,7 @@ class MapCanvas():
                                                      operation_config['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
                     show_qgis_areas.loadSldStyle(
-                        operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer][
-                            'stylePath'])
+                        operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer]['stylePath'])
                     QgsProject.instance().addMapLayer(show_qgis_areas)
 
                 index_layer += 1

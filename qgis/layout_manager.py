@@ -302,28 +302,23 @@ class LayoutManager():
 
                 if len(area) > 0:
                     show_qgis_areas = None
-                    symbol = None
                     if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
                         show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                     self.operation_config['operation_config']['required'][index][
-                                                         'nomeFantasiaCamada'])
-                        symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
                                                          self.operation_config['operation_config']['required'][index][
-                                                             'estiloCamadas'][
-                                                             0])
+                                                             'nomeFantasiaCamada'])
+                        show_qgis_areas.loadSldStyle(
+                            self.operation_config['operation_config']['required'][index]['estiloCamadas'][0]['stylePath'])
                     else:
                         if 'geom' in area:
                             area = area.drop(columns=['geom'])
                         show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                          self.operation_config['operation_config']['required'][index][
                                                              'nomeFantasiaTabelasCamadas'][0])
-                        symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                         self.operation_config['operation_config']['required'][index][
-                                                             'estiloTabelasCamadas'][
-                                                             0])
+                        show_qgis_areas.loadSldStyle(
+                            self.operation_config['operation_config']['required'][index]['estiloTabelasCamadas'][0][
+                                'stylePath'])
 
                     show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-                    show_qgis_areas.renderer().setSymbol(symbol)
                     QgsProject.instance().addMapLayer(show_qgis_areas)
 
             index += 1
