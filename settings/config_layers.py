@@ -203,7 +203,7 @@ class ConfigLayers(QtWidgets.QDialog):
             itemCellClass = QTableWidgetItem(dataTables[tabelasGeom[i]])
             self.table_layers.setItem(i, 3, itemCellClass)
 
-            defalt_proximidade = 0.25
+            defalt_proximidade = 0.00
 
 
             self.objects_file_style.append(self.create_filePath("filepath" + "-" + str(i) + "-" + str(5)))
