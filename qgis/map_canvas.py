@@ -46,9 +46,7 @@ class MapCanvas():
 
             if len(area) > 0:
                 show_qgis_areas = QgsVectorLayer(area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
-                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                                 operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
-                show_qgis_areas.renderer().setSymbol(symbol)
+                show_qgis_areas.loadSldStyle(operation_config['operation_config']['shp'][index]['estiloCamadas'][0]['stylePath'])
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e Postgis
@@ -63,8 +61,8 @@ class MapCanvas():
                     show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                      operation_config['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
-                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
-                    show_qgis_areas.renderer().setSymbol(symbol)
+                    show_qgis_areas.loadSldStyle(
+                        operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer]['stylePath'])
                     QgsProject.instance().addMapLayer(show_qgis_areas)
                 index_layer += 1
             index_db += 1
@@ -138,10 +136,8 @@ class MapCanvas():
 
                 gdf_area = gdf_area.drop_duplicates()
                 show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
-
-                symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['shp'][index]['estiloCamadas'][0])
-
-                show_qgis_areas.renderer().setSymbol(symbol)
+                show_qgis_areas.loadSldStyle(
+                    operation_config['operation_config']['shp'][index]['estiloCamadas'][0]['stylePath'])
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e Postgis
@@ -168,8 +164,9 @@ class MapCanvas():
                     show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
                                                      operation_config['operation_config']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
-                    symbol = self.get_feature_symbol(show_qgis_areas.geometryType(), operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer])
-                    show_qgis_areas.renderer().setSymbol(symbol)
+                    show_qgis_areas.loadSldStyle(
+                        operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer][
+                            'stylePath'])
                     QgsProject.instance().addMapLayer(show_qgis_areas)
 
                 index_layer += 1

@@ -77,21 +77,24 @@
                 "line_color": "black",
                 "width_border": "0.2",
                 "style": "solid",
-                "color": "blue"
+                "color": "blue",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\1_2_3_Massa_Dagua_A.sld"
             },
             {
                 "line_style": "dash dot",
                 "line_color": "red",
                 "width_border": "0.2",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\1_6_1_Estrut_Apoio_Transporte_A.sld"
             },
             {
                 "line_style": "dash dot",
                 "line_color": "red",
                 "width_border": "0.2",
                 "style": "cross",
-                "color": ""
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\1_2_3_Massa_Dagua_A.sld"
             }
         ]
     },
@@ -289,7 +292,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "green"
+                "color": "green",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\1_7_1_Vegetacao_A.sld"
             }
         ]
     },
@@ -310,7 +314,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "blue"
+                "color": "blue",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld"
             }
         ]
     },
@@ -331,7 +336,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_1_4_Edificacao_A.sld"
             }
         ]
     },
@@ -394,7 +400,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LPM_L.sld"
             }
         ]
     },
@@ -415,7 +422,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "green"
+                "color": "green",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_4_Trecho_LTM_L.sld"
             }
         ]
     },
@@ -436,7 +444,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LPM_L.sld"
             }
         ]
     },
@@ -457,7 +466,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_4_Trecho_LTM_L.sld"
             }
         ]
     },
@@ -478,7 +488,8 @@
                 "line_color": "black",
                 "width_border": "0.35",
                 "style": "solid",
-                "color": "red"
+                "color": "red",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
             }
         ]
     },
