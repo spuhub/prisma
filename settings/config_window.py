@@ -362,6 +362,8 @@ class ConfigWindow(QtWidgets.QDialog):
         self.combo_box_servico_geocod.addItem("Google", 0)
         self.combo_box_servico_geocod.addItem("Nominatim (OpenStreetMap)", 1)
        #self.combo_box_servico_geocod.addItem("IBGE", 2)
+        self.set_config()
+
 
     def save_geocoding_key(self):
         """
@@ -371,6 +373,7 @@ class ConfigWindow(QtWidgets.QDialog):
         current_opt = self.combo_box_servico_geocod.currentData()
         current_opt_text = self.combo_box_servico_geocod.currentText()
         key = self.key_geo_cod.text()
+        print("olha ", current_opt_text,current_opt)
         self.credencials.store_current_geocoding_server([current_opt_text, current_opt])
         self.credencials.store_keys(str(current_opt), key)
 
@@ -381,7 +384,8 @@ class ConfigWindow(QtWidgets.QDialog):
         """
         current_op = self.credencials.get_current_geocoding_server()
         current_key = self.credencials.get_key(current_op[1])
-        self.combo_box_servico_geocod(current_op[1])
+        print("olha carreg ", current_op, current_key)
+        self.combo_box_servico_geocod.setCurrentText(current_op[1])
         self.key_geo_cod.setText(current_key)
 
     def back(self):
