@@ -288,7 +288,7 @@ class LinestringRequired():
         lot_area.setText("Comprimento total da linha: " + str(format_value) + " metros em " + str(len(feature_input_gdp.explode())) + " segmentos.")
 
         # Sobreposição com área da união
-        if input.iloc[self.index_input]['Área Homologada'] > 0:
+        if 'Área Homologada' in input and input.iloc[self.index_input]['Área Homologada'] > 0:
             overlay_uniao.setText("Lote sobrepõe Área Homologada da União.")
         else:
             overlay_uniao.setText("Lote não sobrepõe Área Homologada da União.")
