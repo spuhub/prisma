@@ -21,11 +21,13 @@ class ConfigLayers(QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
 
-    def __init__(self, tipo_fonte, id_current_db):
+    def __init__(self, tipo_fonte, id_current_db, login, senha):
         super(ConfigLayers, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'config_layers.ui'), self)
         self.tipoFonte = tipo_fonte
         self.id_current_db = id_current_db
+        self.login = login
+        self.senha = senha
 
         # self.config_windows = ConfigWindow()
         self.setings02 = JsonTools()
@@ -135,7 +137,7 @@ class ConfigLayers(QtWidgets.QDialog):
 
         env = EnvTools()
         credenciais = env.get_credentials(idbd)
-        conn = DbConnection(config["host"], config["porta"], config["baseDeDados"], credenciais[0], credenciais[1])
+        conn = DbConnection(config["host"], config["porta"], config["baseDeDados"], self.login, self.senha)
 
         dataTables = conn.GEtAllTypeGeomOFGeomColum("public")
         tabelasGeom = list(dataTables.keys())

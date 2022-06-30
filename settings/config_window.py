@@ -414,7 +414,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         print("curreert", type(id_current_db))
         if id_current_db != "0":
-            d = ConfigLayers("bd", id_current_db)
+            d = ConfigLayers("bd", id_current_db, self.usuario.text(), self.senha.text())
             d.exec_()
 
     def hideLayerConfShp(self):
