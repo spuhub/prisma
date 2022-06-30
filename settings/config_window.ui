@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>845</width>
-    <height>540</height>
+    <height>731</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -37,22 +37,37 @@
       <attribute name="title">
        <string>Banco de dados</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QComboBox" name="combo_box_base">
+        <layout class="QHBoxLayout" name="horizontalLayout_36">
          <item>
-          <property name="text">
-           <string>Adicionar um novo Banco de dados</string>
-          </property>
+          <widget class="QComboBox" name="combo_box_base">
+           <item>
+            <property name="text">
+             <string>Adicionar um novo Banco de dados</string>
+            </property>
+           </item>
+          </widget>
          </item>
-        </widget>
+         <item>
+          <widget class="QToolButton" name="delete_base">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+           <property name="icon">
+            <iconset theme="Lixo">
+             <normaloff>.</normaloff>.</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Nome</string>
+            <string>Nome:</string>
            </property>
           </widget>
          </item>
@@ -88,7 +103,7 @@
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Host</string>
+            <string>Host:</string>
            </property>
           </widget>
          </item>
@@ -109,7 +124,7 @@
          <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Porta</string>
+            <string>Porta:</string>
            </property>
           </widget>
          </item>
@@ -127,7 +142,7 @@
          <item>
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Base Dados</string>
+            <string>Base Dados:</string>
            </property>
           </widget>
          </item>
@@ -145,7 +160,7 @@
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
-            <string>Orgão Responsável</string>
+            <string>Orgão Responsável:</string>
            </property>
           </widget>
          </item>
@@ -165,14 +180,14 @@
            <item>
             <widget class="QLabel" name="label_10">
              <property name="text">
-              <string>Periodo de Referência</string>
+              <string>Periodo de Referência:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="periodos_referencia_base">
-             <property name="placeholderText">
-              <string>Periodo de Referência</string>
+            <widget class="QgsDateTimeEdit" name="periodos_referencia_base">
+             <property name="displayFormat">
+              <string>dd/MM/yyyy</string>
              </property>
             </widget>
            </item>
@@ -183,14 +198,14 @@
            <item>
             <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Data de Aquisição</string>
+              <string>Data de Aquisição:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="data_aquisicao_base">
-             <property name="placeholderText">
-              <string>Data de Aquisição</string>
+            <widget class="QgsDateTimeEdit" name="data_aquisicao_base">
+             <property name="displayFormat">
+              <string>dd/MM/yyyy</string>
              </property>
             </widget>
            </item>
@@ -201,7 +216,7 @@
            <item>
             <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>Usuario</string>
+              <string>Usuario:</string>
              </property>
             </widget>
            </item>
@@ -219,7 +234,7 @@
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Senha</string>
+              <string>Senha:</string>
              </property>
             </widget>
            </item>
@@ -233,7 +248,7 @@
            <item>
             <widget class="QLabel" name="label_19">
              <property name="text">
-              <string>Descrição</string>
+              <string>Descrição:</string>
              </property>
             </widget>
            </item>
@@ -244,9 +259,6 @@
          </item>
          <item>
           <widget class="QPushButton" name="test_conect">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
            <property name="text">
             <string>Testar Conexão</string>
            </property>
@@ -254,9 +266,6 @@
          </item>
          <item>
           <widget class="QPushButton" name="testar_base_carregar_camadas">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
            <property name="text">
             <string>Configurar Camadas</string>
            </property>
@@ -270,22 +279,33 @@
       <attribute name="title">
        <string>Shapefile</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QComboBox" name="combo_box_shp">
+        <layout class="QHBoxLayout" name="horizontalLayout_37">
          <item>
-          <property name="text">
-           <string>Adicionar um novo Shapefile</string>
-          </property>
+          <widget class="QComboBox" name="combo_box_shp">
+           <item>
+            <property name="text">
+             <string>Adicionar um novo Shapefile</string>
+            </property>
+           </item>
+          </widget>
          </item>
-        </widget>
+         <item>
+          <widget class="QToolButton" name="delete_sh">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_16">
          <item>
           <widget class="QLabel" name="label_15">
            <property name="text">
-            <string>Nome</string>
+            <string>Nome Camada:</string>
            </property>
           </widget>
          </item>
@@ -299,29 +319,11 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_15">
-         <item>
-          <widget class="QLabel" name="label_14">
-           <property name="text">
-            <string>Url</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="url_dowload">
-           <property name="placeholderText">
-            <string>URL para download</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Caminho do Shapefile</string>
+            <string>Caminho do Shapefile:</string>
            </property>
           </widget>
          </item>
@@ -341,11 +343,57 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_30">
+         <item>
+          <widget class="QLabel" name="label_35">
+           <property name="text">
+            <string>Geometria:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_2"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Url:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="url_dowload">
+           <property name="placeholderText">
+            <string>URL para download</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_28">
+         <item>
+          <widget class="QLabel" name="label_33">
+           <property name="text">
+            <string>Estilo:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsFileWidget" name="style_path"/>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_14">
          <item>
           <widget class="QLabel" name="label_13">
            <property name="text">
-            <string>Orgão Responsável</string>
+            <string>Orgão Responsável:</string>
            </property>
           </widget>
          </item>
@@ -363,22 +411,12 @@
          <item>
           <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Periodo de Referência</string>
+            <string>Periodo de Referência:</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QgsDateTimeEdit" name="periodo_referencia_shp">
-           <property name="dateTime">
-            <datetime>
-             <hour>0</hour>
-             <minute>0</minute>
-             <second>0</second>
-             <year>2022</year>
-             <month>6</month>
-             <day>20</day>
-            </datetime>
-           </property>
            <property name="displayFormat">
             <string>dd/MM/yyyy</string>
            </property>
@@ -391,7 +429,7 @@
          <item>
           <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Data de Aquisição</string>
+            <string>Data de Aquisição:</string>
            </property>
           </widget>
          </item>
@@ -409,7 +447,7 @@
          <item>
           <widget class="QLabel" name="label_20">
            <property name="text">
-            <string>Descrição</string>
+            <string>Descrição:</string>
            </property>
           </widget>
          </item>
@@ -419,14 +457,18 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="testar_shp_carregar_camadas">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>Configurar Camada</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_29">
+         <item>
+          <widget class="QLabel" name="label_34">
+           <property name="text">
+            <string>Faixa de Proximidade:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="faixa_proximidade"/>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -436,177 +478,21 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>LPM Homologada</string>
+        <widget class="QGroupBox" name="groupBox_area_uniao">
+         <property name="enabled">
+          <bool>true</bool>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_22">
-          <item>
-           <widget class="QLabel" name="label_21">
-            <property name="text">
-             <string>Base: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_base_lpm_hom"/>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_22">
-            <property name="text">
-             <string>Camada:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_camada_lpm_hom"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>LPM Não Homologada</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_26">
-          <item>
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string>Base: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_base_lpm_n_hom"/>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_30">
-            <property name="text">
-             <string>Camada:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_camada_lpm_n_hom"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_base_ltm_hom">
-         <property name="title">
-          <string>LTM Homologada</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_24">
-          <item>
-           <widget class="QLabel" name="label_25">
-            <property name="text">
-             <string>Base: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_base_ltm_hom"/>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_26">
-            <property name="text">
-             <string>Camada:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_camada_ltm_hom"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="title">
-          <string>LTM Não Homologada</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_23">
-          <item>
-           <widget class="QLabel" name="label_23">
-            <property name="text">
-             <string>Base: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_base_ltm_n_hom"/>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_24">
-            <property name="text">
-             <string>Camada:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_camada_ltm_n_hom"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
           <string>Área da União - Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_25">
           <item>
@@ -646,9 +532,222 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_6">
+        <widget class="QGroupBox" name="groupBox_lmeo_hom">
+         <property name="title">
+          <string>LMEO Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_34">
+          <item>
+           <widget class="QLabel" name="label_40">
+            <property name="text">
+             <string>Base:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_lmeo_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_10">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_44">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_lmeo_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_lltm_hom">
+         <property name="title">
+          <string>LLTM Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_33">
+          <item>
+           <widget class="QLabel" name="label_39">
+            <property name="text">
+             <string>Base:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_lltm_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_lltm_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_lpm_hom">
+         <property name="title">
+          <string>LPM Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_22">
+          <item>
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>Base: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_lpm_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_22">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_lpm_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_ltm_hom">
+         <property name="title">
+          <string>LTM Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_24">
+          <item>
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>Base: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_ltm_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_26">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_ltm_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_area_uniao_n_hom">
          <property name="title">
           <string>Área da União - Não Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_27">
           <item>
@@ -687,6 +786,210 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_lmeo_n_hom">
+         <property name="title">
+          <string>LMEO Não  Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_35">
+          <item>
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string>Base:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_lmeo_n_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_11">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_43">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_lmeo_n_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_lltm_n_hom">
+         <property name="title">
+          <string>LLTM Não Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_32">
+          <item>
+           <widget class="QLabel" name="label_37">
+            <property name="text">
+             <string>Base: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_lltm_n_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_38">
+            <property name="text">
+             <string>Camada</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_lltm_n_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_lpm_n_hom">
+         <property name="title">
+          <string>LPM Não Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_26">
+          <item>
+           <widget class="QLabel" name="label_29">
+            <property name="text">
+             <string>Base: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_lpm_n_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_30">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_lpm_n_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_ltm_n_hom">
+         <property name="title">
+          <string>LTM Não Homologada</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_23">
+          <item>
+           <widget class="QLabel" name="label_23">
+            <property name="text">
+             <string>Base: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_base_ltm_n_hom"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Camada:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_camada_ltm_n_hom"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab">
@@ -712,6 +1015,9 @@
         </item>
         <item>
          <widget class="QgsFileWidget" name="mQgsFileWidget">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="fileWidgetButtonVisible">
            <bool>true</bool>
           </property>
@@ -788,19 +1094,16 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_cancelar">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
+      <widget class="QPushButton" name="btn_salvar">
        <property name="text">
-        <string>Cancelar</string>
+        <string>Salvar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_salvar">
+      <widget class="QPushButton" name="btn_cancelar">
        <property name="text">
-        <string>Salvar</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>

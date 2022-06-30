@@ -8,15 +8,15 @@ class JsonTools:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
+        with open(self.json_path, 'r', encoding='utf8') as f:
+            self.json_config = json.load(f)
 
     def get_json(self):
         """
         Retorna o Json de configuração.
         @return: Json de configuração
         """
-        with open(self.json_path, 'r', encoding='utf8') as f:
-            json_config = json.load(f)
-            return json_config
+        return self.json_config
 
     def get_config_shapefile(self):
 
@@ -24,21 +24,24 @@ class JsonTools:
         Retorna uma lista com as configurações de bases em ShapeFile.
         @return: Lista com as configurações.
         """
-        json_config = self.get_json()
         shp_list = []
 
-        for base, data in json_config.items():
+        for base, data in self.json_config.items():
             if 'tipo' in data and data['tipo'] == 'shp':
                 shp_list.append(data)
 
         return shp_list
 
     def get_config_database(self):
+
         """
         Retorna uma lista com as configurações de bases em PostgreSQL.
         @return: Lista com as configurações.
+
         """
-        json_config = self.get_json()
+        with open(self.json_path, 'r', encoding='utf8') as f:
+            json_config = json.load(f)
+
         shp_list = []
 
         for base, data in json_config.items():
@@ -49,11 +52,11 @@ class JsonTools:
 
     def get_config_required(self):
         required_list = []
-        json_config = self.get_json()
-        required_layers = json_config['obrigatorio']
+
+        required_layers = self.json_config['obrigatorio']
 
         for key, data_required_layer in required_layers.items():
-            for base, data_json in json_config.items():
+            for base, data_json in self.json_config.items():
                 if data_required_layer[0] == base:
                     if data_json['tipo'] == 'pg':
                         data_json['tabelasCamadas'] = [data_required_layer[1]]
@@ -162,6 +165,16 @@ class JsonTools:
 
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
+
+    def delete_base(self, idConfig):
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+        del dados[idConfig]
+
+        with open(self.json_path, 'w') as f:
+            json.dump(dados, f, indent=4)
+
+
 
 
 
