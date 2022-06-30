@@ -343,6 +343,7 @@ class ConfigLayers(QtWidgets.QDialog):
         self.continue_window.emit()
 
     def atualizar_obj_name(self):
+        print ("tamanho obj infor:  ", len(self.objects_button_mais_infor))
         for i in range(len(self.objects_button_mais_infor)):
             aux = self.objects_button_mais_infor[i].objectName()
             newName = aux.split("_")
@@ -356,7 +357,7 @@ class ConfigLayers(QtWidgets.QDialog):
 
         btn = self.sender()
 
-        #print("MEU DEUS", btn.objectName())
+        print("MEU DEUS", btn.objectName())
         btn_name = btn.objectName()
         btn_name_array = btn_name.split("_")
         index_infor = btn_name_array[3]
