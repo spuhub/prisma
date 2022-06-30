@@ -37,10 +37,14 @@ class JsonTools:
         """
         Retorna uma lista com as configurações de bases em PostgreSQL.
         @return: Lista com as configurações.
+
         """
+        with open(self.json_path, 'r', encoding='utf8') as f:
+            json_config = json.load(f)
+
         shp_list = []
 
-        for base, data in self.json_config.items():
+        for base, data in json_config.items():
             if 'tipo' in data and data['tipo'] == 'pg':
                 shp_list.append(data)
 
@@ -161,6 +165,16 @@ class JsonTools:
 
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
+
+    def delete_base(self, idConfig):
+        with open(self.json_path, 'r') as f:
+            dados = json.load(f)
+        del dados[idConfig]
+
+        with open(self.json_path, 'w') as f:
+            json.dump(dados, f, indent=4)
+
+
 
 
 

@@ -132,6 +132,7 @@ class ConfigLayers(QtWidgets.QDialog):
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
 
+
         env = EnvTools()
         credenciais = env.get_credentials(idbd)
         conn = DbConnection(config["host"], config["porta"], config["baseDeDados"], credenciais[0], credenciais[1])
@@ -162,8 +163,8 @@ class ConfigLayers(QtWidgets.QDialog):
 
         if "estiloTabelasCamadas" in config:
             estiloTabelasCamadas = config["estiloTabelasCamadas"]
-        #if "aproximacao" in config:
-         #   aproximacao = config["aproximacao"]
+        if "aproximacao" in config:
+            aproximacao = config["aproximacao"]
 
         self.objects_tables_disponiveis = tabelasGeom
         self.objects_tipo_tables_disponiveis = dataTables.values()
@@ -213,7 +214,7 @@ class ConfigLayers(QtWidgets.QDialog):
                 #print("itemindex",itemidex)
                 itemidex_aux = tabelasCamadas.index(tabelasGeom[i])
                 if(len(estiloTabelasCamadas) !=0):
-                    faixa_proximidade = estiloTabelasCamadas[itemidex]["faixaProximidade"]
+                    faixa_proximidade = aproximacao[itemidex]
 
                     defalt_proximidade = faixa_proximidade
                     print("faixa proximidade",faixa_proximidade)
@@ -234,12 +235,16 @@ class ConfigLayers(QtWidgets.QDialog):
         @return: void
         """
         idbd = self.id_current_db
-        config = self.search_base_pg(self.id_current_db)
-        print(type(config))
+        config_db = self.setings02.get_config_database()
+        config = {}
+        for item in config_db:
+            if item["id"] == idbd:
+                config = item
+        #print(type(config))
 
         config["TabelasDisponiveis"] = self.objects_tables_disponiveis
         config["TipoTabelasDisponiveis"] = list(self.objects_tipo_tables_disponiveis)
-        print("OIIIII", config["TipoTabelasDisponiveis"])
+        #print("OIIIII", config["TipoTabelasDisponiveis"])
         aux = []
         for i in range(len(self.objects_tables_disponiveis)):
             if self.objects_vai_usar[i].checkState():
@@ -275,11 +280,13 @@ class ConfigLayers(QtWidgets.QDialog):
         aux = []
         for i in range(len(self.objects_tables_disponiveis)):
             if self.objects_vai_usar[i].checkState():
-                c = {"line_style": self.objects_estilo_linhas[i].currentData(),
-                "line_color": self.objects_cor_linhas[i].color().name(),
-                "width_border": str(self.objects_espessura_linhas[i].value()),
-                "style": self.objects_preenchimento[i].currentData(),
-                "color": self.objects_cor_preenchimento[i].color().name()}
+                c = {"line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": self.objects_file_style[i].filePath()
+                }
                 aux.append(c)
 
         config["estiloTabelasCamadas"] = aux
@@ -335,7 +342,7 @@ class ConfigLayers(QtWidgets.QDialog):
     def exec_more_infor(self):
 
         btn = self.sender()
-        print("MEU DEUS", btn.objectName())
+        #print("MEU DEUS", btn.objectName())
 
         btn_name = btn.objectName()
         btn_name_array = btn_name.split("_")
@@ -343,5 +350,8 @@ class ConfigLayers(QtWidgets.QDialog):
         d = LayerInfor(self.id_current_db, int(index_infor))
         d.exec_()
         btn = self.sender()
-        print("MEU DEUS",btn.objectName())
+        #print("MEU DEUS",jsonContest)
+
+
+
 

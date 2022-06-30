@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -67,7 +67,7 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Nome</string>
+            <string>Nome:</string>
            </property>
           </widget>
          </item>
@@ -103,7 +103,7 @@
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Host</string>
+            <string>Host:</string>
            </property>
           </widget>
          </item>
@@ -124,7 +124,7 @@
          <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Porta</string>
+            <string>Porta:</string>
            </property>
           </widget>
          </item>
@@ -142,7 +142,7 @@
          <item>
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Base Dados</string>
+            <string>Base Dados:</string>
            </property>
           </widget>
          </item>
@@ -160,7 +160,7 @@
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
-            <string>Orgão Responsável</string>
+            <string>Orgão Responsável:</string>
            </property>
           </widget>
          </item>
@@ -180,14 +180,14 @@
            <item>
             <widget class="QLabel" name="label_10">
              <property name="text">
-              <string>Periodo de Referência</string>
+              <string>Periodo de Referência:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="periodos_referencia_base">
-             <property name="placeholderText">
-              <string>Periodo de Referência</string>
+            <widget class="QgsDateTimeEdit" name="periodos_referencia_base">
+             <property name="displayFormat">
+              <string>dd/MM/yyyy</string>
              </property>
             </widget>
            </item>
@@ -198,14 +198,14 @@
            <item>
             <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Data de Aquisição</string>
+              <string>Data de Aquisição:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="data_aquisicao_base">
-             <property name="placeholderText">
-              <string>Data de Aquisição</string>
+            <widget class="QgsDateTimeEdit" name="data_aquisicao_base">
+             <property name="displayFormat">
+              <string>dd/MM/yyyy</string>
              </property>
             </widget>
            </item>
@@ -216,7 +216,7 @@
            <item>
             <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>Usuario</string>
+              <string>Usuario:</string>
              </property>
             </widget>
            </item>
@@ -234,7 +234,7 @@
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Senha</string>
+              <string>Senha:</string>
              </property>
             </widget>
            </item>
@@ -248,7 +248,7 @@
            <item>
             <widget class="QLabel" name="label_19">
              <property name="text">
-              <string>Descrição</string>
+              <string>Descrição:</string>
              </property>
             </widget>
            </item>
@@ -292,7 +292,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="delete_shp">
+          <widget class="QToolButton" name="delete_sh">
            <property name="text">
             <string>Delete</string>
            </property>
@@ -305,7 +305,7 @@
          <item>
           <widget class="QLabel" name="label_15">
            <property name="text">
-            <string>Nome Camada</string>
+            <string>Nome Camada:</string>
            </property>
           </widget>
          </item>
@@ -323,7 +323,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Caminho do Shapefile</string>
+            <string>Caminho do Shapefile:</string>
            </property>
           </widget>
          </item>
@@ -361,7 +361,7 @@
          <item>
           <widget class="QLabel" name="label_14">
            <property name="text">
-            <string>Url</string>
+            <string>Url:</string>
            </property>
           </widget>
          </item>
@@ -393,7 +393,7 @@
          <item>
           <widget class="QLabel" name="label_13">
            <property name="text">
-            <string>Orgão Responsável</string>
+            <string>Orgão Responsável:</string>
            </property>
           </widget>
          </item>
@@ -411,7 +411,7 @@
          <item>
           <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Periodo de Referência</string>
+            <string>Periodo de Referência:</string>
            </property>
           </widget>
          </item>
@@ -429,7 +429,7 @@
          <item>
           <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Data de Aquisição</string>
+            <string>Data de Aquisição:</string>
            </property>
           </widget>
          </item>
@@ -447,7 +447,7 @@
          <item>
           <widget class="QLabel" name="label_20">
            <property name="text">
-            <string>Descrição</string>
+            <string>Descrição:</string>
            </property>
           </widget>
          </item>
@@ -479,6 +479,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
         <widget class="QGroupBox" name="groupBox_area_uniao">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="title">
           <string>Área da União - Homologada</string>
          </property>
@@ -487,6 +490,9 @@
          </property>
          <property name="checkable">
           <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_25">
           <item>
@@ -536,6 +542,9 @@
          <property name="checkable">
           <bool>true</bool>
          </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_34">
           <item>
            <widget class="QLabel" name="label_40">
@@ -583,6 +592,9 @@
          </property>
          <property name="checkable">
           <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_33">
           <item>
@@ -632,6 +644,9 @@
          <property name="checkable">
           <bool>true</bool>
          </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_22">
           <item>
            <widget class="QLabel" name="label_21">
@@ -679,6 +694,9 @@
          </property>
          <property name="checkable">
           <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_24">
           <item>
@@ -728,6 +746,9 @@
          <property name="checkable">
           <bool>true</bool>
          </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_27">
           <item>
            <widget class="QLabel" name="label_31">
@@ -775,6 +796,9 @@
          </property>
          <property name="checkable">
           <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_35">
           <item>
@@ -824,6 +848,9 @@
          <property name="checkable">
           <bool>true</bool>
          </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_32">
           <item>
            <widget class="QLabel" name="label_37">
@@ -872,6 +899,9 @@
          <property name="checkable">
           <bool>true</bool>
          </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_26">
           <item>
            <widget class="QLabel" name="label_29">
@@ -919,6 +949,9 @@
          </property>
          <property name="checkable">
           <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_23">
           <item>
@@ -982,6 +1015,9 @@
         </item>
         <item>
          <widget class="QgsFileWidget" name="mQgsFileWidget">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="fileWidgetButtonVisible">
            <bool>true</bool>
           </property>
