@@ -107,6 +107,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.newbdID = id
                 self.source_databases.append(confg_dic)
                 self.combo_box_base.addItem(self.nome_base.text(), id)
+                print("Olha o id aqui: " ,  id)
                 self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
                # msg.information(self, "Banco de dados", "Banco de dados adcionado com sucesso!")
                 self.combo_box_base.setCurrentText(self.nome_base.text())
@@ -121,6 +122,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.setings.edit_database(id_current_db, confg_dic)
 
             self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
+            #self.credencials.store_credentials(id_current_db, self.usuario.text(), self.senha.text())
             #msg.information(self,"Banco de dados" ,"Banco de dados editado com sucesso!")
             confg_dic = {}
 
@@ -412,7 +414,7 @@ class ConfigWindow(QtWidgets.QDialog):
         if id_current_db == "0":
             id_current_db = self.newbdID
 
-        print("curreert", type(id_current_db))
+        print("curreert", id_current_db)
         if id_current_db != "0":
             d = ConfigLayers("bd", id_current_db)
             d.exec_()

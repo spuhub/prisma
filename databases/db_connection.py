@@ -52,7 +52,7 @@ class DbConnection:
 
         #try:
         #print (self.nameConect)
-        #print (self.host,self.port, self.db, self.user, self.password)
+        print (self.host,self.port, self.db, self.user, self.password)
 
         self.conn = psycopg2.connect(" dbname=" + self.db + " user=" + self.user + " host=" + self.host+ " password=" + self.password + " port=" + self.port)
 

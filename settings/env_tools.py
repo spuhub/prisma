@@ -74,8 +74,10 @@ class EnvTools:
         @param base_id: Id da base presente no Json de configuração
         @return:
         """
+
         usuario = self.settings.value('prisma/databases/' + base_id + '/usuario')
         senha = self.settings.value('prisma/databases/' + base_id + '/senha')
+        print("USER:", base_id, usuario, senha)
         return [usuario, senha]
 
     def get_key(self, service_id):

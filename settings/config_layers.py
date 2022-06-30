@@ -135,6 +135,7 @@ class ConfigLayers(QtWidgets.QDialog):
 
         env = EnvTools()
         credenciais = env.get_credentials(idbd)
+        print("credenciais config layer",credenciais)
         conn = DbConnection(config["host"], config["porta"], config["baseDeDados"], credenciais[0], credenciais[1])
 
         dataTables = conn.GEtAllTypeGeomOFGeomColum("public")

@@ -44,6 +44,7 @@
         ],
         "tabelasCamadas": [
             "faixa_dominio",
+            "faixa_seguranca",
             "area_especial",
             "municipio",
             "trecho_ferroviario",
@@ -52,6 +53,7 @@
             "massa_dagua"
         ],
         "aproximacao": [
+            0.0,
             0.0,
             0.15,
             0.45,
@@ -62,6 +64,7 @@
         ],
         "nomeFantasiaTabelasCamadas": [
             "Faixa Dominio",
+            "Faixa Seguranca",
             "Area Especial",
             "Municipio",
             "Trecho Ferroviario",
@@ -76,9 +79,18 @@
             "Builder",
             "Builder",
             "Builder",
+            "Builder",
             "Builder"
         ],
         "estiloTabelasCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": ""
+            },
             {
                 "line_style": "",
                 "line_color": "",
@@ -152,7 +164,12 @@
             {},
             {},
             {},
-            {}
+            {
+                "orgaoResponsavel": "fadsesese",
+                "periodosReferencia": "30/06/2022",
+                "dataAquisicao": "30/06/2022",
+                "descricao": "sdadada"
+            }
         ]
     },
     "obrigatorio": {
@@ -175,6 +192,36 @@
             "base1",
             "faixa_dominio",
             "LPM Homologada"
+        ],
+        "ltm_homologada": [
+            "base3",
+            "Quilombo",
+            "LTM Homologada"
+        ],
+        "area_nao_homologada": [
+            "base3",
+            "Quilombo",
+            "\u00c1rea N\u00e3o Homologada"
+        ],
+        "lmeo_nao_homologada": [
+            "base1",
+            "faixa_dominio",
+            "LMEO N\u00e3o Homologada"
+        ],
+        "lltm_nao_homologada": [
+            "base1",
+            "faixa_dominio",
+            "LLTM N\u00e3o Homologada"
+        ],
+        "lpm_nao_homologada": [
+            "base1",
+            "faixa_dominio",
+            "LPM N\u00e3o Homologada"
+        ],
+        "ltm_nao_homologada": [
+            "base3",
+            "Quilombo",
+            "LTM N\u00e3o Homologada"
         ]
     },
     "base3": {
@@ -200,5 +247,29 @@
                 "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_2_4_Terreno_Sujeito_Inundacao_A.sld"
             }
         ]
+    },
+    "base4": {
+        "id": "base4",
+        "tipo": "pg",
+        "nome": "base 2",
+        "host": "localhost",
+        "porta": "5450",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "casa",
+        "periodosReferencia": "01/06/2022",
+        "dataAquisicao": "30/06/2022",
+        "descricao": "teste base2"
+    },
+    "base5": {
+        "id": "base5",
+        "tipo": "pg",
+        "nome": "base 3",
+        "host": "localhost",
+        "porta": "5450",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "casa",
+        "periodosReferencia": "01/06/2022",
+        "dataAquisicao": "30/06/2022",
+        "descricao": "teste base2"
     }
 }
