@@ -18,6 +18,7 @@ from shapely.geometry import Polygon, Point, LineString
 from PyPDF2 import PdfFileReader, PdfFileMerger
 from datetime import datetime
 from .polygon_required import PolygonRequired
+from .overlay_report_polygons import OverlayReportPolygons
 
 
 class Polygons():
@@ -27,6 +28,7 @@ class Polygons():
         self.layout = None
         self.atlas = None
         self.index_input = None
+        self.overlay_report = OverlayReportPolygons()
 
         self.utils = Utils()
         self.time = None
@@ -65,6 +67,7 @@ class Polygons():
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
             # Gera o layout PDF com a área de entrada e áreas da união
+            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
             self.pd.polygon_required_layers(input, input_standard, gdf_line_input, gdf_point_input, self.index_input,
                                             self.time, self.atlas, self.layout)
 

@@ -17,6 +17,7 @@ import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
 from PyPDF2 import PdfFileReader, PdfFileMerger
 from datetime import datetime
+from .overlay_report_linestrings import OverlayReportLinestrings
 
 class Linestrings():
     def __init__(self, operation_config):
@@ -30,6 +31,7 @@ class Linestrings():
 
         self.gpd_area_homologada = []
         self.rect_main_map = None
+        self.overlay_report = OverlayReportLinestrings()
 
         self.utils = Utils()
 
@@ -48,14 +50,11 @@ class Linestrings():
         input.loc[0, 'ctr_lat'] = input.iloc[0]['geometry'].centroid.y
         input.loc[0, 'ctr_long'] = input.iloc[0]['geometry'].centroid.x
 
-        # Soma da área de interseção feita com feição de input e atual área comparada
-        # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
         if index_2 == None:
-            input.loc[0, self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']] = gpd.overlay(
-                input, area).length.sum()
+            input.loc[0, self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']] = False
         else:
             input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
-                index_2]] = gpd.overlay(input, area).length.sum()
+                index_2]] = False
 
         # # Extrai vértices onde as linhas se interceptam
         interseption_points = input.unary_union.intersection(area.unary_union)
@@ -64,7 +63,13 @@ class Linestrings():
         coord_y = []
         gdf_interseption_points = []
         # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
+
         if not interseption_points.is_empty:
+            if index_2 == None:
+                input.loc[0, self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']] = True
+            else:
+                input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
+                    index_2]] = True
             for coord in interseption_points:
                 coord_x.append(coord.x)
                 coord_y.append(coord.y)
@@ -80,6 +85,7 @@ class Linestrings():
             self.index_input = index_input
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
+            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
             # Gera o layout PDF com a área de entrada e áreas da união
             self.lr.linestring_required_layers(input, input_standard, gdf_point_input, self.gpd_area_homologada, self.index_input, self.time, self.atlas, self.layout)
 
@@ -117,13 +123,41 @@ class Linestrings():
                     self.gpd_area_homologada = gpd.overlay(input, area)
 
                 if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                    input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
-                        input, area).length.sum()
+                    if self.operation_config['operation_config']['required'][index][
+                        "nomeFantasiaCamada"] == "Área Homologada" or \
+                            self.operation_config['operation_config']['required'][index][
+                                "nomeFantasiaCamada"] == "Área Não Homologada":
+                        input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                            input, area).length.sum()
+                    else:
+                        points = input.unary_union.intersection(area.unary_union)
+                        if not points.is_empty:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaCamada']] = True
+                        else:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaCamada']] = False
+
+
 
                 else:
-                    input.loc[0, self.operation_config['operation_config']['required'][index][
-                        'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                        input, length).area.sum()
+                    if self.operation_config['operation_config']['required'][index][
+                        "nomeFantasiaTabelasCamadas"] == "Área Homologada" or \
+                            self.operation_config['operation_config']['required'][index][
+                                "nomeFantasiaTabelasCamadas"] == "Área Não Homologada":
+                        input.loc[0, self.operation_config['operation_config']['required'][index][
+                            'nomeFantasiaTabelasCamadas']] = gpd.overlay(
+                            input, length).area.sum()
+                    else:
+                        points = input.unary_union.intersection(area.unary_union)
+                        if not points.is_empty:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaTabelasCamadas']] = True
+                        else:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaTabelasCamadas']] = False
+
+
 
             index += 1
 
