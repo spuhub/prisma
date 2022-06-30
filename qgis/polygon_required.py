@@ -407,8 +407,9 @@ class PolygonRequired():
         return symbol
 
     def remove_layers(self):
-        list_required = ['LPM Homologada', 'LTM Homologada', 'Área Homologada', 'LPM Não Homologada',
-                         'LTM Não Homologada', 'Área Não Homologada', 'OpenStreetMap']
+        list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
+                         'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
+                         'OpenStreetMap']
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])
