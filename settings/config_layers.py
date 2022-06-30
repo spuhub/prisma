@@ -342,11 +342,21 @@ class ConfigLayers(QtWidgets.QDialog):
         self.hide()
         self.continue_window.emit()
 
+    def atualizar_obj_name(self):
+        for i in range(len(self.objects_button_mais_infor)):
+            aux = self.objects_button_mais_infor[i].objectName()
+            newName = aux.split("_")
+            newName[3]=str(i)
+            newName = "_".join(newName)
+            self.objects_button_mais_infor[i].setObjectName(newName)
+
     def exec_more_infor(self):
+        self.save_base_pg()
+        self.atualizar_obj_name()
 
         btn = self.sender()
+
         #print("MEU DEUS", btn.objectName())
-        self.save_base_pg()
         btn_name = btn.objectName()
         btn_name_array = btn_name.split("_")
         index_infor = btn_name_array[3]
