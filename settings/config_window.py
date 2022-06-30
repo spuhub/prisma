@@ -539,7 +539,6 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.groupBox_lltm_hom.setChecked(True)
 
             #LMEO homologada
-
             if "lmeo_homologada" in camada_obrig:
                 base_config = self.search_base_pg(camada_obrig["lmeo_homologada"][0])
                 if base_config == {}:

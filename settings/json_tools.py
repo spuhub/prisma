@@ -139,12 +139,12 @@ class JsonTools:
         @return: Json com as camadas obigatórias
         """
         config = {}
-        config["lpm_homologada"] = ["","",""]
-        config["ltm_homologada"]  = ["","",""]
-        config["area_homologada"]  = ["","",""]
-        config["lpm_nao_homologada"]  = ["","",""]
-        config["ltm_nao_homologada"]  = ["","",""]
-        config["area_nao_homologada"] = ["","",""]
+        #config["lpm_homologada"] = ["","",""]
+        #config["ltm_homologada"]  = ["","",""]
+        #config["area_homologada"]  = ["","",""]
+        #config["lpm_nao_homologada"]  = ["","",""]
+        #config["ltm_nao_homologada"]  = ["","",""]
+        #config["area_nao_homologada"] = ["","",""]
 
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
