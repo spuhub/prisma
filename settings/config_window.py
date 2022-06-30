@@ -157,6 +157,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["id"] = ""
         confg_dic["tipo"] = "shp"
         confg_dic["nome"] = self.nome_shp.text()
+        confg_dic["nomeFantasiaCamada"]  = self.nome_shp.text()
         confg_dic["urlDowload"] = self.url_dowload.text()
         confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
