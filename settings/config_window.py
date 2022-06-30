@@ -134,8 +134,12 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_shp_config_json()
         self.save_mandatory_layers()
         self.save_geocoding_key()
-        msg = QMessageBox(self)
-        msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
+        btn = self.sender()
+        btn_name = btn.objectName()
+
+        if btn_name =="btn_salvar":
+            msg = QMessageBox(self)
+            msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
 
 
     def save_shp_config_json(self):
