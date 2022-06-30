@@ -501,8 +501,8 @@ class ConfigWindow(QtWidgets.QDialog):
             if "tipo" in base_config:
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_area_uniao.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_area_uniao.addItem(item_camada)
 
                         self.comboBox_base_area_uniao.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -525,8 +525,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_lltm_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_lltm_hom.addItem(item_camada)
 
                         self.comboBox_base_lltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -547,8 +547,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_lmeo_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_lmeo_hom.addItem(item_camada)
 
                         self.comboBox_base_lmeo_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -571,8 +571,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_lpm_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_lpm_hom.addItem(item_camada)
 
                         self.comboBox_base_lpm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -594,8 +594,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_ltm_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_ltm_hom.addItem(item_camada)
 
                         self.comboBox_base_ltm_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -616,8 +616,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_area_uniao_n_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
 
                         self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -639,8 +639,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_lltm_n_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_lltm_n_hom.addItem(item_camada)
 
                         self.comboBox_base_lltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -661,8 +661,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_lpm_n_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_lpm_n_hom.addItem(item_camada)
 
                         self.comboBox_base_lpm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -684,8 +684,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_lmeo_n_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
 
                         self.comboBox_base_lmeo_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
@@ -707,8 +707,8 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 if base_config["tipo"] == "pg":
                     self.comboBox_camada_ltm_n_hom.clear()
-                    if "TabelasDisponiveis" in base_config:
-                        for item_camada in base_config["TabelasDisponiveis"]:
+                    if "tabelasCamadas" in base_config:
+                        for item_camada in base_config["tabelasCamadas"]:
                             self.comboBox_camada_ltm_n_hom.addItem(item_camada)
                         self.comboBox_base_ltm_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
 
@@ -786,7 +786,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_lpm_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_lpm_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -802,7 +802,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_lpm_n_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_lpm_n_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -818,7 +818,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_ltm_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_ltm_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -834,7 +834,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_ltm_n_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_ltm_n_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -850,7 +850,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_area_uniao.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_area_uniao.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -866,7 +866,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_area_uniao_n_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -882,7 +882,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_lltm_n_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_lltm_n_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -898,7 +898,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_lltm_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_lltm_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -914,7 +914,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_lmeo_n_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
@@ -930,7 +930,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if base_config["tipo"] == "pg":
             self.comboBox_camada_lmeo_hom.clear()
-            for item_camada in base_config["TabelasDisponiveis"]:
+            for item_camada in base_config["tabelasCamadas"]:
                 self.comboBox_camada_lmeo_hom.addItem(item_camada)
 
         if base_config["tipo"] == "shp":
