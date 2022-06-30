@@ -343,7 +343,7 @@ class ConfigLayers(QtWidgets.QDialog):
 
         btn = self.sender()
         #print("MEU DEUS", btn.objectName())
-
+        self.save_base_pg()
         btn_name = btn.objectName()
         btn_name_array = btn_name.split("_")
         index_infor = btn_name_array[3]
