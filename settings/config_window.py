@@ -134,7 +134,7 @@ class ConfigWindow(QtWidgets.QDialog):
         # self.fill_mandatory_layers()
         self.save_bd_config_json()
         self.save_shp_config_json()
-        self.save_mandatory_layers()
+        #self.save_mandatory_layers()
         self.save_geocoding_key()
         btn = self.sender()
         btn_name = btn.objectName()
@@ -381,7 +381,7 @@ class ConfigWindow(QtWidgets.QDialog):
         current_opt_text = self.combo_box_servico_geocod.currentText()
         key = self.key_geo_cod.text()
         print("olha ", current_opt_text,current_opt)
-        self.credencials.store_current_geocoding_server(current_opt)
+        self.credencials.store_current_geocoding_server(0)
         self.credencials.store_keys(str(current_opt), key)
 
     def set_config(self):
@@ -392,7 +392,7 @@ class ConfigWindow(QtWidgets.QDialog):
         current_op = self.credencials.get_current_geocoding_server()
         current_key = self.credencials.get_key(current_op)
         print("olha carreg ", current_op, current_key)
-        self.combo_box_servico_geocod.setCurrentIndex(current_op)
+        self.combo_box_servico_geocod.setCurrentIndex(0)
         self.key_geo_cod.setText(current_key)
 
     def back(self):
@@ -943,54 +943,99 @@ class ConfigWindow(QtWidgets.QDialog):
 
         config = {}
         if self.groupBox_area_uniao.isChecked():
-            current_base = self.comboBox_base_area_uniao.itemData(self.comboBox_base_area_uniao.currentIndex())
+            current_base = self.comboBox_base_area_uniao.itemData(self.comboBox_base_area_uniao.currentIndex())[0]
+            current_tipo = self.comboBox_base_area_uniao.itemData(self.comboBox_base_area_uniao.currentIndex())[1]
             current_camada = self.comboBox_camada_area_uniao.currentText()
-            config["area_homologada"] = [current_base, current_camada, "Área Homologada"]
+            if current_tipo == 'shp':
+                config["area_homologada"] = [current_base, "", "Área Homologada"]
+            else:
+                config["area_homologada"] = [current_base, current_camada, "Área Homologada"]
 
         if self.groupBox_lmeo_hom.isChecked():
-            current_base = self.comboBox_base_lmeo_hom.itemData(self.comboBox_base_lmeo_hom.currentIndex())
+            current_base = self.comboBox_base_lmeo_hom.itemData(self.comboBox_base_lmeo_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_lmeo_hom.itemData(self.comboBox_base_lmeo_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lmeo_hom.currentText()
-            config["lmeo_homologada"] = [current_base, current_camada, "LMEO Homologada"]
+
+            if current_tipo == 'shp':
+                config["lmeo_homologada"] = [current_base, "", "LMEO Homologada"]
+            else:
+                config["lmeo_homologada"] = [current_base, current_camada, "LMEO Homologada"]
 
         if self.groupBox_lltm_hom.isChecked():
-            current_base = self.comboBox_base_lltm_hom.itemData(self.comboBox_base_lltm_hom.currentIndex())
+            current_base = self.comboBox_base_lltm_hom.itemData(self.comboBox_base_lltm_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_lltm_hom.itemData(self.comboBox_base_lltm_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lltm_hom.currentText()
-            config["lltm_homologada"] = [current_base, current_camada, "LLTM Homologada"]
+            if current_tipo == 'shp':
+                config["lltm_homologada"] = [current_base, "", "LLTM Homologada"]
+            else:
+                config["lltm_homologada"] = [current_base, current_camada, "LLTM Homologada"]
 
         if self.groupBox_lpm_hom.isChecked():
-            current_base = self.comboBox_base_lpm_hom.itemData(self.comboBox_base_lpm_hom.currentIndex())
+            current_base = self.comboBox_base_lpm_hom.itemData(self.comboBox_base_lpm_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_lltm_hom.itemData(self.comboBox_base_lltm_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lpm_hom.currentText()
-            config["lpm_homologada"] = [current_base, current_camada, "LPM Homologada"]
+            if current_tipo == 'shp':
+                config["lpm_homologada"] = [current_base, "", "LPM Homologada"]
+            else:
+                config["lpm_homologada"] = [current_base, current_camada, "LPM Homologada"]
 
         if self.groupBox_ltm_hom.isChecked():
-            current_base = self.comboBox_base_ltm_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())
+            current_base = self.comboBox_base_ltm_hom.itemData(self.comboBox_base_ltm_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_ltm_hom.itemData(self.comboBox_base_ltm_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_ltm_hom.currentText()
-            config["ltm_homologada"] = [current_base, current_camada, "LTM Homologada"]
+            if current_tipo == 'shp':
+                config["ltm_homologada"] = [current_base, "", "LTM Homologada"]
+            else:
+                config["lpm_homologada"] = [current_base, current_camada, "LPM Homologada"]
 
         if self.groupBox_area_uniao_n_hom.isChecked():
-            current_base = self.comboBox_base_area_uniao_n_hom.itemData(self.comboBox_base_area_uniao_n_hom.currentIndex())
+            current_base = self.comboBox_base_area_uniao_n_hom.itemData(self.comboBox_base_area_uniao_n_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_area_uniao_n_hom.itemData(self.comboBox_base_area_uniao_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_area_uniao_n_hom.currentText()
-            config["area_nao_homologada"] = [current_base, current_camada, "Área Não Homologada"]
+            if current_tipo == 'shp':
+                config["area_nao_homologada"] = [current_base, "", "Área Não Homologada"]
+            else:
+                config["area_nao_homologada"] = [current_base, current_camada, "Área Não Homologada"]
 
         if self.groupBox_lmeo_n_hom.isChecked():
-            current_base = self.comboBox_base_lmeo_n_hom.itemData(self.comboBox_base_lmeo_n_hom.currentIndex())
+            current_base = self.comboBox_base_lmeo_n_hom.itemData(self.comboBox_base_lmeo_n_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_lmeo_n_hom.itemData(self.comboBox_base_lmeo_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lmeo_n_hom.currentText()
-            config["lmeo_nao_homologada"] = [current_base, current_camada, "LMEO Não Homologada"]
+            if current_tipo == 'shp':
+                config["lmeo_nao_homologada"] = [current_base, "", "LMEO Não Homologada"]
+            else:
+                config["lmeo_nao_homologada"] = [current_base, current_camada, "LMEO Não Homologada"]
+
 
         if self.groupBox_lltm_n_hom.isChecked():
-            current_base = self.comboBox_base_lltm_n_hom.itemData(self.comboBox_base_lltm_n_hom.currentIndex())
+            current_base = self.comboBox_base_lltm_n_hom.itemData(self.comboBox_base_lltm_n_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_lltm_n_hom.itemData(self.comboBox_base_lltm_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lltm_n_hom.currentText()
-            config["lltm_nao_homologada"] = [current_base, current_camada, "LLTM Não Homologada"]
+            if current_tipo == 'shp':
+                config["lltm_nao_homologada"] = [current_base, "", "LLTM Não Homologada"]
+            else:
+                config["lltm_nao_homologada"] = [current_base, current_camada, "LLTM Não Homologada"]
+
 
         if self.groupBox_lpm_n_hom.isChecked():
-            current_base = self.comboBox_base_lpm_n_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())
+            current_base = self.comboBox_base_lpm_n_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_lpm_n_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lpm_n_hom.currentText()
-            config["lpm_nao_homologada"] = [current_base, current_camada, "LPM Não Homologada"]
+            if current_tipo == 'shp':
+                config["lpm_nao_homologada"] = [current_base, "", "LPM Não Homologada"]
+            else:
+                config["lpm_nao_homologada"] = [current_base, current_camada, "LPM Não Homologada"]
+
 
         if self.groupBox_ltm_n_hom.isChecked():
-            current_base = self.comboBox_base_ltm_n_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())
+            current_base = self.comboBox_base_ltm_n_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())[0]
+            current_tipo = self.comboBox_base_ltm_n_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_ltm_n_hom.currentText()
-            config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
+            if current_tipo == 'shp':
+                config["ltm_nao_homologada"] = [current_base, "", "LTM Não Homologada"]
+            else:
+                config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
+
 
         self.setings.set_camadas_base_obrigatoria(config)
 
