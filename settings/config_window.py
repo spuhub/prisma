@@ -134,7 +134,7 @@ class ConfigWindow(QtWidgets.QDialog):
         # self.fill_mandatory_layers()
         self.save_bd_config_json()
         self.save_shp_config_json()
-        #self.save_mandatory_layers()
+        self.save_mandatory_layers()
         self.save_geocoding_key()
         btn = self.sender()
         btn_name = btn.objectName()
