@@ -278,11 +278,7 @@ class Polygons():
                                                  'nomeFantasiaCamada'])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                             self.operation_config['operation_config']['shp'][index_1][
-                                                 'estiloCamadas'][
-                                                 0])
-            show_qgis_areas.renderer().setSymbol(symbol)
+            show_qgis_areas.loadSldStyle(self.operation_config['operation_config']['shp'][index_1]['estiloCamadas'][0]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
         else:
@@ -296,10 +292,8 @@ class Polygons():
                                                  'nomeFantasiaTabelasCamadas'][index_2])
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_feature_symbol(show_qgis_areas.geometryType(),
-                                             self.operation_config['operation_config']['pg'][index_1][
-                                                 'estiloTabelasCamadas'][index_2])
-            show_qgis_areas.renderer().setSymbol(symbol)
+            show_qgis_areas.loadSldStyle(
+                self.operation_config['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
 
@@ -753,8 +747,9 @@ class Polygons():
         return symbol
 
     def remove_layers(self):
-        list_required = ['LPM Homologada', 'LTM Homologada', 'Área Homologada', 'LPM Não Homologada',
-                         'LTM Não Homologada', 'Área Não Homologada', 'OpenStreetMap']
+        list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
+                         'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
+                         'OpenStreetMap']
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])
