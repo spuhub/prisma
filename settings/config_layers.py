@@ -256,13 +256,12 @@ class ConfigLayers(QtWidgets.QDialog):
         config["tabelasCamadas"] = aux
 
         aux=[]
-
         for i in range(len(self.objects_tables_disponiveis)):
             if self.objects_vai_usar[i].checkState():
                 aux.append(self.objects_buffer[i].value())
 
         config["aproximacao"] = aux
-        print("Aproximacao aqui: ",config["aproximacao"])
+        #print("Aproximacao aqui: ",config["aproximacao"])
 
         aux = []
 
@@ -272,13 +271,11 @@ class ConfigLayers(QtWidgets.QDialog):
 
         config["nomeFantasiaTabelasCamadas"] = aux
 
-        aux = []
-
-        for i in range(len(self.objects_tables_disponiveis)):
-            if self.objects_vai_usar[i].checkState():
-                aux.append("Builder")
-
-        config["descricaoTabelasCamadas"] = aux
+        if "maisInformacoesTabelas" not in config:
+            aux = []
+            for i in range(len(self.objects_tables_disponiveis)):
+                aux.append({})
+                config["maisInformacoesTabelas"] = aux
 
         aux = []
         for i in range(len(self.objects_tables_disponiveis)):
@@ -294,7 +291,7 @@ class ConfigLayers(QtWidgets.QDialog):
 
         config["estiloTabelasCamadas"] = aux
 
-        print(config)
+        #print(config)
         self.setings02.edit_database(self.id_current_db,config)
 
     def search_base_pg(self, id_base):
@@ -360,7 +357,7 @@ class ConfigLayers(QtWidgets.QDialog):
         print("MEU DEUS", btn.objectName())
         btn_name = btn.objectName()
         btn_name_array = btn_name.split("_")
-        index_infor = btn_name_array[3]
+        index_infor = btn_name_array[1]
         d = LayerInfor(self.id_current_db, int(index_infor))
         d.exec_()
         btn = self.sender()

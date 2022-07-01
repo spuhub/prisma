@@ -101,7 +101,7 @@ class JsonTools:
 
         dados[db_id] = db_json_new_conf
         dados[db_id]["id"] = db_id
-        print("vixx", dados)
+        #print("vixx", dados)
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
 
@@ -183,5 +183,5 @@ if __name__ == '__main__':
 
     saida = d.get_config_database()
     d.insert_database_pg(saida[0])
-    print(d.get_config_database())
-    print(d.get_config_shapefile())
+    #print(d.get_config_database())
+    #print(d.get_config_shapefile())
