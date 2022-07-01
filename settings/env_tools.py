@@ -21,11 +21,11 @@ class EnvTools:
         @param password: Senha da Base de dados
         @return: void
         """
+        s = QSettings()
+        path = 'prisma/databases/' + base_id
+        s.setValue(path + '/usuario', user_name)
+        s.setValue(path + '/senha', password)
 
-        self.settings.beginGroup('prisma/databases/' + base_id)
-        self.settings.setValue('usuario', user_name)
-        self.settings.setValue('senha', password)
-        self.settings.endGroup()
 
     def edit_credentials(self, base_id,new_user_name, new_password):
         """
@@ -35,8 +35,9 @@ class EnvTools:
         @param new_password: Nova senha da Base de dados
         @return:
         """
-        self.settings.setValue('prisma/databases/' +base_id+ '/usuario', new_user_name)
-        self.settings.setValue('prisma/databases/' +base_id+ '/senha', new_password)
+        s = QSettings()
+        s.setValue('prisma/databases/' + base_id + '/usuario', new_user_name)
+        s.setValue('prisma/databases/' + base_id + '/senha', new_password)
 
     def store_keys(self, service_id, key):
         """
@@ -45,9 +46,9 @@ class EnvTools:
         @param key: chave do serviço
         @return:
         """
-        self.settings.beginGroup('Geocoding/keys/' + service_id)
-        self.settings.setValue('key', key)
-        self.settings.endGroup()
+        s = QSettings()
+        s.setValue('prisma/geocoding/keys/' + str(service_id), key)
+
 
     def store_current_geocoding_server(self, server_inf):
         """
@@ -55,16 +56,16 @@ class EnvTools:
         @param server_inf: Id do Serviço
         @return: void
         """
-        self.settings.beginGroup('Geocoding/currentServer')
-        self.settings.setValue('current', server_inf)
-        self.settings.endGroup()
+        s = QSettings()
+        s.setValue('prisma/geocoding/current', server_inf)
 
     def get_current_geocoding_server(self):
         """
         Retorna serviço de geocodificação atualmente selecionado nas configurações
         @return: Id do Serviço
         """
-        server_inf = self.settings.value('Geocoding/currentServer/current')
+        s = QSettings()
+        server_inf = s.value('prisma/geocoding/current', 0)
         return server_inf
 
     def get_credentials(self, base_id):
@@ -74,8 +75,9 @@ class EnvTools:
         @param base_id: Id da base presente no Json de configuração
         @return:
         """
-        usuario = self.settings.value('prisma/databases/' + base_id + '/usuario')
-        senha = self.settings.value('prisma/databases/' + base_id + '/senha')
+        s = QSettings()
+        usuario = s.value('prisma/databases/' + base_id + '/usuario')
+        senha = s.value('prisma/databases/' + base_id + '/senha')
         return [usuario, senha]
 
     def get_key(self, service_id):
@@ -85,8 +87,9 @@ class EnvTools:
         @param service_id: Id do serviço do Geocodificação
         @return: chave do serviço de Geocodificação
         """
-        self.settings.beginGroup('Geocoding/keys/' + service_id)
-        return self.settings.value('key')
+        s = QSettings()
+        key = s.value('prisma/geocoding/keys/' + str(service_id),"")
+        return key
 
     def store_report_hearder(self, hearder_List):
 

@@ -379,7 +379,7 @@ class ConfigWindow(QtWidgets.QDialog):
         current_opt_text = self.combo_box_servico_geocod.currentText()
         key = self.key_geo_cod.text()
         print("olha ", current_opt_text,current_opt)
-        self.credencials.store_current_geocoding_server([current_opt_text, current_opt])
+        self.credencials.store_current_geocoding_server(current_opt)
         self.credencials.store_keys(str(current_opt), key)
 
     def set_config(self):
@@ -388,9 +388,9 @@ class ConfigWindow(QtWidgets.QDialog):
         @return: void
         """
         current_op = self.credencials.get_current_geocoding_server()
-        current_key = self.credencials.get_key(current_op[1])
+        current_key = self.credencials.get_key(current_op)
         print("olha carreg ", current_op, current_key)
-        self.combo_box_servico_geocod.setCurrentText(current_op[1])
+        self.combo_box_servico_geocod.setCurrentIndex(current_op)
         self.key_geo_cod.setText(current_key)
 
     def back(self):
