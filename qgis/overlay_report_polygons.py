@@ -95,9 +95,6 @@ class OverlayReportPolygons():
         for i in operation_config['operation_config']['shp']:
             if type(i['nomeFantasiaCamada']) is list:
                 i['nomeFantasiaCamada'] = i['nomeFantasiaCamada'][0]
-            for index, row in gdf_input.iterrows():
-                print("TESTE: ", i['nomeFantasiaCamada'], gdf_input.iloc[index][i['nomeFantasiaCamada']])
-                print("TESTE2: --------")
 
             for rowIndex, row in gdf_input.iterrows():
                 if str(i['nomeFantasiaCamada']) in gdf_input.columns and gdf_input.iloc[rowIndex][str(i['nomeFantasiaCamada'])] > 0:
