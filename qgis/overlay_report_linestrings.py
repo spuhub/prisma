@@ -68,7 +68,7 @@ class OverlayReportLinestrings():
 
         cpf_cnpj_0 = self.layout.itemById('CD_Compl_CPF_CNPJ')
         if "cpf_cnpj" in gdf_input.columns:
-            cpf_cnpj = gdf_input.iloc[0]["cpf_cnpj"]
+            cpf_cnpj = str(gdf_input.iloc[0]["cpf_cnpj"])
             cpf_cnpj_0.setText(cpf_cnpj)
         else:
             cpf_cnpj_0.setText("Não informado.")
@@ -145,7 +145,6 @@ class OverlayReportLinestrings():
                                 camada_com += i['nomeFantasiaCamada'] + "; "
                             else:
                                 camada_sem += i['nomeFantasiaCamada'] + "; "
-
                 else:
                     if type(i['nomeFantasiaTabelasCamadas']) is list:
                         if i['nomeFantasiaTabelasCamadas'][0] == "Área Homologada" or i['nomeFantasiaTabelasCamadas'][
@@ -218,6 +217,8 @@ class OverlayReportLinestrings():
         # files_dir = os.path.normpath(files_dir)
         # print(files_dir)
         pdf_files = [f for f in os.listdir(operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
+        pdf_files = pdf_files[::-1]
+
         merger = PdfFileMerger()
 
         for filename in pdf_files:

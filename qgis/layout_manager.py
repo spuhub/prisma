@@ -241,16 +241,34 @@ class LayoutManager():
             if 'aproximacao' in self.operation_config['operation_config']['shp'][index]:
                 area = self.utils.add_input_approximation_projected(area, self.operation_config['operation_config']['shp'][index]['aproximacao'][0])
 
+            last_area = None
             if len(area) > 0:
-                if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
-                    'geometry'].type in ['Polygon', 'MultiPolygon']:
-                    self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, index, None,
-                                                               self.atlas, self.layout, self.index_input)
+                # ultima área comparada para a atual feição de input
+                if index == len(gdf_selected_shp) - 1:
+                    last_area = True
+                    if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
+                        'geometry'].type in ['Polygon', 'MultiPolygon']:
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, index, None,
+                                                                   self.atlas, self.layout, self.index_input, last_area)
 
-                elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
-                    'geometry'].type in ['LineString', 'MultiLineString']:
-                    self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, index, None,
-                                                               self.atlas, self.layout, self.index_input)
+                    elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
+                        'geometry'].type in ['LineString', 'MultiLineString']:
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, index, None,
+                                                                   self.atlas, self.layout, self.index_input, last_area)
+                else:
+                    last_area = False
+                    if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
+                        'geometry'].type in ['Polygon', 'MultiPolygon']:
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, index,
+                                                                   None,
+                                                                   self.atlas, self.layout, self.index_input, last_area)
+
+                    elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
+                        'geometry'].type in ['LineString', 'MultiLineString']:
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required,
+                                                                         index, None,
+                                                                         self.atlas, self.layout, self.index_input, last_area)
+
 
     def calculation_db(self, input, input_standard, gdf_selected_db, gdf_required):
         """

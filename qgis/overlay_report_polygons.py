@@ -97,6 +97,7 @@ class OverlayReportPolygons():
                 i['nomeFantasiaCamada'] = i['nomeFantasiaCamada'][0]
 
             for rowIndex, row in gdf_input.iterrows():
+                print(gdf_input.columns)
                 if str(i['nomeFantasiaCamada']) in gdf_input.columns and gdf_input.iloc[rowIndex][str(i['nomeFantasiaCamada'])] > 0:
                     camada_com+=i["nomeFantasiaCamada"]+"; "
                 else:
@@ -114,32 +115,65 @@ class OverlayReportPolygons():
         return camada_sem, camada_com
 
     def overlay_required(self, gdf_input, operation_config, camada_sem, camada_com):
+        list_lines = ['LPM Homologada', 'LTM Homologada', 'LPM Não Homologada', 'LTM Não Homologada',
+                      'LLTM Não Homologada', 'LMEO Não Homologada', 'LLTM Homologada', 'LMEO Homologada']
         for i in operation_config['operation_config']['required']:
-
             for rowIndex, row in gdf_input.iterrows():
                 if i['tipo'] == 'shp':
                     if type(i['nomeFantasiaCamada']) is list:
-                        if str(i['nomeFantasiaCamada'][0]) in gdf_input and gdf_input.iloc[rowIndex][str(i['nomeFantasiaCamada'][0])] > 0:
-                            camada_com += i['nomeFantasiaCamada'][0] + "; "
+                        if i['nomeFantasiaCamada'][0] not in list_lines:
+                            if str(i['nomeFantasiaCamada'][0]) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaCamada'][0])] > 0:
+                                camada_com += i['nomeFantasiaCamada'][0] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaCamada'][0] + "; "
                         else:
-                            camada_sem += i['nomeFantasiaCamada'][0] + "; "
-
+                            if str(i['nomeFantasiaCamada'][0]) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaCamada'][0])] == True:
+                                camada_com += i['nomeFantasiaCamada'][0] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaCamada'][0] + "; "
                     else:
-                        if str(i['nomeFantasiaCamada']) in gdf_input and gdf_input.iloc[rowIndex][str(i['nomeFantasiaCamada'])] > 0:
-                            camada_com += i['nomeFantasiaCamada'] + "; "
+
+                        if i['nomeFantasiaCamada'] not in list_lines:
+                            if str(i['nomeFantasiaCamada']) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaCamada'])] > 0:
+                                camada_com += i['nomeFantasiaCamada'] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaCamada'] + "; "
                         else:
-                            camada_sem += i['nomeFantasiaCamada'] + "; "
+                            if str(i['nomeFantasiaCamada']) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaCamada'])] == True:
+                                camada_com += i['nomeFantasiaCamada'] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaCamada'] + "; "
                 else:
                     if type(i['nomeFantasiaTabelasCamadas']) is list:
-                        if str(i['nomeFantasiaTabelasCamadas'][0]) in gdf_input and gdf_input.iloc[rowIndex][str(i['nomeFantasiaTabelasCamadas'][0])] > 0:
-                            camada_com += i['nomeFantasiaTabelasCamadas'][0] + "; "
+                        if i['nomeFantasiaTabelasCamadas'][0] not in list_lines:
+                            if str(i['nomeFantasiaTabelasCamadas'][0]) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaTabelasCamadas'][0])] > 0:
+                                camada_com += i['nomeFantasiaTabelasCamadas'][0] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaTabelasCamadas'][0] + "; "
                         else:
-                            camada_sem += i['nomeFantasiaTabelasCamadas'][0] + "; "
+                            if str(i['nomeFantasiaTabelasCamadas'][0]) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaTabelasCamadas'][0])] == True:
+                                camada_com += i['nomeFantasiaTabelasCamadas'][0] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaTabelasCamadas'][0] + "; "
                     else:
-                        if str(i['nomeFantasiaTabelasCamadas']) in gdf_input and gdf_input.iloc[rowIndex][str(i['nomeFantasiaTabelasCamadas'])] > 0:
-                            camada_com += i['nomeFantasiaTabelasCamadas'] + "; "
+                        if i['nomeFantasiaTabelasCamadas'] not in list_lines:
+                            if str(i['nomeFantasiaTabelasCamadas']) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaTabelasCamadas'])] > 0:
+                                camada_com += i['nomeFantasiaTabelasCamadas'] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaTabelasCamadas'] + "; "
                         else:
-                            camada_sem += i['nomeFantasiaTabelasCamadas'] + "; "
+                            if str(i['nomeFantasiaTabelasCamadas']) in gdf_input and gdf_input.iloc[rowIndex][
+                                str(i['nomeFantasiaTabelasCamadas'])] == True:
+                                camada_com += i['nomeFantasiaTabelasCamadas'] + "; "
+                            else:
+                                camada_sem += i['nomeFantasiaTabelasCamadas'] + "; "
 
         return camada_sem, camada_com
 
@@ -188,6 +222,8 @@ class OverlayReportPolygons():
         # files_dir = os.path.normpath(files_dir)
         # print(files_dir)
         pdf_files = [f for f in os.listdir(operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
+        pdf_files = pdf_files[::-1]
+
         merger = PdfFileMerger()
 
         for filename in pdf_files:

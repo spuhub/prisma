@@ -38,7 +38,7 @@ class Linestrings():
         self.layers = []
         self.root = QgsProject.instance().layerTreeRoot()
 
-    def comparasion_between_linestrings(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input):
+    def comparasion_between_linestrings(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
         self.layout = layout
 
@@ -85,9 +85,11 @@ class Linestrings():
             self.index_input = index_input
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
-            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
             # Gera o layout PDF com a área de entrada e áreas da união
             self.lr.linestring_required_layers(input, input_standard, gdf_point_input, self.gpd_area_homologada, self.index_input, self.time, self.atlas, self.layout)
+
+        if last_area:
+            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
 
         if not interseption_points.is_empty:
             if len(input_standard) > 0:
@@ -97,9 +99,12 @@ class Linestrings():
                 self.handle_layers(input.iloc[[0]], input_standard, area, gdf_point_input,
                                    gdf_required, index_1, index_2)
 
+        input = input.reset_index(drop=True)
+        return input
+
     def calculation_required(self, input, gdf_required):
 
-        input = input.reset_index()
+        input = input.reset_index(drop=True)
 
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
 
@@ -137,9 +142,6 @@ class Linestrings():
                         else:
                             input.loc[0, self.operation_config['operation_config']['required'][index][
                                 'nomeFantasiaCamada']] = False
-
-
-
                 else:
                     if self.operation_config['operation_config']['required'][index][
                         "nomeFantasiaTabelasCamadas"] == "Área Homologada" or \
@@ -147,7 +149,7 @@ class Linestrings():
                                 "nomeFantasiaTabelasCamadas"] == "Área Não Homologada":
                         input.loc[0, self.operation_config['operation_config']['required'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                            input, length).area.sum()
+                            input, length).length.sum()
                     else:
                         points = input.unary_union.intersection(area.unary_union)
                         if not points.is_empty:
@@ -157,10 +159,9 @@ class Linestrings():
                             input.loc[0, self.operation_config['operation_config']['required'][index][
                                 'nomeFantasiaTabelasCamadas']] = False
 
-
-
             index += 1
 
+        input = input.reset_index(drop=True)
         return input
 
     def explode_input(self, gdf_input):
@@ -311,7 +312,8 @@ class Linestrings():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada':
+            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada' \
+                    or layer.name() == 'LLTM Não Homologada' or layer.name() == 'LMEO Não Homologada' or layer.name() == 'LLTM Homologada' or layer.name() == 'LMEO Homologada':
                 layers_situation_map.append(layer)
 
             elif layer.name() == 'OpenStreetMap':

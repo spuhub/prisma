@@ -38,7 +38,7 @@ class Polygons():
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
-    def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input):
+    def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
         self.layout = layout
 
@@ -67,7 +67,6 @@ class Polygons():
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
             # Gera o layout PDF com a área de entrada e áreas da união
-            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
             self.pd.polygon_required_layers(input, input_standard, gdf_line_input, gdf_point_input, self.index_input,
                                             self.time, self.atlas, self.layout)
 
@@ -96,8 +95,14 @@ class Polygons():
                 self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
                                    gdf_required, index_1, index_2)
 
+        if last_area:
+            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
+
+        input = input.reset_index(drop=True)
+        return input
+
     def calculation_required(self, input, gdf_required):
-        input = input.reset_index()
+        input = input.reset_index(drop=True)
 
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
 
@@ -119,18 +124,39 @@ class Polygons():
                 area = area.to_crs(crs)
                 area.set_crs(allow_override=True, crs=crs)
 
-                # Soma da área de interseção feita com feição de input e atual área comparada
-                # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
                 if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                    input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
-                        input, area).area.sum()
+                    if self.operation_config['operation_config']['required'][index][
+                        "nomeFantasiaCamada"] == "Área Homologada" or \
+                            self.operation_config['operation_config']['required'][index][
+                                "nomeFantasiaCamada"] == "Área Não Homologada":
+                        input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                            input, area).area.sum()
+                    else:
+                        has_overlay = len(gpd.overlay(area, input))
+                        if has_overlay > 0:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaCamada']] = True
+                        else:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaCamada']] = False
                 else:
-                    input.loc[0, self.operation_config['operation_config']['required'][index][
-                        'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                        input, area).area.sum()
-
+                    if self.operation_config['operation_config']['required'][index][
+                        "nomeFantasiaTabelasCamadas"] == "Área Homologada" or \
+                            self.operation_config['operation_config']['required'][index][
+                                "nomeFantasiaTabelasCamadas"] == "Área Não Homologada":
+                        input.loc[0, self.operation_config['operation_config']['required'][index][
+                            'nomeFantasiaTabelasCamadas']] = gpd.overlay(
+                            input, length).area.sum()
+                    else:
+                        has_overlay = len(gpd.overlay(area, input))
+                        if has_overlay > 0:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaTabelasCamadas']] = True
+                        else:
+                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                                'nomeFantasiaTabelasCamadas']] = False
             index += 1
-
+        input = input.reset_index(drop=True)
         return input
 
     def explode_input(self, gdf_input):
@@ -434,7 +460,8 @@ class Polygons():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada':
+            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada'\
+                    or layer.name() == 'LLTM Não Homologada' or layer.name() == 'LMEO Não Homologada' or layer.name() == 'LLTM Homologada' or layer.name() == 'LMEO Homologada':
                 layers_situation_map.append(layer)
 
             elif layer.name() == 'OpenStreetMap':
