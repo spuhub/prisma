@@ -32,7 +32,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.newbdID = ''
         self.newshpID = ''
         self.fill_mandatory_layers()
-
+        self.control_problem = 0
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
         self.test_conect.clicked.connect(self.message)
@@ -54,6 +54,17 @@ class ConfigWindow(QtWidgets.QDialog):
         self.comboBox_base_lltm_hom.currentIndexChanged.connect(self.add_action_lltm_hom)
         self.comboBox_base_lmeo_hom.currentIndexChanged.connect(self.add_action_lmeo_hom)
         self.comboBox_base_lmeo_n_hom.currentIndexChanged.connect(self.add_action_lmeo_n_hom)
+
+        self.groupBox_area_uniao.clicked.connect(self.add_action_area_uniao)
+        self.groupBox_lmeo_hom.clicked.connect(self.add_action_lmeo_hom)
+        self.groupBox_lltm_hom.clicked.connect(self.add_action_lltm_hom)
+        self.groupBox_lpm_hom.clicked.connect(self.add_action_lpm_homologada)
+        self.groupBox_ltm_hom.clicked.connect(self.add_action_ltm_homologada)
+        self.groupBox_area_uniao_n_hom.clicked.connect(self.add_action_area_uniao_n_hom)
+        self.groupBox_lmeo_n_hom.clicked.connect(self.add_action_lmeo_n_hom)
+        self.groupBox_lltm_n_hom.clicked.connect(self.add_action_lltm_n_hom)
+        self.groupBox_lpm_n_hom.clicked.connect(self.add_action_lpm_nao_homologada)
+        self.groupBox_ltm_n_hom.clicked.connect(self.add_action_ltm_nao_homologada)
 
         if self.combo_box_shp.currentIndex() == 0:
             self.delete_sh.setEnabled(False)
@@ -102,29 +113,36 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["descricao"] = self.textEdit_bd.toPlainText()
 
         if self.combo_box_base.currentData() == "0":
-            if confg_dic["nome"] != "" and confg_dic["host"] != "" and confg_dic["porta"] != "" and confg_dic["baseDeDados"] != "":
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
+                msg = QMessageBox(self)
+                msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
+                self.control_problem = 1
+            if confg_dic["nome"] != "":
                 id = self.setings.insert_database_pg(confg_dic)
                 self.newbdID = id
                 self.source_databases.append(confg_dic)
                 self.combo_box_base.addItem(self.nome_base.text(), id)
-                print("Olha o id aqui: " ,  id)
                 self.credencials.store_credentials(id, self.usuario.text(), self.senha.text())
                # msg.information(self, "Banco de dados", "Banco de dados adcionado com sucesso!")
                 self.combo_box_base.setCurrentText(self.nome_base.text())
-
-
                 confg_dic = {}
 
         else:
-            index = self.search_index_base_pg(id_current_db)
-            print("ID_current ==", id_current_db, index)
-            self.source_databases[index] = confg_dic
-            self.setings.edit_database(id_current_db, confg_dic)
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
+                msg = QMessageBox(self)
+                msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
+                self.control_problem = 1
 
-            self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
-            #self.credencials.store_credentials(id_current_db, self.usuario.text(), self.senha.text())
-            #msg.information(self,"Banco de dados" ,"Banco de dados editado com sucesso!")
-            confg_dic = {}
+            if confg_dic["nome"] != "":
+                index = self.search_index_base_pg(id_current_db)
+                print("ID_current ==", id_current_db, index)
+                self.source_databases[index] = confg_dic
+                self.setings.edit_database(id_current_db, confg_dic)
+                self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
+                self.combo_box_base.setCurrentText(self.nome_base.text())
+                #self.credencials.store_credentials(id_current_db, self.usuario.text(), self.senha.text())
+                #msg.information(self,"Banco de dados" ,"Banco de dados editado com sucesso!")
+                confg_dic = {}
 
     def save_settings(self):
         """
@@ -132,16 +150,18 @@ class ConfigWindow(QtWidgets.QDialog):
         @return:
         """
         # self.fill_mandatory_layers()
+
         self.save_bd_config_json()
         self.save_shp_config_json()
         self.save_mandatory_layers()
         self.save_geocoding_key()
         btn = self.sender()
         btn_name = btn.objectName()
-
-        if btn_name =="btn_salvar":
-            msg = QMessageBox(self)
-            msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
+        if self.control_problem == 0:
+            if btn_name =="btn_salvar":
+                msg = QMessageBox(self)
+                msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
+        self.control_problem = 0
 
 
     def save_shp_config_json(self):
@@ -185,14 +205,15 @@ class ConfigWindow(QtWidgets.QDialog):
 
         confg_dic["estiloCamadas"] = stryle
 
-
-        #msg = QMessageBox(self)
-
         if self.combo_box_shp.currentData() == "0":
-            if confg_dic["nome"] != "" and confg_dic["urlDowload"] != "" and confg_dic["diretorioLocal"] != "":
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 1:
+                msg = QMessageBox(self)
+                msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
+                self.control_problem = 1
+            if confg_dic["nome"] != "":
                 id = self.setings.insert_database_pg(confg_dic)
                 self.newshpID = id
-                print("New id", id)
+                #print("New id", id)
                 self.source_shp.append(confg_dic)
                 self.combo_box_shp.addItem(self.nome_shp.text(), id)
                 #msg.information(self, "ShapeFile", "Shapefile adcionado com sucesso!")
@@ -201,13 +222,20 @@ class ConfigWindow(QtWidgets.QDialog):
                 confg_dic = {}
 
         else:
-            index = self.search_index_base_shp(id_current_db)
-            print("ID_current ==", id_current_db, index)
-            self.source_shp[index] = confg_dic
-            self.setings.edit_database(id_current_db, confg_dic)
-            #msg.information(self, "ShapeFile", "Shapefile editado com sucesso!")
-            # self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
-            confg_dic = {}
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 1:
+                msg = QMessageBox(self)
+                msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
+                self.control_problem = 1
+
+            if confg_dic["nome"] != "":
+                index = self.search_index_base_shp(id_current_db)
+                print("ID_current ==", id_current_db, index)
+                self.source_shp[index] = confg_dic
+                self.setings.edit_database(id_current_db, confg_dic)
+                self.combo_box_shp.setCurrentText(self.nome_shp.text())
+                #msg.information(self, "ShapeFile", "Shapefile editado com sucesso!")
+                # self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
+                confg_dic = {}
 
     def fill_combo_box_base(self):
         """
