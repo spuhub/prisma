@@ -5,6 +5,10 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 from qgis.utils import reloadPlugin
 
+from PyQt5.QtWidgets import QWidget, QShortcut, QApplication, QMessageBox
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtCore import Qt
+
 class MainWindow (QtWidgets.QDialog):
     """Classe que manipula a tela principal do Prisma."""
 
@@ -27,7 +31,13 @@ class MainWindow (QtWidgets.QDialog):
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
         self.ui.closeEvent = self.close_event
 
+        # Desabilita a tecla ESC
+        self.shortcut_esc = QShortcut(QKeySequence(Qt.Key_Escape), self.iface.mainWindow())
+        self.shortcut_esc.setContext(Qt.ApplicationShortcut)
+        self.shortcut_esc.activated.connect(self.close_event)
+
     def close_event(self, a):
+        print("teste")
         reloadPlugin('prisma')
 
     def go_to_shapefile(self):
