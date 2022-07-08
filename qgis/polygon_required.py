@@ -195,7 +195,7 @@ class PolygonRequired():
         """Armazena o atlas do layout de impressão carregado no projeto."""
         map_atlas = atlas.layout()
         pdf_settings = QgsLayoutExporter(map_atlas).PdfExportSettings()
-        pdf_settings.dpi = 150
+        pdf_settings.dpi = 300
 
         if atlas.enabled():
             pdf_settings.rasterizeWholeImage = True

@@ -238,7 +238,9 @@ class LayoutManager():
             area = area.to_crs(crs)
             area.set_crs(allow_override=True, crs=crs)
 
-            if 'aproximacao' in self.operation_config['operation_config']['shp'][index]:
+            if 'aproximacao' in self.operation_config['operation_config']['shp'][index] and \
+                    self.operation_config['operation_config']['shp'][index]['aproximacao'][0] > 0:
+
                 area = self.utils.add_input_approximation_projected(area, self.operation_config['operation_config']['shp'][index]['aproximacao'][0])
 
             last_area = None
@@ -294,6 +296,12 @@ class LayoutManager():
                 # area.crs = {'init':'epsg:4674'}
                 area = area.to_crs(crs)
                 area.set_crs(allow_override=True, crs=crs)
+
+                if 'aproximacao' in self.operation_config['operation_config']['pg'][index_db] and \
+                        self.operation_config['operation_config']['pg'][index_db]['aproximacao'][index_layer] > 0:
+                    area = self.utils.add_input_approximation_projected(area, self.operation_config['operation_config'][
+                        'pg'][index_db]['aproximacao'][index_layer])
+
                 if len(area) > 0:
                     if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                         'geometry'].type in ['Polygon', 'MultiPolygon']:

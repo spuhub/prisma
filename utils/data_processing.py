@@ -32,7 +32,7 @@ class DataProcessing():
         gdf_selected_shp_standard = gdf_selected_shp.copy()
 
         for index, layer in enumerate(gdf_selected_shp):
-            if 'aproximacao' in operation_config['shp'][index]:
+            if 'aproximacao' in operation_config['shp'][index] and operation_config['shp'][index]['aproximacao'][0] > 0:
                 gdf_selected_shp[index] = self.utils.add_input_approximation_geographic(layer, operation_config['shp'][index]['aproximacao'][0])
 
         # Elimina feições de comparação distantes das feições de input
