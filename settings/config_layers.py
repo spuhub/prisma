@@ -134,7 +134,6 @@ class ConfigLayers(QtWidgets.QDialog):
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
 
-
         env = EnvTools()
         credenciais = env.get_credentials(idbd)
         print("credenciais config layer",credenciais)

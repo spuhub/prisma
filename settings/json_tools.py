@@ -8,15 +8,22 @@ class JsonTools:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
-        with open(self.json_path, 'r', encoding='utf8') as f:
-            self.json_config = json.load(f)
+
 
     def get_json(self):
         """
         Retorna o Json de configuração.
         @return: Json de configuração
         """
-        return self.json_config
+        if os.stat(self.json_path).st_size == 0:
+            return {}
+
+        else:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
+
+            return json_config
 
     def get_config_shapefile(self):
 
@@ -26,9 +33,14 @@ class JsonTools:
         """
         shp_list = []
 
-        for base, data in self.json_config.items():
-            if 'tipo' in data and data['tipo'] == 'shp':
-                shp_list.append(data)
+        if os.stat(self.json_path).st_size != 0:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
+
+            for base, data in json_config.items():
+                if 'tipo' in data and data['tipo'] == 'shp':
+                    shp_list.append(data)
 
         return shp_list
 
@@ -39,10 +51,14 @@ class JsonTools:
         @return: Lista com as configurações.
 
         """
-        with open(self.json_path, 'r', encoding='utf8') as f:
-            json_config = json.load(f)
-
         shp_list = []
+
+        if os.stat(self.json_path).st_size == 0:
+            return []
+        else:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
 
         for base, data in json_config.items():
             if 'tipo' in data and data['tipo'] == 'pg':
@@ -51,19 +67,37 @@ class JsonTools:
         return shp_list
 
     def get_config_required(self):
+
+        """
+        Retorna uma lista com as configurações das camadas obrigatórias caso tiver. Se não tiver camadas
+        obrigatórias retorna uma lista vazia.
+        @return: Lista com as configurações.
+
+        """
+
         required_list = []
 
-        required_layers = self.json_config['obrigatorio']
+        if os.stat(self.json_path).st_size == 0:
+            return []
+        else:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
 
-        for key, data_required_layer in required_layers.items():
-            for base, data_json in self.json_config.items():
-                if data_required_layer[0] == base:
-                    if data_json['tipo'] == 'pg':
-                        data_json['tabelasCamadas'] = [data_required_layer[1]]
-                        data_json['nomeFantasiaTabelasCamadas'] = [data_required_layer[2]]
-                    else:
-                        data_json['nomeFantasiaCamada'] = [data_required_layer[2]]
-                    required_list.append(data_json)
+            if json_config == {}:
+                return []
+
+            if json_config != {}:
+                required_layers = json_config['obrigatorio']
+                for key, data_required_layer in required_layers.items():
+                    for base, data_json in json_config.items():
+                        if data_required_layer[0] == base:
+                            if data_json['tipo'] == 'pg':
+                                data_json['tabelasCamadas'] = [data_required_layer[1]]
+                                data_json['nomeFantasiaTabelasCamadas'] = [data_required_layer[2]]
+                            else:
+                                data_json['nomeFantasiaCamada'] = [data_required_layer[2]]
+                            required_list.append(data_json)
 
         return required_list
 
@@ -75,17 +109,21 @@ class JsonTools:
         """
         dados = {}
 
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
+        if os.stat(self.json_path).st_size != 0:
 
-        numofItens = len(list(dados.keys()))
+            with open(self.json_path, 'r') as f:
+                dados = json.load(f)
+                f.close()
 
-        dbid = "base" + str(numofItens + 1)
-        db_json_conf["id"] = dbid
+            numofItens = len(list(dados.keys()))
 
-        dados[dbid] = db_json_conf
+            dbid = "base" + str(numofItens + 1)
+            db_json_conf["id"] = dbid
+            dados[dbid] = db_json_conf
+
         with open(self.json_path, 'w') as f:
             json.dump(dados, f, indent=4)
+            f.close()
 
         return dbid
 
@@ -96,14 +134,17 @@ class JsonTools:
         @param db_json_new_conf: Json contendo as novas configurações da base de dados
         @return: void
         """
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
+        if os.stat(self.json_path).st_size != 0:
+            with open(self.json_path, 'r') as f:
+                dados = json.load(f)
+            f.close()
 
-        dados[db_id] = db_json_new_conf
-        dados[db_id]["id"] = db_id
-        #print("vixx", dados)
-        with open(self.json_path, 'w') as f:
-            json.dump(dados, f, indent=4)
+            dados[db_id] = db_json_new_conf
+            dados[db_id]["id"] = db_id
+
+            with open(self.json_path, 'w') as f:
+                json.dump(dados, f, indent=4)
+            f.close()
 
     def get_keys_name_source_data(self):
 
@@ -112,17 +153,25 @@ class JsonTools:
         @return: Json de com os nomes
         """
 
-        source_data = {}
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
+        if os.stat(self.json_path).st_size == 0:
+            return {}
+        else:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                dados = json.load(f)
+                f.close()
 
-        numofItens = list(dados.keys())
+                if dados == {}:
+                    return {}
+                if dados != {}:
+                    source_data = {}
+                    numofItens = list(dados.keys())
 
-        for item in numofItens:
-            nome = dados[item]["nome"]
-            source_data[item] = nome
+                    for item in numofItens:
+                        if "nome" in dados[item]:
+                            nome = dados[item]["nome"]
+                            source_data[item] = nome
 
-        return source_data
+                    return source_data
 
     def get_source_data(self, id_base):
         """
@@ -133,25 +182,26 @@ class JsonTools:
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
 
-    def get_camadas_base_obrigatoria (self):
+    def get_camadas_base_obrigatoria(self):
         """
         Retorna todas as camadas obrigatórias.
-        @return: Json com as camadas obigatórias
+        @return: Json com os nomes das camadas obrigatórias
         """
         config = {}
-        #config["lpm_homologada"] = ["","",""]
-        #config["ltm_homologada"]  = ["","",""]
-        #config["area_homologada"]  = ["","",""]
-        #config["lpm_nao_homologada"]  = ["","",""]
-        #config["ltm_nao_homologada"]  = ["","",""]
-        #config["area_nao_homologada"] = ["","",""]
 
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
-        if "obrigatorio" in dados:
-            return dados["obrigatorio"]
+        if os.stat(self.json_path).st_size == 0:
+            return {}
         else:
-            return config
+            with open(self.json_path, 'r') as f:
+                dados = json.load(f)
+            f.close()
+            if dados == {}:
+                return {}
+            else:
+                if "obrigatorio" in dados:
+                    return dados["obrigatorio"]
+                else:
+                    return config
 
     def set_camadas_base_obrigatoria (self, new_conf):
         """
@@ -159,12 +209,21 @@ class JsonTools:
         @param new_conf: ´Json coma as nova configurações de valor : {<Tipo camada> : {nome da base, nome da camada }}
         @return:
         """
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
-        dados["obrigatorio"] = new_conf
+        if os.stat(self.json_path).st_size == 0:
+            return {}
+        else:
+            with open(self.json_path, 'r') as f:
+                dados = json.load(f)
+            f.close()
+            if dados == {}:
+                return {}
+            else:
+                dados["obrigatorio"] = new_conf
 
-        with open(self.json_path, 'w') as f:
-            json.dump(dados, f, indent=4)
+                with open(self.json_path, 'w') as f:
+                    json.dump(dados, f, indent=4)
+                f.close()
+
 
     def delete_base(self, idConfig):
         with open(self.json_path, 'r') as f:
@@ -181,7 +240,14 @@ class JsonTools:
 if __name__ == '__main__':
     d = JsonTools()
 
-    saida = d.get_config_database()
-    d.insert_database_pg(saida[0])
-    #print(d.get_config_database())
+    c = {"adada" : "amsi", "monte22333" : "mais"}
+    b = {
+        "lpm_homologada": [
+            "base1",
+            "faixa_dominio",
+            "LPM Homologada"
+        ]}
+    #saida = d.get_config_database()
+    # d.insert_database_pg(saida[0])
+    print(d.set_camadas_base_obrigatoria(b))
     #print(d.get_config_shapefile())
