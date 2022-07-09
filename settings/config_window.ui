@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -466,7 +466,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="faixa_proximidade"/>
+          <widget class="QDoubleSpinBox" name="faixa_proximidade">
+           <property name="maximum">
+            <double>10000000000.989999771118164</double>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

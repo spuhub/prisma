@@ -1000,7 +1000,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if self.groupBox_lpm_hom.isChecked():
             current_base = self.comboBox_base_lpm_hom.itemData(self.comboBox_base_lpm_hom.currentIndex())[0]
-            current_tipo = self.comboBox_base_lltm_hom.itemData(self.comboBox_base_lltm_hom.currentIndex())[1]
+            current_tipo = self.comboBox_base_lpm_hom.itemData(self.comboBox_base_lpm_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lpm_hom.currentText()
             if current_tipo == 'shp':
                 config["lpm_homologada"] = [current_base, "", "LPM Homologada"]

@@ -187,7 +187,6 @@ class JsonTools:
         Retorna todas as camadas obrigatórias.
         @return: Json com os nomes das camadas obrigatórias
         """
-        config = {}
 
         if os.stat(self.json_path).st_size == 0:
             return {}
@@ -201,7 +200,7 @@ class JsonTools:
                 if "obrigatorio" in dados:
                     return dados["obrigatorio"]
                 else:
-                    return config
+                    return {}
 
     def set_camadas_base_obrigatoria (self, new_conf):
         """
@@ -226,15 +225,31 @@ class JsonTools:
 
 
     def delete_base(self, idConfig):
-        with open(self.json_path, 'r') as f:
-            dados = json.load(f)
-        del dados[idConfig]
 
-        with open(self.json_path, 'w') as f:
-            json.dump(dados, f, indent=4)
+        if os.stat(self.json_path).st_size != 0:
 
+            with open(self.json_path, 'r') as f:
+                dados = json.load(f)
+                f.close()
+            if dados != {}:
+                if idConfig in dados:
+                    del dados[idConfig]
 
+                if "obrigatorio" in dados:
+                    camadas_obrigatorias = dados["obrigatorio"]
+                    key_camadas_obrigatorias = camadas_obrigatorias.keys()
 
+                nome_camada_del = ""
+                for camada in key_camadas_obrigatorias:
+                    if camadas_obrigatorias[camada][0] == idConfig:
+                        nome_camada_del = camada
+
+                del camadas_obrigatorias[nome_camada_del]
+                dados["obrigatorio"] = camadas_obrigatorias
+
+                with open(self.json_path, 'w') as f:
+                    json.dump(dados, f, indent=4)
+                    f.close()
 
 
 if __name__ == '__main__':
@@ -249,5 +264,5 @@ if __name__ == '__main__':
         ]}
     #saida = d.get_config_database()
     # d.insert_database_pg(saida[0])
-    print(d.set_camadas_base_obrigatoria(b))
+    print(d.delete_base("base3"))
     #print(d.get_config_shapefile())
