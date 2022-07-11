@@ -244,8 +244,9 @@ class JsonTools:
                     if camadas_obrigatorias[camada][0] == idConfig:
                         nome_camada_del = camada
 
-                del camadas_obrigatorias[nome_camada_del]
-                dados["obrigatorio"] = camadas_obrigatorias
+                if nome_camada_del != "":
+                    del camadas_obrigatorias[nome_camada_del]
+                    dados["obrigatorio"] = camadas_obrigatorias
 
                 with open(self.json_path, 'w') as f:
                     json.dump(dados, f, indent=4)
