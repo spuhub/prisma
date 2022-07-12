@@ -73,7 +73,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         self.combo_box_shp.currentIndexChanged.connect(self.enable_disable_delete_shp)
         self.combo_box_base.currentIndexChanged.connect(self.enable_disable_delete_bd)
-
+        #self.tabWidget.clicked.connect(self.)
 
     # self.btext.clicked.connect(self.hiderheader)
 
@@ -155,6 +155,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_shp_config_json()
         self.save_mandatory_layers()
         self.save_geocoding_key()
+        self.fill_mandatory_layers_from_json_conf()
         btn = self.sender()
         btn_name = btn.objectName()
         if self.control_problem == 0:
@@ -349,10 +350,11 @@ class ConfigWindow(QtWidgets.QDialog):
             self.porta.clear()
             self.base_de_dados.clear()
             self.orgao_responsavel_base.clear()
-            self.periodos_referencia_base.clear()
-            self.data_aquisicao_base.clear()
+            #self.periodos_referencia_base.clear()
+            #self.data_aquisicao_base.clear()
             self.usuario.clear()
             self.senha.clear()
+            self.textEdit_bd.clear()
 
     def fill_text_fields_shp(self):
         """
@@ -384,10 +386,12 @@ class ConfigWindow(QtWidgets.QDialog):
         if current_id == "0":
             self.nome_shp.clear()
             self.url_dowload.clear()
-            # self.diretorioLocalshp.
+            self.diretorioLocalshp.setFilePath("")
+            self.style_path.setFilePath("")
             self.orgao_responsavel_shp.clear()
-            self.periodo_referencia_shp.clear()
-            self.data_aquisicao_shp.clear()
+            self.textEdit_shp.clear()
+            #self.periodo_referencia_shp.clear()
+            #self.data_aquisicao_shp.clear()
 
     def fill_combo_box_geocoding_server(self):
         """
@@ -496,10 +500,12 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def fill_mandatory_layers_from_json_conf(self):
         camada_obrig = self.setings.get_camadas_base_obrigatoria()
-        pg = self.source_databases
-        shp = self.source_shp
+        #pg = self.setings.get_config_database()
+        #shp = self.setings.get_config_shapefile()
+        source_databases = self.setings.get_config_database()
+        source_shp = self.setings.get_config_shapefile()
 
-        for item in self.source_databases:
+        for item in source_databases:
             self.comboBox_base_lpm_hom.addItem(item["nome"] + " " + "(PostgreSQL)", [item["id"],item["tipo"]])
             self.comboBox_base_lpm_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", [item["id"],item["tipo"]])
             self.comboBox_base_ltm_hom.addItem(item["nome"] + " " + "(PostgreSQL)", [item["id"],item["tipo"]])
@@ -511,7 +517,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_lmeo_hom.addItem(item["nome"] + " " + "(PostgreSQL)", [item["id"],item["tipo"]])
             self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(PostgreSQL)", [item["id"],item["tipo"]])
 
-        for item in self.source_shp:
+        for item in source_shp:
             self.comboBox_base_lpm_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
             self.comboBox_base_lpm_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
             self.comboBox_base_ltm_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
