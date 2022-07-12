@@ -756,21 +756,21 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.comboBox_camada_ltm_n_hom.setCurrentText(camada_obrig["ltm_nao_homologada"][1])
                 self.groupBox_ltm_n_hom.setCheckable(True)
 
-            if base_config == {}:
-                base_config = self.search_base_shp(camada_obrig["area_nao_homologada"][0])
-
-            if base_config["tipo"] == "pg":
-                self.comboBox_camada_area_uniao_n_hom.clear()
-                for item_camada in base_config["TabelasDisponiveis"]:
-                    self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
-                self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
-
-            if base_config["tipo"] == "shp":
-                self.comboBox_camada_area_uniao_n_hom.clear()
-                self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
-                self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
-            print(base_config["nome"])
-            self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"])
+            # if base_config == {}:
+            #     base_config = self.search_base_shp(camada_obrig["area_nao_homologada"][0])
+            #
+            # if base_config["tipo"] == "pg":
+            #     self.comboBox_camada_area_uniao_n_hom.clear()
+            #     for item_camada in base_config["TabelasDisponiveis"]:
+            #         self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
+            #     self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (PostgreSQL)")
+            #
+            # if base_config["tipo"] == "shp":
+            #     self.comboBox_camada_area_uniao_n_hom.clear()
+            #     self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
+            #     self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
+            # print(base_config["nome"])
+            # self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"])
 
     def fill_mandatory_layers_not_json(self):
 
