@@ -663,7 +663,7 @@ class ConfigWindow(QtWidgets.QDialog):
                     self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
                     self.comboBox_base_area_uniao_n_hom.setCurrentText(base_config["nome"] + " (ShapeFile)")
 
-                self.comboBox_base_area_uniao_n_hom.setCurrentText(camada_obrig["area_nao_homologada"][1])
+                self.comboBox_camada_area_uniao_n_hom.setCurrentText(camada_obrig["area_nao_homologada"][1])
                 self.groupBox_area_uniao_n_hom.setChecked(True)
 
             #LLTM não homologada
