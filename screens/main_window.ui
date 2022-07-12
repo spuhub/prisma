@@ -138,7 +138,7 @@
      <item>
       <widget class="QPushButton" name="btn_ponto">
        <property name="enabled">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
