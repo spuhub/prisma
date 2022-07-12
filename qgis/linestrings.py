@@ -124,7 +124,7 @@ class Linestrings():
 
                 # Soma da área de interseção feita com feição de input e atual área comparada
                 # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                if self.operation_config['operation_config']['required'][index]['nome'] == 'Área união homologada':
+                if self.operation_config['operation_config']['required'][index]['nome'] == 'Área Homologada':
                     self.gpd_area_homologada = gpd.overlay(input, area)
 
                 if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
