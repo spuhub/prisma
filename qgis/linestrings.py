@@ -441,7 +441,7 @@ class Linestrings():
                 if text_item not in text:
                     text += text_item
 
-        text += "Nominatim (2022)."
+        text += "OpenStreetMap (2022)."
         self.rect_main_map = None
 
         field_data_source.setText(text)

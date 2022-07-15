@@ -87,6 +87,23 @@ class OverlayReportPolygons():
         else:
             bairro_0.setText("Não informado.")
 
+        et = EnvTools()
+        headers = et.get_report_hearder()
+
+        ministerio = self.layout.itemById('CD_Cabecalho_Ministerio')
+        ministerio.setText(headers['ministerio'])
+
+        sec_esp = self.layout.itemById('CD_Cabecalho_Secretaria_Esp')
+        sec_esp.setText(headers['secretariaEspecial'])
+
+        secretaria = self.layout.itemById('CD_Cabecalho_Secretaria')
+        secretaria.setText(headers['secretaria'])
+
+        superintendencia = self.layout.itemById('CD_Cabecalho_Superintendencia')
+        superintendencia.setText(headers['superintendencia'])
+
+        setor = self.layout.itemById('CD_Cabecalho_Setor')
+        setor.setText(headers['setor'])
 
         self.export_pdf(gdf_input, operation_config, time, index_1, index_2)
 

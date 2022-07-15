@@ -1,138 +1,46 @@
 {
     "base1": {
         "id": "base1",
-        "tipo": "shp",
-        "nome": "LTM",
-        "nomeFantasiaCamada": "LTM",
-        "urlDowload": "casa.com",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LTM_Homologada_L.shp",
-        "orgaoResponsavel": "casa",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "08/07/2022",
-        "dataAquisicao": "08/07/2022",
-        "descricao": "casa",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_3_4_Trecho_LTM_L.sld"
-            }
-        ]
-    },
-    "obrigatorio": {
-        "area_homologada": [
-            "base5",
-            "area_especial",
-            "\u00c1rea Homologada"
-        ],
-        "lpm_homologada": [
-            "base3",
-            "",
-            "LPM Homologada"
-        ],
-        "ltm_homologada": [
-            "base1",
-            "",
-            "LTM Homologada"
-        ]
-    },
-    "base3": {
-        "id": "base3",
-        "tipo": "shp",
-        "nome": "LPM",
-        "nomeFantasiaCamada": "LPM",
-        "urlDowload": "csa",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LPM_Homologada_L.shp",
-        "orgaoResponsavel": "caasa",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "08/07/2022",
-        "dataAquisicao": "07/07/2022",
-        "descricao": "casacadadadacadada",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_3_3_Trecho_LPM_L.sld"
-            }
-        ]
-    },
-    "base4": {
-        "id": "base4",
-        "tipo": "shp",
-        "nome": "area militar",
-        "nomeFantasiaCamada": "area militar",
-        "urlDowload": "asasa",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
-        "orgaoResponsavel": "casa",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "08/07/2022",
-        "dataAquisicao": "07/07/2022",
-        "descricao": "casacadadadacadada",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_3_3_Trecho_LPM_L.sld"
-            }
-        ]
-    },
-    "base5": {
-        "id": "base5",
         "tipo": "pg",
-        "nome": "base",
+        "nome": "Base 1",
         "host": "localhost",
-        "porta": "5450",
+        "porta": "5432",
         "baseDeDados": "usucapiao",
-        "orgaoResponsavel": "casa",
-        "periodosReferencia": "01/07/2022",
-        "dataAquisicao": "01/07/2022",
-        "descricao": "casa",
+        "orgaoResponsavel": "SPU",
+        "periodosReferencia": "12/07/2022",
+        "dataAquisicao": "12/07/2022",
+        "descricao": "Teste",
         "TabelasDisponiveis": [
             "faixa_dominio",
             "faixa_seguranca",
+            "massa_dagua",
             "area_especial",
-            "parcela",
-            "municipio",
-            "trecho_area_indubitavel",
-            "trecho_ferroviario",
             "terras_interiores",
+            "trecho_area_indubitavel",
+            "municipio",
+            "trecho_ferroviario",
             "trecho_rodoviario",
             "trecho_terreno_acrescido_marginal",
             "trecho_terreno_marginal",
             "unidade_federacao",
-            "terreno_sujeito_inundacao",
-            "massa_dagua"
+            "parcela",
+            "terreno_sujeito_inundacao"
         ],
         "TipoTabelasDisponiveis": [
             "",
             "",
             "ST_Polygon",
-            "",
-            "ST_MultiPolygon",
-            "",
-            "ST_LineString",
-            "",
-            "ST_LineString",
+            "ST_Polygon",
             "",
             "",
             "ST_MultiPolygon",
+            "ST_LineString",
+            "ST_LineString",
             "",
-            "ST_Polygon"
+            "",
+            "ST_MultiPolygon",
+            "",
+            ""
         ],
         "tabelasCamadas": [
             "area_especial",
@@ -149,21 +57,21 @@
         "maisInformacoesTabelas": [
             {},
             {},
-            {
-                "orgaoResponsavel": "csasa",
-                "periodosReferencia": "09/07/2022",
-                "dataAquisicao": "09/07/2022",
-                "descricao": "csasa"
-            },
             {},
             {
-                "orgaoResponsavel": "cdasada",
-                "periodosReferencia": "09/07/2022",
-                "dataAquisicao": "09/07/2022",
-                "descricao": "dadacda"
+                "orgaoResponsavel": "fdasfdas",
+                "periodosReferencia": "12/07/2022",
+                "dataAquisicao": "12/07/2022",
+                "descricao": "sdafasd"
             },
             {},
             {},
+            {
+                "orgaoResponsavel": "dsafads",
+                "periodosReferencia": "12/07/2022",
+                "dataAquisicao": "12/07/2022",
+                "descricao": "fasdfas"
+            },
             {},
             {},
             {},
@@ -179,7 +87,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": ""
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\1_2_3_Massa_Dagua_A.sld"
             },
             {
                 "line_style": "",
@@ -187,7 +95,179 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": ""
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\1_6_1_Estrut_Apoio_Transporte_A.sld"
+            }
+        ]
+    },
+    "obrigatorio": {
+        "area_homologada": [
+            "base6",
+            "",
+            "\u00c1rea Homologada"
+        ],
+        "lpm_homologada": [
+            "base5",
+            "",
+            "LPM Homologada"
+        ],
+        "ltm_homologada": [
+            "base4",
+            "",
+            "LTM Homologada"
+        ],
+        "area_nao_homologada": [
+            "base1",
+            "municipio",
+            "\u00c1rea N\u00e3o Homologada"
+        ]
+    },
+    "base3": {
+        "id": "base3",
+        "tipo": "shp",
+        "nome": "\u00c1rea Militar",
+        "nomeFantasiaCamada": "\u00c1rea Militar",
+        "urlDowload": "teste",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "orgaoResponsavel": "Militar",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "14/07/2022",
+        "dataAquisicao": "14/07/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld"
+            }
+        ]
+    },
+    "base4": {
+        "id": "base4",
+        "tipo": "shp",
+        "nome": "LTM Homologada",
+        "nomeFantasiaCamada": "LTM Homologada",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LTM_Homologada_L.shp",
+        "orgaoResponsavel": "SPU Linha",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "05/09/2022",
+        "dataAquisicao": "05/08/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_4_Trecho_LTM_L.sld"
+            }
+        ]
+    },
+    "base5": {
+        "id": "base5",
+        "tipo": "shp",
+        "nome": "LPM Homologada",
+        "nomeFantasiaCamada": "LPM Homologada",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LPM_Homologada_L.shp",
+        "orgaoResponsavel": "SPU LPM",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "05/09/2022",
+        "dataAquisicao": "05/08/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LPM_L.sld"
+            }
+        ]
+    },
+    "base6": {
+        "id": "base6",
+        "tipo": "shp",
+        "nome": "\u00c1rea Homologada",
+        "nomeFantasiaCamada": "\u00c1rea Homologada",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "orgaoResponsavel": "SPU Homol",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "25/11/2022",
+        "dataAquisicao": "19/01/2023",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+            }
+        ]
+    },
+    "base7": {
+        "id": "base7",
+        "tipo": "shp",
+        "nome": "\u00c1rea Quilombola",
+        "nomeFantasiaCamada": "\u00c1rea Quilombola",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU Quilom",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "12/07/2022",
+        "dataAquisicao": "12/07/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\2_1_4_Terreno_Cadastral_A.sld"
+            }
+        ]
+    },
+    "base8": {
+        "id": "base8",
+        "tipo": "shp",
+        "nome": "Shapefile Linhas",
+        "nomeFantasiaCamada": "Shapefile Linhas",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\vinir\\Documents\\linestring_2.shp",
+        "orgaoResponsavel": "SPU Linha",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "12/07/2022",
+        "dataAquisicao": "12/07/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_6_Linha_Costa_L.sld"
             }
         ]
     }
