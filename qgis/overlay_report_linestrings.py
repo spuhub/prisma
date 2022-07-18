@@ -30,7 +30,7 @@ class OverlayReportLinestrings():
     def handle_overlay_report(self, gdf_input, operation_config, time, index_1, index_2):
         camada_sem=""
         camada_com=""
-        camada_sem, camada_com=self.overlay_shapefile(gdf_input, operation_config, camada_sem, camada_com)
+        camada_sem, camada_com = self.overlay_shapefile(gdf_input, operation_config, camada_sem, camada_com)
         camada_sem, camada_com = self.overlay_database(gdf_input, operation_config, camada_sem, camada_com)
         camada_sem, camada_com = self.overlay_required(gdf_input, operation_config, camada_sem, camada_com)
         com = self.layout.itemById('CD_Com_Sobreposicao_Texto')
@@ -87,6 +87,23 @@ class OverlayReportLinestrings():
         else:
             bairro_0.setText("Não informado.")
 
+        et = EnvTools()
+        headers = et.get_report_hearder()
+
+        ministerio = self.layout.itemById('CD_Cabecalho_Ministerio')
+        ministerio.setText(headers['ministerio'])
+
+        sec_esp = self.layout.itemById('CD_Cabecalho_Secretaria_Esp')
+        sec_esp.setText(headers['secretariaEspecial'])
+
+        secretaria = self.layout.itemById('CD_Cabecalho_Secretaria')
+        secretaria.setText(headers['secretaria'])
+
+        superintendencia = self.layout.itemById('CD_Cabecalho_Superintendencia')
+        superintendencia.setText(headers['superintendencia'])
+
+        setor = self.layout.itemById('CD_Cabecalho_Setor')
+        setor.setText(headers['setor'])
 
         self.export_pdf(gdf_input, operation_config, time, index_1, index_2)
 

@@ -24,7 +24,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
                     str(headers['superintendencia']),
                     str(headers['setor'])]
 
-    titulo_memorial_descr = 'MEMORIAL DESCRITIVO'
+    titulo_memorial_descr = 'MEMORIAL SINTÉTICO DE VÉRTICES'
 
     ocupante_imovel = layout.itemById('CD_Compl_Ocupante').currentText()
     cpf_cnpj = layout.itemById('CD_Compl_CPF_CNPJ').currentText()
@@ -34,10 +34,9 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
     area_total = area_total[22:-4]
     centroide = str(layout.itemById('CD_Centroide').currentText())
     centroide = centroide.split('Y')
-    txt_centroide = centroide[0][:-2] + '; Y' + centroide[1]
+    txt_centroide = centroide[0][:-1] + '; Y' + centroide[1]
     sobreposicao_uniao = str(layout.itemById('CD_Compl_Obs4').currentText())
     sobreposicao_uniao = sobreposicao_uniao[41:-4]
-    perimetro_total = '000'
 
     titulo_descricao = "descrição"
 
@@ -59,17 +58,12 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
     doc = SimpleDocTemplate(pdf_path, pagesize=letter, rightMargin=10 * mm, leftMargin=20 * mm, topMargin=30 * mm,
                             bottomMargin=35)
 
-    im2 = Image(os.path.join(os.path.dirname(__file__), "static/spu.png"), 35 * mm, 15 * mm)
-    im = Image(os.path.join(os.path.dirname(__file__), "static/image_republica.jpeg"), 20 * mm, 20 * mm)
+    im = Image(os.path.join(os.path.dirname(__file__), "static/Brasao_Oficial_Colorido.png"), 35 * mm, 20 * mm)
     im.hAlign = 'LEFT'
-    im2.hAlign = 'RIGHT'
-    im2.vAlign = "TOP"
 
     styles = getSampleStyleSheet()
-    styles.add(
-        ParagraphStyle(name='titulo_principal', alignment=TA_CENTER, fontName="Times-Roman", textTransform="uppercase",
-                       fontSize=11))
-    styles.add(ParagraphStyle(name='titulo_secun', alignment=TA_CENTER, fontName="Times-Roman", fontSize=11))
+    styles.add(ParagraphStyle(name='titulo_principal', fontName="Times-Roman", fontSize=11))
+    styles.add(ParagraphStyle(name='titulo_secun', fontName="Times-Roman", fontSize=11))
 
     grupo_titulo = [Paragraph(texto_titulo[0], styles["titulo_principal"]),
                     Paragraph(texto_titulo[1], styles["titulo_secun"]),
@@ -77,7 +71,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
                     Paragraph(texto_titulo[3], styles["titulo_secun"]),
                     Paragraph(texto_titulo[4], styles["titulo_secun"])]
 
-    cabecalho_titulo = TablePDF([[im, grupo_titulo, im2]], colWidths=(30 * mm, 130 * mm, 42 * mm), rowHeights=(5 * mm))
+    cabecalho_titulo = TablePDF([[im, grupo_titulo, ""]], colWidths=(30 * mm, 130 * mm, 42 * mm), rowHeights=(5 * mm))
     Story.append(cabecalho_titulo)
 
     Story.append(Spacer(1, 11))
@@ -98,7 +92,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
     Story.append(t)
 
     dataCabecalho = [["Endereço: " + endereco], ["Municipio/UF: " + municipio_uf],
-                     ["Área total do Imóvel: " + area_total + " m²", "Perimetro Total (m): " + perimetro_total],
+                     ["Área total do Imóvel: " + area_total + " m²"],
                      ["Sobreposição Área da União: " + sobreposicao_uniao + " m²", "Centroide: " + txt_centroide]]
     t = TablePDF(dataCabecalho, colWidths=(76 * mm, 100 * mm), rowHeights=4 * [5 * mm])
     Story.append(t)
@@ -156,7 +150,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
 def handle_table(gdf_vertices):
     table_1 = []
     table_2 = []
-    table_1.append(['Vertice', 'Coordenada X', 'Coordenada Y'])
+    table_1.append(['Vertice', 'X (E)', 'Y (N)'])
 
     add_table_1 = True
     count = 0
@@ -177,7 +171,7 @@ def handle_table(gdf_vertices):
             table_1.append(aux)
         elif index >= 26 and index <= 51:
             if index == 26:
-                table_2.append(['Vertice', 'Coordenada X', 'Coordenada Y'])
+                table_2.append(['Vertice', 'X (E)', 'Y (N)'])
             table_2.append(aux)
         elif index >= 52:
             if (count % 46) == 0 and count != 0:
@@ -200,8 +194,8 @@ def handle_table(gdf_vertices):
             if index == 0:
                 table_1[index].append('')
                 table_1[index].append('Vertice')
-                table_1[index].append('Coordenada X')
-                table_1[index].append('Coordenada Y')
+                table_1[index].append('X (E)')
+                table_1[index].append('Y (N)')
             else:
                 table_1[index].append('')
                 table_1[index].append(table_2[index][0])
