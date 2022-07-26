@@ -467,6 +467,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="faixa_proximidade">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Faixa de proximidade&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="maximum">
             <double>10000000000.989999771118164</double>
            </property>

@@ -504,6 +504,18 @@ class ConfigWindow(QtWidgets.QDialog):
         #shp = self.setings.get_config_shapefile()
         source_databases = self.setings.get_config_database()
         source_shp = self.setings.get_config_shapefile()
+        source_shp = self.setings.get_config_shapefile()
+
+        self.comboBox_base_lpm_hom.clear()
+        self.comboBox_base_lpm_n_hom.clear()
+        self.comboBox_base_ltm_hom.clear()
+        self.comboBox_base_ltm_n_hom.clear()
+        self.comboBox_base_area_uniao.clear()
+        self.comboBox_base_area_uniao_n_hom.clear()
+        self.comboBox_base_lltm_n_hom.clear()
+        self.comboBox_base_lltm_hom.clear()
+        self.comboBox_base_lmeo_hom.clear()
+        self.comboBox_base_lmeo_n_hom.clear()
 
         for item in source_databases:
             self.comboBox_base_lpm_hom.addItem(item["nome"] + " " + "(PostgreSQL)", [item["id"],item["tipo"]])

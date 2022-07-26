@@ -321,5 +321,80 @@
                 "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_6_1_Estrut_Apoio_Transporte_A.sld"
             }
         ]
+    },
+    "base8": {
+        "id": "base8",
+        "tipo": "shp",
+        "nome": "GPAS",
+        "nomeFantasiaCamada": "GPAS",
+        "urlDowload": "",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Assentamento_A.shp",
+        "orgaoResponsavel": "ok",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "01/07/2022",
+        "dataAquisicao": "01/07/2022",
+        "descricao": "adfa",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
+            }
+        ]
+    },
+    "base9": {
+        "id": "base9",
+        "tipo": "shp",
+        "nome": "gps",
+        "nomeFantasiaCamada": "gps",
+        "urlDowload": "urla",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\ctr_lotes.shp",
+        "orgaoResponsavel": "loko",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "18/07/2022",
+        "dataAquisicao": "18/07/2022",
+        "descricao": "loo",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
+            }
+        ]
+    },
+    "base10": {
+        "id": "base10",
+        "tipo": "shp",
+        "nome": "gps",
+        "nomeFantasiaCamada": "gps",
+        "urlDowload": "como.barra",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Assentamento_A.shp",
+        "orgaoResponsavel": "caaa",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "18/07/2022",
+        "dataAquisicao": "18/07/2022",
+        "descricao": "casa",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_6_1_Estrut_Apoio_Transporte_A.sld"
+            }
+        ]
     }
 }
