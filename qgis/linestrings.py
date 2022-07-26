@@ -62,8 +62,8 @@ class Linestrings():
         coord_x = []
         coord_y = []
         gdf_interseption_points = []
-        # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
 
+        # Extrai latitude e longitude desses vértices (Será usado para gerar tabelas pdf)
         if not interseption_points.is_empty:
             if index_2 == None:
                 input.loc[0, self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']] = True
