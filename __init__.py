@@ -60,5 +60,6 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
+
     from .prisma import Prisma
     return Prisma(iface)
