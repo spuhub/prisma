@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/plugins/prisma">
+    <file>icon.png</file>
+    <file>urgeologo.png</file>
+  </qresource>
+</RCC>

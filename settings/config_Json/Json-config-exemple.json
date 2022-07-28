@@ -1,0 +1,62 @@
+{/*Exemplo para base do tipo Postgres*/
+  "base1": {
+    "id": "base1", /*ID da base de dados (gerado automaticamente)*/
+    "tipo": "pg", /*Define o tipo de base de dados  "pg" para bases de dados do tipo postgres e shp para shapeFile */
+    "nome": "edgv", /*Nome da base de dados no plugin (nome fantasia)*/
+    "baseDeDAdos": "edgv", /*Nome da base de dados no banco*/
+    "host": "127.0.0.1", /*host onde está armazenado o banco de dados (IP ou URL)*/
+    "orgaoResponsavel" : "SPU", /*Orgão que criou e é reposavel por manter a base de dados*/
+    "periosReferencia": "10/11/2021", /*Data do mundo real que os dados se referem. Diferente da data que foram colocados no banco de dados*/
+    "dataAquisicao":"10/11/2021", /*Data que os dados foram adiquiridos ou armazenados do banco de dados*/
+    "TabelasDisponiveis": ["area", "ferrovia","estrada", "linhaferrea", "LPM"], /*tabelas disponiveis no banco de dados*/
+    "TipoTabelasDisponiveis": ["Polygon", "Line","Line", "Line", "Line"],
+    "tabelasCamadas": ["ferrovia","estrada", "linhaferrea"], /*Nome das tabelas que serão usadas nas buscas (nomes verdadeiros no BD)*/
+    "nomeFantasiaTabelasCamadas": ["ferroviasEDGV", "estradas"], /*Nome fantazia das tabelas (nomes que irá aparecer na interface e nos relatorios)*/
+    "descricaoTabelasCamadas": ["E de ferrovia", "E de estrada", "É de linhaFerrea"], /*Descrição das tabela/camadas inseridos pelo usuario*/
+    "estiloTabelasCamadas": [
+      {
+        "estiloLinha": "dash dot",
+        "corlinha": "red",
+        "espessuraLinha": 1.0,
+        "TipoPreenchimento": 'cross',
+        "corPreenchimento": ""
+      },
+       {
+        "estiloLinha": "dash dot",
+        "corlinha": "red",
+        "espessuraLinha": 1.0,
+        "TipoPreenchimento": 'cross',
+        "corPreenchimento": ""
+      },
+       {
+        "estiloLinha": "dash dot",
+        "corlinha": "red",
+        "espessuraLinha": 1.0,
+        "TipoPreenchimento": 'cross',
+        "corPreenchimento": ""
+      }
+    ]
+},
+  /*Exemplo para base do tipo shapefile*/
+  "base2":{
+    "id": "base2", /*ID da base de dados (gerado automaticamente)*/
+    "tipo": "shp", /*Define o tipo de base de dados  "pg" para bases de dados do tipo postgres e 'shp' para shapeFile */
+    "nome": "Shpimoveis", /*Nome da base de dados*/
+    "urlDowload": "www.google.com", /*URL de dowload do shapefile*/
+    "diretorioLocal": "c:/" /*Diretorio onde se encontra o shapeFile*/,
+    "orgaoResponsavel" : "SPU", /*Orgão que criou e é reposavel por manter a base de dados*/
+    "periosReferencia": "10/11/2021", /*Data do mundo real que os dados se referem. Diferente da data que foram colocados no banco de dados*/
+    "dataAquisicao":"10/11/2021", /*Data que os dados foram adiquiridos ou armazenados do banco de dados*/
+    "nomeFantasiaCamada": "ferrovia", /*Data que os dados foram adiquiridos ou armazenados do banco de dados*/
+    "TipoCamada":"Polygon",
+    "estiloCamadas": [
+      {
+        "estiloLinha": "dash dot",
+        "corlinha": "red",
+        "espessuraLinha": 1.0,
+        "TipoPreenchimento": 'cross',
+        "corPreenchimento": ""
+      }
+    ]
+}
+}
