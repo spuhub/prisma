@@ -1,6 +1,6 @@
-# spu-prisma
+# SPU-Prisma
 
-O Prisma deve ser considerado como um complemento do QGIS para Caracterização em massa de imóveis (lote, terreno) em geral. Em particular, esse complemento auxilia no estudo de sobreposição do imóvel bem como sua identificação no espaço. 
+O SPU-Prisma (ou simplesmente Prisma), deve ser considerado como um complemento do QGIS para Caracterização em massa de imóveis (lote, terreno) em geral. Em particular, esse complemento auxilia no estudo de sobreposição do imóvel bem como sua identificação no espaço. 
 
 Dado um polígono, linha, ponto ou endereço de entrada o complemento realiza a consulta de sobreposição nas bases de dados da SPU e em bases locais na máquina. Basicamente, o complemento testa se o imóvel sobrepõe ou não outros imóveis da União, bem como, levanta todas as suas características espaciais em relação aos imóveis da União. 
 
@@ -19,7 +19,7 @@ O prisma NÃO pode ser confundido com:
 
 * Um complemento para criar geometrias. 
 
-##Tipos de entradas de dados que o Prisma aceita 
+## Tipos de entradas de dados que o Prisma aceita 
 
 O Prisma aceita as seguintes entradas vindas do usuário: 
 
@@ -28,14 +28,13 @@ O Prisma aceita as seguintes entradas vindas do usuário:
 * De um shapeFile com uma ou mais feições, que pode ser: Pontos, Linha, Polígonos e Multipolígonos.
 
 
+## Tipos bases de dados que o Prisma Consome
+
 O Prisma também irá precisar de consumir internamente pelo menos um dos seguintes tipos de bases de dados: 
 
-Banco de dados Postgres/Postgis. 
+* Banco de dados Postgres/Postgis. 
 
-Um diretório na máquina do usuário com Shapefiles. 
-
- 
-##Tipos bases de dados que o Prisma Consome
+* Um diretório na máquina do usuário com Shapefiles. 
 
 Essas bases devem vir de um processo de curadoria feito pelos técnicos da SPU. E deverão ser cadastradas no próprio complemento dentro da janela de configurações.  
 
