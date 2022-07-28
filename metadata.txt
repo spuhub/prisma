@@ -6,7 +6,7 @@
 name=Prisma
 qgisMinimumVersion=3.16.11
 description=Plugin para fazer caracterização de imóveis 
-version=2.0
+version=3.0
 author=Zago
 email=guilherme.nascimento@economia.gov.br
 
