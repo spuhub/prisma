@@ -1,42 +1,38 @@
 <html>
 <body>
-<h3>Plugin Builder Results</h3>
-
-Congratulations! You just built a plugin for QGIS!<br/><br />
-
-<div id='help' style='font-size:.9em;'>
-Your plugin <b>Prisma</b> was created in:<br>
-&nbsp;&nbsp;<b>C:/Users/guibo/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins\prisma</b>
-<p>
-Your QGIS plugin directory is located at:<br>
-&nbsp;&nbsp;<b>C:/Users/guibo/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins</b>
-<p>
-<h3>What's Next</h3>
-<ol>
-    <li>If resources.py is not present in your plugin directory, compile the resources file using pyrcc5 (simply use <b>pb_tool</b> or <b>make</b> if you have automake)
-    <li>Optionally, test the generated sources using <b>make test</b> (or run tests from your IDE)
-    <li>Copy the entire directory containing your new plugin to the QGIS plugin directory (see Notes below)
-    <li>Test the plugin by enabling it in the QGIS plugin manager
-    <li>Customize it by editing the implementation file <b>prisma.py</b>
-    <li>Create your own custom icon, replacing the default <b>icon.png</b>
-    <li>Modify your user interface by opening <b>prisma_dialog_base.ui</b> in Qt Designer
-</ol>
-Notes:
+<h1 id="spu-prisma">SPU-Prisma</h1>
+<p>O SPU-Prisma (ou simplesmente Prisma), deve ser considerado como um complemento do QGIS para Caracterização em massa de imóveis (lote, terreno) em geral. Em particular, esse complemento auxilia no estudo de sobreposição do imóvel bem como sua identificação no espaço. </p>
+<p>Dado um polígono, linha, ponto ou endereço de entrada o complemento realiza a consulta de sobreposição nas bases de dados da SPU e em bases locais na máquina. Basicamente, o complemento testa se o imóvel sobrepõe ou não outros imóveis da União, bem como, levanta todas as suas características espaciais em relação aos imóveis da União. </p>
+<p>O Prisma gera documentos em formato PDF com o resultado da caracterização. Tais documentos são compostos por mapas, tabela de coordenadas, informações sobre os imóveis que estão se sobrepondo entre outras informações sobre a sobreposição, como por exemplo o tamanho da área sobreposta. </p>
+<h2 id="o-que-n-o-o-prisma">O que não é o Prisma</h2>
+<p>O prisma NÃO pode ser confundido com: </p>
 <ul>
-    <li>You can use <b>pb_tool</b> to compile, deploy, and manage your plugin. Tweak the <i>pb_tool.cfg</i> file included with your plugin as you add files. Install <b>pb_tool</b> using 
-        <i>pip</i> or <i>easy_install</i>. See <b>http://loc8.cc/pb_tool</b> for more information.
-    <li>You can also use the <b>Makefile</b> to compile and deploy when you
-        make changes. This requires GNU make (gmake). The Makefile is ready to use, however you 
-        will have to edit it to add addional Python source files, dialogs, and translations.
+<li><p>Um complemento para desenhar polígonos, pontos e linhas. </p>
+</li>
+<li><p>Um complemento para atualização de geometria ou qualquer outra informação de bancos de dados geográficos ou de um conjunto de shapefile (SHP). </p>
+</li>
+<li><p>Um complemento para fazer cadastro de imóveis. </p>
+</li>
+<li><p>Um complemento para criar geometrias. </p>
+</li>
 </ul>
-</div>
-<div style='font-size:.9em;'>
-<p>
-For information on writing PyQGIS code, see <b>http://loc8.cc/pyqgis_resources</b> for a list of resources.
-</p>
-</div>
-<p>
-&copy;2011-2019 GeoApt LLC - geoapt.com 
-</p>
+<h2 id="tipos-de-entradas-de-dados-que-o-prisma-aceita">Tipos de entradas de dados que o Prisma aceita</h2>
+<p>O Prisma aceita as seguintes entradas vindas do usuário: </p>
+<ul>
+<li>Um endereço de um imóvel que será geocodificado e transformado em um ponto especializado. </li>
+<li>Uma Feição selecionada de uma camada aberta no QGIS que pode ser de um dos tipos: camada de polígonos, camada de linhas, camada de ponto e camada de Multipolígonos </li>
+<li>De um shapeFile com uma ou mais feições, que pode ser: Pontos, Linha, Polígonos e Multipolígonos.</li>
+</ul>
+<h2 id="tipos-bases-de-dados-que-o-prisma-consome">Tipos bases de dados que o Prisma Consome</h2>
+<p>O Prisma também irá precisar de consumir internamente pelo menos um dos seguintes tipos de bases de dados: </p>
+<ul>
+<li><p>Banco de dados Postgres/Postgis. </p>
+</li>
+<li><p>Um diretório na máquina do usuário com Shapefiles. </p>
+</li>
+</ul>
+<p>Essas bases devem vir de um processo de curadoria feito pelos técnicos da SPU. E deverão ser cadastradas no próprio complemento dentro da janela de configurações.  </p>
+<p>Ao cadastrar as bases no plugin será gerado um JSON de curadoria e pré configuração das bases de dados. Tal JSON poderá ser compartilhado entre os usuários da SPU facilitando a disseminação das bases dados de consulta, garantindo que sejam utilizadas bases de dados confiáveis.</p>
+
 </body>
 </html>
