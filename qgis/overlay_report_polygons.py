@@ -114,7 +114,6 @@ class OverlayReportPolygons():
                 i['nomeFantasiaCamada'] = i['nomeFantasiaCamada'][0]
 
             for rowIndex, row in gdf_input.iterrows():
-                print(gdf_input.columns)
                 if str(i['nomeFantasiaCamada']) in gdf_input.columns and gdf_input.iloc[rowIndex][str(i['nomeFantasiaCamada'])] > 0:
                     camada_com+=i["nomeFantasiaCamada"]+"; "
                 else:
@@ -235,7 +234,6 @@ class OverlayReportPolygons():
 
     def merge_pdf(self, operation_config, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        print(pdf_name)
         # files_dir = os.path.normpath(files_dir)
         # print(files_dir)
         pdf_files = [f for f in os.listdir(operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]

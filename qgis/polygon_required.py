@@ -207,7 +207,6 @@ class PolygonRequired():
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        print(pdf_name)
         # files_dir = os.path.normpath(files_dir)
         # print(files_dir)
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
