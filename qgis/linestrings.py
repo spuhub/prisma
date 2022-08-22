@@ -304,10 +304,6 @@ class Linestrings():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada' \
-                    or layer.name() == 'LLTM Não Homologada' or layer.name() == 'LMEO Não Homologada' or layer.name() == 'LLTM Homologada' or layer.name() == 'LMEO Homologada':
-                layers_situation_map.append(layer)
-
             elif layer.name() == 'OpenStreetMap':
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
@@ -316,6 +312,15 @@ class Linestrings():
                 qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
                 layer.loadNamedStyle(qml_style_dir)
                 layer.triggerRepaint()
+
+            if index_2 == None:
+                if layer.name() == self.operation_config['operation_config']['shp'][index_1][
+                    'nomeFantasiaCamada']:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
+            else:
+                if layer.name() == self.operation_config['operation_config']['pg'][index_1][
+                    'nomeFantasiaTabelasCamadas'][index_2]:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
 
         # Configurações no QGis para gerar os relatórios PDF
         ms = QgsMapSettings()
