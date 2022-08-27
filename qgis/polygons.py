@@ -74,26 +74,31 @@ class Polygons():
         # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e feição
         # da atual área que está sendo comparada. Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
         for indexArea, rowArea in area.iterrows():
-            if (input.iloc[0]['geometry'].intersection(rowArea['geometry'])):
+
+            # Issue onde estava testando área e não interseção
+            if (input.iloc[0]['geometry'].intersects(rowArea['geometry'])):
                 data.append({
                     'areaLote': input.iloc[0]['geometry'].intersection(rowArea['geometry']).area,
                     'ctr_lat': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.y,
                     'ctr_long': input.iloc[0]['geometry'].intersection(rowArea['geometry']).centroid.x,
                     'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
                 })
-
-        intersection = gpd.GeoDataFrame(data, crs=input.crs)
+            
+        # Corrigido problema onde lista 'data' chegava ao dataframe vazia.
+        intersection = gpd.GeoDataFrame(data, crs=input.crs) if len(data) > 0 else None
 
         # Gera planta pdf somente quando acontece sobreposição
-        if len(intersection) > 0:
-            intersection.set_crs(allow_override=True, crs=input.crs)
+        # Corrigido problema onde pode não haver dataframe, pois a lista 'data' estava vazia
+        if intersection is not None:
+            if len(intersection) > 0:
+                intersection.set_crs(allow_override=True, crs=input.crs)
 
-            if len(input_standard) > 0:
-                self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
-                                   intersection, gdf_required, index_1, index_2)
-            else:
-                self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
-                                   gdf_required, index_1, index_2)
+                if len(input_standard) > 0:
+                    self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
+                                    intersection, gdf_required, index_1, index_2)
+                else:
+                    self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
+                                    gdf_required, index_1, index_2)
 
         if last_area:
             self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
