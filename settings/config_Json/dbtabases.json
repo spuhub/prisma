@@ -114,11 +114,6 @@
             "base4",
             "",
             "LTM Homologada"
-        ],
-        "area_nao_homologada": [
-            "base1",
-            "municipio",
-            "\u00c1rea N\u00e3o Homologada"
         ]
     },
     "base3": {
@@ -127,7 +122,7 @@
         "nome": "\u00c1rea Militar",
         "nomeFantasiaCamada": "\u00c1rea Militar",
         "urlDowload": "teste",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "diretorioLocal": "E:\\Zago\\atlas\\Area_Militar_A.shp",
         "orgaoResponsavel": "Militar",
         "aproximacao": [
             0.0
@@ -142,7 +137,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld"
+                "stylePath": "C:\\Users\\Marco\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_2_2_Trecho_Terreno_Marinha_A.sld"
             }
         ]
     },
@@ -152,7 +147,7 @@
         "nome": "LTM Homologada",
         "nomeFantasiaCamada": "LTM Homologada",
         "urlDowload": "Teste",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LTM_Homologada_L.shp",
+        "diretorioLocal": "E:\\Zago\\atlas\\LTM_Nao_Homologada_L.shp",
         "orgaoResponsavel": "SPU Linha",
         "aproximacao": [
             0.0
@@ -177,7 +172,7 @@
         "nome": "LPM Homologada",
         "nomeFantasiaCamada": "LPM Homologada",
         "urlDowload": "Teste",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LPM_Homologada_L.shp",
+        "diretorioLocal": "E:\\Zago\\atlas\\LPM_Homologada_L.shp",
         "orgaoResponsavel": "SPU LPM",
         "aproximacao": [
             0.0
@@ -192,7 +187,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LPM_L.sld"
+                "stylePath": "C:\\Users\\Marco\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_3_3_Trecho_LPM_L.sld"
             }
         ]
     },
@@ -202,7 +197,7 @@
         "nome": "\u00c1rea Homologada",
         "nomeFantasiaCamada": "\u00c1rea Homologada",
         "urlDowload": "Teste",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "diretorioLocal": "E:\\Zago\\atlas\\Area_Uniao_Homologada_A.shp",
         "orgaoResponsavel": "SPU Homol",
         "aproximacao": [
             0.0
@@ -217,7 +212,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+                "stylePath": "C:\\Users\\Marco\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
             }
         ]
     },
@@ -227,7 +222,7 @@
         "nome": "\u00c1rea Quilombola",
         "nomeFantasiaCamada": "\u00c1rea Quilombola",
         "urlDowload": "Teste",
-        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "diretorioLocal": "E:\\Zago\\atlas\\Area_Quilombola_A.shp",
         "orgaoResponsavel": "SPU Quilom",
         "aproximacao": [
             0.0
@@ -242,107 +237,7 @@
                 "width_border": "",
                 "style": "",
                 "color": "",
-                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld"
-            }
-        ]
-    },
-    "base8": {
-        "id": "base8",
-        "tipo": "shp",
-        "nome": "Shapefile Linhas",
-        "nomeFantasiaCamada": "Shapefile Linhas",
-        "urlDowload": "Teste",
-        "diretorioLocal": "C:\\Users\\vinir\\Documents\\linestring_2.shp",
-        "orgaoResponsavel": "SPU Linha",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "12/07/2022",
-        "dataAquisicao": "12/07/2022",
-        "descricao": "Teste",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_3_6_Linha_Costa_L.sld"
-            }
-        ]
-    },
-    "base8": {
-        "id": "base8",
-        "tipo": "shp",
-        "nome": "GPAS",
-        "nomeFantasiaCamada": "GPAS",
-        "urlDowload": "",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Assentamento_A.shp",
-        "orgaoResponsavel": "ok",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "01/07/2022",
-        "dataAquisicao": "01/07/2022",
-        "descricao": "adfa",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
-            }
-        ]
-    },
-    "base9": {
-        "id": "base9",
-        "tipo": "shp",
-        "nome": "gps",
-        "nomeFantasiaCamada": "gps",
-        "urlDowload": "urla",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\ctr_lotes.shp",
-        "orgaoResponsavel": "loko",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "18/07/2022",
-        "dataAquisicao": "18/07/2022",
-        "descricao": "loo",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_5_8_Curva_Nivel_L.sld"
-            }
-        ]
-    },
-    "base10": {
-        "id": "base10",
-        "tipo": "shp",
-        "nome": "gps",
-        "nomeFantasiaCamada": "gps",
-        "urlDowload": "como.barra",
-        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Assentamento_A.shp",
-        "orgaoResponsavel": "caaa",
-        "aproximacao": [
-            0.0
-        ],
-        "periodosReferencia": "18/07/2022",
-        "dataAquisicao": "18/07/2022",
-        "descricao": "casa",
-        "estiloCamadas": [
-            {
-                "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\1_6_1_Estrut_Apoio_Transporte_A.sld"
+                "stylePath": "C:\\Users\\Marco\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
             }
         ]
     }

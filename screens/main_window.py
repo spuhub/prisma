@@ -12,6 +12,11 @@ from PyQt5.QtWidgets import QMessageBox
 
 from ..dependency import Dependency
 
+from ..settings.install_dependecies import instala_dependencias, verifica_flag_dependencias
+
+arq_dependencias = os.path.join(os.path.dirname(os.path.dirname(__file__)),'settings', 'dependencies')
+flag_dependencias = os.path.join(os.path.dirname(os.path.dirname(__file__)),'settings','flag_dependencies')
+
 
 class MainWindow (QtWidgets.QDialog):
     """Classe que manipula a tela principal do Prisma."""
@@ -28,12 +33,24 @@ class MainWindow (QtWidgets.QDialog):
         super(MainWindow, self).__init__()
 
         self.ui = loadUi(os.path.join(os.path.dirname(__file__), 'main_window.ui'), self)
-
+        
+        # Se False, dependencias ainda não instaladas
+        if verifica_flag_dependencias(flag_dependencias) == "False":
+            msg = QMessageBox(self)
+            ret = msg.question(self, 'Download Dependências ', "É necessario fazer o download de algumas dependências para o Prisma funcionar corretamente! Deseja fazer o Download das Dependências?", QMessageBox.Yes | QMessageBox.Cancel)
+            if ret == QMessageBox.Yes:
+                instala_dependencias(arq_dependencias)
+                with open(flag_dependencias, "w", encoding='utf-8') as file:
+                    file.write("True")
+                 
+                ret = msg.question(self, 'Reinicio do Sistema Necessário', "É necessario fechar o QGIS para aplicar as instalações", QMessageBox.Ok)
+                sys.exit()
+        
         self.btn_config.clicked.connect(self.go_to_config)
         self.btn_ponto.clicked.connect(self.go_to_point)
         self.btn_feicao.clicked.connect(self.go_to_feature)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
-        self.btn_shapefile.clicked.connect(self.go_to_shapefile)
+        # self.btn_inst_depend.clicked.connect(self.go_to_shapefile)
         self.ui.closeEvent = self.close_event
         self.control = 1
 
@@ -41,9 +58,7 @@ class MainWindow (QtWidgets.QDialog):
         self.shortcut_esc = QShortcut(QKeySequence(Qt.Key_Escape), self.iface.mainWindow())
         self.shortcut_esc.setContext(Qt.ApplicationShortcut)
         self.shortcut_esc.activated.connect(self.close_event)
-        self.dialog_dependecy()
-
-
+        # self.dialog_dependecy()
 
     def dialog_dependecy(self):
         if not os.path.isdir(os.path.join(os.path.dirname(__file__), '../penv')):

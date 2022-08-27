@@ -1,0 +1,10 @@
+-m pip install --upgrade pip
+-m pip install wheel
+-m pip install pipwin
+-m pipwin install shapely
+-m pipwin install gdal
+-m pipwin install fiona
+-m pipwin install rtree
+-m pip install geopandas
+-m pip install PyPDF2
+-m pip install reportlab

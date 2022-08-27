@@ -1,12 +1,3 @@
-from ..screens.main_window import MainWindow
-from ..settings.config_window import ConfigWindow
-from ..screens.result_window import ResultWindow
-from ..screens.overlay_point import OverlayPoint
-from ..screens.overlay_feature import OverlayFeature
-from ..screens.overlay_shapefile import OverlayShapefile
-from ..screens.select_databases import SelectDatabases
-from ..screens.report_generator import ReportGenerator
-
 class Controller:
     """
     Classe que faz o controle das telas.
@@ -34,6 +25,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela principal do prisma.
         """
+        from ..screens.main_window import MainWindow
         self.main_window = MainWindow(self.iface)
         self.main_window.switch_config.connect(self.show_config)
         self.main_window.switch_overlay_point.connect(self.show_overlay_point)
@@ -48,6 +40,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de configuração do prisma.
         """
+        from ..settings.config_window import ConfigWindow
         self.config_window = ConfigWindow()
         self.config_window.back_window.connect(self.show_main)
         self.config_window.show()
@@ -56,6 +49,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de busca por ponto do prisma.
         """
+        from ..screens.overlay_point import OverlayPoint
         self.overlay_point_window = OverlayPoint()
         self.overlay_point_window.back_window.connect(self.show_main)
         self.overlay_point_window.continue_window.connect(self.show_select_databases)
@@ -65,6 +59,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de busca através de feições selecionadas do prisma.
         """
+        from ..screens.overlay_feature import OverlayFeature
         self.overlay_feature_window = OverlayFeature(self.iface)
         self.overlay_feature_window.back_window.connect(self.show_main)
         self.overlay_feature_window.continue_window.connect(self.show_select_databases)
@@ -74,6 +69,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de busca através de input shapefile do prisma.
         """
+        from ..screens.overlay_shapefile import OverlayShapefile
         self.overlay_shapefile_window = OverlayShapefile(self.iface)
         self.overlay_shapefile_window.back_window.connect(self.show_main)
         self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
@@ -83,6 +79,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de seleção de bases de dados para comparação do prisma.
         """
+        from ..screens.select_databases import SelectDatabases
         self.select_databases = SelectDatabases(operation_config)
         self.select_databases.cancel_window.connect(self.show_main)
         self.select_databases.continue_window.connect(self.show_result_window)
@@ -92,6 +89,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela onde o usuário insere os dados de cabeçalho e local onde devem ser gerados os relatórios PDF do prisma.
         """
+        from ..screens.report_generator import ReportGenerator
         self.report_generator = ReportGenerator(result)
         self.report_generator.show()
 
@@ -99,6 +97,7 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de resultados do prisma.
         """
+        from ..screens.result_window import ResultWindow
         self.result_window = ResultWindow(result)
         self.result_window.report_generator_window.connect(self.show_report_generator)
         self.result_window.show()
