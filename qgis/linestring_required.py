@@ -29,6 +29,7 @@ class LinestringRequired():
         self.index_input = None
 
         self.gpd_area_homologada = []
+        self.gpd_area_nao_homologada = []
 
         self.utils = Utils()
         self.time = None
@@ -37,8 +38,9 @@ class LinestringRequired():
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
-    def linestring_required_layers(self, input, input_standard, gdf_interseption_points, gpd_area_homologada, index_input, time, atlas, layout):
+    def linestring_required_layers(self, input, input_standard, gdf_interseption_points, gpd_area_homologada, gpd_area_nao_homologada, index_input, time, atlas, layout):
         self.gpd_area_homologada = gpd_area_homologada
+        self.gpd_area_nao_homologada = gpd_area_nao_homologada
         self.time = time
         self.index_input = index_input
         self.atlas = atlas
@@ -272,15 +274,13 @@ class LinestringRequired():
         input = self.operation_config['input']
 
         overlay_area = self.layout.itemById('CD_Compl_Obs1')
-        lot_area = self.layout.itemById('CD_Compl_Obs2')
-        overlay_uniao = self.layout.itemById('CD_Compl_Obs3')
-        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs4')
-        texto1 = self.layout.itemById('CD_Compl_Obs5')
-        texto2 = self.layout.itemById('CD_Compl_Obs6')
+        lot_area = self.layout.itemById('CD_Compl_Obs1')
+        overlay_uniao = self.layout.itemById('CD_Compl_Obs2')
+        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs3')
+        overlay_uniao_nao = self.layout.itemById('CD_Compl_Obs4')
+        overlay_uniao_nao_area = self.layout.itemById('CD_Compl_Obs5')
+        texto1 = self.layout.itemById('CD_Compl_Obs6')
         texto1.setText("")
-        texto2.setText("")
-
-        overlay_area.setText("")
 
         # Área da feição
         format_value = f'{feature_input_gdp["areaLote"][0]:_.2f}'
@@ -302,6 +302,23 @@ class LinestringRequired():
                     len(self.gpd_area_homologada.explode())) + " segmentos.")
             else:
                 overlay_uniao_area.setText("Sobreposição Área Homologada: 0 metros em 0 segmentos.")
+
+        # Sobreposição com área da união não homologada
+        if 'Área Não Homologada' in input and input.iloc[self.index_input]['Área Não Homologada'] > 0:
+            overlay_uniao_nao.setText("Lote sobrepõe Área Não Homologada da União.")
+        else:
+            overlay_uniao_nao.setText("Lote não sobrepõe Área Não Homologada da União.")
+
+        if 'Área Não Homologada' in feature_input_gdp:
+            format_value = f'{feature_input_gdp.iloc[0]["Área Não Homologada"]:_.2f}'
+            format_value = format_value.replace('.', ',').replace('_', '.')
+
+            if len(self.gpd_area_nao_homologada) > 0:
+                overlay_uniao_nao_area.setText(
+                    "Sobreposição Área Não Homologada: " + str(format_value) + " metros em " + str(
+                        len(self.gpd_area_nao_homologada.explode())) + " segmentos.")
+            else:
+                overlay_uniao_nao_area.setText("Sobreposição Área Não Homologada: 0 metros em 0 segmentos.")
 
 
     def add_template_to_project(self, template_dir):

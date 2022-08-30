@@ -291,16 +291,14 @@ class PolygonRequired():
     def fill_observation(self, feature_input_gdp, layer_name):
         input = self.operation_config['input']
 
-        overlay_area = self.layout.itemById('CD_Compl_Obs1')
-        lot_area = self.layout.itemById('CD_Compl_Obs2')
-        overlay_uniao = self.layout.itemById('CD_Compl_Obs3')
-        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs4')
-        texto1 = self.layout.itemById('CD_Compl_Obs5')
+        lot_area = self.layout.itemById('CD_Compl_Obs1')
+        overlay_uniao = self.layout.itemById('CD_Compl_Obs2')
+        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs3')
+        overlay_uniao_nao = self.layout.itemById('CD_Compl_Obs4')
+        overlay_uniao_nao_area = self.layout.itemById('CD_Compl_Obs5')
         texto2 = self.layout.itemById('CD_Compl_Obs6')
-        texto1.setText("")
-        texto2.setText("")
 
-        overlay_area.setText("")
+        texto2.setText("")
 
         # Área da feição
         format_value = f'{feature_input_gdp["areaLote"][0]:_.2f}'
@@ -317,6 +315,20 @@ class PolygonRequired():
             format_value = f'{feature_input_gdp.iloc[0]["Área Homologada"]:_.2f}'
             format_value = format_value.replace('.', ',').replace('_', '.')
             overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(format_value) + " m².")
+
+        if 'Área Não Homologada' in feature_input_gdp:
+            print("Sobreposição Área não homologada: ", feature_input_gdp.iloc[0]["Área Não Homologada"])
+
+        # Sobreposição com área da união
+        if 'Área Não Homologada' in input and input.iloc[self.index_input]['Área Não Homologada'] > 0:
+            overlay_uniao_nao.setText("Lote sobrepõe Área Não Homologada da União.")
+        else:
+            overlay_uniao_nao.setText("Lote não sobrepõe Área Não Homologada da União.")
+
+        if 'Área Não Homologada' in feature_input_gdp:
+            format_value = f'{feature_input_gdp.iloc[0]["Área Não Homologada"]:_.2f}'
+            format_value = format_value.replace('.', ',').replace('_', '.')
+            overlay_uniao_nao_area.setText("Área de sobreposição com Área Não Homologada: " + str(format_value) + " m².")
 
     def add_template_to_project(self, template_dir):
         """

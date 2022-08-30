@@ -141,12 +141,12 @@ class Polygons():
                                 'nomeFantasiaCamada']] = False
                 else:
                     if self.operation_config['operation_config']['required'][index][
-                        "nomeFantasiaTabelasCamadas"] == "Área Homologada" or \
+                        "nomeFantasiaTabelasCamadas"][0] == "Área Homologada" or \
                             self.operation_config['operation_config']['required'][index][
-                                "nomeFantasiaTabelasCamadas"] == "Área Não Homologada":
+                                "nomeFantasiaTabelasCamadas"][0] == "Área Não Homologada":
                         input.loc[0, self.operation_config['operation_config']['required'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                            input, length).area.sum()
+                            input, area).area.sum()
                     else:
                         has_overlay = len(gpd.overlay(area, input))
                         if has_overlay > 0:
