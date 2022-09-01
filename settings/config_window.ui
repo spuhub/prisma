@@ -28,11 +28,215 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
      </property>
+     <widget class="QWidget" name="tab_shp">
+      <attribute name="title">
+       <string>Shapefile</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_37">
+         <item>
+          <widget class="QComboBox" name="combo_box_shp">
+           <item>
+            <property name="text">
+             <string>Adicionar um novo Shapefile</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="delete_sh">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <item>
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>Nome Camada:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="nome_shp">
+           <property name="placeholderText">
+            <string>Nome</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Caminho do Shapefile:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsFileWidget" name="diretorioLocalshp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="filter">
+            <string>*.shp</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_30">
+         <item>
+          <widget class="QLabel" name="label_35">
+           <property name="text">
+            <string>Geometria:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_2"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Url:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="url_dowload">
+           <property name="placeholderText">
+            <string>URL para download</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_28">
+         <item>
+          <widget class="QLabel" name="label_33">
+           <property name="text">
+            <string>Estilo:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsFileWidget" name="style_path"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Orgão Responsável:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="orgao_responsavel_shp">
+           <property name="placeholderText">
+            <string>Orgão Responsável</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Periodo de Referência:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsDateTimeEdit" name="periodo_referencia_shp">
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Data de Aquisição:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsDateTimeEdit" name="data_aquisicao_shp">
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_21">
+         <item>
+          <widget class="QLabel" name="label_20">
+           <property name="text">
+            <string>Descrição:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="textEdit_shp"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_29">
+         <item>
+          <widget class="QLabel" name="label_34">
+           <property name="text">
+            <string>Faixa de Proximidade:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="faixa_proximidade">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Faixa de proximidade&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="maximum">
+            <double>10000000000.989999771118164</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_bd">
       <attribute name="title">
        <string>Banco de dados</string>
@@ -51,6 +255,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="delete_base">
+           <property name="contextMenuPolicy">
+            <enum>Qt::ActionsContextMenu</enum>
+           </property>
            <property name="text">
             <string>Delete</string>
            </property>
@@ -268,210 +475,6 @@
           <widget class="QPushButton" name="testar_base_carregar_camadas">
            <property name="text">
             <string>Configurar Camadas</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_shp">
-      <attribute name="title">
-       <string>Shapefile</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_37">
-         <item>
-          <widget class="QComboBox" name="combo_box_shp">
-           <item>
-            <property name="text">
-             <string>Adicionar um novo Shapefile</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="delete_sh">
-           <property name="text">
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_16">
-         <item>
-          <widget class="QLabel" name="label_15">
-           <property name="text">
-            <string>Nome Camada:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="nome_shp">
-           <property name="placeholderText">
-            <string>Nome</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Caminho do Shapefile:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QgsFileWidget" name="diretorioLocalshp">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="filter">
-            <string>*.shp</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_30">
-         <item>
-          <widget class="QLabel" name="label_35">
-           <property name="text">
-            <string>Geometria:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_2"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_15">
-         <item>
-          <widget class="QLabel" name="label_14">
-           <property name="text">
-            <string>Url:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="url_dowload">
-           <property name="placeholderText">
-            <string>URL para download</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_28">
-         <item>
-          <widget class="QLabel" name="label_33">
-           <property name="text">
-            <string>Estilo:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QgsFileWidget" name="style_path"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_14">
-         <item>
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string>Orgão Responsável:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="orgao_responsavel_shp">
-           <property name="placeholderText">
-            <string>Orgão Responsável</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_13">
-         <item>
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>Periodo de Referência:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QgsDateTimeEdit" name="periodo_referencia_shp">
-           <property name="displayFormat">
-            <string>dd/MM/yyyy</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_12">
-         <item>
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Data de Aquisição:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QgsDateTimeEdit" name="data_aquisicao_shp">
-           <property name="displayFormat">
-            <string>dd/MM/yyyy</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_21">
-         <item>
-          <widget class="QLabel" name="label_20">
-           <property name="text">
-            <string>Descrição:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="textEdit_shp"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_29">
-         <item>
-          <widget class="QLabel" name="label_34">
-           <property name="text">
-            <string>Faixa de Proximidade:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="faixa_proximidade">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Faixa de proximidade&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="maximum">
-            <double>10000000000.989999771118164</double>
            </property>
           </widget>
          </item>
@@ -1056,7 +1059,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="combo_box_servico_geocod_2"/>
+            <widget class="QComboBox" name="combo_box_servico_geocod">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1096,7 +1103,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="key_geo_cod_2"/>
+            <widget class="QLineEdit" name="key_geo_cod">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1136,7 +1150,7 @@
           </layout>
          </item>
          <item>
-          <spacer name="horizontalSpacer_17">
+          <spacer name="horizontalSpacer_18">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -1149,7 +1163,7 @@
           </spacer>
          </item>
          <item>
-          <spacer name="horizontalSpacer_14">
+          <spacer name="horizontalSpacer_19">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -1162,19 +1176,56 @@
           </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_31">
+          <layout class="QHBoxLayout" name="horizontalLayout_18">
            <item>
-            <widget class="QComboBox" name="comboBox"/>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_45">
+            <widget class="QLabel" name="label_16">
              <property name="text">
-              <string/>
+              <string>Nome</string>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="txt_basemap_name"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_20">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_21">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_44">
+           <item>
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>Link do basemap</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="txt_basemap_link"/>
            </item>
           </layout>
          </item>

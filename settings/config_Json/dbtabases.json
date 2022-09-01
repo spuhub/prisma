@@ -495,5 +495,9 @@
                 "stylePath": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld"
             }
         ]
+    },
+    "basemap": {
+        "nome": "123",
+        "link": "4567"
     }
 }

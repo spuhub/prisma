@@ -72,7 +72,6 @@ class JsonTools:
         Retorna uma lista com as configurações das camadas obrigatórias caso tiver. Se não tiver camadas
         obrigatórias retorna uma lista vazia.
         @return: Lista com as configurações.
-
         """
 
         required_list = []
@@ -100,6 +99,29 @@ class JsonTools:
                             required_list.append(data_json)
 
         return required_list
+
+    def insert_data(self, all_json):
+        with open(self.json_path, "w") as f:
+            json.dump(all_json, f, indent=4)
+            f.close()
+
+    def get_config_basemap(self):
+
+        """
+        Retorna uma lista com as configurações de basemap.
+        @return: Lista com as configurações.
+        """
+        basemap_list = []
+
+        if os.stat(self.json_path).st_size != 0:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
+
+        if 'basemap' in json_config:
+            basemap_list = json_config['basemap']
+
+        return basemap_list
 
     def insert_database_pg(self, db_json_conf):
         """
@@ -222,7 +244,6 @@ class JsonTools:
                 with open(self.json_path, 'w') as f:
                     json.dump(dados, f, indent=4)
                 f.close()
-
 
     def delete_base(self, idConfig):
 
