@@ -22,6 +22,7 @@ class OperationController:
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
         self.data_required = self.json_tools.get_config_required()
+        self.basemap = self.json_tools.get_config_basemap()
 
     def get_operation(self, operation_config, selected_items_shp, selected_items_bd):
         """
@@ -56,6 +57,8 @@ class OperationController:
         elif (operation_config['operation'] == 'coordinate'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
 
+        if len(self.basemap) > 0:
+            operation_config['basemap'] = self.basemap
 
         return operation_config
 

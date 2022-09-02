@@ -497,7 +497,7 @@
         ]
     },
     "basemap": {
-        "nome": "123",
-        "link": "4567"
+        "nome": "Google Maps",
+        "link": "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
     }
 }

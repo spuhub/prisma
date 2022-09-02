@@ -351,9 +351,16 @@ class LayoutManager():
         return input
 
     def load_required_layers(self, gdf_required, crs):
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = ''
+        layer = None
+        if 'basemap' in self.operation_config['operation_config']:
+            tms = self.operation_config['operation_config']['basemap']['link']
+            layer = QgsRasterLayer(tms, self.operation_config['operation_config']['basemap']['nome'], 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
 
