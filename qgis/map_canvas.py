@@ -6,6 +6,8 @@ from qgis.utils import iface
 import geopandas as gpd
 import pandas as pd
 
+from urllib.parse import quote
+
 class MapCanvas():
     """
     Classe responsável por gerenciar o mostrador do QGIS. Utilizada somente para os dois botões presentes na tela de resultados do PRISMA.
@@ -31,7 +33,10 @@ class MapCanvas():
         tms = ''
         layer = None
         if 'basemap' in operation_config['operation_config']:
-            tms = 'type=xyz&url=https://mt1.google.com/vt/lyrs%3Dm%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0'
+            link_basemap = operation_config['operation_config']['basemap']['link']
+            url_quote = quote(link_basemap, safe='://')
+            tms = 'type=xyz&url=' + url_quote
+
             layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
