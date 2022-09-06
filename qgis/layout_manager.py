@@ -354,7 +354,7 @@ class LayoutManager():
         tms = ''
         layer = None
         if 'basemap' in self.operation_config['operation_config']:
-            tms = self.operation_config['operation_config']['basemap']['link']
+            tms = 'type=xyz&url=' + self.operation_config['operation_config']['basemap']['link']
             layer = QgsRasterLayer(tms, self.operation_config['operation_config']['basemap']['nome'], 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap

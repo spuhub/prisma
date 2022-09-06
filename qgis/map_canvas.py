@@ -28,13 +28,20 @@ class MapCanvas():
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
 
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = ''
+        layer = None
+        if 'basemap' in operation_config['operation_config']:
+            tms = 'type=xyz&url=https://mt1.google.com/vt/lyrs%3Dm%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
+        QApplication.instance().processEvents()
 
         # Carrega camadas shapefiles
         index = -1
@@ -106,13 +113,20 @@ class MapCanvas():
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
 
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = ''
+        layer = None
+        if 'basemap' in operation_config['operation_config']:
+            tms = 'type=xyz&url=' + operation_config['operation_config']['basemap']['link'] + '&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
+        QApplication.instance().processEvents()
 
         # Exibe de sobreposição entre input e Shapefiles
         index = -1

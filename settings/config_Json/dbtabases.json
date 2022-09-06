@@ -498,6 +498,6 @@
     },
     "basemap": {
         "nome": "Google Maps",
-        "link": "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+        "link": "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
     }
 }
