@@ -19,6 +19,8 @@ from PyPDF2 import PdfFileReader, PdfFileMerger
 from datetime import datetime
 from .overlay_report_linestrings import OverlayReportLinestrings
 
+from urllib.parse import quote
+
 class Linestrings():
     def __init__(self, operation_config):
         self.operation_config = operation_config
@@ -38,6 +40,8 @@ class Linestrings():
 
         self.layers = []
         self.root = QgsProject.instance().layerTreeRoot()
+
+        self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
 
     def comparasion_between_linestrings(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
@@ -321,7 +325,7 @@ class Linestrings():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'OpenStreetMap':
+            elif layer.name() == self.basemap:
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
@@ -458,12 +462,12 @@ class Linestrings():
 
         text = ''
         for item in print_layers:
-            if item != 'OpenStreetMap':
+            if item != self.basemap:
                 text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
                 if text_item not in text:
                     text += text_item
 
-        text += "OpenStreetMap (2022)."
+        text += self.basemap + " (2022)."
         self.rect_main_map = None
 
         field_data_source.setText(text)
@@ -619,7 +623,7 @@ class Linestrings():
 
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada', 'LPM Não Homologada',
-                         'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada', 'OpenStreetMap']
+                         'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada', self.basemap]
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])

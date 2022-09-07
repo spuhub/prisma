@@ -497,7 +497,7 @@
         ]
     },
     "basemap": {
-        "nome": "Google Maps",
+        "nome": "Bing",
         "link": "http://ecn.t3.tiles.virtualearth.net/tiles/a{q}.jpeg?g=1"
     }
 }
