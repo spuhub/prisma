@@ -33,8 +33,7 @@ from PyQt5.uic import loadUi
 
 # Initialize Qt resources from file resources.py
 from .resources import *
-# Import the code for the dialog
-from .controllers.screen_controller import Controller
+
 
 import os.path
 
@@ -189,7 +188,8 @@ class Prisma:
 
     def run(self):
         """Run method that performs all the real work"""
-
+        # Import the code for the dialog
+        from .controllers.screen_controller import Controller
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:

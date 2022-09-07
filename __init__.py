@@ -29,32 +29,36 @@ import sys
 import subprocess
 #from PyQt5.QtWidgets import QMessageBox
 #subprocess.check_call([sys.executable, "-m", "pip", "install", "PyPDF2"])
-from .dependency import Dependency
+# from .dependency import Dependency
+from .settings.install_dependecies import instala_dependencias, verifica_flag_dependencias
 
-currentDirectoryPath = os.path.dirname(__file__)
-#print currentDirectoryPath
+arq_dependencias = os.path.join(os.path.dirname(__file__), 'settings', 'dependencies')
+flag_dependencias = os.path.join(os.path.dirname(__file__), 'settings', 'flag_dependencies')
 
-libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/site-packages')
-#print libraryDirectoryPath
-sys.path.append(libraryDirectoryPath)
+# currentDirectoryPath = os.path.dirname(__file__)
+# #print currentDirectoryPath
 
-libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/distutils')
-#print libraryDirectoryPath
-#name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib\distutils'
-sys.path.append(libraryDirectoryPath)
+# libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/site-packages')
+# #print libraryDirectoryPath
+# sys.path.append(libraryDirectoryPath)
 
-libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib')
-#print libraryDirectoryPath
-#name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib'
-sys.path.append(libraryDirectoryPath)
+# libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/distutils')
+# #print libraryDirectoryPath
+# #name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib\distutils'
+# sys.path.append(libraryDirectoryPath)
 
-libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/distutils')
-#print libraryDirectoryPath
-#name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib\distutils'
+# libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib')
+# #print libraryDirectoryPath
+# #name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib'
+# sys.path.append(libraryDirectoryPath)
 
-libraryDirectoryPath = os.path.join(currentDirectoryPath, 'env/Lib/site-packages')
-#print libraryDirectoryPath
-sys.path.append(libraryDirectoryPath)
+# libraryDirectoryPath = os.path.join(currentDirectoryPath, 'penv/Lib/distutils')
+# #print libraryDirectoryPath
+# #name_lib_dir  = name_lib_dir +'\.qgis2\python\plugins\AzimuthDistanceCalculator\ENV\Lib\distutils'
+
+# libraryDirectoryPath = os.path.join(currentDirectoryPath, 'env/Lib/site-packages')
+# #print libraryDirectoryPath
+# sys.path.append(libraryDirectoryPath)
 
 
 # noinspection PyPep8Naming
@@ -64,9 +68,15 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
-    if not os.path.isdir(os.path.join(os.path.dirname(__file__), 'penv')):
-        d = Dependency()
-        d.exec_()
+
+    # if not os.path.isdir(os.path.join(os.path.dirname(__file__), 'penv')):
+    #     d = Dependency()
+    #     d.exec_()
+    try:
+        import geopandas
+    except ImportError:
+        with open(flag_dependencias, "w", encoding='utf-8') as file:
+            file.write("False")
+
     from .prisma import Prisma
     return Prisma(iface)
