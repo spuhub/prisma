@@ -22,13 +22,14 @@ class ConfigWindow(QtWidgets.QDialog):
     def __init__(self):
         super(ConfigWindow, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'config_window.ui'), self)
-        self.setings = JsonTools()
+        self.settings = JsonTools()
         self.credencials = EnvTools()
-        self.source_databases = self.setings.get_config_database()
-        self.source_shp = self.setings.get_config_shapefile()
+        self.source_databases = self.settings.get_config_database()
+        self.source_shp = self.settings.get_config_shapefile()
         self.fill_combo_box_base()
         self.fill_combo_box_shp()
         self.fill_combo_box_geocoding_server()
+        self.fill_basemap()
         self.newbdID = ''
         self.newshpID = ''
         self.fill_mandatory_layers()
@@ -85,7 +86,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic = {}
         id_current_db = self.combo_box_base.currentData()
 
-        config_db = self.setings.get_config_database()
+        config_db = self.settings.get_config_database()
         config = {}
         for item in config_db:
             if item["id"] == id_current_db:
@@ -118,7 +119,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
                 self.control_problem = 1
             if confg_dic["nome"] != "":
-                id = self.setings.insert_database_pg(confg_dic)
+                id = self.settings.insert_database_pg(confg_dic)
                 self.newbdID = id
                 self.source_databases.append(confg_dic)
                 self.combo_box_base.addItem(self.nome_base.text(), id)
@@ -137,7 +138,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 index = self.search_index_base_pg(id_current_db)
                 print("ID_current ==", id_current_db, index)
                 self.source_databases[index] = confg_dic
-                self.setings.edit_database(id_current_db, confg_dic)
+                self.settings.edit_database(id_current_db, confg_dic)
                 self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
                 self.combo_box_base.setCurrentText(self.nome_base.text())
                 #self.credencials.store_credentials(id_current_db, self.usuario.text(), self.senha.text())
@@ -155,7 +156,10 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_shp_config_json()
         self.save_mandatory_layers()
         self.save_geocoding_key()
+        self.save_basemap()
+
         self.fill_mandatory_layers_from_json_conf()
+
         btn = self.sender()
         btn_name = btn.objectName()
         if self.control_problem == 0:
@@ -163,7 +167,6 @@ class ConfigWindow(QtWidgets.QDialog):
                 msg = QMessageBox(self)
                 msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
         self.control_problem = 0
-
 
     def save_shp_config_json(self):
         """
@@ -201,8 +204,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 "style": "",
                 "color": "",
                 "stylePath" : self.style_path.filePath(),
-        }
-        ]
+        }]
 
         confg_dic["estiloCamadas"] = stryle
 
@@ -212,7 +214,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
                 self.control_problem = 1
             if confg_dic["nome"] != "":
-                id = self.setings.insert_database_pg(confg_dic)
+                id = self.settings.insert_database_pg(confg_dic)
                 self.newshpID = id
                 #print("New id", id)
                 self.source_shp.append(confg_dic)
@@ -232,11 +234,33 @@ class ConfigWindow(QtWidgets.QDialog):
                 index = self.search_index_base_shp(id_current_db)
                 print("ID_current ==", id_current_db, index)
                 self.source_shp[index] = confg_dic
-                self.setings.edit_database(id_current_db, confg_dic)
+                self.settings.edit_database(id_current_db, confg_dic)
                 self.combo_box_shp.setCurrentText(self.nome_shp.text())
                 #msg.information(self, "ShapeFile", "Shapefile editado com sucesso!")
                 # self.credencials.edit_credentials(id_current_db, self.usuario.text(), self.senha.text())
                 confg_dic = {}
+
+    def save_basemap(self):
+        json_complete = self.settings.get_json()
+
+        nome = self.txt_basemap_name.text()
+        link = self.txt_basemap_link.text()
+
+        if len(nome) == 0 or len(link) == 0:
+            del json_complete['basemap']
+        else:
+            json_complete['basemap'] = {}
+            json_complete['basemap']['nome'] = nome
+            json_complete['basemap']['link'] = link
+
+        self.settings.insert_data(json_complete)
+
+    def fill_basemap(self):
+        json_basemap = self.settings.get_config_basemap()
+
+        if len(json_basemap) > 0:
+            self.txt_basemap_name.setText(json_basemap['nome'])
+            self.txt_basemap_link.setText(json_basemap['link'])
 
     def fill_combo_box_base(self):
         """
@@ -499,12 +523,12 @@ class ConfigWindow(QtWidgets.QDialog):
             msg.critical(self, "Conexão com Banco de dados", "Falha ao conectar com o banco de dados!")
 
     def fill_mandatory_layers_from_json_conf(self):
-        camada_obrig = self.setings.get_camadas_base_obrigatoria()
-        #pg = self.setings.get_config_database()
-        #shp = self.setings.get_config_shapefile()
-        source_databases = self.setings.get_config_database()
-        source_shp = self.setings.get_config_shapefile()
-        source_shp = self.setings.get_config_shapefile()
+        camada_obrig = self.settings.get_camadas_base_obrigatoria()
+        #pg = self.settings.get_config_database()
+        #shp = self.settings.get_config_shapefile()
+        source_databases = self.settings.get_config_database()
+        source_shp = self.settings.get_config_shapefile()
+        source_shp = self.settings.get_config_shapefile()
 
         self.comboBox_base_lpm_hom.clear()
         self.comboBox_base_lpm_n_hom.clear()
@@ -831,7 +855,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
 
     def fill_mandatory_layers(self):
-        camada_obrig = self.setings.get_camadas_base_obrigatoria()
+        camada_obrig = self.settings.get_camadas_base_obrigatoria()
         self.fill_mandatory_layers_from_json_conf()
 
     def add_action_lpm_homologada(self):
@@ -1092,7 +1116,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
 
 
-        self.setings.set_camadas_base_obrigatoria(config)
+        self.settings.set_camadas_base_obrigatoria(config)
 
     def delete_bd(self):
         msg = QMessageBox(self)
@@ -1100,7 +1124,7 @@ class ConfigWindow(QtWidgets.QDialog):
                            "Você realmente deseja excluir a configuracão de " + self.combo_box_shp.currentText() + "?",
                            QMessageBox.Yes | QMessageBox.No)
         if ret == QMessageBox.Yes:
-            self.setings.delete_base(self.combo_box_base.currentData())
+            self.settings.delete_base(self.combo_box_base.currentData())
             self.nome_base.clear()
             self.host.clear()
             self.porta.clear()
@@ -1113,12 +1137,12 @@ class ConfigWindow(QtWidgets.QDialog):
             self.combo_box_base.setCurrentIndex(0)
 
     def delete_shp(self):
-        #self.setings.delete_base(self.combo_box_shp.currentData())
+        #self.settings.delete_base(self.combo_box_shp.currentData())
         msg = QMessageBox(self)
         ret = msg.question(self, 'Deletar configuração', "Você realmente deseja excluir a configuração de " + self.combo_box_shp.currentText() +"?", QMessageBox.Yes | QMessageBox.No)
 
         if ret == QMessageBox.Yes:
-            self.setings.delete_base(self.combo_box_shp.currentData())
+            self.settings.delete_base(self.combo_box_shp.currentData())
             self.nome_shp.clear()
             self.url_dowload.clear()
             self.diretorioLocalshp.setFilePath("")

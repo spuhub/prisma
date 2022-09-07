@@ -19,6 +19,8 @@ from PyPDF2 import PdfFileReader, PdfFileMerger
 from datetime import datetime
 from .overlay_report_linestrings import OverlayReportLinestrings
 
+from urllib.parse import quote
+
 class Linestrings():
     def __init__(self, operation_config):
         self.operation_config = operation_config
@@ -30,6 +32,7 @@ class Linestrings():
         self.lr = LinestringRequired(self.operation_config)
 
         self.gpd_area_homologada = []
+        self.gpd_area_nao_homologada = []
         self.rect_main_map = None
         self.overlay_report = OverlayReportLinestrings()
 
@@ -37,6 +40,8 @@ class Linestrings():
 
         self.layers = []
         self.root = QgsProject.instance().layerTreeRoot()
+
+        self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
 
     def comparasion_between_linestrings(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
@@ -86,7 +91,7 @@ class Linestrings():
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
             # Gera o layout PDF com a área de entrada e áreas da união
-            self.lr.linestring_required_layers(input, input_standard, gdf_point_input, self.gpd_area_homologada, self.index_input, self.time, self.atlas, self.layout)
+            self.lr.linestring_required_layers(input, input_standard, gdf_point_input, self.gpd_area_homologada, self.gpd_area_nao_homologada, self.index_input, self.time, self.atlas, self.layout)
 
         if last_area:
             self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
@@ -119,19 +124,26 @@ class Linestrings():
         # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
         for area in gdf_required:
             if len(area) > 0:
+                if isinstance(area, list):
+                    area = area[0].to_crs(crs)
+                else:
+                    area = area.to_crs(crs)
                 area = area.to_crs(crs)
                 area.set_crs(allow_override=True, crs=crs)
-
-                # Soma da área de interseção feita com feição de input e atual área comparada
-                # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                if self.operation_config['operation_config']['required'][index]['nome'] == 'Área Homologada':
-                    self.gpd_area_homologada = gpd.overlay(input, area)
 
                 if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
                     if self.operation_config['operation_config']['required'][index][
                         "nomeFantasiaCamada"] == "Área Homologada" or \
                             self.operation_config['operation_config']['required'][index][
                                 "nomeFantasiaCamada"] == "Área Não Homologada":
+                        # Soma da área de interseção feita com feição de input e atual área comparada
+                        # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
+                        if self.operation_config['operation_config']['required'][index]['nome'] == 'Área Homologada':
+                            self.gpd_area_homologada = gpd.overlay(input, area)
+
+                        if self.operation_config['operation_config']['required'][index]['nome'] == 'Área Não Homologada':
+                            self.gpd_area_nao_homologada = gpd.overlay(input, area)
+
                         input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
                             input, area).length.sum()
                     else:
@@ -144,12 +156,21 @@ class Linestrings():
                                 'nomeFantasiaCamada']] = False
                 else:
                     if self.operation_config['operation_config']['required'][index][
-                        "nomeFantasiaTabelasCamadas"] == "Área Homologada" or \
+                        "nomeFantasiaTabelasCamadas"][0] == "Área Homologada" or \
                             self.operation_config['operation_config']['required'][index][
-                                "nomeFantasiaTabelasCamadas"] == "Área Não Homologada":
+                                "nomeFantasiaTabelasCamadas"][0] == "Área Não Homologada":
+                        # Soma da área de interseção feita com feição de input e atual área comparada
+                        # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
+                        if self.operation_config['operation_config']['required'][index]['nomeFantasiaTabelasCamadas'][0] == 'Área Homologada':
+                            self.gpd_area_homologada = gpd.overlay(input, area)
+
+                        if self.operation_config['operation_config']['required'][index][
+                            'nomeFantasiaTabelasCamadas'][0] == 'Área Não Homologada':
+                            self.gpd_area_nao_homologada = gpd.overlay(input, area)
+
                         input.loc[0, self.operation_config['operation_config']['required'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                            input, length).length.sum()
+                            input, area).length.sum()
                     else:
                         points = input.unary_union.intersection(area.unary_union)
                         if not points.is_empty:
@@ -304,11 +325,7 @@ class Linestrings():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada' \
-                    or layer.name() == 'LLTM Não Homologada' or layer.name() == 'LMEO Não Homologada' or layer.name() == 'LLTM Homologada' or layer.name() == 'LMEO Homologada':
-                layers_situation_map.append(layer)
-
-            elif layer.name() == 'OpenStreetMap':
+            elif layer.name() == self.basemap:
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
@@ -316,6 +333,15 @@ class Linestrings():
                 qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
                 layer.loadNamedStyle(qml_style_dir)
                 layer.triggerRepaint()
+
+            if index_2 == None:
+                if layer.name() == self.operation_config['operation_config']['shp'][index_1][
+                    'nomeFantasiaCamada']:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
+            else:
+                if layer.name() == self.operation_config['operation_config']['pg'][index_1][
+                    'nomeFantasiaTabelasCamadas'][index_2]:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
 
         # Configurações no QGis para gerar os relatórios PDF
         ms = QgsMapSettings()
@@ -436,12 +462,12 @@ class Linestrings():
 
         text = ''
         for item in print_layers:
-            if item != 'OpenStreetMap':
+            if item != self.basemap:
                 text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
                 if text_item not in text:
                     text += text_item
 
-        text += "OpenStreetMap (2022)."
+        text += self.basemap + " (2022)."
         self.rect_main_map = None
 
         field_data_source.setText(text)
@@ -597,7 +623,7 @@ class Linestrings():
 
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada', 'LPM Não Homologada',
-                         'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada', 'OpenStreetMap']
+                         'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada', self.basemap]
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])

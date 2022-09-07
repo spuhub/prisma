@@ -20,6 +20,7 @@ from datetime import datetime
 from .polygon_required import PolygonRequired
 from .overlay_report_polygons import OverlayReportPolygons
 
+from urllib.parse import quote
 
 class Polygons():
     def __init__(self, operation_config):
@@ -37,6 +38,8 @@ class Polygons():
         self.layers = []
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
+
+        self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
 
     def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
@@ -82,18 +85,19 @@ class Polygons():
                     'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
                 })
 
-        intersection = gpd.GeoDataFrame(data, crs=input.crs)
+        intersection = gpd.GeoDataFrame(data, crs=input.crs) if len(data) > 0 else None
 
         # Gera planta pdf somente quando acontece sobreposição
-        if len(intersection) > 0:
-            intersection.set_crs(allow_override=True, crs=input.crs)
+        if intersection is not None:
+            if len(intersection) > 0:
+                intersection.set_crs(allow_override=True, crs=input.crs)
 
-            if len(input_standard) > 0:
-                self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
-                                   intersection, gdf_required, index_1, index_2)
-            else:
-                self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
-                                   gdf_required, index_1, index_2)
+                if len(input_standard) > 0:
+                    self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
+                                       intersection, gdf_required, index_1, index_2)
+                else:
+                    self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
+                                       gdf_required, index_1, index_2)
 
         if last_area:
             self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
@@ -141,12 +145,12 @@ class Polygons():
                                 'nomeFantasiaCamada']] = False
                 else:
                     if self.operation_config['operation_config']['required'][index][
-                        "nomeFantasiaTabelasCamadas"] == "Área Homologada" or \
+                        "nomeFantasiaTabelasCamadas"][0] == "Área Homologada" or \
                             self.operation_config['operation_config']['required'][index][
-                                "nomeFantasiaTabelasCamadas"] == "Área Não Homologada":
+                                "nomeFantasiaTabelasCamadas"][0] == "Área Não Homologada":
                         input.loc[0, self.operation_config['operation_config']['required'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
-                            input, length).area.sum()
+                            input, area).area.sum()
                     else:
                         has_overlay = len(gpd.overlay(area, input))
                         if has_overlay > 0:
@@ -329,10 +333,7 @@ class Polygons():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada':
-                layers_situation_map.append(layer)
-
-            elif layer.name() == 'OpenStreetMap':
+            elif layer.name() == self.basemap:
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
@@ -345,6 +346,15 @@ class Polygons():
                 qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
                 layer.loadNamedStyle(qml_style_dir)
                 layer.triggerRepaint()
+
+            if index_2 == None:
+                if layer.name() == self.operation_config['operation_config']['shp'][index_1][
+                                                     'nomeFantasiaCamada']:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
+            else:
+                if layer.name() == self.operation_config['operation_config']['pg'][index_1][
+                                                 'nomeFantasiaTabelasCamadas'][index_2]:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
 
         # Configurações no QGis para gerar os relatórios PDF
         ms = QgsMapSettings()
@@ -371,132 +381,6 @@ class Polygons():
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
         self.export_pdf(feature_input_gdp, gdf_point_input, index_1, index_2)
-
-    def handle_required_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard):
-        """
-        Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
-        está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
-
-        @keyword feature_input_gdp: Feição que está sendo processada e será carregada para o QGis.
-        @keyword input_standard: Feição padrão isto é, sem zona de proximidade (caso necessário), que está sendo processada e será carregada para o QGis.
-        @keyword feature_area: Camada de comparação que está sendo processada.
-        @keyword feature_intersection: Camada de interseção (caso exista) e será carregada para o QGis.
-        @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
-        @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
-        """
-        crs = (feature_input_gdp.iloc[0]['crs_feature'])
-        # Forma de contornar problema do QGis, que alterava o extent da camada de forma incorreta
-        extent = feature_input_gdp.bounds
-
-        # Altera o EPSG do projeto QGis
-        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-        QApplication.instance().processEvents()
-
-        self.remove_layers()
-
-        # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
-        if 'aproximacao' in self.operation_config['operation_config']:
-            # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
-            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
-            show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-            symbol = self.get_input_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
-
-            input_standard = input_standard.to_crs(crs)
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(),
-                                                      "Feição de Estudo/Sobreposição (padrão)")
-            show_qgis_input_standard.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-            symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
-            show_qgis_input_standard.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_input_standard)
-        else:
-            # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
-            show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
-            show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-            symbol = self.get_input_standard_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
-
-        # Camada de cotas
-        show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
-        show_qgis_quota.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-        QgsProject.instance().addMapLayer(show_qgis_quota, False)
-        self.root.insertLayer(0, show_qgis_quota)
-
-        # Camada de vértices
-        show_qgis_vertices = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
-        show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-        QgsProject.instance().addMapLayer(show_qgis_vertices, False)
-        self.root.insertLayer(0, show_qgis_vertices)
-
-        layers_localization_map = []
-        layers_situation_map = []
-        # Posiciona a tela do QGis no extent da área de entrada
-        for layer in QgsProject.instance().mapLayers().values():
-            if layer.name() == 'Feição de Estudo/Sobreposição':
-                rect = QgsRectangle(extent['minx'], extent['miny'], extent['maxx'], extent['maxy'])
-                # Aqui está sendo contornado o erro de transformação, comentado no comeco desta função
-                layer.setExtent(rect)
-                self.atlas.setEnabled(True)
-                self.atlas.setCoverageLayer(layer)
-                self.atlas.changed
-                self.layers = layer
-
-                layers_localization_map.append(layer)
-                layers_situation_map.append(layer)
-
-            elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada'\
-                    or layer.name() == 'LLTM Não Homologada' or layer.name() == 'LMEO Não Homologada' or layer.name() == 'LLTM Homologada' or layer.name() == 'LMEO Homologada':
-                layers_situation_map.append(layer)
-
-            elif layer.name() == 'OpenStreetMap':
-                layers_localization_map.append(layer)
-                layers_situation_map.append(layer)
-
-            elif layer.name() == 'Linhas':
-                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Linhas_de_Cota_L.qml')
-                layer.loadNamedStyle(qml_style_dir)
-                layer.triggerRepaint()
-
-            elif layer.name() == 'Vértices':
-                qml_style_dir = os.path.join(os.path.dirname(__file__), 'static\Estilo_Vertice_P.qml')
-                layer.loadNamedStyle(qml_style_dir)
-                layer.triggerRepaint()
-
-        # Configurações no QGis para gerar os relatórios PDF
-        ms = QgsMapSettings()
-        ms.setLayers([self.layers])
-        rect = QgsRectangle(ms.fullExtent())
-
-        main_map = self.layout.itemById('Planta_Principal')
-        situation_map = self.layout.itemById('Planta_Situacao')
-        localization_map = self.layout.itemById('Planta_Localizacao')
-
-        situation_map.setLayers(layers_situation_map)
-        localization_map.setLayers(layers_localization_map)
-        situation_map.refresh()
-        localization_map.refresh()
-
-        ms.setExtent(rect)
-        main_map.zoomToExtent(rect)
-        iface.mapCanvas().refresh()
-        main_map.refresh()
-        QApplication.instance().processEvents()
-        self.rect_main_map = main_map.extent()
-
-        # Tamanho do mapa no layout
-        main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
-
-        self.export_pdf(feature_input_gdp, None, None)
 
     def export_pdf(self, feature_input_gdp, gdf_point_input, index_1, index_2):
         """
@@ -539,7 +423,6 @@ class Polygons():
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        print(pdf_name)
         # files_dir = os.path.normpath(files_dir)
         # print(files_dir)
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
@@ -593,12 +476,12 @@ class Polygons():
 
         text = ''
         for item in print_layers:
-            if item != 'OpenStreetMap':
+            if item != self.basemap:
                 text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
                 if text_item not in text:
                     text += text_item
 
-        text += "OpenStreetMap (2022)."
+        text += self.basemap + " (2022)."
         self.rect_main_map = None
         field_data_source.setText(text)
 
@@ -749,7 +632,7 @@ class Polygons():
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
                          'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
-                         'OpenStreetMap']
+                         self.basemap]
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])

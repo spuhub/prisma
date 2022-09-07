@@ -186,8 +186,6 @@ def handle_table(gdf_vertices):
 
     tam_table_1 = len(table_1)
     tam_table_2 = len(table_2)
-    print('tam_table_1: ', tam_table_1)
-    print('tam_table_2: ', tam_table_2)
 
     if tam_table_2 > 0:
         for index, row in enumerate(table_2):
@@ -201,8 +199,6 @@ def handle_table(gdf_vertices):
                 table_1[index].append(table_2[index][0])
                 table_1[index].append(table_2[index][1])
                 table_1[index].append(table_2[index][2])
-
-            print(table_1[index])
 
     return table_1, tam_table_1, tam_table_2
 

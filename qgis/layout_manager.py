@@ -18,6 +18,8 @@ from .overlay_report_polygons import OverlayReportPolygons
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
 
+from urllib.parse import quote
+
 class LayoutManager():
     """Classe responsável por fazer a manipulação do Layout de impressão. Contém métodos para fazer o controle das feições carregadas para impressão,
     manipular textos e também algumas operações com dados que serão plotados ou utilizados para gerar relatórios PDF.
@@ -351,9 +353,19 @@ class LayoutManager():
         return input
 
     def load_required_layers(self, gdf_required, crs):
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = ''
+        layer = None
+        if 'basemap' in self.operation_config['operation_config']:
+            link_basemap = self.operation_config['operation_config']['basemap']['link']
+            url_quote = quote(link_basemap, safe='://')
+            tms = 'type=xyz&url=' + url_quote
+
+            layer = QgsRasterLayer(tms, self.operation_config['operation_config']['basemap']['nome'], 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
 

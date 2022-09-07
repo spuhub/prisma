@@ -36,6 +36,8 @@ class PolygonRequired():
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
+        self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
+
     def polygon_required_layers(self, input, input_standard, gdf_line_input, gdf_point_input, index_input, time, atlas, layout):
         self.time = time
         self.index_input = index_input
@@ -134,7 +136,7 @@ class PolygonRequired():
             elif layer.name() == 'LPM Homologada' or layer.name() == 'LTM Homologada' or layer.name() == 'LPM Não Homologada' or layer.name() == 'LTM Não Homologada':
                 layers_situation_map.append(layer)
 
-            elif layer.name() == 'OpenStreetMap':
+            elif layer.name() == self.basemap:
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
@@ -207,7 +209,6 @@ class PolygonRequired():
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        print(pdf_name)
         # files_dir = os.path.normpath(files_dir)
         # print(files_dir)
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
@@ -257,12 +258,12 @@ class PolygonRequired():
 
         text = ''
         for item in print_layers:
-            if item != 'OpenStreetMap':
+            if item != self.basemap:
                 text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
                 if text_item not in text:
                     text += text_item
 
-        text += "OpenStreetMap (2022)."
+        text += self.basemap + " (2022)."
         self.rect_main_map = None
         field_data_source.setText(text)
 
@@ -292,16 +293,14 @@ class PolygonRequired():
     def fill_observation(self, feature_input_gdp, layer_name):
         input = self.operation_config['input']
 
-        overlay_area = self.layout.itemById('CD_Compl_Obs1')
-        lot_area = self.layout.itemById('CD_Compl_Obs2')
-        overlay_uniao = self.layout.itemById('CD_Compl_Obs3')
-        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs4')
-        texto1 = self.layout.itemById('CD_Compl_Obs5')
+        lot_area = self.layout.itemById('CD_Compl_Obs1')
+        overlay_uniao = self.layout.itemById('CD_Compl_Obs2')
+        overlay_uniao_area = self.layout.itemById('CD_Compl_Obs3')
+        overlay_uniao_nao = self.layout.itemById('CD_Compl_Obs4')
+        overlay_uniao_nao_area = self.layout.itemById('CD_Compl_Obs5')
         texto2 = self.layout.itemById('CD_Compl_Obs6')
-        texto1.setText("")
-        texto2.setText("")
 
-        overlay_area.setText("")
+        texto2.setText("")
 
         # Área da feição
         format_value = f'{feature_input_gdp["areaLote"][0]:_.2f}'
@@ -318,6 +317,20 @@ class PolygonRequired():
             format_value = f'{feature_input_gdp.iloc[0]["Área Homologada"]:_.2f}'
             format_value = format_value.replace('.', ',').replace('_', '.')
             overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(format_value) + " m².")
+
+        if 'Área Não Homologada' in feature_input_gdp:
+            print("Sobreposição Área não homologada: ", feature_input_gdp.iloc[0]["Área Não Homologada"])
+
+        # Sobreposição com área da união
+        if 'Área Não Homologada' in input and input.iloc[self.index_input]['Área Não Homologada'] > 0:
+            overlay_uniao_nao.setText("Lote sobrepõe Área Não Homologada da União.")
+        else:
+            overlay_uniao_nao.setText("Lote não sobrepõe Área Não Homologada da União.")
+
+        if 'Área Não Homologada' in feature_input_gdp:
+            format_value = f'{feature_input_gdp.iloc[0]["Área Não Homologada"]:_.2f}'
+            format_value = format_value.replace('.', ',').replace('_', '.')
+            overlay_uniao_nao_area.setText("Área de sobreposição com Área Não Homologada: " + str(format_value) + " m².")
 
     def add_template_to_project(self, template_dir):
         """
@@ -409,7 +422,7 @@ class PolygonRequired():
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
                          'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
-                         'OpenStreetMap']
+                         self.basemap]
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])

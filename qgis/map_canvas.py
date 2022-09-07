@@ -6,6 +6,8 @@ from qgis.utils import iface
 import geopandas as gpd
 import pandas as pd
 
+from urllib.parse import quote
+
 class MapCanvas():
     """
     Classe responsável por gerenciar o mostrador do QGIS. Utilizada somente para os dois botões presentes na tela de resultados do PRISMA.
@@ -28,13 +30,23 @@ class MapCanvas():
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
 
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = ''
+        layer = None
+        if 'basemap' in operation_config['operation_config']:
+            link_basemap = operation_config['operation_config']['basemap']['link']
+            url_quote = quote(link_basemap, safe='://')
+            tms = 'type=xyz&url=' + url_quote
+
+            layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
+        QApplication.instance().processEvents()
 
         # Carrega camadas shapefiles
         index = -1
@@ -106,13 +118,20 @@ class MapCanvas():
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
 
-        # Carrega camada mundial do OpenStreetMap
-        tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+        tms = ''
+        layer = None
+        if 'basemap' in operation_config['operation_config']:
+            tms = 'type=xyz&url=' + operation_config['operation_config']['basemap']['link'] + '&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png&zmax=18&zmin=0'
+            layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
         QApplication.instance().processEvents()
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
+        QApplication.instance().processEvents()
 
         # Exibe de sobreposição entre input e Shapefiles
         index = -1
