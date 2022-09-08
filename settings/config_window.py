@@ -855,7 +855,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
 
     def fill_mandatory_layers(self):
-        camada_obrig = self.settings.get_camadas_base_obrigatoria()
+        camada_obrig = self.setings.get_camadas_base_obrigatoria()
         self.fill_mandatory_layers_from_json_conf()
 
     def add_action_lpm_homologada(self):
@@ -875,7 +875,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_lpm_hom.addItem(base_config["nome"])
 
     def add_action_lpm_nao_homologada(self):
-        id_base_selec = self.comboBox_base_lpm_n_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_lpm_n_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -891,7 +894,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_lpm_n_hom.addItem(base_config["nome"])
 
     def add_action_ltm_homologada(self):
-        id_base_selec = self.comboBox_base_ltm_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_ltm_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -907,7 +913,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_ltm_hom.addItem(base_config["nome"])
 
     def add_action_ltm_nao_homologada(self):
-        id_base_selec = self.comboBox_base_ltm_n_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_ltm_n_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -923,7 +932,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_ltm_n_hom.addItem(base_config["nome"])
 
     def add_action_area_uniao(self):
-        id_base_selec = self.comboBox_base_area_uniao.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_area_uniao.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -939,7 +951,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_area_uniao.addItem(base_config["nome"])
 
     def add_action_area_uniao_n_hom(self):
-        id_base_selec = self.comboBox_base_area_uniao_n_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_area_uniao_n_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -955,7 +970,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
 
     def add_action_lltm_n_hom(self):
-        id_base_selec = self.comboBox_base_lltm_n_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_lltm_n_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -971,7 +989,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
 
     def add_action_lltm_hom(self):
-        id_base_selec = self.comboBox_base_lltm_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_lltm_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -987,7 +1008,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
 
     def add_action_lmeo_n_hom(self):
-        id_base_selec = self.comboBox_base_lmeo_n_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_lmeo_n_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -1003,7 +1027,10 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
 
     def add_action_lmeo_hom(self):
-        id_base_selec = self.comboBox_base_lmeo_hom.currentData()[0]
+        try:
+            id_base_selec = self.comboBox_base_lmeo_hom.currentData()[0]
+        except Exception as e:
+            print(e)
         base_config = self.search_base_pg(id_base_selec)
 
         if base_config == {}:
@@ -1116,7 +1143,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
 
 
-        self.settings.set_camadas_base_obrigatoria(config)
+        self.setings.set_camadas_base_obrigatoria(config)
 
     def delete_bd(self):
         msg = QMessageBox(self)
@@ -1124,7 +1151,7 @@ class ConfigWindow(QtWidgets.QDialog):
                            "Você realmente deseja excluir a configuracão de " + self.combo_box_shp.currentText() + "?",
                            QMessageBox.Yes | QMessageBox.No)
         if ret == QMessageBox.Yes:
-            self.settings.delete_base(self.combo_box_base.currentData())
+            self.setings.delete_base(self.combo_box_base.currentData())
             self.nome_base.clear()
             self.host.clear()
             self.porta.clear()
@@ -1137,12 +1164,12 @@ class ConfigWindow(QtWidgets.QDialog):
             self.combo_box_base.setCurrentIndex(0)
 
     def delete_shp(self):
-        #self.settings.delete_base(self.combo_box_shp.currentData())
+        #self.setings.delete_base(self.combo_box_shp.currentData())
         msg = QMessageBox(self)
         ret = msg.question(self, 'Deletar configuração', "Você realmente deseja excluir a configuração de " + self.combo_box_shp.currentText() +"?", QMessageBox.Yes | QMessageBox.No)
 
         if ret == QMessageBox.Yes:
-            self.settings.delete_base(self.combo_box_shp.currentData())
+            self.setings.delete_base(self.combo_box_shp.currentData())
             self.nome_shp.clear()
             self.url_dowload.clear()
             self.diretorioLocalshp.setFilePath("")
