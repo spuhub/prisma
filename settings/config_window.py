@@ -247,7 +247,8 @@ class ConfigWindow(QtWidgets.QDialog):
         link = self.txt_basemap_link.text()
 
         if len(nome) == 0 or len(link) == 0:
-            del json_complete['basemap']
+            if 'basemap' in json_complete:
+                del json_complete['basemap']
         else:
             json_complete['basemap'] = {}
             json_complete['basemap']['nome'] = nome
@@ -855,195 +856,217 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
 
     def fill_mandatory_layers(self):
-        camada_obrig = self.setings.get_camadas_base_obrigatoria()
+        camada_obrig = self.settings.get_camadas_base_obrigatoria()
         self.fill_mandatory_layers_from_json_conf()
 
     def add_action_lpm_homologada(self):
-        id_base_selec = self.comboBox_base_lpm_hom.currentData()[0]
-        base_config = self.search_base_pg(id_base_selec)
+        try:
+            id_base_selec = self.comboBox_base_lpm_hom.currentData()[0]
 
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
+            base_config = self.search_base_pg(id_base_selec)
 
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_lpm_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_lpm_hom.addItem(item_camada)
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
 
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_lpm_hom.clear()
-            self.comboBox_camada_lpm_hom.addItem(base_config["nome"])
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lpm_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_lpm_hom.addItem(item_camada)
 
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_lpm_hom.clear()
+                self.comboBox_camada_lpm_hom.addItem(base_config["nome"])
+
+        except Exception as e:
+            print(e)
     def add_action_lpm_nao_homologada(self):
         try:
             id_base_selec = self.comboBox_base_lpm_n_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lpm_n_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_lpm_n_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_lpm_n_hom.clear()
+                self.comboBox_camada_lpm_n_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_lpm_n_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_lpm_n_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_lpm_n_hom.clear()
-            self.comboBox_camada_lpm_n_hom.addItem(base_config["nome"])
 
     def add_action_ltm_homologada(self):
         try:
             id_base_selec = self.comboBox_base_ltm_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_ltm_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_ltm_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_ltm_hom.clear()
+                self.comboBox_camada_ltm_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_ltm_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_ltm_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_ltm_hom.clear()
-            self.comboBox_camada_ltm_hom.addItem(base_config["nome"])
 
     def add_action_ltm_nao_homologada(self):
         try:
             id_base_selec = self.comboBox_base_ltm_n_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_ltm_n_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_ltm_n_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_ltm_n_hom.clear()
+                self.comboBox_camada_ltm_n_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_ltm_n_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_ltm_n_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_ltm_n_hom.clear()
-            self.comboBox_camada_ltm_n_hom.addItem(base_config["nome"])
 
     def add_action_area_uniao(self):
         try:
             id_base_selec = self.comboBox_base_area_uniao.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_area_uniao.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_area_uniao.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_area_uniao.clear()
+                self.comboBox_camada_area_uniao.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_area_uniao.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_area_uniao.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_area_uniao.clear()
-            self.comboBox_camada_area_uniao.addItem(base_config["nome"])
 
     def add_action_area_uniao_n_hom(self):
         try:
             id_base_selec = self.comboBox_base_area_uniao_n_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_area_uniao_n_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_area_uniao_n_hom.clear()
+                self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_area_uniao_n_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_area_uniao_n_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_area_uniao_n_hom.clear()
-            self.comboBox_camada_area_uniao_n_hom.addItem(base_config["nome"])
 
     def add_action_lltm_n_hom(self):
         try:
             id_base_selec = self.comboBox_base_lltm_n_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lltm_n_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_lltm_n_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_lltm_n_hom.clear()
+                self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_lltm_n_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_lltm_n_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_lltm_n_hom.clear()
-            self.comboBox_camada_lltm_n_hom.addItem(base_config["nome"])
 
     def add_action_lltm_hom(self):
         try:
             id_base_selec = self.comboBox_base_lltm_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lltm_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_lltm_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_lltm_hom.clear()
+                self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_lltm_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_lltm_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_lltm_hom.clear()
-            self.comboBox_camada_lltm_hom.addItem(base_config["nome"])
 
     def add_action_lmeo_n_hom(self):
         try:
             id_base_selec = self.comboBox_base_lmeo_n_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lmeo_n_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_lmeo_n_hom.clear()
+                self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_lmeo_n_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_lmeo_n_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_lmeo_n_hom.clear()
-            self.comboBox_camada_lmeo_n_hom.addItem(base_config["nome"])
 
     def add_action_lmeo_hom(self):
         try:
             id_base_selec = self.comboBox_base_lmeo_hom.currentData()[0]
+
+            base_config = self.search_base_pg(id_base_selec)
+
+            if base_config == {}:
+                base_config = self.search_base_shp(id_base_selec)
+
+            if base_config["tipo"] == "pg":
+                self.comboBox_camada_lmeo_hom.clear()
+                for item_camada in base_config["tabelasCamadas"]:
+                    self.comboBox_camada_lmeo_hom.addItem(item_camada)
+
+            if base_config["tipo"] == "shp":
+                self.comboBox_camada_lmeo_hom.clear()
+                self.comboBox_camada_lmeo_hom.addItem(base_config["nome"])
+
         except Exception as e:
             print(e)
-        base_config = self.search_base_pg(id_base_selec)
-
-        if base_config == {}:
-            base_config = self.search_base_shp(id_base_selec)
-
-        if base_config["tipo"] == "pg":
-            self.comboBox_camada_lmeo_hom.clear()
-            for item_camada in base_config["tabelasCamadas"]:
-                self.comboBox_camada_lmeo_hom.addItem(item_camada)
-
-        if base_config["tipo"] == "shp":
-            self.comboBox_camada_lmeo_hom.clear()
-            self.comboBox_camada_lmeo_hom.addItem(base_config["nome"])
 
     def save_mandatory_layers(self):
 
@@ -1143,7 +1166,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
 
 
-        self.setings.set_camadas_base_obrigatoria(config)
+        self.settings.set_camadas_base_obrigatoria(config)
 
     def delete_bd(self):
         msg = QMessageBox(self)
@@ -1151,7 +1174,7 @@ class ConfigWindow(QtWidgets.QDialog):
                            "Você realmente deseja excluir a configuracão de " + self.combo_box_shp.currentText() + "?",
                            QMessageBox.Yes | QMessageBox.No)
         if ret == QMessageBox.Yes:
-            self.setings.delete_base(self.combo_box_base.currentData())
+            self.settings.delete_base(self.combo_box_base.currentData())
             self.nome_base.clear()
             self.host.clear()
             self.porta.clear()
@@ -1164,12 +1187,12 @@ class ConfigWindow(QtWidgets.QDialog):
             self.combo_box_base.setCurrentIndex(0)
 
     def delete_shp(self):
-        #self.setings.delete_base(self.combo_box_shp.currentData())
+        #self.settings.delete_base(self.combo_box_shp.currentData())
         msg = QMessageBox(self)
         ret = msg.question(self, 'Deletar configuração', "Você realmente deseja excluir a configuração de " + self.combo_box_shp.currentText() +"?", QMessageBox.Yes | QMessageBox.No)
 
         if ret == QMessageBox.Yes:
-            self.setings.delete_base(self.combo_box_shp.currentData())
+            self.settings.delete_base(self.combo_box_shp.currentData())
             self.nome_shp.clear()
             self.url_dowload.clear()
             self.diretorioLocalshp.setFilePath("")
