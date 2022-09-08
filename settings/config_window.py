@@ -855,7 +855,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.comboBox_base_lmeo_n_hom.addItem(item["nome"] + " " + "(ShapeFile)", [item["id"],item["tipo"]])
 
     def fill_mandatory_layers(self):
-        camada_obrig = self.setings.get_camadas_base_obrigatoria()
+        camada_obrig = self.settings.get_camadas_base_obrigatoria()
         self.fill_mandatory_layers_from_json_conf()
 
     def add_action_lpm_homologada(self):
@@ -1143,7 +1143,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
 
 
-        self.setings.set_camadas_base_obrigatoria(config)
+        self.settings.set_camadas_base_obrigatoria(config)
 
     def delete_bd(self):
         msg = QMessageBox(self)
@@ -1151,7 +1151,7 @@ class ConfigWindow(QtWidgets.QDialog):
                            "Você realmente deseja excluir a configuracão de " + self.combo_box_shp.currentText() + "?",
                            QMessageBox.Yes | QMessageBox.No)
         if ret == QMessageBox.Yes:
-            self.setings.delete_base(self.combo_box_base.currentData())
+            self.settings.delete_base(self.combo_box_base.currentData())
             self.nome_base.clear()
             self.host.clear()
             self.porta.clear()
@@ -1164,12 +1164,12 @@ class ConfigWindow(QtWidgets.QDialog):
             self.combo_box_base.setCurrentIndex(0)
 
     def delete_shp(self):
-        #self.setings.delete_base(self.combo_box_shp.currentData())
+        #self.settings.delete_base(self.combo_box_shp.currentData())
         msg = QMessageBox(self)
         ret = msg.question(self, 'Deletar configuração', "Você realmente deseja excluir a configuração de " + self.combo_box_shp.currentText() +"?", QMessageBox.Yes | QMessageBox.No)
 
         if ret == QMessageBox.Yes:
-            self.setings.delete_base(self.combo_box_shp.currentData())
+            self.settings.delete_base(self.combo_box_shp.currentData())
             self.nome_shp.clear()
             self.url_dowload.clear()
             self.diretorioLocalshp.setFilePath("")
