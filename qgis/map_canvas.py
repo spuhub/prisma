@@ -121,7 +121,10 @@ class MapCanvas():
         tms = ''
         layer = None
         if 'basemap' in operation_config['operation_config']:
-            tms = 'type=xyz&url=' + operation_config['operation_config']['basemap']['link'] + '&zmax=18&zmin=0'
+            link_basemap = operation_config['operation_config']['basemap']['link']
+            url_quote = quote(link_basemap, safe='://')
+            tms = 'type=xyz&url=' + url_quote
+
             layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
