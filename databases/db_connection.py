@@ -25,6 +25,8 @@
 import geopandas as gpd
 import pandas as pd
 
+from shapely.wkt import loads
+
 import psycopg2
 
 class DbConnection:
@@ -179,7 +181,7 @@ class DbConnection:
             sridLayer = "".join(c for c in comp if c.isdecimal())
 
             sridTable = self.GEtSridTable(tableName)
-            gdf = gpd.GeoDataFrame([], crs=sridTable)
+            gdf = None
 
             input = input.to_wkt()
             for indexInput, rowInput in input.iterrows():
@@ -199,7 +201,12 @@ class DbConnection:
                           + rowInput['geometry'] + "'," + str(
                         sridLayer) + ")," + str(sridTable) + " ))"
                 self.conn.set_client_encoding('utf-8')
-                gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
+                if gdf is not None:
+                    gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
+                else:
+                    gdf = gpd.GeoDataFrame(gpd.GeoDataFrame.from_postgis(sql, self.conn), crs = sridTable, geometry='geometry')
+
+            gdf.geometry = gdf['geometry'].apply(loads)
 
             gdf = gdf.drop_duplicates(subset=['geometry'], keep='first')
             gdf = gdf.reset_index()

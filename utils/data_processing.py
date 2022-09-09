@@ -67,9 +67,9 @@ class DataProcessing():
                 gdf, crs = database['connection'].CalculateIntersectGPD(scaled_input, layer, approximation,
                                                                         (str(scaled_input.crs)).replace('epsg:', ''))
                 if len(gdf) > 0 and crs != None:
-                    gdf.crs = {'init': 'epsg:' + str(crs)}
+                    # gdf.crs = {'init': 'epsg:' + str(crs)}
 
-                    layers_db.append(gpd.GeoDataFrame(gdf, crs=crs))
+                    layers_db.append(gpd.GeoDataFrame(gdf, crs=crs, geometry='geometry'))
 
             gdf_selected_db.append(layers_db)
         return gdf_selected_db

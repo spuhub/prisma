@@ -97,7 +97,7 @@ class OverlayAnalisys():
             index_layer = 0
             for layer_db in db:
                 overlay_db[self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = False
-                layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
+                # layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
                 layer_db = layer_db.to_crs(4326)
                 for indexArea, rowArea in layer_db.iterrows():
                     for indexInput, rowInput in input.iterrows():
