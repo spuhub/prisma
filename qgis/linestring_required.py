@@ -40,7 +40,7 @@ class LinestringRequired():
 
         self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
 
-    def linestring_required_layers(self, input, input_standard, gdf_interseption_points, gpd_area_homologada, gpd_area_nao_homologada, index_input, time, atlas, layout):
+    def linestring_required_layers(self, input, input_standard, gdf_vertices, gpd_area_homologada, gpd_area_nao_homologada, index_input, time, atlas, layout):
         self.gpd_area_homologada = gpd_area_homologada
         self.gpd_area_nao_homologada = gpd_area_nao_homologada
         self.time = time
@@ -49,11 +49,11 @@ class LinestringRequired():
         self.layout = layout
 
         if len(input_standard) > 0:
-            self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], gdf_interseption_points)
+            self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], gdf_vertices)
         else:
-            self.handle_layers(input.iloc[[0]], input_standard, gdf_interseption_points)
+            self.handle_layers(input.iloc[[0]], input_standard, gdf_vertices)
 
-    def handle_layers(self, feature_input_gdp, input_standard, gdf_interseption_points):
+    def handle_layers(self, feature_input_gdp, input_standard, gdf_vertices):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -74,6 +74,18 @@ class LinestringRequired():
         QApplication.instance().processEvents()
 
         self.remove_layers()
+
+        # Carrega as áreas de intersecção no Qgis
+        if self.gpd_area_homologada is not None:
+            if len(self.gpd_area_homologada) > 0:
+                show_qgis_intersection = QgsVectorLayer(self.gpd_area_homologada.to_json(), "Sobreposição")
+                show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+                symbol = QgsLineSymbol.createSimple(
+                    {'line_style': 'solid', 'line_color': 'yellow', 'color': 'yellow', 'style': 'solid'})
+                show_qgis_intersection.renderer().setSymbol(symbol)
+                QgsProject.instance().addMapLayer(show_qgis_intersection, False)
+                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_intersection)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
@@ -157,9 +169,9 @@ class LinestringRequired():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.export_pdf(feature_input_gdp, gdf_interseption_points)
+        self.export_pdf(feature_input_gdp, gdf_vertices)
 
-    def export_pdf(self, feature_input_gdp, gdf_interseption_points):
+    def export_pdf(self, feature_input_gdp, gdf_vertices):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 
@@ -187,7 +199,7 @@ class LinestringRequired():
             QgsLayoutExporter.exportToPdf(atlas, pdf_path,
                                           settings=pdf_settings)
 
-        gerardoc(feature_input_gdp, gdf_interseption_points, pdf_name, pdf_path, self.layout, self.operation_config)
+        gerardoc(feature_input_gdp, gdf_vertices, pdf_name, pdf_path, self.layout, self.operation_config)
         self.merge_pdf(pdf_name)
 
     def merge_pdf(self, pdf_name):
@@ -229,7 +241,7 @@ class LinestringRequired():
         self.fill_data_source()
 
     def fill_data_source(self):
-        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição']
+        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição']
         field_data_source = self.layout.itemById('CD_FonteDados')
 
         all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]

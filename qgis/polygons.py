@@ -45,7 +45,7 @@ class Polygons():
         self.atlas = atlas
         self.layout = layout
 
-        input = self.calculation_required(input, gdf_required)
+        input, intersection_required = self.calculation_required(input, gdf_required)
         # Extrai vértices e linhas do polígono que está sendo comparado
         gdf_point_input, gdf_line_input = self.explode_input(input)
 
@@ -70,7 +70,7 @@ class Polygons():
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
             # Gera o layout PDF com a área de entrada e áreas da união
-            self.pd.polygon_required_layers(input, input_standard, gdf_line_input, gdf_point_input, self.index_input,
+            self.pd.polygon_required_layers(input, input_standard, intersection_required, gdf_line_input, gdf_point_input, self.index_input,
                                             self.time, self.atlas, self.layout)
 
         data = []
@@ -109,6 +109,7 @@ class Polygons():
 
     def calculation_required(self, input, gdf_required):
         input = input.reset_index(drop=True)
+        intersection = None
 
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
 
@@ -137,6 +138,21 @@ class Polygons():
                                 "nomeFantasiaCamada"] == "Área Não Homologada":
                         input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
                             input, area).area.sum()
+
+                        if self.operation_config['operation_config']['required'][index][
+                            "nomeFantasiaCamada"] == "Área Homologada":
+                            data = []
+                            # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e área homologada.
+                            # Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
+                            for indexArea, rowArea in area.iterrows():
+                                if (input.iloc[0]['geometry'].intersection(rowArea['geometry'])):
+                                    data.append({
+                                        'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
+                                    })
+
+                            # Corrigido problema onde lista 'data' chegava ao dataframe vazia.
+                            intersection = gpd.GeoDataFrame(data, crs=input.crs) if len(data) > 0 else None
+
                     else:
                         has_overlay = len(gpd.overlay(area, input))
                         if has_overlay > 0:
@@ -153,6 +169,20 @@ class Polygons():
                         input.loc[0, self.operation_config['operation_config']['required'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
                             input, area).area.sum()
+
+                        if self.operation_config['operation_config']['required'][index][
+                            "nomeFantasiaTabelasCamadas"][0] == "Área Homologada":
+                            data = []
+                            # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e área homologada.
+                            # Realiza ainda cálculo de área e centroid para a nova geomatria de interseção
+                            for indexArea, rowArea in area.iterrows():
+                                if (input.iloc[0]['geometry'].intersection(rowArea['geometry'])):
+                                    data.append({
+                                        'geometry': input.iloc[0]['geometry'].intersection(rowArea['geometry'])
+                                    })
+
+                            # Corrigido problema onde lista 'data' chegava ao dataframe vazia.
+                            intersection = gpd.GeoDataFrame(data, crs=input.crs) if len(data) > 0 else None
                     else:
                         has_overlay = len(gpd.overlay(area, input))
                         if has_overlay > 0:
@@ -163,7 +193,7 @@ class Polygons():
                                 'nomeFantasiaTabelasCamadas']] = False
             index += 1
         input = input.reset_index(drop=True)
-        return input
+        return input, intersection
 
     def explode_input(self, gdf_input):
         geometry = gdf_input.iloc[0]['geometry']

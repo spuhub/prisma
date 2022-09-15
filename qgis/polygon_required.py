@@ -38,18 +38,18 @@ class PolygonRequired():
 
         self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
 
-    def polygon_required_layers(self, input, input_standard, gdf_line_input, gdf_point_input, index_input, time, atlas, layout):
+    def polygon_required_layers(self, input, input_standard, intersection_required, gdf_line_input, gdf_point_input, index_input, time, atlas, layout):
         self.time = time
         self.index_input = index_input
         self.atlas = atlas
         self.layout = layout
 
         if len(input_standard) > 0:
-            self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]])
+            self.handle_layers(input.iloc[[0]], intersection_required, gdf_line_input, gdf_point_input, input_standard.iloc[[0]])
         else:
-            self.handle_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard)
+            self.handle_layers(input.iloc[[0]], intersection_required, gdf_line_input, gdf_point_input, input_standard)
 
-    def handle_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard):
+    def handle_layers(self, feature_input_gdp, intersection_required, gdf_line_input, gdf_point_input, input_standard):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -57,7 +57,7 @@ class PolygonRequired():
         @keyword feature_input_gdp: Feição que está sendo processada e será carregada para o QGis.
         @keyword input_standard: Feição padrão isto é, sem zona de proximidade (caso necessário), que está sendo processada e será carregada para o QGis.
         @keyword feature_area: Camada de comparação que está sendo processada.
-        @keyword feature_intersection: Camada de interseção (caso exista) e será carregada para o QGis.
+        @keyword intersection_required: Camada de interseção (caso exista) e será carregada para o QGis.
         @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
         @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
         """
@@ -70,6 +70,19 @@ class PolygonRequired():
         QApplication.instance().processEvents()
 
         self.remove_layers()
+
+        # Carrega as áreas de intersecção no Qgis
+        if intersection_required is not None:
+            if len(intersection_required) > 0:
+                show_qgis_intersection = QgsVectorLayer(intersection_required.to_json(), "Sobreposição")
+                show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+                symbol = QgsFillSymbol.createSimple(
+                    {'line_style': 'solid', 'line_color': 'black', 'color': 'yellow', 'width_border': '0,35',
+                     'style': 'solid'})
+                show_qgis_intersection.renderer().setSymbol(symbol)
+                QgsProject.instance().addMapLayer(show_qgis_intersection, False)
+                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_intersection)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:

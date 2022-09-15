@@ -96,12 +96,12 @@ class Linestrings():
         if last_area:
             self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
 
-        if not interseption_points.is_empty:
+        if len(gdf_interseption_points) > 0:
             if len(input_standard) > 0:
                 self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], area,
-                                   gdf_point_input, gdf_required, index_1, index_2)
+                                   gdf_interseption_points, gdf_required, index_1, index_2)
             else:
-                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_point_input,
+                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points,
                                    gdf_required, index_1, index_2)
 
         input = input.reset_index(drop=True)
