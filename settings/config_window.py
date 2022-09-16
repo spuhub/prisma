@@ -30,6 +30,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.fill_combo_box_shp()
         self.fill_combo_box_geocoding_server()
         self.fill_basemap()
+        self.fill_sld_default_layers()
         self.newbdID = ''
         self.newshpID = ''
         self.fill_mandatory_layers()
@@ -157,6 +158,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_mandatory_layers()
         self.save_geocoding_key()
         self.save_basemap()
+        self.save_sld_default_layers()
 
         self.fill_mandatory_layers_from_json_conf()
 
@@ -255,6 +257,119 @@ class ConfigWindow(QtWidgets.QDialog):
             json_complete['basemap']['link'] = link
 
         self.settings.insert_data(json_complete)
+
+    def save_sld_default_layers(self):
+        json_complete = self.settings.get_json()
+
+        default_input_polygon = self.qfw_entrada_poligono.filePath()
+        default_input_line = self.qfw_entrada_linha.filePath()
+        default_input_point = self.qfw_entrada_ponto.filePath()
+
+        buffer = self.qfw_buffer.filePath()
+
+        overlay_input_polygon = self.qfw_sobreposicao_poligono.filePath()
+        overlay_input_line = self.qfw_sobreposicao_linha.filePath()
+        overlay_input_point = self.qfw_sobreposicao_ponto.filePath()
+
+        # Tratando campo de sld para input polígono
+        if len(default_input_polygon) == 0:
+            if 'sld_default_layers' in json_complete and 'default_input_polygon' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['default_input_polygon']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['default_input_polygon'] = default_input_polygon
+
+        # Tratando campo de sld para input linha
+        if len(default_input_line) == 0:
+            if 'sld_default_layers' in json_complete and 'default_input_line' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['default_input_line']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['default_input_line'] = default_input_line
+
+        # Tratando campo de sld para input ponto
+        if len(default_input_point) == 0:
+            if 'sld_default_layers' in json_complete and 'default_input_point' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['default_input_point']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['default_input_point'] = default_input_point
+
+        # Tratando campo de sld para buffer
+        if len(buffer) == 0:
+            if 'sld_default_layers' in json_complete and 'buffer' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['buffer']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['buffer'] = buffer
+
+        # Tratando campo de sld para camada sobreposição Polígono
+        if len(overlay_input_polygon) == 0:
+            if 'sld_default_layers' in json_complete and 'overlay_input_polygon' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['overlay_input_polygon']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['overlay_input_polygon'] = overlay_input_polygon
+
+        # Tratando campo de sld para camada sobreposição Linha
+        if len(overlay_input_line) == 0:
+            if 'sld_default_layers' in json_complete and 'overlay_input_line' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['overlay_input_line']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['overlay_input_line'] = overlay_input_line
+
+        # Tratando campo de sld para camada sobreposição Ponto
+        if len(overlay_input_point) == 0:
+            if 'sld_default_layers' in json_complete and 'overlay_input_point' in json_complete['sld_default_layers']:
+                del json_complete['sld_default_layers']['overlay_input_point']
+        else:
+            if 'sld_default_layers' not in json_complete:
+                json_complete['sld_default_layers'] = {}
+
+            json_complete['sld_default_layers']['overlay_input_point'] = overlay_input_point
+
+        # Testa se existe algum campo de configuração para as camadas default
+        if 'sld_default_layers' in json_complete and len(json_complete['sld_default_layers']) == 0:
+            del json_complete['sld_default_layers']
+
+        self.settings.insert_data(json_complete)
+
+    def fill_sld_default_layers(self):
+        json_complete = self.settings.get_json()
+
+        if 'sld_default_layers' in json_complete and 'default_input_polygon' in json_complete['sld_default_layers']:
+            self.qfw_entrada_poligono.setFilePath(json_complete['sld_default_layers']['default_input_polygon'])
+
+        if 'sld_default_layers' in json_complete and 'default_input_line' in json_complete['sld_default_layers']:
+            self.qfw_entrada_linha.setFilePath(json_complete['sld_default_layers']['default_input_line'])
+
+        if 'sld_default_layers' in json_complete and 'default_input_point' in json_complete['sld_default_layers']:
+            self.qfw_entrada_ponto.setFilePath(json_complete['sld_default_layers']['default_input_point'])
+
+        if 'sld_default_layers' in json_complete and 'buffer' in json_complete['sld_default_layers']:
+            self.qfw_buffer.setFilePath(json_complete['sld_default_layers']['buffer'])
+
+        if 'sld_default_layers' in json_complete and 'overlay_input_polygon' in json_complete['sld_default_layers']:
+            self.qfw_sobreposicao_poligono.setFilePath(json_complete['sld_default_layers']['overlay_input_polygon'])
+
+        if 'sld_default_layers' in json_complete and 'overlay_input_line' in json_complete['sld_default_layers']:
+            self.qfw_sobreposicao_linha.setFilePath(json_complete['sld_default_layers']['overlay_input_line'])
+
+        if 'sld_default_layers' in json_complete and 'overlay_input_point' in json_complete['sld_default_layers']:
+            self.qfw_sobreposicao_ponto.setFilePath(json_complete['sld_default_layers']['overlay_input_point'])
 
     def fill_basemap(self):
         json_basemap = self.settings.get_config_basemap()
