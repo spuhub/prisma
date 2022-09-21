@@ -23,6 +23,7 @@ class OperationController:
         self.data_shp = self.json_tools.get_config_shapefile()
         self.data_required = self.json_tools.get_config_required()
         self.basemap = self.json_tools.get_config_basemap()
+        self.sld_default_layers = self.json_tools.get_config_sld_default_layers()
 
     def get_operation(self, operation_config, selected_items_shp, selected_items_bd):
         """
@@ -59,6 +60,8 @@ class OperationController:
 
         if len(self.basemap) > 0:
             operation_config['basemap'] = self.basemap
+
+        operation_config['sld_default_layers'] = self.sld_default_layers
 
         return operation_config
 

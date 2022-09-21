@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from ..screens.report_generator import ReportGenerator
 from ..databases.db_connection import DbConnection
+from ..utils.default_sld import slddefaultlayers
 
 
 class ConfigWindow(QtWidgets.QDialog):
@@ -37,6 +38,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.control_problem = 0
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
+        self.btn_reset_default_layers.clicked.connect(self.reset_default_layers)
         self.test_conect.clicked.connect(self.message)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConfBase)
         #self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
@@ -273,77 +275,45 @@ class ConfigWindow(QtWidgets.QDialog):
 
         # Tratando campo de sld para input polígono
         if len(default_input_polygon) == 0:
-            if 'sld_default_layers' in json_complete and 'default_input_polygon' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['default_input_polygon']
+            json_complete['sld_default_layers']['default_input_polygon'] = slddefaultlayers.POLYGON_SLD_INPUT.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['default_input_polygon'] = default_input_polygon
 
         # Tratando campo de sld para input linha
         if len(default_input_line) == 0:
-            if 'sld_default_layers' in json_complete and 'default_input_line' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['default_input_line']
+            json_complete['sld_default_layers']['default_input_line'] = slddefaultlayers.LINE_SLD_INPUT.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['default_input_line'] = default_input_line
 
         # Tratando campo de sld para input ponto
         if len(default_input_point) == 0:
-            if 'sld_default_layers' in json_complete and 'default_input_point' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['default_input_point']
+            json_complete['sld_default_layers']['default_input_point'] = slddefaultlayers.POINT_SLD_INPUT.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['default_input_point'] = default_input_point
 
         # Tratando campo de sld para buffer
         if len(buffer) == 0:
-            if 'sld_default_layers' in json_complete and 'buffer' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['buffer']
+            json_complete['sld_default_layers']['buffer'] = slddefaultlayers.BUFFER_SLD.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['buffer'] = buffer
 
         # Tratando campo de sld para camada sobreposição Polígono
         if len(overlay_input_polygon) == 0:
-            if 'sld_default_layers' in json_complete and 'overlay_input_polygon' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['overlay_input_polygon']
+            json_complete['sld_default_layers']['overlay_input_polygon'] = slddefaultlayers.POLYGON_SLD_OVERLAY.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['overlay_input_polygon'] = overlay_input_polygon
 
         # Tratando campo de sld para camada sobreposição Linha
         if len(overlay_input_line) == 0:
-            if 'sld_default_layers' in json_complete and 'overlay_input_line' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['overlay_input_line']
+            json_complete['sld_default_layers']['overlay_input_line'] = slddefaultlayers.LINE_SLD_OVERLAY.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['overlay_input_line'] = overlay_input_line
 
         # Tratando campo de sld para camada sobreposição Ponto
         if len(overlay_input_point) == 0:
-            if 'sld_default_layers' in json_complete and 'overlay_input_point' in json_complete['sld_default_layers']:
-                del json_complete['sld_default_layers']['overlay_input_point']
+            json_complete['sld_default_layers']['overlay_input_point'] = slddefaultlayers.POINT_SLD_OVERLAY.value
         else:
-            if 'sld_default_layers' not in json_complete:
-                json_complete['sld_default_layers'] = {}
-
             json_complete['sld_default_layers']['overlay_input_point'] = overlay_input_point
-
-        # Testa se existe algum campo de configuração para as camadas default
-        if 'sld_default_layers' in json_complete and len(json_complete['sld_default_layers']) == 0:
-            del json_complete['sld_default_layers']
 
         self.settings.insert_data(json_complete)
 
@@ -370,6 +340,15 @@ class ConfigWindow(QtWidgets.QDialog):
 
         if 'sld_default_layers' in json_complete and 'overlay_input_point' in json_complete['sld_default_layers']:
             self.qfw_sobreposicao_ponto.setFilePath(json_complete['sld_default_layers']['overlay_input_point'])
+
+    def reset_default_layers(self):
+        self.qfw_entrada_poligono.setFilePath(slddefaultlayers.POLYGON_SLD_INPUT.value)
+        self.qfw_entrada_linha.setFilePath(slddefaultlayers.LINE_SLD_INPUT.value)
+        self.qfw_entrada_ponto.setFilePath(slddefaultlayers.POLYGON_SLD_INPUT.value)
+        self.qfw_buffer.setFilePath(slddefaultlayers.BUFFER_SLD.value)
+        self.qfw_sobreposicao_poligono.setFilePath(slddefaultlayers.POLYGON_SLD_OVERLAY.value)
+        self.qfw_sobreposicao_linha.setFilePath(slddefaultlayers.LINE_SLD_OVERLAY.value)
+        self.qfw_sobreposicao_ponto.setFilePath(slddefaultlayers.POINT_SLD_OVERLAY.value)
 
     def fill_basemap(self):
         json_basemap = self.settings.get_config_basemap()
@@ -552,7 +531,7 @@ class ConfigWindow(QtWidgets.QDialog):
         current_opt = self.combo_box_servico_geocod.currentData()
         current_opt_text = self.combo_box_servico_geocod.currentText()
         key = self.key_geo_cod.text()
-        print("olha ", current_opt_text,current_opt)
+        print("olha ", current_opt_text, current_opt)
         self.credencials.store_current_geocoding_server(current_opt)
         self.credencials.store_keys(str(current_opt), key)
 
@@ -569,7 +548,6 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def back(self):
         self.hide()
-        self.back_window.emit()
 
     def next(self):
         self.hide()

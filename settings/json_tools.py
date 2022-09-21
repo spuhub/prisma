@@ -123,6 +123,24 @@ class JsonTools:
 
         return basemap_list
 
+    def get_config_sld_default_layers(self):
+
+        """
+        Retorna uma lista com as configurações de sld_default_layers.
+        @return: Lista com as configurações.
+        """
+        sld_default_layers_list = []
+
+        if os.stat(self.json_path).st_size != 0:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
+
+        if 'sld_default_layers' in json_config:
+            sld_default_layers_list = json_config['sld_default_layers']
+
+        return sld_default_layers_list
+
     def insert_database_pg(self, db_json_conf):
         """
         Insere as configurações de um banco de dados PostgreSQL no Json.

@@ -268,10 +268,7 @@ class Polygons():
             show_qgis_intersection = QgsVectorLayer(feature_intersection.to_json(), "Sobreposição")
             show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': 'yellow', 'width_border': '0,35',
-                 'style': 'solid'})
-            show_qgis_intersection.renderer().setSymbol(symbol)
+            show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_polygon'])
             QgsProject.instance().addMapLayer(show_qgis_intersection, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_intersection)
 
