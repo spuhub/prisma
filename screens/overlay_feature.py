@@ -29,7 +29,6 @@ class OverlayFeature (QtWidgets.QDialog):
         Retorna para tela anterior.
         """
         self.hide()
-        self.back_window.emit()
 
     def next(self):
         """

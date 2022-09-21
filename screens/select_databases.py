@@ -105,7 +105,6 @@ class SelectDatabases(QtWidgets.QDialog):
         Retorna para tela anterior.
         """
         self.hide()
-        self.cancel_window.emit()
 
     def next(self):
         """

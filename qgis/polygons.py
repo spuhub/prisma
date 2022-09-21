@@ -278,8 +278,7 @@ class Polygons():
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_input_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['buffer'])
             QgsProject.instance().addMapLayer(show_qgis_input, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
 
@@ -289,8 +288,8 @@ class Polygons():
                                                       "Feição de Estudo/Sobreposição (padrão)")
             show_qgis_input_standard.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
-            show_qgis_input_standard.renderer().setSymbol(symbol)
+            self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
+
             QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_input_standard)
         else:
@@ -298,8 +297,8 @@ class Polygons():
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-            symbol = self.get_input_standard_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
+            self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
+
             QgsProject.instance().addMapLayer(show_qgis_input, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
 
@@ -590,7 +589,7 @@ class Polygons():
         layout.loadFromTemplate(document, QgsReadWriteContext())
         project.layoutManager().addLayout(layout)
 
-    def get_input_symbol(self, geometry_type):
+    def get_input_symbol(self, geometry_type, show_qgis_input):
         """
         Estilização dinâmica para diferentes tipos de geometrias (Área de input).
 
@@ -601,19 +600,15 @@ class Polygons():
 
         # Point
         if geometry_type == 0:
-            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': '#616161'})
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['default_input_point'])
         # Line String
         if geometry_type == 1:
-            symbol = QgsLineSymbol.createSimple({"line_color": "#616161", "line_style": "solid", "width": "0.35"})
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['default_input_line'])
         # Polígono
         elif geometry_type == 2:
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
-                 'style': 'solid'})
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['default_input_polygon'])
 
-        return symbol
-
-    def get_input_standard_symbol(self, geometry_type):
+    def get_input_standard_symbol(self, geometry_type, show_qgis_input):
         """
         Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação).
 
@@ -624,17 +619,13 @@ class Polygons():
 
         # Point
         if geometry_type == 0:
-            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': 'gray'})
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['default_input_point'])
         # Line String
         if geometry_type == 1:
-            symbol = QgsLineSymbol.createSimple({"line_color": "gray", "line_style": "solid", "width": "0.35"})
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['default_input_line'])
         # Polígono
         elif geometry_type == 2:
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35',
-                 'style': 'solid'})
-
-        return symbol
+            show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['default_input_polygon'])
 
     def get_feature_symbol(self, geometry_type, style):
         """
