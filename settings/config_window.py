@@ -247,16 +247,12 @@ class ConfigWindow(QtWidgets.QDialog):
     def save_basemap(self):
         json_complete = self.settings.get_json()
 
-        nome = self.txt_basemap_name.text()
-        link = self.txt_basemap_link.text()
-
-        if len(nome) == 0 or len(link) == 0:
-            if 'basemap' in json_complete:
-                del json_complete['basemap']
-        else:
-            json_complete['basemap'] = {}
-            json_complete['basemap']['nome'] = nome
-            json_complete['basemap']['link'] = link
+        selected_basemap = self.cbx_basemap.currentText()
+        for value in json_complete['basemap']:
+            if value[0] == selected_basemap:
+                value[2] = "True"
+            else:
+                value[2] = "False"
 
         self.settings.insert_data(json_complete)
 
@@ -353,9 +349,15 @@ class ConfigWindow(QtWidgets.QDialog):
     def fill_basemap(self):
         json_basemap = self.settings.get_config_basemap()
 
-        if len(json_basemap) > 0:
-            self.txt_basemap_name.setText(json_basemap['nome'])
-            self.txt_basemap_link.setText(json_basemap['link'])
+        basemap_name = [x[0] for x in json_basemap]
+        self.cbx_basemap.addItems(basemap_name)
+
+        selected_basemap: int = None
+        for index, value in enumerate(json_basemap):
+            if value[2] == "True":
+                selected_basemap = index
+
+        self.cbx_basemap.setCurrentIndex(selected_basemap)
 
     def fill_combo_box_base(self):
         """

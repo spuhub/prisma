@@ -498,15 +498,28 @@
     },
     "sld_default_layers": {
         "default_input_polygon": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "default_input_line": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LTM_L.sld",
+        "default_input_line": "C:\\Users\\vinir\\Desktop\\sld\\1_6_5_Trecho_Duto_L.sld",
         "default_input_point": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld",
         "buffer": "C:\\Users\\vinir\\Desktop\\sld\\1_2_3_Massa_Dagua_A.sld",
-        "overlay_input_polygon": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld",
+        "overlay_input_polygon": "C:\\Users\\vinir\\Desktop\\sld\\1_2_4_Terreno_Sujeito_Inundacao_A.sld",
         "overlay_input_line": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LPM_L.sld",
         "overlay_input_point": "C:\\Users\\vinir\\Desktop\\sld\\1_6_2_Estacao_Ferroviario_P.sld"
     },
-    "basemap": {
-        "nome": "OpenStreetMap",
-        "link": "type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    }
+    "basemap": [
+        [
+            "Google Maps",
+            "type=xyz&url=https://mt1.google.com/vt/lyrs%3Dm%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0",
+            "True"
+        ],
+        [
+            "OpenStreetMap",
+            "type=xyz&url=https://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png&zmax=19&zmin=0",
+            "False"
+        ],
+        [
+            "Bing",
+            "type=xyz&url=http://ecn.t3.tiles.virtualearth.net/tiles/a%7Bq%7D.jpeg?g%3D1&zmax=18&zmin=0",
+            "False"
+        ]
+    ]
 }

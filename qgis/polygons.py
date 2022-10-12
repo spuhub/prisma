@@ -39,7 +39,7 @@ class Polygons():
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
-        self.basemap = self.operation_config['operation_config']['basemap']['nome'] if 'basemap' in self.operation_config['operation_config'] else 'OpenStreetMap'
+        self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
     def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
@@ -270,7 +270,7 @@ class Polygons():
 
             show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_polygon'])
             QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_intersection)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_intersection)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
@@ -361,7 +361,7 @@ class Polygons():
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
-            elif layer.name() == self.basemap:
+            elif layer.name() == self.basemap_name:
                 layers_localization_map.append(layer)
                 layers_situation_map.append(layer)
 
@@ -504,12 +504,12 @@ class Polygons():
 
         text = ''
         for item in print_layers:
-            if item != self.basemap:
+            if item != self.basemap_name:
                 text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
                 if text_item not in text:
                     text += text_item
 
-        text += self.basemap + " (2022)."
+        text += self.basemap_name + " (2022)."
         self.rect_main_map = None
         field_data_source.setText(text)
 
@@ -652,7 +652,8 @@ class Polygons():
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
                          'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
-                         self.basemap]
+                         self.basemap_name]
+
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])

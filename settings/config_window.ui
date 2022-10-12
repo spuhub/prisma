@@ -1461,12 +1461,12 @@
            <item>
             <widget class="QLabel" name="label_16">
              <property name="text">
-              <string>Nome</string>
+              <string>Selecione um basemap</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="txt_basemap_name"/>
+            <widget class="QComboBox" name="cbx_basemap"/>
            </item>
           </layout>
          </item>
@@ -1497,18 +1497,7 @@
           </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_44">
-           <item>
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>Link do basemap</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="txt_basemap_link"/>
-           </item>
-          </layout>
+          <layout class="QHBoxLayout" name="horizontalLayout_44"/>
          </item>
         </layout>
        </item>

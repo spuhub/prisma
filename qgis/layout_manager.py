@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import glob
+import re
 
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsRasterLayer, QgsVectorLayer, QgsFillSymbol, \
     QgsLineSymbol, QgsMarkerSymbol, QgsRectangle, QgsMapSettings, QgsLayoutSize, QgsUnitTypes, QgsLayoutExporter, \
-    QgsPrintLayout, QgsReadWriteContext, QgsPalLayerSettings, QgsTextFormat, QgsVectorLayerSimpleLabeling
+    QgsPrintLayout, QgsReadWriteContext, QgsPalLayerSettings, QgsTextFormat, QgsVectorLayerSimpleLabeling, QgsVectorFileWriter, \
+    QgsCoordinateTransformContext
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
@@ -61,7 +64,10 @@ class LayoutManager():
         self.atlas = None
         self.overlay_report = OverlayReportPolygons()
         self.layers = []
+        self.layers_project_path = []
+        self.layers_project_name = []
         self.has_db = None
+        self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
         self.polygons = Polygons(self.operation_config)
         self.linestrings = Linestrings(self.operation_config)
@@ -76,6 +82,8 @@ class LayoutManager():
         self.layout = QgsProject.instance().layoutManager().layoutByName("Planta_FolhaA3_Paisagem")
         self.atlas = self.layout.atlas()
 
+        project_crs = QgsProject.instance().crs().authid()
+
         input = self.operation_config['input_standard']
         input_geographic = self.operation_config['input']
 
@@ -85,6 +93,8 @@ class LayoutManager():
         gdf_selected_shp = self.operation_config['gdf_selected_shp']
         gdf_selected_db = self.operation_config['gdf_selected_db']
         gdf_required, gdf_selected_shp, gdf_selected_db = self.get_required_layers(gdf_selected_shp, gdf_selected_db)
+
+        self.save_project_layers()
 
         # Variável será utilizada para controlar a impressão da folha de rosto
         self.has_db = False
@@ -138,6 +148,11 @@ class LayoutManager():
                 gdf_input = self.calculation_db(gdf_input, input_standard, gdf_selected_db, gdf_required)
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
+
+        QgsProject.instance().setCrs(QgsCoordinateReferenceSystem(str(project_crs)))
+        QApplication.instance().processEvents()
+        QgsProject.instance().removeAllMapLayers()
+        self.load_project_layers()
 
     def get_feature_with_crs(self, input):
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
@@ -353,14 +368,8 @@ class LayoutManager():
         return input
 
     def load_required_layers(self, gdf_required, crs):
-        tms = ''
-        layer = None
         if 'basemap' in self.operation_config['operation_config']:
-            link_basemap = self.operation_config['operation_config']['basemap']['link']
-            url_quote = quote(link_basemap, safe='://')
-            tms = 'type=xyz&url=' + url_quote
-
-            layer = QgsRasterLayer(tms, self.operation_config['operation_config']['basemap']['nome'], 'wms')
+            layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
             tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -442,3 +451,47 @@ class LayoutManager():
             symbol = QgsFillSymbol.createSimple(style)
 
         return symbol
+
+    def save_project_layers(self):
+        ROOT_DIR = os.path.dirname(__file__)
+
+        layers = [layer for layer in QgsProject.instance().mapLayers().values()]
+
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = "ESRI Shapefile"
+        basemap_layer = ["Google Maps", "OpenStreetMap", "Bing"]
+        for layer in layers:
+            if layer.name() in basemap_layer:
+                continue
+
+            QgsVectorFileWriter.writeAsVectorFormatV2(layer, layer.source(), QgsCoordinateTransformContext(), options)
+
+            self.layers_project_path.append(layer.source())
+
+            self.layers_project_name.append(layer.name())
+            SAVE_QML_DIR = ROOT_DIR + '/../temp/' + layer.name() + ".qml"
+            layer.saveNamedStyle(SAVE_QML_DIR)
+
+    def load_project_layers(self):
+        TEMP_QML_DIR = os.path.dirname(__file__) + '/../temp/'
+
+        for index, path_layer in enumerate(self.layers_project_path):
+            layer = QgsVectorLayer(path_layer, self.layers_project_name[index], "ogr")
+            if not layer.isValid():
+                return
+
+            layer.loadNamedStyle(TEMP_QML_DIR + self.layers_project_name[index] + ".qml")
+            layer.triggerRepaint()
+
+            QgsProject.instance().addMapLayer(layer)
+
+        filelist = glob.glob(os.path.join(TEMP_QML_DIR, "*"))
+        for f in filelist:
+            os.remove(f)
+
+    def remove_layers(self):
+        print("QgsProject.instance().mapLayers().values(): ", QgsProject.instance().mapLayers().values())
+
+        for layer in QgsProject.instance().mapLayers().values():
+            if layer.name() not in self.project_layers:
+                QgsProject.instance().removeMapLayers([layer.id()])
