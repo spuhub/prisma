@@ -5,8 +5,9 @@ from qgis.utils import iface
 
 import geopandas as gpd
 import pandas as pd
-
 from urllib.parse import quote
+
+from ..utils.utils import Utils
 
 class MapCanvas():
     """
@@ -15,7 +16,9 @@ class MapCanvas():
     """
     def __init__(self):
         """Método construtor da classe."""
-        pass
+        self.operation_config = None
+        self.utils = Utils()
+        self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
 
     def print_all_layers_qgis(self, operation_config):
@@ -24,23 +27,18 @@ class MapCanvas():
 
         @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
         """
+        self.operation_config = operation_config
         input = operation_config['input']
         input_standard = operation_config['input_standard']
 
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
 
-        tms = ''
-        layer = None
         if 'basemap' in operation_config['operation_config']:
-            link_basemap = operation_config['operation_config']['basemap']['link']
-            url_quote = quote(link_basemap, safe='://')
-            tms = 'type=xyz&url=' + url_quote
-
-            layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
+            layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
-            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png&zmax=18&zmin=0'
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
             layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
@@ -82,22 +80,19 @@ class MapCanvas():
         if 'aproximacao' in operation_config['operation_config']:
             show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
 
-            symbol = self.get_input_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
+            show_qgis_input.loadSldStyle(operation_config['operation_config']['sld_default_layers']['buffer'])
 
             QgsProject.instance().addMapLayer(show_qgis_input)
 
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
 
-            symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
-            show_qgis_input_standard.renderer().setSymbol(symbol)
+            self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
 
             QgsProject.instance().addMapLayer(show_qgis_input_standard)
         else:
             show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
 
-            symbol = self.get_input_standard_symbol(show_qgis_input.geometryType())
-            show_qgis_input.renderer().setSymbol(symbol)
+            self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
 
             QgsProject.instance().addMapLayer(show_qgis_input)
 
@@ -112,23 +107,18 @@ class MapCanvas():
 
         @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
         """
+        self.operation_config = operation_config
         input = operation_config['input']
         input_standard = operation_config['input_standard']
 
         gdf_selected_shp = operation_config['gdf_selected_shp']
         gdf_selected_db = operation_config['gdf_selected_db']
 
-        tms = ''
-        layer = None
         if 'basemap' in operation_config['operation_config']:
-            link_basemap = operation_config['operation_config']['basemap']['link']
-            url_quote = quote(link_basemap, safe='://')
-            tms = 'type=xyz&url=' + url_quote
-
-            layer = QgsRasterLayer(tms, operation_config['operation_config']['basemap']['nome'], 'wms')
+            layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
-            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png&zmax=18&zmin=0'
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
             layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
@@ -199,8 +189,7 @@ class MapCanvas():
 
                 show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Feição de Estudo/Sobreposição")
 
-                symbol = self.get_input_symbol(show_qgis_input.geometryType())
-                show_qgis_input.renderer().setSymbol(symbol)
+                show_qgis_input.loadSldStyle(operation_config['operation_config']['sld_default_layers']['buffer'])
 
                 QgsProject.instance().addMapLayer(show_qgis_input)
 
@@ -210,8 +199,7 @@ class MapCanvas():
 
                 show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
 
-                symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
-                show_qgis_input_standard.renderer().setSymbol(symbol)
+                self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
 
                 QgsProject.instance().addMapLayer(show_qgis_input_standard)
 
@@ -223,8 +211,7 @@ class MapCanvas():
                 show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(),
                                                           "Feição de Estudo/Sobreposição")
 
-                symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
-                show_qgis_input_standard.renderer().setSymbol(symbol)
+                self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
 
                 QgsProject.instance().addMapLayer(show_qgis_input_standard)
 
@@ -273,7 +260,7 @@ class MapCanvas():
 
         return get_overlay_standard
 
-    def get_input_symbol(self, geometry_type):
+    def get_input_symbol(self, geometry_type, show_qgis_input):
         """
         Estilização dinâmica para diferentes tipos de geometrias (Área de input).
 
@@ -284,19 +271,18 @@ class MapCanvas():
 
         # Point
         if geometry_type == 0:
-            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': '#616161'})
+            show_qgis_input.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['default_input_point'])
         # Line String
         if geometry_type == 1:
-            symbol = QgsLineSymbol.createSimple({"line_color": "#616161", "line_style": "solid", "width": "0.35"})
+            show_qgis_input.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['default_input_line'])
         # Polígono
         elif geometry_type == 2:
-            symbol = QgsFillSymbol.createSimple(
-                {'line_style': 'solid', 'line_color': 'black', 'color': '#616161', 'width_border': '0,35',
-                 'style': 'solid'})
+            show_qgis_input.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['default_input_polygon'])
 
-        return symbol
-
-    def get_input_standard_symbol(self, geometry_type):
+    def get_input_standard_symbol(self, geometry_type, show_qgis_input):
         """
         Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação).
 
@@ -307,15 +293,16 @@ class MapCanvas():
 
         # Point
         if geometry_type == 0:
-            symbol = QgsMarkerSymbol.createSimple({'name': 'dot', 'color': 'gray'})
+            show_qgis_input.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['default_input_point'])
         # Line String
         if geometry_type == 1:
-            symbol = QgsLineSymbol.createSimple({"line_color": "gray", "line_style": "solid", "width": "0.35"})
+            show_qgis_input.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['default_input_line'])
         # Polígono
         elif geometry_type == 2:
-            symbol = QgsFillSymbol.createSimple({'line_style': 'solid', 'line_color': 'black', 'color': 'gray', 'width_border': '0,35', 'style': 'solid'})
-
-        return symbol
+            show_qgis_input.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['default_input_polygon'])
 
     def get_feature_symbol(self, geometry_type, style):
         """
