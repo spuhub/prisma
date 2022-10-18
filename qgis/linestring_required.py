@@ -35,18 +35,20 @@ class LinestringRequired():
         self.time = None
 
         self.layers = []
+        self.project_layers = []
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
-    def linestring_required_layers(self, input, input_standard, gdf_vertices, gpd_area_homologada, gpd_area_nao_homologada, index_input, time, atlas, layout):
+    def linestring_required_layers(self, input, input_standard, gdf_vertices, gpd_area_homologada, gpd_area_nao_homologada, project_layers, index_input, time, atlas, layout):
         self.gpd_area_homologada = gpd_area_homologada
         self.gpd_area_nao_homologada = gpd_area_nao_homologada
         self.time = time
         self.index_input = index_input
         self.atlas = atlas
         self.layout = layout
+        self.project_layers = project_layers
 
         if len(input_standard) > 0:
             self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], gdf_vertices)
@@ -84,7 +86,7 @@ class LinestringRequired():
                 show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_line'])
 
                 QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_intersection)
+                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
@@ -95,7 +97,7 @@ class LinestringRequired():
             symbol = self.get_input_symbol(show_qgis_input.geometryType())
             show_qgis_input.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
             input_standard = input_standard.to_crs(crs)
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(),
@@ -105,7 +107,7 @@ class LinestringRequired():
             symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
             show_qgis_input_standard.renderer().setSymbol(symbol)
             QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_input_standard)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
         else:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
@@ -114,7 +116,7 @@ class LinestringRequired():
             self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
 
             QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
         layers_localization_map = []
         layers_situation_map = []
@@ -240,7 +242,7 @@ class LinestringRequired():
         self.fill_data_source()
 
     def fill_data_source(self):
-        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição']
+        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição'] + self.project_layers
         field_data_source = self.layout.itemById('CD_FonteDados')
 
         all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
@@ -423,7 +425,7 @@ class LinestringRequired():
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
                          'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
-                         self.basemap_name]
+                         self.basemap_name] + self.project_layers
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:
                 QgsProject.instance().removeMapLayers([layer.id()])

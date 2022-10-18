@@ -35,15 +35,18 @@ class Polygons():
         self.time = None
         self.pd = PolygonRequired(self.operation_config)
 
+        self.project_layers = []
+
         self.layers = []
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
-    def comparasion_between_polygons(self, input, input_standard, area, gdf_required, index_1, index_2, atlas, layout, index_input, last_area):
+    def comparasion_between_polygons(self, input, input_standard, area, gdf_required, project_layers, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
         self.layout = layout
+        self.project_layers = project_layers
 
         input, intersection_required = self.calculation_required(input, gdf_required)
         # Extrai vértices e linhas do polígono que está sendo comparado
@@ -70,7 +73,7 @@ class Polygons():
             date_and_time = datetime.now()
             self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
             # Gera o layout PDF com a área de entrada e áreas da união
-            self.pd.polygon_required_layers(input, input_standard, intersection_required, gdf_line_input, gdf_point_input, self.index_input,
+            self.pd.polygon_required_layers(input, input_standard, intersection_required, gdf_line_input, gdf_point_input, self.project_layers, self.index_input,
                                             self.time, self.atlas, self.layout)
 
         data = []
@@ -270,7 +273,7 @@ class Polygons():
 
             show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_polygon'])
             QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_intersection)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
@@ -280,7 +283,7 @@ class Polygons():
 
             show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['buffer'])
             QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
             if index_2 != None:
                 input_standard = input_standard.to_crs(crs)
@@ -291,7 +294,7 @@ class Polygons():
             self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
 
             QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_input_standard)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
         else:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
@@ -300,7 +303,7 @@ class Polygons():
             self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
 
             QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
         # Carrega camada de comparação no QGis
         # Se index 2 é diferente de None, significa que a comparação está vinda de banco de dados
@@ -312,7 +315,7 @@ class Polygons():
 
             show_qgis_areas.loadSldStyle(self.operation_config['operation_config']['shp'][index_1]['estiloCamadas'][0]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
         else:
             if 'geom' in feature_area:
                 feature_area = feature_area.drop(columns=['geom'])
@@ -327,7 +330,7 @@ class Polygons():
             show_qgis_areas.loadSldStyle(
                 self.operation_config['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_areas)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
 
         # Camada de cotas
         show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
@@ -451,8 +454,7 @@ class Polygons():
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        # files_dir = os.path.normpath(files_dir)
-        # print(files_dir)
+
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
         merger = PdfFileMerger()
 
@@ -494,7 +496,7 @@ class Polygons():
         self.fill_data_source()
 
     def fill_data_source(self):
-        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas']
+        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas'] + self.project_layers
         field_data_source = self.layout.itemById('CD_FonteDados')
 
         all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
@@ -652,7 +654,7 @@ class Polygons():
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
                          'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
-                         self.basemap_name]
+                         self.basemap_name] + self.project_layers
 
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:

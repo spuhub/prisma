@@ -33,16 +33,18 @@ class PolygonRequired():
         self.time = None
 
         self.layers = []
+        self.project_layers = []
         self.rect_main_map = None
         self.root = QgsProject.instance().layerTreeRoot()
 
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
-    def polygon_required_layers(self, input, input_standard, intersection_required, gdf_line_input, gdf_point_input, index_input, time, atlas, layout):
+    def polygon_required_layers(self, input, input_standard, intersection_required, gdf_line_input, gdf_point_input, project_layers, index_input, time, atlas, layout):
         self.time = time
         self.index_input = index_input
         self.atlas = atlas
         self.layout = layout
+        self.project_layers = project_layers
 
         if len(input_standard) > 0:
             self.handle_layers(input.iloc[[0]], intersection_required, gdf_line_input, gdf_point_input, input_standard.iloc[[0]])
@@ -80,7 +82,7 @@ class PolygonRequired():
                 show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_polygon'])
 
                 QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_intersection)
+                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
 
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
@@ -90,7 +92,7 @@ class PolygonRequired():
 
             show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['buffer'])
             QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
             input_standard = input_standard.to_crs(crs)
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(),
@@ -99,7 +101,7 @@ class PolygonRequired():
             self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
 
             QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, show_qgis_input_standard)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
         else:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
@@ -108,7 +110,7 @@ class PolygonRequired():
             self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
 
             QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 1, show_qgis_input)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
         # Camada de cotas
         show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
@@ -218,8 +220,7 @@ class PolygonRequired():
 
     def merge_pdf(self, pdf_name):
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
-        # files_dir = os.path.normpath(files_dir)
-        # print(files_dir)
+
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
         merger = PdfFileMerger()
 
@@ -257,7 +258,7 @@ class PolygonRequired():
         self.fill_data_source()
 
     def fill_data_source(self):
-        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas']
+        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Sobreposição', 'Vértices', 'Linhas'] + self.project_layers
         field_data_source = self.layout.itemById('CD_FonteDados')
 
         all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
@@ -430,7 +431,7 @@ class PolygonRequired():
     def remove_layers(self):
         list_required = ['LPM Homologada', 'LTM Homologada', 'LLTM Homologada', 'LMEO Homologada', 'Área Homologada',
                          'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada', 'LLTM Não Homologada', 'LMEO Não Homologada',
-                         self.basemap_name]
+                         self.basemap_name] + self.project_layers
 
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in list_required:

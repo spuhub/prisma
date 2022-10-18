@@ -66,6 +66,7 @@ class LayoutManager():
         self.layers = []
         self.layers_project_path = []
         self.layers_project_name = []
+        self.project_layers = []
         self.has_db = None
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
@@ -94,7 +95,9 @@ class LayoutManager():
         gdf_selected_db = self.operation_config['gdf_selected_db']
         gdf_required, gdf_selected_shp, gdf_selected_db = self.get_required_layers(gdf_selected_shp, gdf_selected_db)
 
-        self.save_project_layers()
+        self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
+        # self.save_project_layers()
+        self.make_invisible_layer()
 
         # Variável será utilizada para controlar a impressão da folha de rosto
         self.has_db = False
@@ -121,8 +124,9 @@ class LayoutManager():
         input['Área Não Homologada'] = 0
 
         # Remove camadas já impressas
-        QgsProject.instance().removeAllMapLayers()
-        QApplication.instance().processEvents()
+        self.remove_layers()
+        # QgsProject.instance().removeAllMapLayers()
+        # QApplication.instance().processEvents()
 
         # Os cálculos de área, centroide, interseções são feitos aqui, de forma individual para cada feição
         # do shp de entrada. Após realizar os cálculos, as funções calculation_shp e calculation_db
@@ -134,8 +138,9 @@ class LayoutManager():
             else:
                 # Caso feição atual tenha crs diferente, remove todas camadas e gera novamente
                 if input.iloc[indexInput-1]['crs_feature'] != rowInput['crs_feature']:
-                    QgsProject.instance().removeAllMapLayers()
-                    QApplication.instance().processEvents()
+                    self.remove_layers()
+                    # QgsProject.instance().removeAllMapLayers()
+                    # QApplication.instance().processEvents()
                     self.load_required_layers(gdf_required, rowInput['crs_feature'])
 
             gdf_input = self.get_feature_with_crs(input.iloc[[indexInput]])
@@ -151,8 +156,9 @@ class LayoutManager():
 
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem(str(project_crs)))
         QApplication.instance().processEvents()
-        QgsProject.instance().removeAllMapLayers()
-        self.load_project_layers()
+        self.remove_layers()
+        # QgsProject.instance().removeAllMapLayers()
+        # self.load_project_layers()
 
     def get_feature_with_crs(self, input):
         crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
@@ -275,24 +281,24 @@ class LayoutManager():
                     last_area = True
                     if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                         'geometry'].type in ['Polygon', 'MultiPolygon']:
-                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, index, None,
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, self.project_layers, index, None,
                                                                    self.atlas, self.layout, self.index_input, last_area)
 
                     elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                         'geometry'].type in ['LineString', 'MultiLineString']:
-                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, index, None,
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, self.project_layers, index, None,
                                                                    self.atlas, self.layout, self.index_input, last_area)
                 else:
                     last_area = False
                     if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                         'geometry'].type in ['Polygon', 'MultiPolygon']:
-                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, index,
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, self.project_layers, index,
                                                                    None,
                                                                    self.atlas, self.layout, self.index_input, last_area)
 
                     elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                         'geometry'].type in ['LineString', 'MultiLineString']:
-                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required,
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, self.project_layers,
                                                                          index, None,
                                                                          self.atlas, self.layout, self.index_input, last_area)
         return input
@@ -335,14 +341,14 @@ class LayoutManager():
                         if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                             'geometry'].type in ['Polygon', 'MultiPolygon']:
                             input = self.polygons.comparasion_between_polygons(input, input_standard, area,
-                                                                               gdf_required, index_db, index_layer,
+                                                                               gdf_required, self.project_layers, index_db, index_layer,
                                                                                self.atlas, self.layout,
                                                                                self.index_input, last_area)
 
                         elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                             'geometry'].type in ['LineString', 'MultiLineString']:
                             input = self.linestrings.comparasion_between_linestrings(input, input_standard, area,
-                                                                                     gdf_required, index_db, index_layer,
+                                                                                     gdf_required, self.project_layers, index_db, index_layer,
                                                                                      self.atlas, self.layout,
                                                                                      self.index_input, last_area)
                     else:
@@ -350,7 +356,7 @@ class LayoutManager():
                         if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                             'geometry'].type in ['Polygon', 'MultiPolygon']:
                             input = self.polygons.comparasion_between_polygons(input, input_standard, area,
-                                                                               gdf_required, index_db,
+                                                                               gdf_required, self.project_layers, index_db,
                                                                                index_layer,
                                                                                self.atlas, self.layout,
                                                                                self.index_input, last_area)
@@ -358,7 +364,7 @@ class LayoutManager():
                         elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                             'geometry'].type in ['LineString', 'MultiLineString']:
                             input = self.linestrings.comparasion_between_linestrings(input, input_standard, area,
-                                                                                     gdf_required,
+                                                                                     gdf_required, self.project_layers,
                                                                                      index_db, index_layer,
                                                                                      self.atlas, self.layout,
                                                                                      self.index_input, last_area)
@@ -490,8 +496,11 @@ class LayoutManager():
             os.remove(f)
 
     def remove_layers(self):
-        print("QgsProject.instance().mapLayers().values(): ", QgsProject.instance().mapLayers().values())
-
         for layer in QgsProject.instance().mapLayers().values():
             if layer.name() not in self.project_layers:
                 QgsProject.instance().removeMapLayers([layer.id()])
+
+    def make_invisible_layer(self):
+        for layer in QgsProject.instance().mapLayers().values():
+            if layer.name() in self.project_layers:
+                QgsProject.instance().layerTreeRoot().findLayer(layer.id()).setItemVisibilityChecked(False)
