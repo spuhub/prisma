@@ -66,6 +66,25 @@ class JsonTools:
 
         return shp_list
 
+    def get_config_wfs(self):
+
+        """
+        Retorna uma lista com as configurações de bases em WFS.
+        @return: Lista com as configurações.
+        """
+        wfs_list = []
+
+        if os.stat(self.json_path).st_size != 0:
+            with open(self.json_path, 'r', encoding='utf8') as f:
+                json_config = json.load(f)
+                f.close()
+
+            for base, data in json_config.items():
+                if 'tipo' in data and data['tipo'] == 'wfs':
+                    wfs_list.append(data)
+
+        return wfs_list
+
     def get_config_required(self):
 
         """

@@ -1,17 +1,19 @@
 import sys
 import os.path
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.uic import loadUi
+from PyQt5.QtWidgets import QMessageBox
+from qgis.gui import QgsFileWidget, QgsDateTimeEdit
 
 from .config_layers import ConfigLayers
 from .json_tools import JsonTools
 from .env_tools import EnvTools
-from PyQt5.QtWidgets import QMessageBox
 
 from ..screens.report_generator import ReportGenerator
 from ..databases.db_connection import DbConnection
 from ..utils.default_sld import slddefaultlayers
+from ..utils.wfs_to_geopandas import WfsOperations
 
 
 class ConfigWindow(QtWidgets.QDialog):
@@ -39,6 +41,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.btn_cancelar.clicked.connect(self.back)
         self.btn_salvar.clicked.connect(self.save_settings)
         self.btn_reset_default_layers.clicked.connect(self.reset_default_layers)
+        self.btn_get_wfs.clicked.connect(self.handle_wfs)
         self.test_conect.clicked.connect(self.message)
         self.testar_base_carregar_camadas.clicked.connect(self.hideLayerConfBase)
         #self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
@@ -161,6 +164,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_geocoding_key()
         self.save_basemap()
         self.save_sld_default_layers()
+        self.save_wfs_config()
 
         self.fill_mandatory_layers_from_json_conf()
 
@@ -1310,7 +1314,86 @@ class ConfigWindow(QtWidgets.QDialog):
         if self.combo_box_base.currentIndex() != 0:
             self.delete_base.setEnabled(True)
 
+    def handle_wfs(self):
+        self.link_wfs = self.txt_link_wfs.text()
+
+        wfs_operations = WfsOperations()
+
+        self.wfs_data = wfs_operations.get_wfs_informations(self.link_wfs)
+
+        # Configura quantidade de linhas e as colunas da tabela de resultados
+        self.tbl_wfs.setColumnCount(6)
+        self.tbl_wfs.setRowCount(len(self.wfs_data))
+        self.tbl_wfs.setHorizontalHeaderLabels(['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade", "Arquivo SLD"])
+
+        self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
+        self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
+        row_control = 0
+        for data in self.wfs_data:
+            item = QtWidgets.QTableWidgetItem(str(data[1]))
+            item.setFlags(QtCore.Qt.ItemIsUserCheckable |
+                          QtCore.Qt.ItemIsEnabled)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            cellName = QtWidgets.QTableWidgetItem(item)
+            self.tbl_wfs.setItem(row_control, 0, cellName)
+
+            cellName = QtWidgets.QTableWidgetItem("")
+            self.tbl_wfs.setItem(row_control, 1, cellName)
+
+            cellName = QtWidgets.QTableWidgetItem("")
+            self.tbl_wfs.setItem(row_control, 2, cellName)
+
+            cellName = QgsDateTimeEdit()
+            cellName.setDisplayFormat("dd/MM/yyyy")
+            self.tbl_wfs.setCellWidget(row_control, 3, cellName)
+
+            cellName = QtWidgets.QTableWidgetItem("")
+            self.tbl_wfs.setItem(row_control, 4, cellName)
+
+            cellName = QgsFileWidget()
+            self.tbl_wfs.setCellWidget(row_control, 5, cellName)
+
+            row_control += 1
+
+        self.tbl_wfs.itemClicked.connect(self.handleItemClicked)
+        self._list = []
+
+    def handleItemClicked(self, item):
+        print(os.path.join(os.path.dirname(__file__)))
+        if self.tbl_wfs.item(item.row(), 0).checkState() == QtCore.Qt.Checked:
+            if item.row() not in self._list:
+                self._list.append(item.row())
+                print(self._list)
+        else:
+            if item.row() in self._list:
+                self._list.remove(item.row())
+                print(self._list)
+
+    def save_wfs_config(self):
+        wfs_operations = WfsOperations()
+        json_complete = self.settings.get_json()
+
+        for item in self._list:
+            if wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
+                data = {}
+
+                data['tipo'] = 'wfs'
+                data['nome'] = self.tbl_wfs.item(item, 1).text()
+                data['diretorio'] = os.path.join(os.path.dirname(__file__), '/../wfs_layers/', self.wfs_data[item][0])
+                data['orgaoResponsavel'] = self.tbl_wfs.item(item, 2).text()
+                data['aproximacao'] = self.tbl_wfs.item(item, 3).text()
+                data['style'] = self.tbl_wfs.item(item, 4).text()
+
+                for value in json_complete['basemap']:
+                    if value[0] == selected_basemap:
+                        value[2] = "True"
+                    else:
+                        value[2] = "False"
+
+                self.settings.insert_data(json_complete)
 
 
+            print("save: ", self.tbl_wfs.item(item, 0).text(), self.tbl_wfs.item(item, 1).text(), self.tbl_wfs.item(item, 2).text())
 
 

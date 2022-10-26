@@ -36,6 +36,7 @@ class SelectDatabases(QtWidgets.QDialog):
         # Funcionalidades dos botões da tela
         self.check_bd.clicked.connect(self.handle_check_bd)
         self.check_shp.clicked.connect(self.handle_check_shp)
+        self.check_wfs.clicked.connect(self.handle_check_wfs)
         self.btn_cancel.clicked.connect(self.cancel)
         self.btn_continuar.clicked.connect(self.next)
 
@@ -99,6 +100,15 @@ class SelectDatabases(QtWidgets.QDialog):
             self.list_shp.setEnabled(True)
         else:
             self.list_shp.setEnabled(False)
+
+    def handle_check_wfs(self):
+        """
+        Habilita/desabilita tabela contendo base de dados de shapefiles
+        """
+        if self.check_wfs.isChecked():
+            self.list_wfs.setEnabled(True)
+        else:
+            self.list_wfs.setEnabled(False)
 
     def cancel(self):
         """
