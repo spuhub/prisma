@@ -21,11 +21,12 @@ class OperationController:
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
+        self.data_wfs = self.json_tools.get_config_wfs()
         self.data_required = self.json_tools.get_config_required()
         self.basemap = self.json_tools.get_config_basemap()
         self.sld_default_layers = self.json_tools.get_config_sld_default_layers()
 
-    def get_operation(self, operation_config, selected_items_shp, selected_items_bd):
+    def get_operation(self, operation_config, selected_items_shp, selected_items_wfs, selected_items_bd):
         """
         Função que gera as configurações/especificações da busca de sobreposição que irá acontecer. Aqui é armazenado, em formado de dicionário, quais bases de dados serão de dados serão
         utilizadas para a busca de sobreposição
@@ -36,10 +37,10 @@ class OperationController:
         @return operation_config: Dicionário contendo configurações/especificações de busca.
         """
         if (operation_config['operation'] == 'shapefile'):
-            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
+            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_wfs, selected_items_shp)
 
         elif (operation_config['operation'] == 'feature'):
-            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
+            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_wfs, selected_items_shp)
 
             # Quando uma camada é pega do QGis, alguns campos são retornados em formato de objeto QVariant
             # Esses dados sempre são nulos e podem ser apagados, que é oq está sendo feito
@@ -56,7 +57,7 @@ class OperationController:
             operation_config['input'] = input
 
         elif (operation_config['operation'] == 'coordinate'):
-            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_shp)
+            operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_wfs, selected_items_shp)
 
         if len(self.basemap) > 0:
             operation_config['basemap'] = self.basemap
@@ -65,7 +66,7 @@ class OperationController:
 
         return operation_config
 
-    def create_operation_config(self, operation_config, selected_items_bd, selected_items_shp):
+    def create_operation_config(self, operation_config, selected_items_bd, selected_items_wfs, selected_items_shp):
         """
         Monta uma lista de configurações para operação que será realizada.
 
@@ -78,6 +79,24 @@ class OperationController:
         for i in self.data_shp:
             if(i['nome'] in selected_items_shp):
                 operation_config['shp'].append(i)
+
+        operation_config['wfs'] = []
+
+        handled_items_wfs = []
+        for value in selected_items_wfs:
+            handled_value = value.replace(')', '').split(' (')
+            handled_items_wfs.append(handled_value)
+
+        for i in self.data_wfs:
+            for key, layer in enumerate(i['nomeFantasiaTabelasCamadas']):
+                for layer_req in handled_items_wfs:
+                    if i['nome'] == layer_req[1] and layer == layer_req[0]:
+                        operation_config['wfs'].append(dict(i))
+                        operation_config['wfs'][-1]['nomeFantasiaTabelasCamadas'] = layer
+                        operation_config['wfs'][-1]['tabelasCamadas'] = i['tabelasCamadas'][key]
+                        operation_config['wfs'][-1]['estiloTabelasCamadas'] = i['estiloTabelasCamadas'][key]
+                        operation_config['wfs'][-1]['aproximacao'] = i['aproximacao'][key]
+                        operation_config['wfs'][-1]['diretorio'] = i['diretorio'][key]
 
         operation_config['pg'] = []
 
@@ -97,7 +116,6 @@ class OperationController:
                 for layer_req in handled_items_db:
                     if i['nome'] == layer_req[1] and layer == layer_req[0]:
                         operation_config['pg'].append(dict(i))
-                        print(operation_config['pg'][-1])
                         operation_config['pg'][-1]['nomeFantasiaTabelasCamadas'] = [layer]
                         operation_config['pg'][-1]['tabelasCamadas'] = [i['tabelasCamadas'][key]]
                         operation_config['pg'][-1]['estiloTabelasCamadas'] = [i['estiloTabelasCamadas'][key]]

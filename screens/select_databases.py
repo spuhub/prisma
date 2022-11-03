@@ -28,6 +28,7 @@ class SelectDatabases(QtWidgets.QDialog):
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
         self.data_shp = self.json_tools.get_config_shapefile()
+        self.data_wfs = self.json_tools.get_config_wfs()
         self.json = self.json_tools.get_json()
 
         super(SelectDatabases, self).__init__()
@@ -83,6 +84,21 @@ class SelectDatabases(QtWidgets.QDialog):
                     item.setFlags(item.flags())
                     self.list_bd.addItem(item)
 
+        for db in range(len(self.data_wfs)):
+            for db_layers in range(len(self.data_wfs[db]['nomeFantasiaTabelasCamadas'])):
+                is_required = False
+                for x in required_pg:
+                    if x[0] == self.data_wfs[db]['id'] and x[1] == self.data_wfs[db]['wfsSelecionadas'][db_layers]:
+                        is_required = True
+
+                if is_required == False:
+                    item = QtWidgets.QListWidgetItem(
+                        self.data_wfs[db]['nomeFantasiaTabelasCamadas'][db_layers] + ' (' + self.data_wfs[db]['nome'] + ')')
+                    item.setFont(QFont('Arial', 10))
+                    item.setSizeHint(QtCore.QSize(20, 30))
+                    item.setFlags(item.flags())
+                    self.list_wfs.addItem(item)
+
     def handle_check_bd(self):
         """
         Habilita/desabilita tabela contendo base de dados de banco de dados
@@ -126,28 +142,31 @@ class SelectDatabases(QtWidgets.QDialog):
         self.hide()
 
         selected_items_shp = []
+        selected_items_wfs = []
         selected_items_bd = []
 
         # Armazena bases de dados selecionadas
         if self.check_shp.isChecked():
             selected_items_shp = [item.text() for item in self.list_shp.selectedItems()]
+        if self.check_wfs.isChecked():
+            selected_items_wfs = [item.text() for item in self.list_wfs.selectedItems()]
         if self.check_bd.isChecked():
             selected_items_bd = [item.text() for item in self.list_bd.selectedItems()]
 
         # Prepara operação que será realizada em formato dicionário
         oc = OperationController()
-        self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_bd)
+        self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_wfs, selected_items_bd)
 
         # Leitura e manipulação dos dados
-        input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(
+        input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_wfs, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(
             self.operation_config)
 
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        gdf_result = overlay_analysis.overlay_analysis(input, input_standard, gdf_selected_shp, gdf_selected_db, self.operation_config)
+        gdf_result = overlay_analysis.overlay_analysis(input, input_standard, gdf_selected_shp, gdf_selected_wfs, gdf_selected_db, self.operation_config)
 
         data = {'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
                   'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_shp_standard': gdf_selected_shp_standard,
-                  'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
+                  'gdf_selected_wfs': gdf_result['gdf_selected_wfs'], 'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
 
         self.continue_window.emit(data)

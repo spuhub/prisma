@@ -39,3 +39,20 @@ class ShpHandle():
             gdf_selected_shp[shp].set_crs(allow_override=True, crs=4326) # tranforma dados para sistema de coordenadas de referência adotados como padrão no projeto (EPSG:4674)
 
         return gdf_selected_shp
+
+    def read_selected_wfs(self, selected_wfs):
+        """
+        Método que lê arquivos wfs selecionados para comparação.
+
+        @keyword selected_wfs: Vetor contendo informações das bases de dados selecionadas para comparação, essas informações são obtidas do arquivo JSON.
+        @return input: Geodataframe contendo os dados do shapefile de input.
+        """
+        gdf_selected_wfs = []
+
+        # Cria uma lista com dados no formato geopandas das áreas selecionadas para comparação
+        for wfs in range(len(selected_wfs)):
+            gdf_selected_wfs.append(gpd.read_file(selected_wfs[wfs]['diretorio']))
+            gdf_selected_wfs[wfs] = gdf_selected_wfs[wfs].to_crs(4326)
+            gdf_selected_wfs[wfs].set_crs(allow_override=True, crs=4326) # tranforma dados para sistema de coordenadas de referência adotados como padrão no projeto (EPSG:4674)
+
+        return gdf_selected_wfs

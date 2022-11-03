@@ -37,7 +37,7 @@ class OverlayAnalisys():
         """Método construtor da classe."""
         self.utils = Utils()
 
-    def overlay_analysis(self, input, input_standard, gdf_selected_shp, gdf_selected_db, operation_config):
+    def overlay_analysis(self, input, input_standard, gdf_selected_shp, gdf_selected_wfs, gdf_selected_db, operation_config):
         """
         Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas.
         Esta função é feita através da projeção geográfica.
@@ -53,11 +53,14 @@ class OverlayAnalisys():
         # Comparação de sobreposição entre input e Shapefiles
         input = self.analisys_shp(input, gdf_selected_shp)
 
+        # Comparação de sobreposição entre input e Shapefiles
+        input = self.analisys_wfs(input, gdf_selected_wfs)
+
         # Comparação de sobreposição entre input e bases de dados de banco de dados
         input = self.analysis_db(input, gdf_selected_db)
 
-        result = {'input': input,'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp,
-                  'gdf_selected_db': gdf_selected_db}
+        result = {'input': input, 'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp,
+                  'gdf_selected_wfs': gdf_selected_wfs, 'gdf_selected_db': gdf_selected_db}
 
         return result
 
@@ -82,6 +85,28 @@ class OverlayAnalisys():
 
             index += 1
         return overlay_shp
+
+    def analisys_wfs(self, input, gdf_selected_wfs):
+        """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
+
+        @keyword input: Camada de input.
+        @keyword gdf_selected_shp: Camadas shapefiles selecionadas para comparação.
+        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
+        """
+        index = 0
+        overlay_wfs = input.copy()
+        for area in gdf_selected_wfs:
+            overlay_wfs[self.operation_config['wfs'][index]['nomeFantasiaTabelasCamadas']] = False
+            area = area.to_crs(4326)
+            for indexArea, rowArea in area.iterrows():
+                for indexInput, rowInput in input.iterrows():
+                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                        overlay_wfs.loc[indexInput, self.operation_config['wfs'][index]['nomeFantasiaTabelasCamadas']] = True
+                        # if str(input.geom_type) == str(area.geom_type):
+                        #     overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+
+            index += 1
+        return overlay_wfs
 
     def analysis_db(self, input, gdf_selected_db):
         """Verifica sobreposição entre camada de input e camadas de banco de dados selecionadas.

@@ -1348,7 +1348,7 @@ class ConfigWindow(QtWidgets.QDialog):
             cellName.setDisplayFormat("dd/MM/yyyy")
             self.tbl_wfs.setCellWidget(row_control, 3, cellName)
 
-            cellName = QtWidgets.QTableWidgetItem("")
+            cellName = QtWidgets.QTableWidgetItem("0")
             self.tbl_wfs.setItem(row_control, 4, cellName)
 
             cellName = QgsFileWidget()
@@ -1374,26 +1374,76 @@ class ConfigWindow(QtWidgets.QDialog):
         wfs_operations = WfsOperations()
         json_complete = self.settings.get_json()
 
+        data = {}
+        id_current_wfs = self.combo_wfs.currentData()
+        config_json_wfs = self.settings.get_config_wfs()
+
+        data['nome'] = self.txt_nome_wfs.text()
+        data['link'] = self.link_wfs
+        data['tipo'] = 'wfs'
+
+        data['nomeFantasiaTabelasCamadas'] = []
+        data['diretorio'] = []
+        data['orgaoResponsavel'] = []
+        data['periodosReferencia'] = []
+        data['aproximacao'] = []
+        data['estiloTabelasCamadas'] = []
+
+        names_selected_wfs = [self.wfs_data[item][0] for item in self._list]
+
+        data['wfsSelecionadas'] = [self.wfs_data[item][1] for item in self._list]
+        data['tabelasCamadas'] = [item[0] for item in self.wfs_data]
+
         for item in self._list:
-            if wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
-                data = {}
+            if self.wfs_data[item][0] in names_selected_wfs and wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
+                data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
+                layer = self.wfs_data[item][0] \
+                    .replace(':', '_') \
+                    .replace('*', '_') \
+                    .replace('/', '_') \
+                    .replace('\\', '_')
+                data['diretorio'].append(os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson")
+                data['orgaoResponsavel'].append(self.tbl_wfs.item(item, 2).text())
 
-                data['tipo'] = 'wfs'
-                data['nome'] = self.tbl_wfs.item(item, 1).text()
-                data['diretorio'] = os.path.join(os.path.dirname(__file__), '/../wfs_layers/', self.wfs_data[item][0])
-                data['orgaoResponsavel'] = self.tbl_wfs.item(item, 2).text()
-                data['aproximacao'] = self.tbl_wfs.item(item, 3).text()
-                data['style'] = self.tbl_wfs.item(item, 4).text()
+                print("self.tbl_wfs.item(item, 3): ", self.tbl_wfs.cellWidget(item, 3))
 
-                for value in json_complete['basemap']:
-                    if value[0] == selected_basemap:
-                        value[2] = "True"
-                    else:
-                        value[2] = "False"
+                dt = self.tbl_wfs.cellWidget(item, 3).dateTime()
+                dt_string = dt.toString(self.tbl_wfs.cellWidget(item, 3).displayFormat())
+                data["periodosReferencia"].append(dt_string)
 
-                self.settings.insert_data(json_complete)
+                data['aproximacao'].append(self.tbl_wfs.item(item, 4).text())
+                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 5).filePath())
 
+        self.settings.insert_database_pg(data)
 
-            print("save: ", self.tbl_wfs.item(item, 0).text(), self.tbl_wfs.item(item, 1).text(), self.tbl_wfs.item(item, 2).text())
+        # for item in self._list:
+        #     if wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
+        #         data = {}
+        #         if id == None:
+        #             data['nome'] = self.txt_nome_wfs.text()
+        #             data['link'] = self.link_wfs
+        #             data['tipo'] = 'wfs'
+        #
+        #         data['nomeFantasia'] = self.tbl_wfs.item(item, 1).text()
+        #         data['diretorio'] = os.path.join(os.path.dirname(__file__), '/../wfs_layers/', self.wfs_data[item][0])
+        #         data['orgaoResponsavel'] = self.tbl_wfs.item(item, 2).text()
+        #
+        #         dt = self.tbl_wfs.item(item, 3).text()
+        #         dt_string = dt.toString(self.periodos_referencia_base.displayFormat())
+        #         data["periodosReferencia"] = dt_string
+        #
+        #         data['aproximacao'] = self.tbl_wfs.item(item, 4).text()
+        #         data['style'] = self.tbl_wfs.item(item, 5).text()
+        #
+        #         for value in json_complete['basemap']:
+        #             if value[0] == selected_basemap:
+        #                 value[2] = "True"
+        #             else:
+        #                 value[2] = "False"
+        #
+        #         self.settings.insert_data(json_complete)
+        #
+        #
+        #     print("save: ", self.tbl_wfs.item(item, 0).text(), self.tbl_wfs.item(item, 1).text(), self.tbl_wfs.item(item, 2).text())
 
 

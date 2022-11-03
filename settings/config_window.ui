@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1136</width>
-    <height>878</height>
+    <width>1270</width>
+    <height>894</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -488,11 +488,38 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_51">
+         <item>
+          <widget class="QComboBox" name="combo_wfs">
+           <item>
+            <property name="text">
+             <string>Adicionar uma nova base de dados WFS</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_54">
+         <item>
+          <widget class="QLabel" name="label_55">
+           <property name="text">
+            <string>Nome da base WFS: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="txt_nome_wfs"/>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_50">
          <item>
           <widget class="QLabel" name="label_17">
            <property name="text">
-            <string>Link WFS:</string>
+            <string>Link da WFS: </string>
            </property>
           </widget>
          </item>
@@ -514,7 +541,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>Link da base WFS</string>
+            <string/>
            </property>
            <property name="cursorMoveStyle">
             <enum>Qt::LogicalMoveStyle</enum>

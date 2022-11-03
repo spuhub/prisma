@@ -1,3 +1,5 @@
+import os
+
 import geopandas as gpd
 import requests
 from owslib.wfs import WebFeatureService
@@ -19,17 +21,21 @@ class WfsOperations:
 
       def download_wfs_layer(self, link_wfs, layer):
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',
-                  TYPENAME=layer, OUTPUTFORMAT='geojson')
+                  TYPENAME=layer, OUTPUTFORMAT='json')
 
             url = requests.Request('GET', link_wfs, params=params).prepare().url
             response = requests.get(url)
 
             if response.ok:
-                  print("response: ", response)
-                  print(os.path.join(os.path.dirname(__file__)))
+                  layer = layer\
+                        .replace(':', '_')\
+                        .replace('*', '_')\
+                        .replace('/', '_')\
+                        .replace('\\', '_')
+                  dir = os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson"
 
-                  # open("instagram.ico", "wb").write(response.content)
-
+                  print(dir)
+                  open(dir, "wb").write(response.content)
                   return True
             return False
 

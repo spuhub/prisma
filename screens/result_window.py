@@ -49,7 +49,7 @@ class ResultWindow (QtWidgets.QDialog):
 
         # Configura quantidade de linhas e as colunas da tabela de resultados
         self.tbl_result.setColumnCount(2)
-        self.tbl_result.setRowCount(len(self.result['operation_config']['shp']) + len(self.result['operation_config']['pg']) + len(self.result['operation_config']['required']))
+        self.tbl_result.setRowCount(len(self.result['operation_config']['shp']) + len(self.result['operation_config']['pg']) + len(self.result['operation_config']['wfs']) + len(self.result['operation_config']['required']))
         self.tbl_result.setHorizontalHeaderLabels(['Camada', 'Sobreposições'])
 
         self.tbl_result.horizontalHeader().setStretchLastSection(True)
@@ -57,6 +57,7 @@ class ResultWindow (QtWidgets.QDialog):
 
         self.overlay_counter_shp()
         self.overlay_counter_pg()
+        self.overlay_counter_wfs()
         # self.overlay_counter_required()
 
 
@@ -85,6 +86,29 @@ class ResultWindow (QtWidgets.QDialog):
 
             self.row_control += 1
 
+    def overlay_counter_wfs(self):
+        """
+        Faz a contagem de quantas sobreposições aconteceram com as áreas de wfs selecionadas
+        e realiza a inserção deste valor na tabela.
+        """
+        gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['input'])
+
+        for i in self.result['operation_config']['wfs']:
+            if type(i['nomeFantasiaTabelasCamadas']) is list:
+                i['nomeFantasiaTabelasCamadas'] = i['nomeFantasiaTabelasCamadas'][0]
+
+            cont = 0
+            for rowIndex, row in gdf_result_shp.iterrows():
+                if str(i['nomeFantasiaTabelasCamadas']) in gdf_result_shp and row[str(i['nomeFantasiaTabelasCamadas'])] == True:
+                    cont += 1
+
+            cellName = QtWidgets.QTableWidgetItem(str(i['nomeFantasiaTabelasCamadas']))
+            self.tbl_result.setItem(self.row_control, 0, cellName)
+
+            cellValue = QtWidgets.QTableWidgetItem(str(cont))
+            self.tbl_result.setItem(self.row_control, 1, cellValue)
+
+            self.row_control += 1
 
     def overlay_counter_pg(self):
         """
