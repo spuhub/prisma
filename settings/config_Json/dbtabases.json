@@ -299,7 +299,7 @@
     "base10": {
         "id": "base10",
         "tipo": "pg",
-        "nome": "Base de dados 2",
+        "nome": "Base de dados 22",
         "host": "localhost",
         "porta": "5432",
         "baseDeDados": "usucapiao",
@@ -523,137 +523,33 @@
         ]
     ],
     "base14": {
-        "nome": "Base 1",
-        "link": "http://servicos.dnit.gov.br/dnitgeo/geoserver/ows?service=wfs&amp;version=2.0.0&amp;request=GetCapabilities",
-        "tipo": "wfs",
-        "nomeFantasiaTabelasCamadas": [
-            "Urbanizadas",
-            "Quilombola"
-        ],
-        "diretorio": [
-            "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\settings/../wfs_layers/vgeo_vw_ibge_areas_urbanizadas.geojson",
-            "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\settings/../wfs_layers/publica_vw_poa_p_sinaflor_a.geojson"
-        ],
-        "orgaoResponsavel": [
-            "SPU",
-            "SPU"
-        ],
-        "periodosReferencia": [
-            "01/11/2022",
-            "07/11/2022"
-        ],
-        "aproximacao": [
-            "0",
-            "0"
-        ],
-        "estiloTabelasCamadas": [
-            "C:\\Users\\vinir\\Desktop\\sld\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld",
-            "C:\\Users\\vinir\\Desktop\\sld\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
-        ],
-        "wfsSelecionadas": [
-            "vw_ibge_areas_urbanizadas",
-            "vgeo:vw_quilombolas"
-        ],
-        "tabelasCamadas": [
-            "sge_hml:CamadaView",
-            "vgeo:daq_eclusas_opr",
-            "vgeo:daq_ip4_opr",
-            "vgeo:daq_sinalizacao_opr",
-            "ics_geo:geo_ICS",
-            "vgeo:tb_obras_andamento_fisico",
-            "vgeo:tb_obras_delegadas",
-            "vgeo:tb_obras_diretas",
-            "vgeo:vw_aerodromos",
-            "vgeo:vw_amazonia_legal",
-            "vgeo:vw_ana_massa_dagua",
-            "vgeo:vw_anac_aerodromos",
-            "vgeo:vw_antaq_portos",
-            "vgeo:vw_antaq_travessias",
-            "vgeo:vw_antaq_vias_navegaveis",
-            "vgeo:vw_cadastros",
-            "vgeo:vw_capitais",
-            "vgeo:vw_cavernas",
-            "vgeo:vw_cide_rod_2020",
-            "vgeo:vw_cide_rod_2021",
-            "vgeo:vw_distritos",
-            "vgeo:vw_drenagem",
-            "vgeo:vw_dutovias",
-            "vgeo:vw_faixa_dominio",
-            "vgeo:vw_faixa_fronteira",
-            "vgeo:vw_faixa_reconhecida",
-            "vgeo:vw_funai_terras_indigenas",
-            "vgeo:vw_ibge_amazonia_legal",
-            "vgeo:vw_ibge_areas_urbanizadas",
-            "vgeo:vw_ibge_faixa_fronteira",
-            "vgeo:vw_ibge_municipios",
-            "vgeo:vw_ibge_uf",
-            "vgeo:vw_icmbio_cavernas",
-            "vgeo:vw_icmbio_unid_conserv",
-            "vgeo:vw_incra_quilombolas",
-            "vgeo:vw_iphan_sitios_arq",
-            "vgeo:vw_lindeiros",
-            "vgeo:vw_malha_ics",
-            "vgeo:vw_massa_dagua",
-            "vgeo:vw_municipios",
-            "vgeo:vw_oae",
-            "vgeo:vw_pnct_201903a",
-            "vgeo:vw_pnct_202001a",
-            "vgeo:vw_pnct_202104a",
-            "vgeo:vw_pnct_contadores",
-            "vgeo:vw_pnct_contadores_2020_2025",
-            "vgeo:vw_portos",
-            "vgeo:vw_postos_prf",
-            "sgplan_projetos_hml:vw_projeto_geo",
-            "sgplan_projetos_hml:vw_projeto_geo_antep",
-            "sgplan_projetos_hml:vw_projeto_geo_manut",
-            "sgplan_projetos_hml:vw_projeto_geo_relatorios_antep_linha",
-            "sgplan_projetos_hml:vw_projeto_geo_relatorios_antep_ponto",
-            "sgplan_projetos_hml:vw_projeto_geo_relatorios_linha",
-            "sgplan_projetos:vw_projeto_geo_relatorios_linha",
-            "sgplan_projetos_hml:vw_projeto_geo_relatorios_manut_linha",
-            "sgplan_projetos_hml:vw_projeto_geo_relatorios_ponto",
-            "sgplan_projetos:vw_projeto_geo_relatorios_ponto",
-            "vgeo:vw_quilombolas",
-            "vgeo:vw_sedes_municipais",
-            "sgplan_projetos_hml:vw_sgpd_hml",
-            "vgeo:vw_sgpd",
-            "vgeo:vw_sitios_arq",
-            "vgeo:vw_snv_inserviveis",
-            "vgeo:vw_snv_rod",
-            "vgeo:vw_terras_indigenas",
-            "vgeo:vw_uf",
-            "vgeo:vw_unid_conserv",
-            "vgeo:vw_unid_local",
-            "vgeo:vwm_img_acervo",
-            "vgeo:vwm_mdt",
-            "vgeo:vwm_orto"
-        ],
-        "id": "base14"
-    },
-    "base15": {
-        "nome": "Base de dados DNIT",
+        "nome_wfs": "asdfdsaf",
         "link": "http://siscom.ibama.gov.br/geoserver/ows?service=wfs&amp;version=1.3.0&amp;request=GetCapabilities",
         "tipo": "wfs",
-        "nomeFantasiaTabelasCamadas": [
-            "Nome p\u00e1tio"
+        "nome": [
+            "asdf"
         ],
-        "diretorio": [
-            "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\settings/../wfs_layers/publica_vw_poa_p_sinaflor_a.geojson"
+        "diretorioLocal": [
+            "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\settings/../wfs_layers/publica_img_catalogo_landsat_a.geojson"
         ],
         "orgaoResponsavel": [
-            "SPU"
+            "sadfsad"
         ],
         "periodosReferencia": [
-            "01/11/2022"
+            "10/11/2022"
         ],
         "aproximacao": [
             "0"
         ],
-        "estiloTabelasCamadas": [
+        "descricao": [
+            "sdafasd"
+        ],
+        "estiloCamadas": [
             "C:\\Users\\vinir\\Desktop\\sld\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
         ],
+        "dataAquisicao": "10/11/2022",
         "wfsSelecionadas": [
-            "P\u00e1tio"
+            "Catalogo Landsat"
         ],
         "tabelasCamadas": [
             "publica:img_catalogo_landsat_a",
@@ -672,7 +568,7 @@
             "publica:adm_prioridade_decreto_5092_a",
             "publica:vw_poa_p_sinaflor_a",
             "publica:vw_pmfs_pp_sinaflor_a",
-            "SICAR:REL_TEMA_IMOVEL_POLIGONO",
+            "car:REL_TEMA_IMOVEL_POLIGONO",
             "publica:adm_edif_pub_civil_ibama_p",
             "publica:img_foto_rio_doce_p",
             "publica:img_grade_cbers_ccd_a",
@@ -702,6 +598,6 @@
             "publica:vw_pmfs_amf_sinaflor_a",
             "publica:vw_sinaflo_ae_sinaflor_a"
         ],
-        "id": "base15"
+        "id": "base14"
     }
 }

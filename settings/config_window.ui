@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -547,6 +547,56 @@
             <enum>Qt::LogicalMoveStyle</enum>
            </property>
           </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_52">
+         <item>
+          <widget class="QLabel" name="label_57">
+           <property name="text">
+            <string>Período de aquisição:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsDateTimeEdit" name="date_aquisicao_wfs">
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_53">
+         <item>
+          <widget class="QLabel" name="label_58">
+           <property name="text">
+            <string>Período de referência:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsDateTimeEdit" name="date_referencia_wfs">
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_55">
+         <item>
+          <widget class="QLabel" name="label_59">
+           <property name="text">
+            <string>Descrição:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="txt_descricao_wfs"/>
          </item>
         </layout>
        </item>

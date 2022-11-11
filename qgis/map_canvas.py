@@ -32,6 +32,7 @@ class MapCanvas():
         input_standard = operation_config['input_standard']
 
         gdf_selected_shp = operation_config['gdf_selected_shp']
+        gdf_selected_wfs = operation_config['gdf_selected_wfs']
         gdf_selected_db = operation_config['gdf_selected_db']
 
         if 'basemap' in operation_config['operation_config']:
@@ -57,6 +58,23 @@ class MapCanvas():
             if len(area) > 0:
                 show_qgis_areas = QgsVectorLayer(area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
                 show_qgis_areas.loadSldStyle(operation_config['operation_config']['shp'][index]['estiloCamadas'][0]['stylePath'])
+                QgsProject.instance().addMapLayer(show_qgis_areas)
+
+        # Carrega camadas WFS
+        index = -1
+        index_show_overlay = 0
+        print(operation_config['operation_config']['wfs'])
+        input = input.to_crs(epsg='4326')
+        for area in gdf_selected_wfs:
+            area = area.to_crs(epsg='4326')
+            index += 1
+
+            if len(area) > 0:
+                show_qgis_areas = QgsVectorLayer(area.to_json(),
+                                                 operation_config['operation_config']['wfs'][index][
+                                                     'nomeFantasiaTabelasCamadas'])
+                show_qgis_areas.loadSldStyle(
+                    operation_config['operation_config']['wfs'][index]['estiloTabelasCamadas'])
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e Postgis
@@ -112,6 +130,7 @@ class MapCanvas():
         input_standard = operation_config['input_standard']
 
         gdf_selected_shp = operation_config['gdf_selected_shp']
+        gdf_selected_wfs = operation_config['gdf_selected_wfs']
         gdf_selected_db = operation_config['gdf_selected_db']
 
         if 'basemap' in operation_config['operation_config']:
@@ -150,6 +169,34 @@ class MapCanvas():
                 show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
                 show_qgis_areas.loadSldStyle(
                     operation_config['operation_config']['shp'][index]['estiloCamadas'][0]['stylePath'])
+                QgsProject.instance().addMapLayer(show_qgis_areas)
+
+        # Exibe de sobreposição entre input e WFS
+        index = -1
+        index_show_overlay = 0
+        gdf_input = gpd.GeoDataFrame(columns=input.columns)
+        print_input = False
+        input = input.to_crs(epsg='4326')
+        for area in gdf_selected_wfs:
+            area = area.to_crs(epsg='4326')
+            index += 1
+            gdf_area = gpd.GeoDataFrame(columns=area.columns)
+            for indexArea, rowArea in area.iterrows():
+                for indexInput, rowInput in input.iterrows():
+                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
+                        gdf_input.loc[index_show_overlay] = rowInput
+                        gdf_area.loc[index_show_overlay] = rowArea
+                        index_show_overlay += 1
+
+            if len(gdf_area) > 0:
+                print_input = True
+
+                gdf_area = gdf_area.drop_duplicates()
+                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
+                                                 operation_config['operation_config']['wfs'][index][
+                                                     'nomeFantasiaTabelasCamadas'])
+                show_qgis_areas.loadSldStyle(
+                    operation_config['operation_config']['wfs'][index]['estiloTabelasCamadas'])
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e Postgis

@@ -1322,9 +1322,9 @@ class ConfigWindow(QtWidgets.QDialog):
         self.wfs_data = wfs_operations.get_wfs_informations(self.link_wfs)
 
         # Configura quantidade de linhas e as colunas da tabela de resultados
-        self.tbl_wfs.setColumnCount(6)
+        self.tbl_wfs.setColumnCount(7)
         self.tbl_wfs.setRowCount(len(self.wfs_data))
-        self.tbl_wfs.setHorizontalHeaderLabels(['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade", "Arquivo SLD"])
+        self.tbl_wfs.setHorizontalHeaderLabels(['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade", "Arquivo SLD", "Descrição"])
 
         self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
         self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -1354,6 +1354,9 @@ class ConfigWindow(QtWidgets.QDialog):
             cellName = QgsFileWidget()
             self.tbl_wfs.setCellWidget(row_control, 5, cellName)
 
+            cellName = QgsFileWidget()
+            self.tbl_wfs.setCellWidget(row_control, 5, cellName)
+
             row_control += 1
 
         self.tbl_wfs.itemClicked.connect(self.handleItemClicked)
@@ -1378,16 +1381,24 @@ class ConfigWindow(QtWidgets.QDialog):
         id_current_wfs = self.combo_wfs.currentData()
         config_json_wfs = self.settings.get_config_wfs()
 
-        data['nome'] = self.txt_nome_wfs.text()
+        if self.txt_nome_wfs == '' or self.link_wfs == '' or self.txt_descricao_wfs == '' or len(self._list) == 0:
+            return
+
+        data['nome_wfs'] = self.txt_nome_wfs.text()
         data['link'] = self.link_wfs
         data['tipo'] = 'wfs'
 
-        data['nomeFantasiaTabelasCamadas'] = []
-        data['diretorio'] = []
+        data['nome'] = []
+        data['diretorioLocal'] = []
         data['orgaoResponsavel'] = []
         data['periodosReferencia'] = []
         data['aproximacao'] = []
-        data['estiloTabelasCamadas'] = []
+        data['descricao'] = []
+        data['estiloCamadas'] = []
+
+        dt = self.date_aquisicao_wfs.dateTime()
+        dt_string = dt.toString(self.date_aquisicao_wfs.displayFormat())
+        data['dataAquisicao'] = dt_string
 
         names_selected_wfs = [self.wfs_data[item][0] for item in self._list]
 
@@ -1396,13 +1407,13 @@ class ConfigWindow(QtWidgets.QDialog):
 
         for item in self._list:
             if self.wfs_data[item][0] in names_selected_wfs and wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
-                data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
+                data['nome'].append(self.tbl_wfs.item(item, 1).text())
                 layer = self.wfs_data[item][0] \
                     .replace(':', '_') \
                     .replace('*', '_') \
                     .replace('/', '_') \
                     .replace('\\', '_')
-                data['diretorio'].append(os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson")
+                data['diretorioLocal'].append(os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson")
                 data['orgaoResponsavel'].append(self.tbl_wfs.item(item, 2).text())
 
                 print("self.tbl_wfs.item(item, 3): ", self.tbl_wfs.cellWidget(item, 3))
@@ -1412,7 +1423,8 @@ class ConfigWindow(QtWidgets.QDialog):
                 data["periodosReferencia"].append(dt_string)
 
                 data['aproximacao'].append(self.tbl_wfs.item(item, 4).text())
-                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 5).filePath())
+                data['estiloCamadas'].append(self.tbl_wfs.cellWidget(item, 5).filePath())
+                data['descricao'].append(self.tbl_wfs.item(item, 6).text())
 
         self.settings.insert_database_pg(data)
 
