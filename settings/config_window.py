@@ -28,8 +28,10 @@ class ConfigWindow(QtWidgets.QDialog):
         self.settings = JsonTools()
         self.credencials = EnvTools()
         self.source_databases = self.settings.get_config_database()
+        self.source_wfs = self.settings.get_config_wfs()
         self.source_shp = self.settings.get_config_shapefile()
         self.fill_combo_box_base()
+        self.fill_combo_box_wfs()
         self.fill_combo_box_shp()
         self.fill_combo_box_geocoding_server()
         self.fill_basemap()
@@ -47,8 +49,10 @@ class ConfigWindow(QtWidgets.QDialog):
         #self.testar_shp_carregar_camadas.clicked.connect(self.hideLayerConfShp)
         self.combo_box_base.activated.connect(self.fill_text_fields_base)
         self.combo_box_shp.activated.connect(self.fill_text_fields_shp)
-        self.delete_base.clicked.connect(self.delete_bd)
         self.delete_sh.clicked.connect(self.delete_shp)
+        self.btn_delete_wfs.clicked.connect(self.delete_wfs_config)
+        self.delete_base.clicked.connect(self.delete_bd)
+        self.combo_wfs.activated.connect(self.fill_data_wfs)
 
         self.comboBox_base_lpm_hom.currentIndexChanged.connect(self.add_action_lpm_homologada)
         self.comboBox_base_lpm_n_hom.currentIndexChanged.connect(self.add_action_lpm_nao_homologada)
@@ -72,6 +76,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.groupBox_lltm_n_hom.clicked.connect(self.add_action_lltm_n_hom)
         self.groupBox_lpm_n_hom.clicked.connect(self.add_action_lpm_nao_homologada)
         self.groupBox_ltm_n_hom.clicked.connect(self.add_action_ltm_nao_homologada)
+        self._list = []
 
         if self.combo_box_shp.currentIndex() == 0:
             self.delete_sh.setEnabled(False)
@@ -120,7 +125,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["descricao"] = self.textEdit_bd.toPlainText()
 
         if self.combo_box_base.currentData() == "0":
-            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 1:
                 msg = QMessageBox(self)
                 msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
                 self.control_problem = 1
@@ -135,7 +140,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 confg_dic = {}
 
         else:
-            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 1:
                 msg = QMessageBox(self)
                 msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
                 self.control_problem = 1
@@ -217,7 +222,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["estiloCamadas"] = stryle
 
         if self.combo_box_shp.currentData() == "0":
-            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 1:
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
                 msg = QMessageBox(self)
                 msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
                 self.control_problem = 1
@@ -233,7 +238,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 confg_dic = {}
 
         else:
-            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 1:
+            if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
                 msg = QMessageBox(self)
                 msg.critical(self, "Erro", "Está faltando o nome da base de dados!")
                 self.control_problem = 1
@@ -372,6 +377,16 @@ class ConfigWindow(QtWidgets.QDialog):
         if len(self.source_databases) > 0:
             for item in self.source_databases:
                 self.combo_box_base.addItem(item["nome"], item["id"])
+
+    def fill_combo_box_wfs(self):
+        """
+        Preenche o combox com bases PostgreSQl cadastradas e presentes no Json de configuração.
+        @return: void
+        """
+        self.combo_wfs.setItemData(0, "0")
+        if len(self.source_wfs) > 0:
+            for item in self.source_wfs:
+                self.combo_wfs.addItem(item["nome_wfs"], item["id"])
 
     def fill_combo_box_shp(self):
         """
@@ -1354,24 +1369,107 @@ class ConfigWindow(QtWidgets.QDialog):
             cellName = QgsFileWidget()
             self.tbl_wfs.setCellWidget(row_control, 5, cellName)
 
-            cellName = QgsFileWidget()
-            self.tbl_wfs.setCellWidget(row_control, 5, cellName)
-
             row_control += 1
 
         self.tbl_wfs.itemClicked.connect(self.handleItemClicked)
         self._list = []
 
-    def handleItemClicked(self, item):
-        print(os.path.join(os.path.dirname(__file__)))
-        if self.tbl_wfs.item(item.row(), 0).checkState() == QtCore.Qt.Checked:
-            if item.row() not in self._list:
-                self._list.append(item.row())
-                print(self._list)
-        else:
-            if item.row() in self._list:
-                self._list.remove(item.row())
-                print(self._list)
+    def fill_data_wfs(self):
+        for item in self.source_wfs:
+            if item['id'] == self.combo_wfs.currentData():
+                self.txt_nome_wfs.setText(item['nome_wfs'])
+                self.txt_link_wfs.setText(item['link'])
+                self.txt_descricao_wfs.setText(item['descricao_base'])
+
+                get_date = item["dataAquisicao"].split("/")
+                date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+                self.date_aquisicao_wfs.setDate(date)
+
+                # get_date = item["periodosReferencia"].split("/")
+                # date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+                # self.date_referencia_wfs.setDate(date)
+
+                # Configura quantidade de linhas e as colunas da tabela de resultados
+                self.tbl_wfs.setColumnCount(7)
+                self.tbl_wfs.setRowCount(len(item['tabelasCamadas']))
+                self.tbl_wfs.setHorizontalHeaderLabels(
+                    ['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade",
+                     "Arquivo SLD", "Descrição"])
+
+                self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
+                self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
+                row_control = 0
+                layer_control = 0
+                for index, data in enumerate(item['tabelasCamadas']):
+                    item_tbl = QtWidgets.QTableWidgetItem(item['tabelasCamadasNomesFantasia'][index])
+                    item_tbl.setFlags(QtCore.Qt.ItemIsUserCheckable |
+                                  QtCore.Qt.ItemIsEnabled)
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        item_tbl.setCheckState(QtCore.Qt.Checked)
+                    else:
+                        item_tbl.setCheckState(QtCore.Qt.Unchecked)
+                    cellName = QtWidgets.QTableWidgetItem(item_tbl)
+                    self.tbl_wfs.setItem(row_control, 0, cellName)
+
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        cellName = QtWidgets.QTableWidgetItem(item['wfsSelecionadas'][layer_control])
+                    else:
+                        cellName = QtWidgets.QTableWidgetItem("")
+                    self.tbl_wfs.setItem(row_control, 1, cellName)
+
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        cellName = QtWidgets.QTableWidgetItem(item['orgaoResponsavel'][layer_control])
+                    else:
+                        cellName = QtWidgets.QTableWidgetItem("")
+                    self.tbl_wfs.setItem(row_control, 2, cellName)
+
+                    cellName = QgsDateTimeEdit()
+                    cellName.setDisplayFormat("dd/MM/yyyy")
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        get_date = item["periodosReferencia"][layer_control].split("/")
+                        date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+                        cellName.setDate(date)
+                    self.tbl_wfs.setCellWidget(row_control, 3, cellName)
+
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        cellName = QtWidgets.QTableWidgetItem(item['aproximacao'][layer_control])
+                    else:
+                        cellName = QtWidgets.QTableWidgetItem("")
+                    self.tbl_wfs.setItem(row_control, 4, cellName)
+
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        cellName = QgsFileWidget()
+                        cellName.setFilePath(item['estiloCamadas'][layer_control])
+                    else:
+                        cellName = QgsFileWidget()
+                    self.tbl_wfs.setCellWidget(row_control, 5, cellName)
+
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        cellName = QtWidgets.QTableWidgetItem(item['descricao'][layer_control])
+                        layer_control += 1
+                    else:
+                        cellName = QtWidgets.QTableWidgetItem("")
+                    self.tbl_wfs.setItem(row_control, 6, cellName)
+
+                    row_control += 1
+
+                self.tbl_wfs.itemClicked.connect(self.handleItemClicked)
+                self._list = []
+
+    def delete_wfs_config(self):
+        msg = QMessageBox(self)
+        ret = msg.question(self, 'Deletar configuração',
+                           "Você realmente deseja excluir a configuracão de " + self.combo_wfs.currentText() + "?",
+                           QMessageBox.Yes | QMessageBox.No)
+        if ret == QMessageBox.Yes:
+            self.settings.delete_base(self.combo_wfs.currentData())
+            self.txt_nome_wfs.clear()
+            self.txt_link_wfs.clear()
+            self.txt_descricao_wfs.clear()
+            self.tbl_wfs.setRowCount(0);
+            self.combo_box_base.removeItem(self.combo_wfs.currentIndex())
+            self.combo_box_base.setCurrentIndex(0)
 
     def save_wfs_config(self):
         wfs_operations = WfsOperations()
@@ -1381,11 +1479,12 @@ class ConfigWindow(QtWidgets.QDialog):
         id_current_wfs = self.combo_wfs.currentData()
         config_json_wfs = self.settings.get_config_wfs()
 
-        if self.txt_nome_wfs == '' or self.link_wfs == '' or self.txt_descricao_wfs == '' or len(self._list) == 0:
+        if self.txt_nome_wfs == '' or self.txt_link_wfs == '' or self.txt_descricao_wfs == '' or len(self._list) == 0:
             return
 
         data['nome_wfs'] = self.txt_nome_wfs.text()
         data['link'] = self.link_wfs
+        data['descricao_base'] = self.txt_descricao_wfs.text()
         data['tipo'] = 'wfs'
 
         data['nome'] = []
@@ -1404,6 +1503,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         data['wfsSelecionadas'] = [self.wfs_data[item][1] for item in self._list]
         data['tabelasCamadas'] = [item[0] for item in self.wfs_data]
+        data['tabelasCamadasNomesFantasia'] = [item[1] for item in self.wfs_data]
 
         for item in self._list:
             if self.wfs_data[item][0] in names_selected_wfs and wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
@@ -1428,34 +1528,13 @@ class ConfigWindow(QtWidgets.QDialog):
 
         self.settings.insert_database_pg(data)
 
-        # for item in self._list:
-        #     if wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
-        #         data = {}
-        #         if id == None:
-        #             data['nome'] = self.txt_nome_wfs.text()
-        #             data['link'] = self.link_wfs
-        #             data['tipo'] = 'wfs'
-        #
-        #         data['nomeFantasia'] = self.tbl_wfs.item(item, 1).text()
-        #         data['diretorio'] = os.path.join(os.path.dirname(__file__), '/../wfs_layers/', self.wfs_data[item][0])
-        #         data['orgaoResponsavel'] = self.tbl_wfs.item(item, 2).text()
-        #
-        #         dt = self.tbl_wfs.item(item, 3).text()
-        #         dt_string = dt.toString(self.periodos_referencia_base.displayFormat())
-        #         data["periodosReferencia"] = dt_string
-        #
-        #         data['aproximacao'] = self.tbl_wfs.item(item, 4).text()
-        #         data['style'] = self.tbl_wfs.item(item, 5).text()
-        #
-        #         for value in json_complete['basemap']:
-        #             if value[0] == selected_basemap:
-        #                 value[2] = "True"
-        #             else:
-        #                 value[2] = "False"
-        #
-        #         self.settings.insert_data(json_complete)
-        #
-        #
-        #     print("save: ", self.tbl_wfs.item(item, 0).text(), self.tbl_wfs.item(item, 1).text(), self.tbl_wfs.item(item, 2).text())
-
-
+    def handleItemClicked(self, item):
+        print(os.path.join(os.path.dirname(__file__)))
+        if self.tbl_wfs.item(item.row(), 0).checkState() == QtCore.Qt.Checked:
+            if item.row() not in self._list:
+                self._list.append(item.row())
+                print(self._list)
+        else:
+            if item.row() in self._list:
+                self._list.remove(item.row())
+                print(self._list)

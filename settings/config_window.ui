@@ -28,7 +28,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -496,6 +496,20 @@
              <string>Adicionar uma nova base de dados WFS</string>
             </property>
            </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btn_delete_wfs">
+           <property name="contextMenuPolicy">
+            <enum>Qt::ActionsContextMenu</enum>
+           </property>
+           <property name="text">
+            <string>Delete</string>
+           </property>
+           <property name="icon">
+            <iconset theme="Lixo">
+             <normaloff>.</normaloff>.</iconset>
+           </property>
           </widget>
          </item>
         </layout>
