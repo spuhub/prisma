@@ -39,6 +39,8 @@ class DataProcessing():
         # Elimina feições de comparação distantes das feições de input
         gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)
 
+        gdf_selected_wfs = self.eliminate_invalid_geometrys(gdf_selected_wfs)
+
         for index, layer in enumerate(gdf_selected_wfs):
             if 'aproximacao' in operation_config['wfs'][index] and operation_config['shp'][index]['aproximacao'][0] > 0:
                 gdf_selected_wfs[index] = self.utils.add_input_approximation_geographic(layer, operation_config['shp'][index]['aproximacao'][0])
@@ -47,6 +49,28 @@ class DataProcessing():
         gdf_selected_wfs = self.eliminate_distant_features_shp(scaled_input, gdf_selected_wfs)
 
         return input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_wfs, gdf_selected_db, operation_config
+
+    def eliminate_invalid_geometrys(self, gdf_selected_wfs):
+        '''
+        Elimina geometrias inválidas vindas da base de dados WFS
+        :param gdf_selected_wfs:
+        :return:
+        '''
+        for i in range(len(gdf_selected_wfs)):
+            gdf_selected_wfs[i] = gdf_selected_wfs[i].to_crs(4326)
+            for indexArea, rowArea in gdf_selected_wfs[i].iterrows():
+                if 'geometry' not in rowArea:
+                    gdf_selected_wfs[i].drop(indexArea, inplace=True)
+                    continue
+
+                if rowArea['geometry'] == None:
+                    gdf_selected_wfs[i].drop(indexArea, inplace=True)
+                    continue
+
+                if not rowArea['geometry'].is_valid:
+                    gdf_selected_wfs[i].drop(indexArea, inplace=True)
+
+        return gdf_selected_wfs
 
     def get_db_layers(self, scaled_input, operation_config):
         """

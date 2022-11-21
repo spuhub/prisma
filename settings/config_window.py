@@ -386,7 +386,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.combo_wfs.setItemData(0, "0")
         if len(self.source_wfs) > 0:
             for item in self.source_wfs:
-                self.combo_wfs.addItem(item["nome_wfs"], item["id"])
+                self.combo_wfs.addItem(item["nome"], item["id"])
 
     def fill_combo_box_shp(self):
         """
@@ -1377,7 +1377,7 @@ class ConfigWindow(QtWidgets.QDialog):
     def fill_data_wfs(self):
         for item in self.source_wfs:
             if item['id'] == self.combo_wfs.currentData():
-                self.txt_nome_wfs.setText(item['nome_wfs'])
+                self.txt_nome_wfs.setText(item['nome'])
                 self.txt_link_wfs.setText(item['link'])
                 self.txt_descricao_wfs.setText(item['descricao_base'])
 
@@ -1433,14 +1433,14 @@ class ConfigWindow(QtWidgets.QDialog):
                     self.tbl_wfs.setCellWidget(row_control, 3, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
-                        cellName = QtWidgets.QTableWidgetItem(item['aproximacao'][layer_control])
+                        cellName = QtWidgets.QTableWidgetItem(int(item['aproximacao'][layer_control]))
                     else:
                         cellName = QtWidgets.QTableWidgetItem("")
                     self.tbl_wfs.setItem(row_control, 4, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
                         cellName = QgsFileWidget()
-                        cellName.setFilePath(item['estiloCamadas'][layer_control])
+                        cellName.setFilePath(item['estiloTabelasCamadas'][layer_control])
                     else:
                         cellName = QgsFileWidget()
                     self.tbl_wfs.setCellWidget(row_control, 5, cellName)
@@ -1482,18 +1482,18 @@ class ConfigWindow(QtWidgets.QDialog):
         if self.txt_nome_wfs == '' or self.txt_link_wfs == '' or self.txt_descricao_wfs == '' or len(self._list) == 0:
             return
 
-        data['nome_wfs'] = self.txt_nome_wfs.text()
+        data['nome'] = self.txt_nome_wfs.text()
         data['link'] = self.link_wfs
         data['descricao_base'] = self.txt_descricao_wfs.text()
         data['tipo'] = 'wfs'
 
-        data['nome'] = []
-        data['diretorioLocal'] = []
+        data['nomeFantasiaTabelasCamadas'] = []
+        data['diretorio'] = []
         data['orgaoResponsavel'] = []
         data['periodosReferencia'] = []
         data['aproximacao'] = []
         data['descricao'] = []
-        data['estiloCamadas'] = []
+        data['estiloTabelasCamadas'] = []
 
         dt = self.date_aquisicao_wfs.dateTime()
         dt_string = dt.toString(self.date_aquisicao_wfs.displayFormat())
@@ -1507,13 +1507,13 @@ class ConfigWindow(QtWidgets.QDialog):
 
         for item in self._list:
             if self.wfs_data[item][0] in names_selected_wfs and wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
-                data['nome'].append(self.tbl_wfs.item(item, 1).text())
+                data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
                 layer = self.wfs_data[item][0] \
                     .replace(':', '_') \
                     .replace('*', '_') \
                     .replace('/', '_') \
                     .replace('\\', '_')
-                data['diretorioLocal'].append(os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson")
+                data['diretorio'].append(os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson")
                 data['orgaoResponsavel'].append(self.tbl_wfs.item(item, 2).text())
 
                 print("self.tbl_wfs.item(item, 3): ", self.tbl_wfs.cellWidget(item, 3))
@@ -1522,8 +1522,8 @@ class ConfigWindow(QtWidgets.QDialog):
                 dt_string = dt.toString(self.tbl_wfs.cellWidget(item, 3).displayFormat())
                 data["periodosReferencia"].append(dt_string)
 
-                data['aproximacao'].append(self.tbl_wfs.item(item, 4).text())
-                data['estiloCamadas'].append(self.tbl_wfs.cellWidget(item, 5).filePath())
+                data['aproximacao'].append(int(self.tbl_wfs.item(item, 4).text()))
+                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 5).filePath())
                 data['descricao'].append(self.tbl_wfs.item(item, 6).text())
 
         self.settings.insert_database_pg(data)

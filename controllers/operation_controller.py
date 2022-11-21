@@ -97,6 +97,8 @@ class OperationController:
                         operation_config['wfs'][-1]['estiloTabelasCamadas'] = i['estiloTabelasCamadas'][key]
                         operation_config['wfs'][-1]['aproximacao'] = i['aproximacao'][key]
                         operation_config['wfs'][-1]['diretorio'] = i['diretorio'][key]
+                        operation_config['wfs'][-1]['orgaoResponsavel'] = i['orgaoResponsavel'][key]
+                        operation_config['wfs'][-1]['periodosReferencia'] = i['periodosReferencia'][key]
 
         operation_config['pg'] = []
 

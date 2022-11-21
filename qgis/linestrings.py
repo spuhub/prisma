@@ -45,7 +45,7 @@ class Linestrings():
 
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
-    def comparasion_between_linestrings(self, input, input_standard, area, gdf_required, project_layers, index_1, index_2, atlas, layout, index_input, last_area):
+    def comparasion_between_linestrings(self, input, input_standard, area, gdf_required, project_layers, base_type, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
         self.layout = layout
         self.project_layers = project_layers

@@ -43,7 +43,7 @@ class Polygons():
 
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
-    def comparasion_between_polygons(self, input, input_standard, area, gdf_required, project_layers, index_1, index_2, atlas, layout, index_input, last_area):
+    def comparasion_between_polygons(self, input, input_standard, area, gdf_required, project_layers, base_type, index_1, index_2, atlas, layout, index_input, last_area):
         self.atlas = atlas
         self.layout = layout
         self.project_layers = project_layers
@@ -59,8 +59,11 @@ class Polygons():
 
         # Soma da área de interseção feita com feição de input e atual área comparada
         # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-        if index_2 == None:
+        if base_type == 'shp':
             input.loc[0, self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']] = gpd.overlay(
+                input, area).area.sum()
+        elif base_type == 'wfs':
+            input.loc[0, self.operation_config['operation_config']['wfs'][index_1]['nomeFantasiaTabelasCamadas']] = gpd.overlay(
                 input, area).area.sum()
         else:
             input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
@@ -99,13 +102,13 @@ class Polygons():
 
                 if len(input_standard) > 0:
                     self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard.iloc[[0]], area,
-                                    intersection, gdf_required, index_1, index_2)
+                                    intersection, gdf_required, base_type, index_1, index_2)
                 else:
                     self.handle_comparasion_layers(input.iloc[[0]], gdf_line_input, gdf_point_input, input_standard, area, intersection,
-                                    gdf_required, index_1, index_2)
+                                    gdf_required, base_type, index_1, index_2)
 
         if last_area:
-            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, index_1, index_2)
+            self.overlay_report.handle_overlay_report(input, self.operation_config, self.time, base_type, index_1, index_2)
 
         input = input.reset_index(drop=True)
         return input
@@ -239,7 +242,7 @@ class Polygons():
 
         return gdf_geometry_points, gdf_geometry_lines
 
-    def handle_comparasion_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard, feature_area, feature_intersection, gdf_required, index_1, index_2):
+    def handle_comparasion_layers(self, feature_input_gdp, gdf_line_input, gdf_point_input, input_standard, feature_area, feature_intersection, gdf_required, base_type, index_1, index_2):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -307,7 +310,7 @@ class Polygons():
 
         # Carrega camada de comparação no QGis
         # Se index 2 é diferente de None, significa que a comparação está vinda de banco de dados
-        if index_2 == None:
+        if base_type == 'shp':
             show_qgis_areas = QgsVectorLayer(feature_area.to_json(),
                                              self.operation_config['operation_config']['shp'][index_1][
                                                  'nomeFantasiaCamada'])
@@ -316,6 +319,19 @@ class Polygons():
             show_qgis_areas.loadSldStyle(self.operation_config['operation_config']['shp'][index_1]['estiloCamadas'][0]['stylePath'])
             QgsProject.instance().addMapLayer(show_qgis_areas, False)
             self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
+
+        elif base_type == 'wfs':
+            show_qgis_areas = QgsVectorLayer(feature_area.to_json(),
+                                             self.operation_config['operation_config']['wfs'][index_1][
+                                                 'nomeFantasiaTabelasCamadas'])
+            show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+            show_qgis_areas.loadSldStyle(
+                self.operation_config['operation_config']['wfs'][index_1]['estiloTabelasCamadas'])
+            QgsProject.instance().addMapLayer(show_qgis_areas, False)
+            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1,
+                                  show_qgis_areas)
+
         else:
             if 'geom' in feature_area:
                 feature_area = feature_area.drop(columns=['geom'])
@@ -378,13 +394,16 @@ class Polygons():
                 layer.loadNamedStyle(qml_style_dir)
                 layer.triggerRepaint()
 
-            if index_2 == None:
-                if layer.name() == self.operation_config['operation_config']['shp'][index_1][
-                                                     'nomeFantasiaCamada']:
+            if base_type == 'shp':
+                if layer.name() == self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']:
                     layers_situation_map.insert(len(layers_situation_map) - 1, layer)
+
+            elif base_type == 'wfs':
+                if layer.name() == self.operation_config['operation_config']['wfs'][index_1]['nomeFantasiaTabelasCamadas']:
+                    layers_situation_map.insert(len(layers_situation_map) - 1, layer)
+
             else:
-                if layer.name() == self.operation_config['operation_config']['pg'][index_1][
-                                                 'nomeFantasiaTabelasCamadas'][index_2]:
+                if layer.name() == self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]:
                     layers_situation_map.insert(len(layers_situation_map) - 1, layer)
 
         # Configurações no QGis para gerar os relatórios PDF
@@ -411,9 +430,9 @@ class Polygons():
         # Tamanho do mapa no layout
         main_map.attemptResize(QgsLayoutSize(390, 277, QgsUnitTypes.LayoutMillimeters))
 
-        self.export_pdf(feature_input_gdp, gdf_point_input, index_1, index_2)
+        self.export_pdf(feature_input_gdp, gdf_point_input, base_type, index_1, index_2)
 
-    def export_pdf(self, feature_input_gdp, gdf_point_input, index_1, index_2):
+    def export_pdf(self, feature_input_gdp, gdf_point_input, base_type, index_1, index_2):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 
@@ -422,16 +441,19 @@ class Polygons():
         @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
         """
         # Manipulação dos textos do layout
-        self.handle_text(feature_input_gdp, index_1, index_2)
+        self.handle_text(feature_input_gdp, base_type, index_1, index_2)
 
         if 'logradouro' not in feature_input_gdp:
             feature_input_gdp['logradouro'] = "Ponto por Endereço ou Coordenada"
 
         if index_1 == None and index_2 == None:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_AreasObrigatorias.pdf'
-        elif index_2 == None:
+        elif base_type == 'shp':
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_' + str(
                 self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']) + '.pdf'
+        elif base_type == 'wfs':
+            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_' + str(
+                self.operation_config['operation_config']['wfs'][index_1]['nomeFantasiaTabelasCamadas']) + '.pdf'
         else:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(self.time) + '_' + str(
                 self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
@@ -467,7 +489,7 @@ class Polygons():
             if pdf_name in filename and filename.count("_") > 2:
                 os.remove(self.operation_config['path_output'] + "/" + filename)
 
-    def handle_text(self, feature_input_gdp, index_1, index_2):
+    def handle_text(self, feature_input_gdp, base_type, index_1, index_2):
         """
         Faz a manipulação de alguns dados textuais presentes no layout de impressão.
 
@@ -484,10 +506,16 @@ class Polygons():
         sector.setText(headers['setor'])
 
         title = self.layout.itemById('CD_Titulo')
-        if index_2 == None:
+        if base_type == 'shp':
             layer_name = self.operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']
             title.setText('Caracterização: ' + layer_name)
             self.fill_observation(feature_input_gdp, layer_name)
+
+        elif base_type == 'wfs':
+            layer_name = self.operation_config['operation_config']['wfs'][index_1]['nomeFantasiaTabelasCamadas']
+            title.setText('Caracterização: ' + layer_name)
+            self.fill_observation(feature_input_gdp, layer_name)
+
         else:
             layer_name = self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][index_2]
             title.setText('Caracterização: ' + layer_name)
@@ -520,6 +548,10 @@ class Polygons():
         for name in layers_name:
             for x in self.operation_config['operation_config']['shp']:
                 if name == x['nomeFantasiaCamada']:
+                    data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['operation_config']['wfs']:
+                if name == x['nomeFantasiaTabelasCamadas']:
                     data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
             for x in self.operation_config['operation_config']['pg']:

@@ -67,6 +67,7 @@ class LayoutManager():
         self.layers_project_path = []
         self.layers_project_name = []
         self.project_layers = []
+        self.has_wfs = None
         self.has_db = None
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
@@ -92,12 +93,20 @@ class LayoutManager():
 
         input_standard = self.operation_config['input_standard']
         gdf_selected_shp = self.operation_config['gdf_selected_shp']
+        gdf_selected_wfs = self.operation_config['gdf_selected_wfs']
         gdf_selected_db = self.operation_config['gdf_selected_db']
         gdf_required, gdf_selected_shp, gdf_selected_db = self.get_required_layers(gdf_selected_shp, gdf_selected_db)
 
         self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
         # self.save_project_layers()
         self.make_invisible_layer()
+
+        # Variável será utilizada para controlar a impressão da folha de rosto
+        self.has_wfs = False
+        if len(gdf_selected_wfs) > 0:
+            for list in gdf_selected_wfs:
+                if len(list) > 0:
+                    self.has_wfs = True
 
         # Variável será utilizada para controlar a impressão da folha de rosto
         self.has_db = False
@@ -147,9 +156,11 @@ class LayoutManager():
             # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
             if len(input_standard) > 0:
                 gdf_input = self.calculation_shp(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
+                gdf_input = self.calculation_wfs(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_wfs, gdf_required)
                 gdf_input = self.calculation_db(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_db, gdf_required)
             else:
                 gdf_input = self.calculation_shp(gdf_input, input_standard, gdf_selected_shp, gdf_required)
+                gdf_input = self.calculation_wfs(gdf_input, input_standard, gdf_selected_wfs, gdf_required)
                 gdf_input = self.calculation_db(gdf_input, input_standard, gdf_selected_db, gdf_required)
             atual_progress += interval_progress
             self.progress_bar.setValue(atual_progress)
@@ -277,31 +288,99 @@ class LayoutManager():
             last_area = None
             if len(area) > 0:
                 # ultima área comparada para a atual feição de input
-                if self.has_db == False and index == len(gdf_selected_shp) - 1:
+                if self.has_db == False and self.has_wfs == False and index == len(gdf_selected_shp) - 1:
                     last_area = True
                     if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                         'geometry'].type in ['Polygon', 'MultiPolygon']:
-                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, self.project_layers, index, None,
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, self.project_layers, "shp", index, None,
                                                                    self.atlas, self.layout, self.index_input, last_area)
 
                     elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                         'geometry'].type in ['LineString', 'MultiLineString']:
-                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, self.project_layers, index, None,
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, self.project_layers, "shp", index, None,
                                                                    self.atlas, self.layout, self.index_input, last_area)
                 else:
                     last_area = False
                     if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                         'geometry'].type in ['Polygon', 'MultiPolygon']:
-                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, self.project_layers, index,
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required, self.project_layers, "shp", index,
                                                                    None,
                                                                    self.atlas, self.layout, self.index_input, last_area)
 
                     elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                         'geometry'].type in ['LineString', 'MultiLineString']:
-                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, self.project_layers,
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area, gdf_required, self.project_layers, "shp",
                                                                          index, None,
                                                                          self.atlas, self.layout, self.index_input, last_area)
         return input
+
+    def calculation_wfs(self, input, input_standard, gdf_selected_wfs, gdf_required):
+        """
+        Função compara a feição de input passada como parâmetro com bases de dados oriundas de bancos de dados WFS. Para cada área de comparação
+        comparada com a feição de input, chama a função handle_layers, responsável por gerar as camadas no QGIS.
+
+        @keyword input: Feição ou shapefile de input, caso possua zona de proximidade inserida pelo usuário, a mesma será armazenado nesta variável.
+        @keyword input_standard: Feição ou shapefile de input padrão isto é, sem zona de proximidade (caso necessário).
+        @keyword gdf_selected_db: Bases de dados de banco(s) de dado selecionados para comparação com a área de input.
+        """
+        crs = 'EPSG:' + str(input.iloc[0]['crs_feature'])
+
+        input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
+
+        if len(input_standard) > 0:
+            input_standard = input_standard.to_crs(crs)
+            input_standard.set_crs(crs, allow_override=True)
+
+        # Compara a feição de entrada com todas as áreas de comparação shp selecionadas pelo usuário
+        for index, area in enumerate(gdf_selected_wfs):
+            area = area.to_crs(crs)
+            area.set_crs(allow_override=True, crs=crs)
+
+            if 'aproximacao' in self.operation_config['operation_config']['wfs'][index] and \
+                    self.operation_config['operation_config']['wfs'][index]['aproximacao'] > 0:
+                area = self.utils.add_input_approximation_projected(area,
+                                                                    self.operation_config['operation_config']['wfs'][
+                                                                        index]['aproximacao'])
+
+            last_area = None
+            if len(area) > 0:
+                # ultima área comparada para a atual feição de input
+                if self.has_db == False and index == len(gdf_selected_wfs) - 1:
+                    last_area = True
+                    if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
+                        'geometry'].type in ['Polygon', 'MultiPolygon']:
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required,
+                                                                           self.project_layers, "wfs", index, None,
+                                                                           self.atlas, self.layout, self.index_input,
+                                                                           last_area)
+
+                    elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
+                        'geometry'].type in ['LineString', 'MultiLineString']:
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area,
+                                                                                 gdf_required, self.project_layers, "wfs",
+                                                                                 index, None,
+                                                                                 self.atlas, self.layout,
+                                                                                 self.index_input, last_area)
+                else:
+                    last_area = False
+                    if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
+                        'geometry'].type in ['Polygon', 'MultiPolygon']:
+                        input = self.polygons.comparasion_between_polygons(input, input_standard, area, gdf_required,
+                                                                           self.project_layers, "wfs", index,
+                                                                           None,
+                                                                           self.atlas, self.layout, self.index_input,
+                                                                           last_area)
+
+                    elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
+                        'geometry'].type in ['LineString', 'MultiLineString']:
+                        input = self.linestrings.comparasion_between_linestrings(input, input_standard, area,
+                                                                                 gdf_required, self.project_layers, "wfs",
+                                                                                 index, None,
+                                                                                 self.atlas, self.layout,
+                                                                                 self.index_input, last_area)
+        return input
+
 
     def calculation_db(self, input, input_standard, gdf_selected_db, gdf_required):
         """
@@ -341,14 +420,14 @@ class LayoutManager():
                         if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                             'geometry'].type in ['Polygon', 'MultiPolygon']:
                             input = self.polygons.comparasion_between_polygons(input, input_standard, area,
-                                                                               gdf_required, self.project_layers, index_db, index_layer,
+                                                                               gdf_required, self.project_layers, "db", index_db, index_layer,
                                                                                self.atlas, self.layout,
                                                                                self.index_input, last_area)
 
                         elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                             'geometry'].type in ['LineString', 'MultiLineString']:
                             input = self.linestrings.comparasion_between_linestrings(input, input_standard, area,
-                                                                                     gdf_required, self.project_layers, index_db, index_layer,
+                                                                                     gdf_required, self.project_layers, "db", index_db, index_layer,
                                                                                      self.atlas, self.layout,
                                                                                      self.index_input, last_area)
                     else:
@@ -356,7 +435,7 @@ class LayoutManager():
                         if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon'] and area.iloc[0][
                             'geometry'].type in ['Polygon', 'MultiPolygon']:
                             input = self.polygons.comparasion_between_polygons(input, input_standard, area,
-                                                                               gdf_required, self.project_layers, index_db,
+                                                                               gdf_required, self.project_layers, "db", index_db,
                                                                                index_layer,
                                                                                self.atlas, self.layout,
                                                                                self.index_input, last_area)
@@ -364,14 +443,12 @@ class LayoutManager():
                         elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString'] and area.iloc[0][
                             'geometry'].type in ['LineString', 'MultiLineString']:
                             input = self.linestrings.comparasion_between_linestrings(input, input_standard, area,
-                                                                                     gdf_required, self.project_layers,
+                                                                                     gdf_required, self.project_layers, "db",
                                                                                      index_db, index_layer,
                                                                                      self.atlas, self.layout,
                                                                                      self.index_input, last_area)
                 index_layer += 1
             index_db += 1
-
-        return input
 
     def load_required_layers(self, gdf_required, crs):
         if 'basemap' in self.operation_config['operation_config']:

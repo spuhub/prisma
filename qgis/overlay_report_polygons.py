@@ -27,10 +27,11 @@ class OverlayReportPolygons():
 
 
 
-    def handle_overlay_report(self, gdf_input, operation_config, time, index_1, index_2):
+    def handle_overlay_report(self, gdf_input, operation_config, time, base_type, index_1, index_2):
         camada_sem=""
         camada_com=""
         camada_sem, camada_com=self.overlay_shapefile(gdf_input, operation_config, camada_sem, camada_com)
+        camada_sem, camada_com = self.overlay_wfs(gdf_input, operation_config, camada_sem, camada_com)
         camada_sem, camada_com = self.overlay_database(gdf_input, operation_config, camada_sem, camada_com)
         camada_sem, camada_com = self.overlay_required(gdf_input, operation_config, camada_sem, camada_com)
         com = self.layout.itemById('CD_Com_Sobreposicao_Texto')
@@ -105,8 +106,7 @@ class OverlayReportPolygons():
         setor = self.layout.itemById('CD_Cabecalho_Setor')
         setor.setText(headers['setor'])
 
-        self.export_pdf(gdf_input, operation_config, time, index_1, index_2)
-
+        self.export_pdf(gdf_input, operation_config, time, base_type, index_1, index_2)
 
     def overlay_shapefile(self, gdf_input, operation_config, camada_sem, camada_com):
         for i in operation_config['operation_config']['shp']:
@@ -118,6 +118,18 @@ class OverlayReportPolygons():
                     camada_com+=i["nomeFantasiaCamada"]+"; "
                 else:
                     camada_sem+=i["nomeFantasiaCamada"]+"; "
+        return camada_sem, camada_com
+
+    def overlay_wfs(self, gdf_input, operation_config, camada_sem, camada_com):
+        for i in operation_config['operation_config']['wfs']:
+            if type(i['nomeFantasiaTabelasCamadas']) is list:
+                i['nomeFantasiaTabelasCamadas'] = i['nomeFantasiaTabelasCamadas'][0]
+
+            for rowIndex, row in gdf_input.iterrows():
+                if str(i['nomeFantasiaTabelasCamadas']) in gdf_input.columns and gdf_input.iloc[rowIndex][str(i['nomeFantasiaTabelasCamadas'])] > 0:
+                    camada_com+=i["nomeFantasiaTabelasCamadas"]+"; "
+                else:
+                    camada_sem+=i["nomeFantasiaTabelasCamadas"]+"; "
         return camada_sem, camada_com
 
     def overlay_database(self, gdf_input, operation_config, camada_sem, camada_com):
@@ -194,7 +206,7 @@ class OverlayReportPolygons():
         return camada_sem, camada_com
 
 
-    def export_pdf(self, feature_input_gdp, operation_config, time, index_1, index_2):
+    def export_pdf(self, feature_input_gdp, operation_config, time, base_type, index_1, index_2):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
 
@@ -208,9 +220,14 @@ class OverlayReportPolygons():
 
         if index_1 == None and index_2 == None:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(time) + '_AreasObrigatorias.pdf'
-        elif index_2 == None:
+        elif base_type == "shp":
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(time) + '_' + str(
                 operation_config['operation_config']['shp'][index_1]['nomeFantasiaCamada']) + '.pdf'
+
+        elif base_type == "wfs":
+            pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(time) + '_' + str(
+                operation_config['operation_config']['wfs'][index_1]['nomeFantasiaTabelasCamadas']) + '.pdf'
+
         else:
             pdf_name = str(feature_input_gdp.iloc[0]['logradouro']) + '_' + str(time) + '_' + str(
                 operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
