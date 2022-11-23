@@ -50,11 +50,12 @@ class SelectDatabases(QtWidgets.QDialog):
         required_shp = []
         required_pg = []
 
-        for key, data in self.json['obrigatorio'].items():
-            if data[1] == '':
-                required_shp.append(data)
-            else:
-                required_pg.append(data)
+        if 'obrigatorio' in self.json:
+            for key, data in self.json['obrigatorio'].items():
+                if data[1] == '':
+                    required_shp.append(data)
+                else:
+                    required_pg.append(data)
 
         for i in range(len(self.data_shp)):
             is_required = False
