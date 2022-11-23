@@ -7,6 +7,15 @@ Dado um polígono, linha, ponto ou endereço de entrada o complemento realiza a 
 O Prisma gera documentos em formato PDF com o resultado da caracterização. Tais documentos são compostos por mapas, tabela de coordenadas, informações sobre os imóveis que estão se sobrepondo entre outras informações sobre a sobreposição, como por exemplo o tamanho da área sobreposta. 
 
 
+#
+
+*SPU-Prisma (or simply Prisma) should be considered as a complement to QGIS for mass characterization of real estate (allotments, land) in general. In particular, this complement helps in the study of overlapping the property as well as its identification in space.*
+
+*Given a polygon, line, point or input address, the complement performs the overlay query in the SPU databases and in local bases on the machine. Basically, the complement tests whether or not the property overlaps with other Union properties, as well as surveys all its spatial characteristics in relation to Union properties.*
+
+*Prisma generates documents in PDF format with the result of the characterization. Such documents are composed of maps, table of coordinates, information about the properties that are overlapping, among other information about the overlap, such as the size of the overlapping area.*
+
+
 ## O que não é o Prisma
 
 O prisma NÃO pode ser confundido com: 
