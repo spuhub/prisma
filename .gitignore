@@ -2,5 +2,11 @@
 __pycache__/
 /settings/config_Json
 controllers/__pycache__
+databases/__pycache__
+layout/__pycache__
+qgis/__pycache__
+screens/__pycache__
+settings/__pycache__
+utils/__pycache__
 
 
