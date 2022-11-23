@@ -121,5 +121,25 @@ class EnvTools:
         """
         self.settings.remove('prisma/hearderList/header')
 
+    def store_path_json(self, path):
+        """
+        Armazena o caminho do json de configuração
+        :param path:
+        :return:
+        """
+        s = QSettings()
+        s.setValue('prisma/json', path)
+
+    def get_path_json(self):
+
+        """
+        retorna o caminho de configuração
+        :return:
+        """
+        s = QSettings()
+        server_inf = s.value('prisma/geocoding/current', 0)
+        return server_inf
+
+
 
 
