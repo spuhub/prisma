@@ -1,12 +1,504 @@
 {
+    "base1": {
+        "id": "base1",
+        "tipo": "pg",
+        "nome": "Base 1",
+        "host": "localhost",
+        "porta": "5432",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "SPU",
+        "periodosReferencia": "12/07/2022",
+        "dataAquisicao": "12/07/2022",
+        "descricao": "Teste",
+        "TabelasDisponiveis": [
+            "faixa_dominio",
+            "faixa_seguranca",
+            "massa_dagua",
+            "area_especial",
+            "terras_interiores",
+            "trecho_area_indubitavel",
+            "municipio",
+            "trecho_ferroviario",
+            "trecho_rodoviario",
+            "trecho_terreno_acrescido_marginal",
+            "trecho_terreno_marginal",
+            "unidade_federacao",
+            "parcela",
+            "terreno_sujeito_inundacao"
+        ],
+        "TipoTabelasDisponiveis": [
+            "",
+            "",
+            "ST_Polygon",
+            "ST_Polygon",
+            "",
+            "",
+            "ST_MultiPolygon",
+            "ST_LineString",
+            "ST_LineString",
+            "",
+            "",
+            "ST_MultiPolygon",
+            "",
+            ""
+        ],
+        "tabelasCamadas": [
+            "area_especial",
+            "municipio"
+        ],
+        "aproximacao": [
+            0.0,
+            0.0
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "Area Especial",
+            "Municipio"
+        ],
+        "maisInformacoesTabelas": [
+            {},
+            {},
+            {},
+            {
+                "orgaoResponsavel": "fdasfdas",
+                "periodosReferencia": "12/07/2022",
+                "dataAquisicao": "12/07/2022",
+                "descricao": "sdafasd"
+            },
+            {},
+            {},
+            {
+                "orgaoResponsavel": "dsafads",
+                "periodosReferencia": "12/07/2022",
+                "dataAquisicao": "12/07/2022",
+                "descricao": "fasdfas"
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld"
+            },
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld"
+            }
+        ]
+    },
+    "obrigatorio": {
+        "area_homologada": [
+            "base6",
+            "",
+            "\u00c1rea Homologada"
+        ],
+        "lpm_homologada": [
+            "base5",
+            "",
+            "LPM Homologada"
+        ],
+        "ltm_homologada": [
+            "base4",
+            "",
+            "LTM Homologada"
+        ]
+    },
+    "base3": {
+        "id": "base3",
+        "tipo": "shp",
+        "nome": "\u00c1rea Militar",
+        "nomeFantasiaCamada": "\u00c1rea Militar",
+        "urlDowload": "teste",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Militar_A.shp",
+        "orgaoResponsavel": "Militar",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "14/07/2022",
+        "dataAquisicao": "14/07/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+            }
+        ]
+    },
+    "base4": {
+        "id": "base4",
+        "tipo": "shp",
+        "nome": "LTM Homologada",
+        "nomeFantasiaCamada": "LTM Homologada",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LTM_Homologada_L.shp",
+        "orgaoResponsavel": "SPU Linha",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "05/09/2022",
+        "dataAquisicao": "05/08/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_3_4_Trecho_LTM_L.sld"
+            }
+        ]
+    },
+    "base5": {
+        "id": "base5",
+        "tipo": "shp",
+        "nome": "LPM Homologada",
+        "nomeFantasiaCamada": "LPM Homologada",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\LPM_Homologada_L.shp",
+        "orgaoResponsavel": "SPU LPM",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "05/09/2022",
+        "dataAquisicao": "05/08/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_3_3_Trecho_LPM_L.sld"
+            }
+        ]
+    },
+    "base6": {
+        "id": "base6",
+        "tipo": "shp",
+        "nome": "\u00c1rea Homologada",
+        "nomeFantasiaCamada": "\u00c1rea Homologada",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Uniao_Homologada_A.shp",
+        "orgaoResponsavel": "SPU Homol",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "25/11/2022",
+        "dataAquisicao": "19/01/2023",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+            }
+        ]
+    },
+    "base7": {
+        "id": "base7",
+        "tipo": "shp",
+        "nome": "\u00c1rea Quilombola",
+        "nomeFantasiaCamada": "\u00c1rea Quilombola",
+        "urlDowload": "Teste",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU Quilom",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "12/07/2022",
+        "dataAquisicao": "12/07/2022",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld"
+            }
+        ]
+    },
+    "base8": {
+        "id": "base8",
+        "tipo": "shp",
+        "nome": "Shapefile de linhas",
+        "nomeFantasiaCamada": "Shapefile de linhas",
+        "urlDowload": "asdfdasf",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\linestring_2.shp",
+        "orgaoResponsavel": "asdfasd",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "09/08/2022",
+        "dataAquisicao": "09/08/2022",
+        "descricao": "fdsa",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_3_6_Linha_Costa_L.sld"
+            }
+        ]
+    },
+    "base9": {
+        "id": "base9",
+        "tipo": "shp",
+        "nome": "Camada de Ponto",
+        "nomeFantasiaCamada": "Camada de Ponto",
+        "urlDowload": "asdfasd",
+        "diretorioLocal": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\camada_pontos.shp",
+        "orgaoResponsavel": "Ponto SPU",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "15/08/2022",
+        "dataAquisicao": "15/08/2022",
+        "descricao": "",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles1_5_2_Ponto_Cotado_Altimetrico_P.sld"
+            }
+        ]
+    },
+    "base10": {
+        "id": "base10",
+        "tipo": "pg",
+        "nome": "Base de dados 2",
+        "host": "localhost",
+        "porta": "5432",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "SPU",
+        "periodosReferencia": "16/08/2022",
+        "dataAquisicao": "16/08/2022",
+        "descricao": "Teste",
+        "TabelasDisponiveis": [
+            "faixa_dominio",
+            "faixa_seguranca",
+            "massa_dagua",
+            "area_especial",
+            "terras_interiores",
+            "trecho_area_indubitavel",
+            "municipio",
+            "trecho_ferroviario",
+            "trecho_rodoviario",
+            "trecho_terreno_acrescido_marginal",
+            "trecho_terreno_marginal",
+            "unidade_federacao",
+            "parcela",
+            "terreno_sujeito_inundacao"
+        ],
+        "TipoTabelasDisponiveis": [
+            "",
+            "",
+            "ST_Polygon",
+            "ST_Polygon",
+            "",
+            "",
+            "ST_MultiPolygon",
+            "ST_LineString",
+            "ST_LineString",
+            "",
+            "",
+            "ST_MultiPolygon",
+            "",
+            ""
+        ],
+        "tabelasCamadas": [
+            "massa_dagua",
+            "area_especial"
+        ],
+        "aproximacao": [
+            0.0,
+            0.0
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "Massa Dagua",
+            "Area Especial"
+        ],
+        "maisInformacoesTabelas": [
+            {},
+            {},
+            {
+                "orgaoResponsavel": "ASDAS",
+                "periodosReferencia": "16/08/2022",
+                "dataAquisicao": "16/08/2022",
+                "descricao": "adsfasdf"
+            },
+            {
+                "orgaoResponsavel": "OSU",
+                "periodosReferencia": "16/08/2022",
+                "dataAquisicao": "16/08/2022",
+                "descricao": "OIJMAS"
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles1_6_1_Estrut_Apoio_Transporte_A.sld"
+            },
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld"
+            }
+        ]
+    },
+    "base11": {
+        "id": "base11",
+        "tipo": "pg",
+        "nome": "Base de dados 1",
+        "host": "localhost",
+        "porta": "5432",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "SPU",
+        "periodosReferencia": "16/08/2022",
+        "dataAquisicao": "16/08/2022",
+        "descricao": "Teste",
+        "TabelasDisponiveis": [
+            "faixa_dominio",
+            "faixa_seguranca",
+            "massa_dagua",
+            "area_especial",
+            "terras_interiores",
+            "trecho_area_indubitavel",
+            "municipio",
+            "trecho_ferroviario",
+            "trecho_rodoviario",
+            "trecho_terreno_acrescido_marginal",
+            "trecho_terreno_marginal",
+            "unidade_federacao",
+            "parcela",
+            "terreno_sujeito_inundacao"
+        ],
+        "TipoTabelasDisponiveis": [
+            "",
+            "",
+            "ST_Polygon",
+            "ST_Polygon",
+            "",
+            "",
+            "ST_MultiPolygon",
+            "ST_LineString",
+            "ST_LineString",
+            "",
+            "",
+            "ST_MultiPolygon",
+            "",
+            ""
+        ],
+        "tabelasCamadas": [
+            "massa_dagua",
+            "area_especial"
+        ],
+        "aproximacao": [
+            0.0,
+            0.0
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "Massa Dagua",
+            "Area Especial"
+        ],
+        "maisInformacoesTabelas": [
+            {},
+            {},
+            {
+                "orgaoResponsavel": "Massa dagua SPU",
+                "periodosReferencia": "16/08/2022",
+                "dataAquisicao": "16/08/2022",
+                "descricao": "Teste"
+            },
+            {
+                "orgaoResponsavel": "Teste 1",
+                "periodosReferencia": "09/03/2022",
+                "dataAquisicao": "16/08/2022",
+                "descricao": "Teste 1"
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles2_1_4_Terreno_Cadastral_A.sld"
+            },
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld"
+            }
+        ]
+    },
     "sld_default_layers": {
-        "default_input_polygon": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "default_input_line": "C:\\Users\\vinir\\Desktop\\sld\\1_6_5_Trecho_Duto_L.sld",
-        "default_input_point": "C:\\Users\\vinir\\Desktop\\sld\\3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "buffer": "C:\\Users\\vinir\\Desktop\\sld\\1_2_3_Massa_Dagua_A.sld",
-        "overlay_input_polygon": "C:\\Users\\vinir\\Desktop\\sld\\1_2_4_Terreno_Sujeito_Inundacao_A.sld",
-        "overlay_input_line": "C:\\Users\\vinir\\Desktop\\sld\\3_3_3_Trecho_LPM_L.sld",
-        "overlay_input_point": "C:\\Users\\vinir\\Desktop\\sld\\1_6_2_Estacao_Ferroviario_P.sld"
+        "default_input_polygon": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld",
+        "default_input_line": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles1_6_5_Trecho_Duto_L.sld",
+        "default_input_point": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_2_2_Trecho_Terreno_Marinha_A.sld",
+        "buffer": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles1_2_3_Massa_Dagua_A.sld",
+        "overlay_input_polygon": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles1_2_4_Terreno_Sujeito_Inundacao_A.sld",
+        "overlay_input_line": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles3_3_3_Trecho_LPM_L.sld",
+        "overlay_input_point": "C:\\Users\\guibo\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\prisma\\styles1_6_2_Estacao_Ferroviario_P.sld"
     },
     "basemap": [
         [

@@ -27,6 +27,8 @@ class ConfigWindow(QtWidgets.QDialog):
         loadUi(os.path.join(os.path.dirname(__file__), 'config_window.ui'), self)
         self.settings = JsonTools()
         self.credencials = EnvTools()
+        self.fill_path_json()
+        self.path_json_mudou_flag = 0
         self.source_databases = self.settings.get_config_database()
         self.source_wfs = self.settings.get_config_wfs()
         self.source_shp = self.settings.get_config_shapefile()
@@ -36,6 +38,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.fill_combo_box_geocoding_server()
         self.fill_basemap()
         self.fill_sld_default_layers()
+
         self.newbdID = ''
         self.newshpID = ''
         self.fill_mandatory_layers()
@@ -76,6 +79,8 @@ class ConfigWindow(QtWidgets.QDialog):
         self.groupBox_lltm_n_hom.clicked.connect(self.add_action_lltm_n_hom)
         self.groupBox_lpm_n_hom.clicked.connect(self.add_action_lpm_nao_homologada)
         self.groupBox_ltm_n_hom.clicked.connect(self.add_action_ltm_nao_homologada)
+
+        self.path_json.fileChanged.connect(self.path_mudou)
         self._list = []
 
         if self.combo_box_shp.currentIndex() == 0:
@@ -170,6 +175,13 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_basemap()
         self.save_sld_default_layers()
         self.save_wfs_config()
+
+        self.store_path_json()
+        if self.path_json_mudou_flag == 1:
+            msg = QMessageBox(self)
+            msg.warning(self, "Atenção!", "Você mudou a fonte de curadoria. Por Favor, reinicie o plugin para que as alterações entrem e vigor.")
+            self.path_json_mudou_flag == 0
+
 
         self.fill_mandatory_layers_from_json_conf()
 
@@ -1538,3 +1550,15 @@ class ConfigWindow(QtWidgets.QDialog):
             if item.row() in self._list:
                 self._list.remove(item.row())
                 print(self._list)
+
+    def store_path_json(self):
+        path = self.path_json.filePath()
+        self.credencials.store_path_json(path)
+
+
+    def fill_path_json(self):
+        path = self.credencials.get_path_json()
+        self.path_json.setFilePath(str(path))
+
+    def path_mudou(self):
+        self.path_json_mudou_flag = 1

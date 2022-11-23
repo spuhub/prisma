@@ -1,5 +1,6 @@
 import os
 import json
+from .env_tools import EnvTools
 
 class JsonTools:
     """
@@ -7,7 +8,12 @@ class JsonTools:
     """
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        env = EnvTools()
+        current_path = env.get_path_json()
         self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
+        if current_path != "":
+            self.json_path = current_path
+
 
 
     def get_json(self):
