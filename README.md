@@ -49,7 +49,7 @@ Essas bases devem vir de um processo de curadoria feito pelos técnicos da SPU. 
 
 Ao cadastrar as bases no plugin será gerado um JSON de curadoria e pré configuração das bases de dados. Tal JSON poderá ser compartilhado entre os usuários da SPU facilitando a disseminação das bases dados de consulta, garantindo que sejam utilizadas bases de dados confiáveis.
 
-## Manual do usuário
+## Manual do Usuário
 
 Manual do usuário disponível [aqui](https://github.com/cgdag/SPU-Prisma/tree/master/docs/manual_usuario)
 
