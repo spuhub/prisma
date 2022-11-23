@@ -1,32 +1,46 @@
-Plugin Builder Results
+# SPU-Prisma
 
-Your plugin Prisma was created in:
-    C:/Users/guibo/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins\prisma
+O SPU-Prisma (ou simplesmente Prisma), deve ser considerado como um complemento do QGIS para Caracterização em massa de imóveis (lote, terreno) em geral. Em particular, esse complemento auxilia no estudo de sobreposição do imóvel bem como sua identificação no espaço.
 
-Your QGIS plugin directory is located at:
-    C:/Users/guibo/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins
+Dado um polígono, linha, ponto ou endereço de entrada o complemento realiza a consulta de sobreposição nas bases de dados da SPU e em bases locais na máquina. Basicamente, o complemento testa se o imóvel sobrepõe ou não outros imóveis da União, bem como, levanta todas as suas características espaciais em relação aos imóveis da União.
 
-What's Next:
+O Prisma gera documentos em formato PDF com o resultado da caracterização. Tais documentos são compostos por mapas, tabela de coordenadas, informações sobre os imóveis que estão se sobrepondo entre outras informações sobre a sobreposição, como por exemplo o tamanho da área sobreposta.
 
-  * Copy the entire directory containing your new plugin to the QGIS plugin
-    directory
 
-  * Compile the resources file using pyrcc5
+## O que não é o Prisma
 
-  * Run the tests (``make test``)
+O prisma NÃO pode ser confundido com:
 
-  * Test the plugin by enabling it in the QGIS plugin manager
+* Um complemento para desenhar polígonos, pontos e linhas.
 
-  * Customize it by editing the implementation file: ``prisma.py``
+* Um complemento para atualização de geometria ou qualquer outra informação de bancos de dados geográficos ou de um conjunto de shapefile (SHP).
 
-  * Create your own custom icon, replacing the default icon.png
+* Um complemento para fazer cadastro de imóveis.
 
-  * Modify your user interface by opening Prisma_dialog_base.ui in Qt Designer
+* Um complemento para criar geometrias.
 
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
+## Tipos de entradas de dados que o Prisma aceita
 
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
+O Prisma aceita as seguintes entradas vindas do usuário:
 
-(C) 2011-2018 GeoApt LLC - geoapt.com
+* Um endereço de um imóvel que será geocodificado e transformado em um ponto especializado.
+* Uma Feição selecionada de uma camada aberta no QGIS que pode ser de um dos tipos: camada de polígonos, camada de linhas, camada de ponto e camada de Multipolígonos
+* De um shapeFile com uma ou mais feições, que pode ser: Pontos, Linha, Polígonos e Multipolígonos.
+
+
+## Tipos bases de dados que o Prisma Consome
+
+O Prisma também irá precisar de consumir internamente pelo menos um dos seguintes tipos de bases de dados:
+
+* Banco de dados Postgres/Postgis.
+
+* Um diretório na máquina do usuário com Shapefiles.
+
+Essas bases devem vir de um processo de curadoria feito pelos técnicos da SPU. E deverão ser cadastradas no próprio complemento dentro da janela de configurações.
+
+Ao cadastrar as bases no plugin será gerado um JSON de curadoria e pré configuração das bases de dados. Tal JSON poderá ser compartilhado entre os usuários da SPU facilitando a disseminação das bases dados de consulta, garantindo que sejam utilizadas bases de dados confiáveis.
+
+## Contato dos Desenvolvedores (contact)
+
+* Guilherme Henrique (guilherme.nascimento@economia.gov.br)
+* Vinicius Rafael (vinicius.schneider@economia.gov.br)
