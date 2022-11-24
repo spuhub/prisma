@@ -96,6 +96,10 @@ class Linestrings():
                                                        crs=input.crs)
             gdf_interseption_points = gdf_interseption_points.reset_index()
 
+        # Carrega camada de vértices necessárias para a tabela de vértices no layout
+        if len(gdf_point_input) > 0:
+            self.load_vertice_layer(gdf_point_input, input.iloc[0]['crs_feature'])
+
         # Pega o tempo em que o processamento da feição atual se inicia
         # Utilizado para gerar os nomes únicos na hora de exportar o PDF
         if index_input != self.index_input:
@@ -111,9 +115,9 @@ class Linestrings():
         if len(gdf_interseption_points) > 0:
             if len(input_standard) > 0:
                 self.handle_layers(input.iloc[[0]], input_standard.iloc[[0]], area,
-                                   gdf_interseption_points, gdf_required, base_type, index_1, index_2)
+                                   gdf_interseption_points, gdf_point_input, gdf_required, base_type, index_1, index_2)
             else:
-                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points,
+                self.handle_layers(input.iloc[[0]], input_standard, area, gdf_interseption_points, gdf_point_input,
                                    gdf_required, base_type, index_1, index_2)
 
         input = input.reset_index(drop=True)
@@ -230,7 +234,7 @@ class Linestrings():
 
         return gdf_geometry_points
 
-    def handle_layers(self, feature_input_gdp, input_standard, feature_area, feature_gdf_interseption_points, gdf_required, base_type, index_1, index_2):
+    def handle_layers(self, feature_input_gdp, input_standard, feature_area, feature_gdf_interseption_points, gdf_point_input, gdf_required, base_type, index_1, index_2):
         """
         Carrega camadas já processadas no QGis para que posteriormente possam ser gerados os relatórios no formato PDF. Após gerar todas camadas necessárias,
         está função aciona outra função (export_pdf), que é responsável por gerar o layout PDF a partir das feições carregadas nesta função.
@@ -251,11 +255,6 @@ class Linestrings():
         QApplication.instance().processEvents()
 
         self.remove_layers()
-
-        # len(QgsProject.instance().layerTreeRoot().children()) # usar depois
-        # self.root.insertLayer(0, self.root.layerOrder()[3]) # usar depois
-
-        # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, )
 
         # Carrega as áreas de intersecção no Qgis
         if len(feature_gdf_interseption_points) > 0:
@@ -394,6 +393,14 @@ class Linestrings():
 
         self.export_pdf(feature_input_gdp, feature_gdf_interseption_points, base_type, index_1, index_2)
 
+    def load_vertice_layer(self, gdf_point_input, crs):
+        load_vertices_input = QgsVectorLayer(gdf_point_input.to_json(), "Vértices")
+        load_vertices_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+        QgsProject.instance().addMapLayer(load_vertices_input, False)
+        self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) + 2, load_vertices_input)
+        QgsProject.instance().layerTreeRoot().findLayer(load_vertices_input.id()).setItemVisibilityChecked(False)
+
     def export_pdf(self, feature_input_gdp, feature_gdf_interseption_points, base_type, index_1, index_2):
         """
         Função responsável carregar o layout de impressão e por gerar os arquivos PDF.
@@ -486,7 +493,7 @@ class Linestrings():
         self.fill_data_source()
 
     def fill_data_source(self):
-        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Interseções'] + self.project_layers
+        prisma_layers = ['Feição de Estudo/Sobreposição (padrão)', 'Feição de Estudo/Sobreposição', 'Interseções', "Vértices"] + self.project_layers
         field_data_source = self.layout.itemById('CD_FonteDados')
 
         all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
