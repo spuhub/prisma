@@ -87,11 +87,16 @@ class Linestrings():
             else:
                 input.loc[0, self.operation_config['operation_config']['pg'][index_1]['nomeFantasiaTabelasCamadas'][
                     index_2]] = True
-            for coord in interseption_points:
-                coord_x.append(coord.x)
-                coord_y.append(coord.y)
 
-            data = list(zip(coord_x, coord_y, interseption_points))
+            data: list = []
+            if interseption_points.geom_type == 'Point':
+                data = [[interseption_points.x, interseption_points.y, interseption_points]]
+            elif interseption_points.geom_type == 'MultiPoint':
+                for coord in interseption_points:
+                    coord_x.append(coord.x)
+                    coord_y.append(coord.y)
+                data = list(zip(coord_x, coord_y, interseption_points))
+
             gdf_interseption_points = gpd.GeoDataFrame(columns=['coord_x', 'coord_y', 'geometry'], data=data,
                                                        crs=input.crs)
             gdf_interseption_points = gdf_interseption_points.reset_index()
