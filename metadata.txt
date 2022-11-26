@@ -27,6 +27,8 @@ changelog=Version 3.0 (22/07/2022):
             - The dependency installation method has been modified
             - Adjustments in the generation of reports
             - Bug fix in compare module
+         Version 4.1 (6/11/2022):
+            - Correção de bug no módulo de carregamento de Json de configuração
 
 # Tags are comma separated with spaces allowed
 tags=python
