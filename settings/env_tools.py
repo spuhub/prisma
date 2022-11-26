@@ -137,7 +137,7 @@ class EnvTools:
         :return:
         """
         s = QSettings()
-        server_inf = s.value('prisma/json', 0)
+        server_inf = s.value('prisma/json')
         return server_inf
 
 
