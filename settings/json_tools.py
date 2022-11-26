@@ -11,7 +11,8 @@ class JsonTools:
         env = EnvTools()
         current_path = env.get_path_json()
         self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
-        if current_path != "":
+        if current_path != "" and current_path is not None and current_path != "None":
+            print("entrou", current_path)
             self.json_path = current_path
 
 

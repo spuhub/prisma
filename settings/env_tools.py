@@ -136,9 +136,18 @@ class EnvTools:
         retorna o caminho de configuração
         :return:
         """
-        s = QSettings()
-        server_inf = s.value('prisma/json')
-        return server_inf
+        try:
+            s = QSettings()
+            server_inf = s.value('prisma/json')
+            return server_inf
+
+        except Exception as erro:
+            print(erro)
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            return base_dir + "/settings/config_Json/dbtabases.json"
+
+
+
 
 
 

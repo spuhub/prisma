@@ -24,5 +24,6 @@
             "type=xyz&url=http://ecn.t3.tiles.virtualearth.net/tiles/a%7Bq%7D.jpeg?g%3D1&zmax=18&zmin=0",
             "False"
         ]
-    ]
+    ],
+    "obrigatorio": {}
 }
