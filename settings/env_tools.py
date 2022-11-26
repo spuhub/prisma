@@ -138,8 +138,13 @@ class EnvTools:
         """
         try:
             s = QSettings()
+            s.remove('prisma/json')
             server_inf = s.value('prisma/json')
-            return server_inf
+            if server_inf is None:
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                return base_dir + "/settings/config_Json/dbtabases.json"
+            else:
+                return server_inf
 
         except Exception as erro:
             print(erro)
