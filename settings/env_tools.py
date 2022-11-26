@@ -138,7 +138,7 @@ class EnvTools:
         """
         try:
             s = QSettings()
-            s.remove('prisma/json')
+            #s.remove('prisma/json')
             server_inf = s.value('prisma/json')
             if server_inf is None:
                 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
