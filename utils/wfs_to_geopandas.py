@@ -34,6 +34,9 @@ class WfsOperations:
                         .replace('\\', '_')
                   dir = os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson"
 
+                  if os.path.isfile(dir):
+                        os.remove(dir)
+
                   print(dir)
                   open(dir, "wb").write(response.content)
                   return True

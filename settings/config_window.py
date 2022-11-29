@@ -1390,11 +1390,11 @@ class ConfigWindow(QtWidgets.QDialog):
                 # self.date_referencia_wfs.setDate(date)
 
                 # Configura quantidade de linhas e as colunas da tabela de resultados
-                self.tbl_wfs.setColumnCount(7)
+                self.tbl_wfs.setColumnCount(8)
                 self.tbl_wfs.setRowCount(len(item['tabelasCamadas']))
                 self.tbl_wfs.setHorizontalHeaderLabels(
                     ['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade",
-                     "Arquivo SLD", "Descrição"])
+                     "Arquivo SLD", "Descrição", "Atualizar camada"])
 
                 self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
                 self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -1452,10 +1452,27 @@ class ConfigWindow(QtWidgets.QDialog):
                         cellName = QtWidgets.QTableWidgetItem("")
                     self.tbl_wfs.setItem(row_control, 6, cellName)
 
+                    cellName = QtWidgets.QPushButton('Atualizar', self)
+                    cellName.clicked.connect(self.update_wfs_layer)
+                    self.tbl_wfs.setCellWidget(row_control, 7, cellName)
+
                     row_control += 1
 
                 self.tbl_wfs.itemClicked.connect(self.handleItemClicked)
                 self._list = []
+
+    def update_wfs_layer(self):
+        row = self.tbl_wfs.currentRow()
+        print(row)
+        msg = QMessageBox(self)
+        ret = msg.question(self, 'Atualizar camada WFS',
+                           "Você realmente deseja atualizar a camada " + str(self.tbl_wfs.item(row, 0).text()) + "?",
+                           QMessageBox.Yes | QMessageBox.No)
+        if ret == QMessageBox.Yes:
+            for item in self.source_wfs:
+                if item['id'] == self.combo_wfs.currentData():
+                    wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item]['tabelasCamadas'][int(self.tbl_wfs.item(row, 0).text())])
+
 
     def delete_wfs_config(self):
         msg = QMessageBox(self)
@@ -1467,9 +1484,9 @@ class ConfigWindow(QtWidgets.QDialog):
             self.txt_nome_wfs.clear()
             self.txt_link_wfs.clear()
             self.txt_descricao_wfs.clear()
-            self.tbl_wfs.setRowCount(0);
-            self.combo_box_base.removeItem(self.combo_wfs.currentIndex())
-            self.combo_box_base.setCurrentIndex(0)
+            self.tbl_wfs.setRowCount(0)
+            self.combo_wfs.removeItem(self.combo_wfs.currentIndex())
+            self.combo_wfs.setCurrentIndex(0)
 
     def save_wfs_config(self):
         wfs_operations = WfsOperations()
@@ -1515,8 +1532,6 @@ class ConfigWindow(QtWidgets.QDialog):
                     .replace('\\', '_')
                 data['diretorio'].append(os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson")
                 data['orgaoResponsavel'].append(self.tbl_wfs.item(item, 2).text())
-
-                print("self.tbl_wfs.item(item, 3): ", self.tbl_wfs.cellWidget(item, 3))
 
                 dt = self.tbl_wfs.cellWidget(item, 3).dateTime()
                 dt_string = dt.toString(self.tbl_wfs.cellWidget(item, 3).displayFormat())
