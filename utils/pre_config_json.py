@@ -8,7 +8,7 @@ def pre_config_json():
         Foco é pegar de forma dinâmica o diretório onde o qgis está instalado na máquina do usuário.
     """
     json_tools = JsonTools()
-    json_data = get_json()
+    json_data = json_tools.get_json()
 
     data: dict = {
         "default_input_polygon": f"{os.path.dirname(__file__)}/../styles/3_2_2_Trecho_Terreno_Marinha_A.sld",
