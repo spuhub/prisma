@@ -1462,6 +1462,9 @@ class ConfigWindow(QtWidgets.QDialog):
                 self._list = []
 
     def update_wfs_layer(self):
+        wfs_operations = WfsOperations()
+        # self.wfs_data = wfs_operations.get_wfs_informations(self.txt_link_wfs.text())
+        print(self.source_wfs)
         row = self.tbl_wfs.currentRow()
         print(row)
         msg = QMessageBox(self)
@@ -1469,10 +1472,12 @@ class ConfigWindow(QtWidgets.QDialog):
                            "Você realmente deseja atualizar a camada " + str(self.tbl_wfs.item(row, 0).text()) + "?",
                            QMessageBox.Yes | QMessageBox.No)
         if ret == QMessageBox.Yes:
-            for item in self.source_wfs:
+            for index, item in enumerate(self.source_wfs):
                 if item['id'] == self.combo_wfs.currentData():
-                    wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item]['tabelasCamadas'][int(self.tbl_wfs.item(row, 0).text())])
-
+                    wfs_operations.update_wfs_layer(self.txt_link_wfs.text(), self.source_wfs[index]['tabelasCamadas'][row])
+                    ret = msg.question(self, 'Camada atualizada',
+                                       "Camada atualizada com sucesso!",
+                                       QMessageBox.Ok)
 
     def delete_wfs_config(self):
         msg = QMessageBox(self)
