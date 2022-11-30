@@ -85,6 +85,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         self.combo_box_shp.currentIndexChanged.connect(self.enable_disable_delete_shp)
         self.combo_box_base.currentIndexChanged.connect(self.enable_disable_delete_bd)
+        self.combo_wfs.currentIndexChanged.connect(self.handle_combo_wfs)
         #self.tabWidget.clicked.connect(self.)
 
     # self.btext.clicked.connect(self.hiderheader)
@@ -1323,6 +1324,19 @@ class ConfigWindow(QtWidgets.QDialog):
         if self.combo_box_shp.currentIndex() != 0:
             self.delete_sh.setEnabled(True)
 
+    def handle_combo_wfs(self):
+        if self.combo_wfs.currentIndex() == 0:
+            self.btn_delete_wfs.setEnabled(False)
+
+            self.txt_nome_wfs.clear()
+            self.txt_link_wfs.clear()
+            self.txt_descricao_wfs.clear()
+            self.tbl_wfs.setRowCount(0)
+            self.combo_wfs.setCurrentIndex(0)
+
+        if self.combo_wfs.currentIndex() != 0:
+            self.btn_delete_wfs.setEnabled(True)
+
     def enable_disable_delete_bd(self):
         if self.combo_box_base.currentIndex() == 0:
             self.delete_base.setEnabled(False)
@@ -1507,11 +1521,9 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def save_wfs_config(self):
         wfs_operations = WfsOperations()
-        json_complete = self.settings.get_json()
 
         data = {}
         id_current_wfs = self.combo_wfs.currentData()
-        config_json_wfs = self.settings.get_config_wfs()
 
         if self.txt_nome_wfs == '' or self.txt_link_wfs == '' or self.txt_descricao_wfs == '' or len(self._list) == 0:
             return
@@ -1565,6 +1577,9 @@ class ConfigWindow(QtWidgets.QDialog):
                 data['descricao'].append(self.tbl_wfs.item(item, 7).text())
 
         self.settings.insert_database_pg(data)
+        self.source_wfs = self.settings.get_config_wfs()
+        self.combo_wfs.addItem(data["nome"], data["id"])
+        self.combo_wfs.setCurrentText(data["nome"])
 
     def handleItemClicked(self, item):
         print(os.path.join(os.path.dirname(__file__)))
