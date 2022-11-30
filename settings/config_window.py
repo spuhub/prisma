@@ -1540,9 +1540,7 @@ class ConfigWindow(QtWidgets.QDialog):
         data['tabelasCamadas'] = [item[0] for item in self.wfs_data]
         data['tabelasCamadasNomesFantasia'] = [item[1] for item in self.wfs_data]
 
-        print("self._list: ", self._list)
         self._list.sort()
-        print("self._list sorted: ", self._list)
         for item in self._list:
             if self.wfs_data[item][0] in names_selected_wfs and wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
                 data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
