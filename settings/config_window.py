@@ -1337,9 +1337,9 @@ class ConfigWindow(QtWidgets.QDialog):
         self.wfs_data = wfs_operations.get_wfs_informations(self.link_wfs)
 
         # Configura quantidade de linhas e as colunas da tabela de resultados
-        self.tbl_wfs.setColumnCount(7)
+        self.tbl_wfs.setColumnCount(8)
         self.tbl_wfs.setRowCount(len(self.wfs_data))
-        self.tbl_wfs.setHorizontalHeaderLabels(['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade", "Arquivo SLD", "Descrição"])
+        self.tbl_wfs.setHorizontalHeaderLabels(['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo de aquisição", "Periodo de referência", "Faixa de proximidade", "Arquivo SLD", "Descrição"])
 
         self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
         self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -1363,11 +1363,15 @@ class ConfigWindow(QtWidgets.QDialog):
             cellName.setDisplayFormat("dd/MM/yyyy")
             self.tbl_wfs.setCellWidget(row_control, 3, cellName)
 
+            cellName = QgsDateTimeEdit()
+            cellName.setDisplayFormat("dd/MM/yyyy")
+            self.tbl_wfs.setCellWidget(row_control, 4, cellName)
+
             cellName = QtWidgets.QTableWidgetItem("0")
-            self.tbl_wfs.setItem(row_control, 4, cellName)
+            self.tbl_wfs.setItem(row_control, 5, cellName)
 
             cellName = QgsFileWidget()
-            self.tbl_wfs.setCellWidget(row_control, 5, cellName)
+            self.tbl_wfs.setCellWidget(row_control, 6, cellName)
 
             row_control += 1
 
@@ -1390,10 +1394,10 @@ class ConfigWindow(QtWidgets.QDialog):
                 # self.date_referencia_wfs.setDate(date)
 
                 # Configura quantidade de linhas e as colunas da tabela de resultados
-                self.tbl_wfs.setColumnCount(8)
+                self.tbl_wfs.setColumnCount(9)
                 self.tbl_wfs.setRowCount(len(item['tabelasCamadas']))
                 self.tbl_wfs.setHorizontalHeaderLabels(
-                    ['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo do referência", "Faixa de proximidade",
+                    ['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo de aquisição", "Periodo de referência", "Faixa de proximidade",
                      "Arquivo SLD", "Descrição", "Atualizar camada"])
 
                 self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
@@ -1413,7 +1417,7 @@ class ConfigWindow(QtWidgets.QDialog):
                     self.tbl_wfs.setItem(row_control, 0, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
-                        cellName = QtWidgets.QTableWidgetItem(item['wfsSelecionadas'][layer_control])
+                        cellName = QtWidgets.QTableWidgetItem(item['nomeFantasiaTabelasCamadas'][layer_control])
                     else:
                         cellName = QtWidgets.QTableWidgetItem("")
                     self.tbl_wfs.setItem(row_control, 1, cellName)
@@ -1427,34 +1431,42 @@ class ConfigWindow(QtWidgets.QDialog):
                     cellName = QgsDateTimeEdit()
                     cellName.setDisplayFormat("dd/MM/yyyy")
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
-                        get_date = item["periodosReferencia"][layer_control].split("/")
+                        get_date = item["periodoAquisicao"][layer_control].split("/")
                         date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
                         cellName.setDate(date)
                     self.tbl_wfs.setCellWidget(row_control, 3, cellName)
+
+                    cellName = QgsDateTimeEdit()
+                    cellName.setDisplayFormat("dd/MM/yyyy")
+                    if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
+                        get_date = item["periodosReferencia"][layer_control].split("/")
+                        date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
+                        cellName.setDate(date)
+                    self.tbl_wfs.setCellWidget(row_control, 4, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
                         cellName = QtWidgets.QTableWidgetItem(int(item['aproximacao'][layer_control]))
                     else:
                         cellName = QtWidgets.QTableWidgetItem("")
-                    self.tbl_wfs.setItem(row_control, 4, cellName)
+                    self.tbl_wfs.setItem(row_control, 5, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
                         cellName = QgsFileWidget()
                         cellName.setFilePath(item['estiloTabelasCamadas'][layer_control])
                     else:
                         cellName = QgsFileWidget()
-                    self.tbl_wfs.setCellWidget(row_control, 5, cellName)
+                    self.tbl_wfs.setCellWidget(row_control, 6, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
                         cellName = QtWidgets.QTableWidgetItem(item['descricao'][layer_control])
                         layer_control += 1
                     else:
                         cellName = QtWidgets.QTableWidgetItem("")
-                    self.tbl_wfs.setItem(row_control, 6, cellName)
+                    self.tbl_wfs.setItem(row_control, 7, cellName)
 
                     cellName = QtWidgets.QPushButton('Atualizar', self)
                     cellName.clicked.connect(self.update_wfs_layer)
-                    self.tbl_wfs.setCellWidget(row_control, 7, cellName)
+                    self.tbl_wfs.setCellWidget(row_control, 8, cellName)
 
                     row_control += 1
 
@@ -1505,13 +1517,14 @@ class ConfigWindow(QtWidgets.QDialog):
             return
 
         data['nome'] = self.txt_nome_wfs.text()
-        data['link'] = self.link_wfs
+        data['link'] = self.txt_link_wfs.text()
         data['descricao_base'] = self.txt_descricao_wfs.text()
         data['tipo'] = 'wfs'
 
         data['nomeFantasiaTabelasCamadas'] = []
         data['diretorio'] = []
         data['orgaoResponsavel'] = []
+        data['periodoAquisicao'] = []
         data['periodosReferencia'] = []
         data['aproximacao'] = []
         data['descricao'] = []
@@ -1527,6 +1540,9 @@ class ConfigWindow(QtWidgets.QDialog):
         data['tabelasCamadas'] = [item[0] for item in self.wfs_data]
         data['tabelasCamadasNomesFantasia'] = [item[1] for item in self.wfs_data]
 
+        print("self._list: ", self._list)
+        self._list.sort()
+        print("self._list sorted: ", self._list)
         for item in self._list:
             if self.wfs_data[item][0] in names_selected_wfs and wfs_operations.download_wfs_layer(self.link_wfs, self.wfs_data[item][0]):
                 data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
@@ -1540,11 +1556,15 @@ class ConfigWindow(QtWidgets.QDialog):
 
                 dt = self.tbl_wfs.cellWidget(item, 3).dateTime()
                 dt_string = dt.toString(self.tbl_wfs.cellWidget(item, 3).displayFormat())
+                data["periodoAquisicao"].append(dt_string)
+
+                dt = self.tbl_wfs.cellWidget(item, 4).dateTime()
+                dt_string = dt.toString(self.tbl_wfs.cellWidget(item, 4).displayFormat())
                 data["periodosReferencia"].append(dt_string)
 
-                data['aproximacao'].append(int(self.tbl_wfs.item(item, 4).text()))
-                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 5).filePath())
-                data['descricao'].append(self.tbl_wfs.item(item, 6).text())
+                data['aproximacao'].append(int(self.tbl_wfs.item(item, 5).text()))
+                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 6).filePath())
+                data['descricao'].append(self.tbl_wfs.item(item, 7).text())
 
         self.settings.insert_database_pg(data)
 
