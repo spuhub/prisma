@@ -19,7 +19,7 @@ class WfsOperations:
 
             return data_wfs
 
-      def download_wfs_layer(self, link_wfs, layer):
+      def download_wfs_layer(self, link_wfs, layer, base_name):
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',
                   TYPENAME=layer, OUTPUTFORMAT='json')
 
@@ -32,13 +32,19 @@ class WfsOperations:
                         .replace('*', '_')\
                         .replace('/', '_')\
                         .replace('\\', '_')
-                  dir = os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson"
 
-                  open(dir, "wb").write(response.content)
+                  dir = os.path.dirname(__file__) + '/../wfs_layers/' + str(base_name)
+                  print(dir)
+                  if not os.path.isdir(dir):
+                        os.mkdir(dir)
+
+                  file_path = dir + '/' + layer + ".geojson"
+                  open(file_path, "wb").write(response.content)
+
                   return True
             return False
 
-      def update_wfs_layer(self, link_wfs, layer):
+      def update_wfs_layer(self, link_wfs, layer, base_name):
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',
                   TYPENAME=layer, OUTPUTFORMAT='json')
 
@@ -51,7 +57,8 @@ class WfsOperations:
                         .replace('*', '_')\
                         .replace('/', '_')\
                         .replace('\\', '_')
-                  dir = os.path.dirname(__file__) + '/../wfs_layers/' + layer + ".geojson"
+
+                  dir = os.path.dirname(__file__) + '/../wfs_layers/' + base_name + '/' + layer + ".geojson"
 
                   if os.path.isfile(dir):
                         os.remove(dir)
