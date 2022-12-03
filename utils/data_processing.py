@@ -38,12 +38,11 @@ class DataProcessing():
 
         # Elimina feições de comparação distantes das feições de input
         gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)
-
         gdf_selected_wfs = self.eliminate_invalid_geometrys(gdf_selected_wfs)
 
         for index, layer in enumerate(gdf_selected_wfs):
-            if 'aproximacao' in operation_config['wfs'][index] and operation_config['shp'][index]['aproximacao'][0] > 0:
-                gdf_selected_wfs[index] = self.utils.add_input_approximation_geographic(layer, operation_config['shp'][index]['aproximacao'][0])
+            if 'aproximacao' in operation_config['wfs'][index] and operation_config['wfs'][index]['aproximacao'] > 0:
+                gdf_selected_wfs[index] = self.utils.add_input_approximation_geographic(layer, operation_config['wfs'][index]['aproximacao'])
 
         # Elimina feições de comparação distantes das feições de input
         gdf_selected_wfs = self.eliminate_distant_features_shp(scaled_input, gdf_selected_wfs)

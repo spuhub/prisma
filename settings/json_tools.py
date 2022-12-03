@@ -2,6 +2,8 @@ import os
 import json
 from .env_tools import EnvTools
 
+from typing import Optional
+
 class JsonTools:
     """
     Classe para Manipular o arquivo de configuração.
@@ -167,7 +169,7 @@ class JsonTools:
 
         return sld_default_layers_list
 
-    def insert_database_pg(self, db_json_conf):
+    def insert_database_pg(self, db_json_conf, id_base: Optional[str] = None):
         """
         Insere as configurações de um banco de dados PostgreSQL no Json.
         @param db_json_conf: Json com as configurações do banco de dados
@@ -183,7 +185,7 @@ class JsonTools:
 
             numofItens = len(list(dados.keys()))
 
-            dbid = "base" + str(numofItens + 1)
+            dbid = id_base or ("base" + str(numofItens + 1))
             db_json_conf["id"] = dbid
             dados[dbid] = db_json_conf
 
@@ -245,8 +247,13 @@ class JsonTools:
         @param id_base: Id da base de dados (postgresql ou SHP)
         @return: Json com as configurações de base de dados
         """
+        get_base: dict = {}
         with open(self.json_path, 'r') as f:
             dados = json.load(f)
+            get_base = dados.get(str(id_base))
+            f.close()
+
+        return get_base
 
     def get_camadas_base_obrigatoria(self):
         """
