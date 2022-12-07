@@ -1538,10 +1538,13 @@ class ConfigWindow(QtWidgets.QDialog):
         return wfs_data
 
     def save_wfs_config(self):
-        wfs_operations = WfsOperations()
+        if self.tabWidget.currentIndex() == 2:
+            return
 
         if self.txt_nome_wfs == '' or self.txt_link_wfs == '' or self.txt_descricao_wfs == '' or (len(self._list) == 0 and self.combo_wfs.currentIndex() == 0):
             return
+
+        wfs_operations = WfsOperations()
 
         data = {}
         id_current_wfs: str = ''
