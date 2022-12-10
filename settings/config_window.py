@@ -1,10 +1,12 @@
 import sys
 import os.path
+import os
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QTableWidgetItem, QComboBox
 from qgis.gui import QgsFileWidget, QgsDateTimeEdit
+from qgis.core import QgsVectorLayer, QgsDataSourceUri
 
 from .config_layers import ConfigLayers
 from .json_tools import JsonTools
@@ -92,9 +94,8 @@ class ConfigWindow(QtWidgets.QDialog):
         self.combo_box_shp.currentIndexChanged.connect(self.enable_disable_delete_shp)
         self.combo_box_base.currentIndexChanged.connect(self.enable_disable_delete_bd)
         self.combo_wfs.currentIndexChanged.connect(self.handle_combo_wfs)
-        #self.tabWidget.clicked.connect(self.)
-
-    # self.btext.clicked.connect(self.hiderheader)
+        # Signal para tratar click no tabWidget
+        self.tabWidget.tabBarClicked.connect(self.handle_tabwidget)
 
     def save_bd_config_json(self):
         """
@@ -1538,7 +1539,7 @@ class ConfigWindow(QtWidgets.QDialog):
         return wfs_data
 
     def save_wfs_config(self):
-        if self.tabWidget.currentIndex() == 2:
+        if self.tabWidget.currentIndex() != 2:
             return
 
         if self.txt_nome_wfs == '' or self.txt_link_wfs == '' or self.txt_descricao_wfs == '' or (len(self._list) == 0 and self.combo_wfs.currentIndex() == 0):
@@ -1645,3 +1646,99 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def path_mudou(self):
         self.path_json_mudou_flag = 1
+
+    def handle_tabwidget(self, index):
+        """
+            função para tratar signal de click no TabWidget
+        """
+        if index == 3:
+            self.config_col_tab()
+
+    def config_col_tab(self):
+        self.tbl_col_shp.setRowCount(len(self.source_shp))
+
+        for idx, shp in enumerate(self.source_shp):
+            nome = shp['nomeFantasiaCamada']
+            caminho = shp['diretorioLocal']
+
+            layer = QgsVectorLayer(caminho, f"{nome}",  "ogr")
+
+            field_names = [field.name() for field in layer.fields()] 
+            self.cmb_shp_fields1 = comboColunas(self.tbl_col_shp, field_names)
+            self.cmb_shp_fields2 = comboColunas(self.tbl_col_shp, field_names)
+            self.cmb_shp_fields3 = comboColunas(self.tbl_col_shp, field_names)
+
+            qitem_nome = QTableWidgetItem(nome)
+
+            self.tbl_col_shp.setItem(idx, 0, qitem_nome)
+            self.tbl_col_shp.setCellWidget(idx, 1, self.cmb_shp_fields1)
+            self.tbl_col_shp.setCellWidget(idx, 2, self.cmb_shp_fields2)
+            self.tbl_col_shp.setCellWidget(idx, 3, self.cmb_shp_fields3)
+
+        et = EnvTools()
+        for i in self.source_databases:
+            user, pwd = et.get_credentials(i['id'])
+
+            port = i['porta']
+            host = i['host']
+            dbase = i['baseDeDados']
+            nomes = i['nomeFantasiaTabelasCamadas']
+
+            self.tbl_col_bd.setRowCount(len(nomes))
+
+            uri = QgsDataSourceUri()
+            uri.setConnection(host, port, dbase, user, pwd)
+
+            for idx, camada in enumerate(i['tabelasCamadas']):
+                uri.setDataSource('public', f'{camada}', 'geom')
+                layer = QgsVectorLayer(uri.uri(False), camada, 'postgres')
+                field_names = [field.name() for field in layer.fields()]
+                self.cmb_db_fields1 = comboColunas(
+                    self.tbl_col_bd, field_names)
+                self.cmb_db_fields2 = comboColunas(
+                    self.tbl_col_bd, field_names)
+                self.cmb_db_fields3 = comboColunas(
+                    self.tbl_col_bd, field_names)
+
+                qitem_nome = QTableWidgetItem(nomes[idx])
+
+                self.tbl_col_bd.setItem(idx, 0, qitem_nome)
+                self.tbl_col_bd.setCellWidget(idx, 1, self.cmb_db_fields1)
+                self.tbl_col_bd.setCellWidget(idx, 2, self.cmb_db_fields2)
+                self.tbl_col_bd.setCellWidget(idx, 3, self.cmb_db_fields3)
+
+        wfs_dir = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            'wfs_layers')
+
+        list_wfs = []
+        for root, folder, files in os.walk(wfs_dir):
+            for file in files:
+                if file.endswith(".geojson"):
+                    gjs_file = os.path.join(root, file)
+                    list_wfs.append((file.split('.')[0], gjs_file))
+
+        self.tbl_col_wfs.setRowCount(len(list_wfs))
+
+        for idx, tuple_wfs in enumerate(list_wfs):
+            nome, wfs = tuple_wfs
+            layer = QgsVectorLayer(wfs, "wfs",  "ogr")
+            field_names = [field.name() for field in layer.fields()]
+
+            self.cmb_wfs_fields1 = comboColunas(self.tbl_col_wfs, field_names)
+            self.cmb_wfs_fields2 = comboColunas(self.tbl_col_wfs, field_names)
+            self.cmb_wfs_fields3 = comboColunas(self.tbl_col_wfs, field_names)
+
+            qitem_nome = QTableWidgetItem(nome)
+
+            self.tbl_col_wfs.setItem(idx, 0, qitem_nome)
+            self.tbl_col_wfs.setCellWidget(idx, 1, self.cmb_wfs_fields1)
+            self.tbl_col_wfs.setCellWidget(idx, 2, self.cmb_wfs_fields2)
+            self.tbl_col_wfs.setCellWidget(idx, 3, self.cmb_wfs_fields3)
+            
+class comboColunas(QComboBox):
+    def __init__(self, parent, lista_itens):
+        super().__init__(parent)
+        self.addItems(lista_itens)
+        self.setCurrentIndex(-1)
+
