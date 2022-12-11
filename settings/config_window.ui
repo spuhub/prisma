@@ -682,6 +682,9 @@
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
+           <attribute name="verticalHeaderHighlightSections">
+            <bool>false</bool>
+           </attribute>
            <attribute name="verticalHeaderStretchLastSection">
             <bool>false</bool>
            </attribute>
@@ -739,6 +742,9 @@
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
+           <attribute name="verticalHeaderHighlightSections">
+            <bool>false</bool>
+           </attribute>
            <attribute name="verticalHeaderStretchLastSection">
             <bool>false</bool>
            </attribute>
@@ -792,6 +798,9 @@
            </attribute>
            <attribute name="horizontalHeaderDefaultSectionSize">
             <number>400</number>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
            </attribute>
            <attribute name="verticalHeaderHighlightSections">
             <bool>false</bool>

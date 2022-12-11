@@ -1595,7 +1595,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 if not os.path.isfile(file_path):
                     try:
                         wfs_operations.download_wfs_layer(self.txt_link_wfs.text(), self.wfs_data[item][0], data['nome'])
-                    except e:
+                    except Exception as e:
                         print(e)
                         continue
                 data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
@@ -1706,35 +1706,30 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.tbl_col_bd.setCellWidget(idx, 1, self.cmb_db_fields1)
                 self.tbl_col_bd.setCellWidget(idx, 2, self.cmb_db_fields2)
                 self.tbl_col_bd.setCellWidget(idx, 3, self.cmb_db_fields3)
+        
+        for wfs in range(len(self.source_wfs)):
+            for idx_wfs_layer in range(len(self.source_wfs[wfs]['nomeFantasiaTabelasCamadas'])):
+                nome = self.source_wfs[wfs]['nomeFantasiaTabelasCamadas'][idx_wfs_layer]
+                geojson = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                'wfs_layers', self.source_wfs[wfs]['nome'],
+                self.source_wfs[wfs]['diretorio'][idx_wfs_layer].split(r"/")[-1])
+        
+                self.tbl_col_wfs.setRowCount(len(self.source_wfs[wfs]['nomeFantasiaTabelasCamadas']))
+                
+                layer = QgsVectorLayer(geojson, "wfs",  "ogr")
+                field_names = [field.name() for field in layer.fields()]
 
-        wfs_dir = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            'wfs_layers')
+                self.cmb_wfs_fields1 = comboColunas(self.tbl_col_wfs, field_names)
+                self.cmb_wfs_fields2 = comboColunas(self.tbl_col_wfs, field_names)
+                self.cmb_wfs_fields3 = comboColunas(self.tbl_col_wfs, field_names)
 
-        list_wfs = []
-        for root, folder, files in os.walk(wfs_dir):
-            for file in files:
-                if file.endswith(".geojson"):
-                    gjs_file = os.path.join(root, file)
-                    list_wfs.append((file.split('.')[0], gjs_file))
+                qitem_nome = QTableWidgetItem(nome)
 
-        self.tbl_col_wfs.setRowCount(len(list_wfs))
+                self.tbl_col_wfs.setItem(idx_wfs_layer, 0, qitem_nome)
+                self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 1, self.cmb_wfs_fields1)
+                self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 2, self.cmb_wfs_fields2)
+                self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 3, self.cmb_wfs_fields3)
 
-        for idx, tuple_wfs in enumerate(list_wfs):
-            nome, wfs = tuple_wfs
-            layer = QgsVectorLayer(wfs, "wfs",  "ogr")
-            field_names = [field.name() for field in layer.fields()]
-
-            self.cmb_wfs_fields1 = comboColunas(self.tbl_col_wfs, field_names)
-            self.cmb_wfs_fields2 = comboColunas(self.tbl_col_wfs, field_names)
-            self.cmb_wfs_fields3 = comboColunas(self.tbl_col_wfs, field_names)
-
-            qitem_nome = QTableWidgetItem(nome)
-
-            self.tbl_col_wfs.setItem(idx, 0, qitem_nome)
-            self.tbl_col_wfs.setCellWidget(idx, 1, self.cmb_wfs_fields1)
-            self.tbl_col_wfs.setCellWidget(idx, 2, self.cmb_wfs_fields2)
-            self.tbl_col_wfs.setCellWidget(idx, 3, self.cmb_wfs_fields3)
             
 class comboColunas(QComboBox):
     def __init__(self, parent, lista_itens):
