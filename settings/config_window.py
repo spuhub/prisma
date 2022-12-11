@@ -176,31 +176,30 @@ class ConfigWindow(QtWidgets.QDialog):
         """
         # self.fill_mandatory_layers()
 
-        # self.save_bd_config_json()
-        # self.save_shp_config_json()
-        # self.save_mandatory_layers()
-        # self.save_geocoding_key()
-        # self.save_basemap()
-        # self.save_sld_default_layers()
-        # self.save_wfs_config()
+        self.save_bd_config_json()
+        self.save_shp_config_json()
+        self.save_mandatory_layers()
+        self.save_geocoding_key()
+        self.save_basemap()
+        self.save_sld_default_layers()
+        self.save_wfs_config()
         self.save_col_tab()
 
-        # self.store_path_json()
-        # if self.path_json_mudou_flag == 1:
-        #     msg = QMessageBox(self)
-        #     msg.warning(self, "Atenção!", "Você mudou a fonte de curadoria. Por Favor, reinicie o plugin para que as alterações entrem e vigor.")
-        #     self.path_json_mudou_flag == 0
+        self.store_path_json()
+        if self.path_json_mudou_flag == 1:
+            msg = QMessageBox(self)
+            msg.warning(self, "Atenção!", "Você mudou a fonte de curadoria. Por Favor, reinicie o plugin para que as alterações entrem e vigor.")
+            self.path_json_mudou_flag == 0
 
+        self.fill_mandatory_layers_from_json_conf()
 
-        # self.fill_mandatory_layers_from_json_conf()
-
-        # btn = self.sender()
-        # btn_name = btn.objectName()
-        # if self.control_problem == 0:
-        #     if btn_name =="btn_salvar":
-        #         msg = QMessageBox(self)
-        #         msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
-        # self.control_problem = 0
+        btn = self.sender()
+        btn_name = btn.objectName()
+        if self.control_problem == 0:
+            if btn_name =="btn_salvar":
+                msg = QMessageBox(self)
+                msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
+        self.control_problem = 0
 
     def save_shp_config_json(self):
         """
