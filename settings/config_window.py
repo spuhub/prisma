@@ -96,6 +96,11 @@ class ConfigWindow(QtWidgets.QDialog):
         self.combo_wfs.currentIndexChanged.connect(self.handle_combo_wfs)
         # Signal para tratar click no tabWidget
         self.tabWidget.tabBarClicked.connect(self.handle_tabwidget)
+        # Listas para armazenar bases carregadas nas configuracoes de camada
+        self.bases_shp = []
+        self.bases_bd = []
+        self.bases_wfs = []
+
 
     def save_bd_config_json(self):
         """
@@ -171,30 +176,31 @@ class ConfigWindow(QtWidgets.QDialog):
         """
         # self.fill_mandatory_layers()
 
-        self.save_bd_config_json()
-        self.save_shp_config_json()
-        self.save_mandatory_layers()
-        self.save_geocoding_key()
-        self.save_basemap()
-        self.save_sld_default_layers()
-        self.save_wfs_config()
+        # self.save_bd_config_json()
+        # self.save_shp_config_json()
+        # self.save_mandatory_layers()
+        # self.save_geocoding_key()
+        # self.save_basemap()
+        # self.save_sld_default_layers()
+        # self.save_wfs_config()
+        self.save_col_tab()
 
-        self.store_path_json()
-        if self.path_json_mudou_flag == 1:
-            msg = QMessageBox(self)
-            msg.warning(self, "Atenção!", "Você mudou a fonte de curadoria. Por Favor, reinicie o plugin para que as alterações entrem e vigor.")
-            self.path_json_mudou_flag == 0
+        # self.store_path_json()
+        # if self.path_json_mudou_flag == 1:
+        #     msg = QMessageBox(self)
+        #     msg.warning(self, "Atenção!", "Você mudou a fonte de curadoria. Por Favor, reinicie o plugin para que as alterações entrem e vigor.")
+        #     self.path_json_mudou_flag == 0
 
 
-        self.fill_mandatory_layers_from_json_conf()
+        # self.fill_mandatory_layers_from_json_conf()
 
-        btn = self.sender()
-        btn_name = btn.objectName()
-        if self.control_problem == 0:
-            if btn_name =="btn_salvar":
-                msg = QMessageBox(self)
-                msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
-        self.control_problem = 0
+        # btn = self.sender()
+        # btn_name = btn.objectName()
+        # if self.control_problem == 0:
+        #     if btn_name =="btn_salvar":
+        #         msg = QMessageBox(self)
+        #         msg.information(self, "Salvar Configurações", "As configurações foram salvas com sucesso!")
+        # self.control_problem = 0
 
     def save_shp_config_json(self):
         """
@@ -1652,6 +1658,9 @@ class ConfigWindow(QtWidgets.QDialog):
             função para tratar signal de click no TabWidget
         """
         if index == 3:
+            self.bases_shp = []
+            self.bases_bd = []
+            self.bases_wfs = []
             self.config_col_tab()
 
     def config_col_tab(self):
@@ -1659,8 +1668,10 @@ class ConfigWindow(QtWidgets.QDialog):
 
         for idx, shp in enumerate(self.source_shp):
             nome = shp['nomeFantasiaCamada']
+            id_base = shp['id']
             caminho = shp['diretorioLocal']
-
+            selectedFields = shp['selectedFields']
+            self.bases_shp.append(id_base)
             layer = QgsVectorLayer(caminho, f"{nome}",  "ogr")
 
             field_names = [field.name() for field in layer.fields()] 
@@ -1668,12 +1679,17 @@ class ConfigWindow(QtWidgets.QDialog):
             self.cmb_shp_fields2 = comboColunas(self.tbl_col_shp, field_names)
             self.cmb_shp_fields3 = comboColunas(self.tbl_col_shp, field_names)
 
-            qitem_nome = QTableWidgetItem(nome)
+            self.cmb_shp_fields1.setCurrentIndex(selectedFields[0])
+            self.cmb_shp_fields2.setCurrentIndex(selectedFields[1])
+            self.cmb_shp_fields3.setCurrentIndex(selectedFields[2])
+
+            qitem_nome = QTableWidgetItem(f"{nome}")
 
             self.tbl_col_shp.setItem(idx, 0, qitem_nome)
             self.tbl_col_shp.setCellWidget(idx, 1, self.cmb_shp_fields1)
             self.tbl_col_shp.setCellWidget(idx, 2, self.cmb_shp_fields2)
             self.tbl_col_shp.setCellWidget(idx, 3, self.cmb_shp_fields3)
+            
 
         et = EnvTools()
         for i in self.source_databases:
@@ -1683,13 +1699,15 @@ class ConfigWindow(QtWidgets.QDialog):
             host = i['host']
             dbase = i['baseDeDados']
             nomes = i['nomeFantasiaTabelasCamadas']
-
+            id_base = i['id']
             self.tbl_col_bd.setRowCount(len(nomes))
-
+            selectedFields = i['selectedFields']
+            
             uri = QgsDataSourceUri()
             uri.setConnection(host, port, dbase, user, pwd)
 
             for idx, camada in enumerate(i['tabelasCamadas']):
+                selectedFields_camada = selectedFields[str(idx)]
                 uri.setDataSource('public', f'{camada}', 'geom')
                 layer = QgsVectorLayer(uri.uri(False), camada, 'postgres')
                 field_names = [field.name() for field in layer.fields()]
@@ -1700,7 +1718,13 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.cmb_db_fields3 = comboColunas(
                     self.tbl_col_bd, field_names)
 
-                qitem_nome = QTableWidgetItem(nomes[idx])
+                self.cmb_db_fields1.setCurrentIndex(selectedFields_camada[0])
+                self.cmb_db_fields2.setCurrentIndex(selectedFields_camada[1])
+                self.cmb_db_fields3.setCurrentIndex(selectedFields_camada[2])
+
+                self.bases_bd.append((id_base, idx))
+                
+                qitem_nome = QTableWidgetItem(f"{nomes[idx]}")
 
                 self.tbl_col_bd.setItem(idx, 0, qitem_nome)
                 self.tbl_col_bd.setCellWidget(idx, 1, self.cmb_db_fields1)
@@ -1709,19 +1733,25 @@ class ConfigWindow(QtWidgets.QDialog):
         
         for wfs in range(len(self.source_wfs)):
             for idx_wfs_layer in range(len(self.source_wfs[wfs]['nomeFantasiaTabelasCamadas'])):
+                selectedFields = self.source_wfs[wfs]['selectedFields']
                 nome = self.source_wfs[wfs]['nomeFantasiaTabelasCamadas'][idx_wfs_layer]
                 geojson = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                 'wfs_layers', self.source_wfs[wfs]['nome'],
                 self.source_wfs[wfs]['diretorio'][idx_wfs_layer].split(r"/")[-1])
-        
+                selectedFields_camada = selectedFields[str(idx_wfs_layer)]
                 self.tbl_col_wfs.setRowCount(len(self.source_wfs[wfs]['nomeFantasiaTabelasCamadas']))
-                
+                self.bases_wfs.append((self.source_wfs[wfs]['id'], idx_wfs_layer))
+
                 layer = QgsVectorLayer(geojson, "wfs",  "ogr")
                 field_names = [field.name() for field in layer.fields()]
 
                 self.cmb_wfs_fields1 = comboColunas(self.tbl_col_wfs, field_names)
                 self.cmb_wfs_fields2 = comboColunas(self.tbl_col_wfs, field_names)
                 self.cmb_wfs_fields3 = comboColunas(self.tbl_col_wfs, field_names)
+
+                self.cmb_wfs_fields1.setCurrentIndex(selectedFields_camada[0])
+                self.cmb_wfs_fields2.setCurrentIndex(selectedFields_camada[1])
+                self.cmb_wfs_fields3.setCurrentIndex(selectedFields_camada[2])
 
                 qitem_nome = QTableWidgetItem(nome)
 
@@ -1730,7 +1760,55 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 2, self.cmb_wfs_fields2)
                 self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 3, self.cmb_wfs_fields3)
 
+    def save_col_tab(self):
+        if self.tabWidget.currentIndex() != 3:
+            return
+        # Salva colunas SHP
+        for row in range(self.tbl_col_shp.rowCount()):
+            base_shp = self.bases_shp[row]
+            config = self.search_base_shp(base_shp)
+
+            self.cmb_shp_fields1 = self.tbl_col_shp.cellWidget(row, 1)
+            self.cmb_shp_fields2 = self.tbl_col_shp.cellWidget(row, 2)
+            self.cmb_shp_fields3 = self.tbl_col_shp.cellWidget(row, 3)
+
+            config["selectedFields"] = (self.cmb_shp_fields1.currentIndex(),self.cmb_shp_fields2.currentIndex(),self.cmb_shp_fields3.currentIndex())
+            self.settings.edit_database(base_shp, config)
+
+        # Salva colunas BD
+        for row in range(self.tbl_col_bd.rowCount()):
+            base_bd, idx_camada = self.bases_bd[row]
+
+            self.cmb_db_fields1 = self.tbl_col_bd.cellWidget(row, 1)
+            self.cmb_db_fields2 = self.tbl_col_bd.cellWidget(row, 2)
+            self.cmb_db_fields3 = self.tbl_col_bd.cellWidget(row, 3)
+
+            config = self.search_base_pg(base_bd)
+            if "selectedFields" in config:
+                config['selectedFields'][idx_camada] = (self.cmb_db_fields1.currentIndex(),self.cmb_db_fields2.currentIndex(),self.cmb_db_fields3.currentIndex())
+            else:
+                config["selectedFields"] = {idx_camada: (self.cmb_db_fields1.currentIndex(),self.cmb_db_fields2.currentIndex(),self.cmb_db_fields3.currentIndex())}
+
+            self.settings.edit_database(base_bd, config)
+
+        # Salva colunas WFS
+        for row in range(self.tbl_col_wfs.rowCount()):
+            base_wfs, idx_camada = self.bases_wfs[row]
+
+            self.cmb_wfs_fields1 = self.tbl_col_wfs.cellWidget(row, 1)
+            self.cmb_wfs_fields2 = self.tbl_col_wfs.cellWidget(row, 2)
+            self.cmb_wfs_fields3 = self.tbl_col_wfs.cellWidget(row, 3)
+
+            config = self.settings.get_source_data(base_wfs)
             
+            if "selectedFields" in config:
+                config['selectedFields'][idx_camada] = (self.cmb_wfs_fields1.currentIndex(),self.cmb_wfs_fields2.currentIndex(),self.cmb_wfs_fields3.currentIndex())
+            else:
+                config["selectedFields"] = {idx_camada: (self.cmb_wfs_fields1.currentIndex(),self.cmb_wfs_fields2.currentIndex(),self.cmb_wfs_fields3.currentIndex())}
+
+            self.settings.edit_database(base_wfs, config)   
+
+
 class comboColunas(QComboBox):
     def __init__(self, parent, lista_itens):
         super().__init__(parent)
