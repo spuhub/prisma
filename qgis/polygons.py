@@ -269,15 +269,6 @@ class Polygons():
 
         # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - 2, )
 
-        # Carrega as áreas de intersecção no Qgis
-        if len(feature_intersection) > 0:
-            show_qgis_intersection = QgsVectorLayer(feature_intersection.to_json(), "Sobreposição")
-            show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-            show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_polygon'])
-            QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
-
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
@@ -285,8 +276,8 @@ class Polygons():
             show_qgis_input.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
             show_qgis_input.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['buffer'])
-            QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
+            QgsProject.instance().addMapLayer(show_qgis_input)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
             if index_2 != None:
                 input_standard = input_standard.to_crs(crs)
@@ -296,8 +287,8 @@ class Polygons():
 
             self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
 
-            QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
+            QgsProject.instance().addMapLayer(show_qgis_input_standard)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
         else:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
@@ -305,8 +296,8 @@ class Polygons():
 
             self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
 
-            QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
+            QgsProject.instance().addMapLayer(show_qgis_input)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
         # Carrega camada de comparação no QGis
         # Se index 2 é diferente de None, significa que a comparação está vinda de banco de dados
@@ -317,8 +308,8 @@ class Polygons():
             show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
             show_qgis_areas.loadSldStyle(self.operation_config['operation_config']['shp'][index_1]['estiloCamadas'][0]['stylePath'])
-            QgsProject.instance().addMapLayer(show_qgis_areas, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
+            QgsProject.instance().addMapLayer(show_qgis_areas)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
 
         elif base_type == 'wfs':
             show_qgis_areas = QgsVectorLayer(feature_area.to_json(),
@@ -328,9 +319,9 @@ class Polygons():
 
             show_qgis_areas.loadSldStyle(
                 self.operation_config['operation_config']['wfs'][index_1]['estiloTabelasCamadas'])
-            QgsProject.instance().addMapLayer(show_qgis_areas, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1,
-                                  show_qgis_areas)
+            QgsProject.instance().addMapLayer(show_qgis_areas)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1,
+            #                       show_qgis_areas)
 
         else:
             if 'geom' in feature_area:
@@ -345,15 +336,25 @@ class Polygons():
 
             show_qgis_areas.loadSldStyle(
                 self.operation_config['operation_config']['pg'][index_1]['estiloTabelasCamadas'][index_2]['stylePath'])
-            QgsProject.instance().addMapLayer(show_qgis_areas, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
+            QgsProject.instance().addMapLayer(show_qgis_areas)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_areas)
+
+        # Carrega as áreas de intersecção no Qgis
+        if len(feature_intersection) > 0:
+            show_qgis_intersection = QgsVectorLayer(feature_intersection.to_json(), "Sobreposição")
+            show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+            show_qgis_intersection.loadSldStyle(
+                self.operation_config['operation_config']['sld_default_layers']['overlay_input_polygon'])
+            QgsProject.instance().addMapLayer(show_qgis_intersection)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
 
         # Camada de cotas
         show_qgis_quota = QgsVectorLayer(gdf_line_input.to_json(), "Linhas")
         show_qgis_quota.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-        QgsProject.instance().addMapLayer(show_qgis_quota, False)
-        self.root.insertLayer(0, show_qgis_quota)
+        QgsProject.instance().addMapLayer(show_qgis_quota)
+        # self.root.insertLayer(0, show_qgis_quota)
 
         # Camada de vértices
         # Remover o último vértice, para não ficar dois pontos no mesmo lugar
@@ -361,8 +362,8 @@ class Polygons():
         show_qgis_vertices = QgsVectorLayer(show_gdf_point_input.to_json(), "Vértices")
         show_qgis_vertices.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
 
-        QgsProject.instance().addMapLayer(show_qgis_vertices, False)
-        self.root.insertLayer(0, show_qgis_vertices)
+        QgsProject.instance().addMapLayer(show_qgis_vertices)
+        # self.root.insertLayer(0, show_qgis_vertices)
 
         layers_localization_map = []
         layers_situation_map = []

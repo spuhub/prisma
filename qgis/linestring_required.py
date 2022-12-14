@@ -77,17 +77,6 @@ class LinestringRequired():
 
         self.remove_layers()
 
-        # Carrega as áreas de intersecção no Qgis
-        if self.gpd_area_homologada is not None:
-            if len(self.gpd_area_homologada) > 0:
-                show_qgis_intersection = QgsVectorLayer(self.gpd_area_homologada.to_json(), "Sobreposição")
-                show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
-
-                show_qgis_intersection.loadSldStyle(self.operation_config['operation_config']['sld_default_layers']['overlay_input_line'])
-
-                QgsProject.instance().addMapLayer(show_qgis_intersection, False)
-                self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
-
         # Carrega a área padrão no QGis, sem área de aproximação (caso necessário)
         if 'aproximacao' in self.operation_config['operation_config']:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
@@ -96,8 +85,8 @@ class LinestringRequired():
 
             symbol = self.get_input_symbol(show_qgis_input.geometryType())
             show_qgis_input.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
+            QgsProject.instance().addMapLayer(show_qgis_input)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
 
             input_standard = input_standard.to_crs(crs)
             show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(),
@@ -106,8 +95,8 @@ class LinestringRequired():
 
             symbol = self.get_input_standard_symbol(show_qgis_input_standard.geometryType())
             show_qgis_input_standard.renderer().setSymbol(symbol)
-            QgsProject.instance().addMapLayer(show_qgis_input_standard, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
+            QgsProject.instance().addMapLayer(show_qgis_input_standard)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_input_standard)
         else:
             # Carrega camada de input no QGis (Caso usuário tenha inserido como entrada, a área de aproximação está nesta camada)
             show_qgis_input = QgsVectorLayer(feature_input_gdp.to_json(), "Feição de Estudo/Sobreposição")
@@ -115,8 +104,20 @@ class LinestringRequired():
 
             self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
 
-            QgsProject.instance().addMapLayer(show_qgis_input, False)
-            self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
+            QgsProject.instance().addMapLayer(show_qgis_input)
+            # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 1, show_qgis_input)
+
+        # Carrega as áreas de intersecção no Qgis
+        if self.gpd_area_homologada is not None:
+            if len(self.gpd_area_homologada) > 0:
+                show_qgis_intersection = QgsVectorLayer(self.gpd_area_homologada.to_json(), "Sobreposição")
+                show_qgis_intersection.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))
+
+                show_qgis_intersection.loadSldStyle(
+                    self.operation_config['operation_config']['sld_default_layers']['overlay_input_line'])
+
+                QgsProject.instance().addMapLayer(show_qgis_intersection)
+                # self.root.insertLayer(len(QgsProject.instance().layerTreeRoot().children()) - len(self.project_layers) - 2, show_qgis_intersection)
 
         layers_localization_map = []
         layers_situation_map = []
