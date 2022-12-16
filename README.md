@@ -16,7 +16,7 @@ O Prisma gera documentos em formato PDF com o resultado da caracterização. Tai
 *Prisma generates documents in PDF format with the result of the characterization. Such documents are composed of maps, table of coordinates, information about the properties that are overlapping, among other information about the overlap, such as the size of the overlapping area.*
 
 
-## O que não é o Prisma
+## O que não é o SPU-Prisma
 
 O prisma NÃO pode ser confundido com: 
 
