@@ -53,6 +53,10 @@ Ao cadastrar as bases no plugin será gerado um JSON de curadoria e pré configu
 
 Manual do usuário disponível [aqui](https://github.com/cgdag/SPU-Prisma/tree/master/docs/manual_usuario).
 
+## Download do SPU-Prisma
+
+[SPU-Prisma na loja do QGIS] (https://plugins.qgis.org/plugins/prisma/). 
+
 ## Contato dos Desenvolvedores (contact)
 
 * Guilherme Henrique (guilherme.nascimento@economia.gov.br)
