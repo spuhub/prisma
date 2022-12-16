@@ -55,7 +55,7 @@ Manual do usuário disponível [aqui](https://github.com/cgdag/SPU-Prisma/tree/m
 
 ## Download do SPU-Prisma
 
-[SPU-Prisma na loja do QGIS] (https://plugins.qgis.org/plugins/prisma/). 
+[SPU-Prisma na loja do QGIS](https://plugins.qgis.org/plugins/prisma/). 
 
 ## Contato dos Desenvolvedores (contact)
 
