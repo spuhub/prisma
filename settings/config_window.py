@@ -1678,9 +1678,9 @@ class ConfigWindow(QtWidgets.QDialog):
             self.cmb_shp_fields2 = comboColunas(self.tbl_col_shp, field_names)
             self.cmb_shp_fields3 = comboColunas(self.tbl_col_shp, field_names)
 
-            self.cmb_shp_fields1.setCurrentIndex(selectedFields[0])
-            self.cmb_shp_fields2.setCurrentIndex(selectedFields[1])
-            self.cmb_shp_fields3.setCurrentIndex(selectedFields[2])
+            self.cmb_shp_fields1.setCurrentText(selectedFields[0])
+            self.cmb_shp_fields2.setCurrentText(selectedFields[1])
+            self.cmb_shp_fields3.setCurrentText(selectedFields[2])
 
             qitem_nome = QTableWidgetItem(f"{nome}")
 
@@ -1717,9 +1717,9 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.cmb_db_fields3 = comboColunas(
                     self.tbl_col_bd, field_names)
 
-                self.cmb_db_fields1.setCurrentIndex(selectedFields_camada[0])
-                self.cmb_db_fields2.setCurrentIndex(selectedFields_camada[1])
-                self.cmb_db_fields3.setCurrentIndex(selectedFields_camada[2])
+                self.cmb_db_fields1.setCurrentText(selectedFields_camada[0])
+                self.cmb_db_fields2.setCurrentText(selectedFields_camada[1])
+                self.cmb_db_fields3.setCurrentText(selectedFields_camada[2])
 
                 self.bases_bd.append((id_base, idx))
                 
@@ -1748,9 +1748,9 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.cmb_wfs_fields2 = comboColunas(self.tbl_col_wfs, field_names)
                 self.cmb_wfs_fields3 = comboColunas(self.tbl_col_wfs, field_names)
 
-                self.cmb_wfs_fields1.setCurrentIndex(selectedFields_camada[0])
-                self.cmb_wfs_fields2.setCurrentIndex(selectedFields_camada[1])
-                self.cmb_wfs_fields3.setCurrentIndex(selectedFields_camada[2])
+                self.cmb_wfs_fields1.setCurrentText(selectedFields_camada[0])
+                self.cmb_wfs_fields2.setCurrentText(selectedFields_camada[1])
+                self.cmb_wfs_fields3.setCurrentText(selectedFields_camada[2])
 
                 qitem_nome = QTableWidgetItem(nome)
 
@@ -1771,7 +1771,7 @@ class ConfigWindow(QtWidgets.QDialog):
             self.cmb_shp_fields2 = self.tbl_col_shp.cellWidget(row, 2)
             self.cmb_shp_fields3 = self.tbl_col_shp.cellWidget(row, 3)
 
-            config["selectedFields"] = (self.cmb_shp_fields1.currentIndex(),self.cmb_shp_fields2.currentIndex(),self.cmb_shp_fields3.currentIndex())
+            config["selectedFields"] = (self.cmb_shp_fields1.currentText(),self.cmb_shp_fields2.currentText(),self.cmb_shp_fields3.currentText())
             self.settings.edit_database(base_shp, config)
 
         # Salva colunas BD
@@ -1784,9 +1784,9 @@ class ConfigWindow(QtWidgets.QDialog):
 
             config = self.search_base_pg(base_bd)
             if "selectedFields" in config:
-                config['selectedFields'][idx_camada] = (self.cmb_db_fields1.currentIndex(),self.cmb_db_fields2.currentIndex(),self.cmb_db_fields3.currentIndex())
+                config['selectedFields'][idx_camada] = (self.cmb_db_fields1.currentText(),self.cmb_db_fields2.currentText(),self.cmb_db_fields3.currentText())
             else:
-                config["selectedFields"] = {idx_camada: (self.cmb_db_fields1.currentIndex(),self.cmb_db_fields2.currentIndex(),self.cmb_db_fields3.currentIndex())}
+                config["selectedFields"] = {idx_camada: (self.cmb_db_fields1.currentText(),self.cmb_db_fields2.currentText(),self.cmb_db_fields3.currentText())}
 
             self.settings.edit_database(base_bd, config)
 
@@ -1801,9 +1801,9 @@ class ConfigWindow(QtWidgets.QDialog):
             config = self.settings.get_source_data(base_wfs)
             
             if "selectedFields" in config:
-                config['selectedFields'][idx_camada] = (self.cmb_wfs_fields1.currentIndex(),self.cmb_wfs_fields2.currentIndex(),self.cmb_wfs_fields3.currentIndex())
+                config['selectedFields'][idx_camada] = (self.cmb_wfs_fields1.currentText(),self.cmb_wfs_fields2.currentText(),self.cmb_wfs_fields3.currentText())
             else:
-                config["selectedFields"] = {idx_camada: (self.cmb_wfs_fields1.currentIndex(),self.cmb_wfs_fields2.currentIndex(),self.cmb_wfs_fields3.currentIndex())}
+                config["selectedFields"] = {idx_camada: (self.cmb_wfs_fields1.currentText(),self.cmb_wfs_fields2.currentText(),self.cmb_wfs_fields3.currentText())}
 
             self.settings.edit_database(base_wfs, config)   
 
