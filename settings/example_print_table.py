@@ -46,7 +46,6 @@ for idx, shp in enumerate(source_shp):
     selectedFields = shp['selectedFields']
     if selectedFields[0] != "" and selectedFields[1] != "" and selectedFields[2] != "":
         layer = QgsVectorLayer(caminho, f"{nome}",  "ogr")
-        iter = layer.getFeatures()
         tabla_item.setVectorLayer(layer)
         tabla_item.setDisplayedFields(selectedFields)
         
@@ -55,5 +54,3 @@ for idx, shp in enumerate(source_shp):
         result= exporter.exportToPdf(fr"C:\Users\Marco Reliquias\Desktop\Teste\{idx}.pdf", QgsLayoutExporter.PdfExportSettings())
         if not result == exporter.Success:
             print(result)
-
-qgs_instance.write()
