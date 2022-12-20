@@ -1594,8 +1594,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 if not os.path.isfile(file_path):
                     try:
                         wfs_operations.download_wfs_layer(self.txt_link_wfs.text(), self.wfs_data[item][0], data['nome'])
-                    except e:
-                        print(e)
+                    except:
                         continue
                 data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
                 data['diretorio'].append(file_path)

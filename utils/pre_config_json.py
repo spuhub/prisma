@@ -11,13 +11,13 @@ def pre_config_json():
     json_data = json_tools.get_json()
 
     data: dict = {
-        "default_input_polygon": f"{os.path.dirname(__file__)}/../styles/3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "default_input_line": f"{os.path.dirname(__file__)}/../styles/1_6_5_Trecho_Duto_L.sld",
-        "default_input_point": f"{os.path.dirname(__file__)}/../styles/3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "buffer": f"{os.path.dirname(__file__)}/../styles/1_2_3_Massa_Dagua_A.sld",
-        "overlay_input_polygon": f"{os.path.dirname(__file__)}/../styles/1_2_4_Terreno_Sujeito_Inundacao_A.sld",
-        "overlay_input_line": f"{os.path.dirname(__file__)}/../styles/3_3_3_Trecho_LPM_L.sld",
-        "overlay_input_point": f"{os.path.dirname(__file__)}/../styles/1_6_2_Estacao_Ferroviario_P.sld"
+        "default_input_polygon": f"{os.path.dirname(__file__)}/../styles/default_layers/input_A.sld",
+        "default_input_line": f"{os.path.dirname(__file__)}/../styles/default_layers/input_L.sld",
+        "default_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/input_P.sld",
+        "buffer": f"{os.path.dirname(__file__)}/../styles/default_layers/buffer_A.sld",
+        "overlay_input_polygon": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_A.sld",
+        "overlay_input_line": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_L.sld",
+        "overlay_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_P.sld"
     }
 
     json_data.update(sld_default_layers = data)
