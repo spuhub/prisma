@@ -122,9 +122,8 @@ class Polygons():
         input = input.to_crs(crs)
         input.set_crs(crs, allow_override=True)
 
-        if 'aproximacao' in self.operation_config['operation_config']:
-            input = self.utils.add_input_approximation_projected(input, self.operation_config['operation_config'][
-                'aproximacao'])
+        input = input.to_crs(crs)
+        input.set_crs(crs, allow_override=True)
 
         index = 0
         # Compara a feição de entrada com todas as áreas de comparação obrigatórias selecionadas pelo usuário
@@ -161,6 +160,7 @@ class Polygons():
 
                     else:
                         has_overlay = len(gpd.overlay(area, input))
+
                         if has_overlay > 0:
                             input.loc[0, self.operation_config['operation_config']['required'][index][
                                 'nomeFantasiaCamada']] = True

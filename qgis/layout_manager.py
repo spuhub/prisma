@@ -153,6 +153,11 @@ class LayoutManager():
                     self.load_required_layers(gdf_required, rowInput['crs_feature'])
 
             gdf_input = self.get_feature_with_crs(input.iloc[[indexInput]])
+
+            if 'aproximacao' in self.operation_config['operation_config']:
+                gdf_input = self.utils.add_input_approximation_projected(gdf_input, self.operation_config['operation_config'][
+                    'aproximacao'])
+
             # Caso input_standard maior que 0, significa que o usuário inseriu uma área de proximidade
             if len(input_standard) > 0:
                 gdf_input = self.calculation_shp(gdf_input, input_standard.iloc[[indexInput]], gdf_selected_shp, gdf_required)
