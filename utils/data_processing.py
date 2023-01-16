@@ -3,7 +3,6 @@ from ..databases.shp_handle import ShpHandle
 from .utils import Utils
 
 import geopandas as gpd
-import pandas as pd
 from shapely.wkt import loads
 
 class DataProcessing():
