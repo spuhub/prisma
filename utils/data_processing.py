@@ -3,6 +3,7 @@ from ..databases.shp_handle import ShpHandle
 from .utils import Utils
 
 import geopandas as gpd
+import pandas as pd
 from shapely.wkt import loads
 
 class DataProcessing():
@@ -139,6 +140,9 @@ class DataProcessing():
             index += 1
 
         for i in range(len(gdf_selected_shp)):
+            # Obriga a sempre manter ao menos um registro no GeoDataFrame
+            # Serve para pegar o tipo da geometria posteriormente durante as comparações
+            gdf_selected_shp[i].loc[0, 'close_input'] = True
             # Exclui áreas que não foram classificadas como perto do input (sem sobreposição ao input escalado)
             gdf_selected_shp[i] = gdf_selected_shp[i].query("close_input == True")
             gdf_selected_shp[i] = gdf_selected_shp[i].drop(columns=['close_input'])
