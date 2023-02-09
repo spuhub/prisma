@@ -57,6 +57,7 @@ class LayoutManager():
         self.add_template_to_project(template_dir)
 
         # Folha de rosto
+        # teste
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Relatorio_FolhaA4_Retrato.qpt')
         self.add_template_to_project(template_dir)
 
