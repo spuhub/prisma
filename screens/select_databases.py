@@ -164,10 +164,8 @@ class SelectDatabases(QtWidgets.QDialog):
 
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        gdf_result = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
+        dic_overlaps = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
 
-        data = {'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
-                  'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_shp_standard': gdf_selected_shp_standard,
-                  'gdf_selected_wfs': gdf_result['gdf_selected_wfs'], 'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
+        data = {'layers': dic_layers, 'overlaps':dic_overlaps, 'operation_config': self.operation_config}
 
         self.continue_window.emit(data)

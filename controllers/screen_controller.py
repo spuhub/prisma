@@ -83,19 +83,19 @@ class Controller:
         self.select_databases.continue_window.connect(self.show_result_window)
         self.select_databases.show()
 
-    def show_report_generator(self, result):
+    def show_report_generator(self, data):
         """
         Função acionada (e também serve como controller) para mostrar a tela onde o usuário insere os dados de cabeçalho e local onde devem ser gerados os relatórios PDF do prisma.
         """
         from ..screens.report_generator import ReportGenerator
-        self.report_generator = ReportGenerator(result)
+        self.report_generator = ReportGenerator(data)
         self.report_generator.show()
 
-    def show_result_window(self, result):
+    def show_result_window(self, data):
         """
         Função acionada (e também serve como controller) para mostrar a tela de resultados do prisma.
         """
         from ..screens.result_window import ResultWindow
-        self.result_window = ResultWindow(result)
+        self.result_window = ResultWindow(data)
         self.result_window.report_generator_window.connect(self.show_report_generator)
         self.result_window.show()

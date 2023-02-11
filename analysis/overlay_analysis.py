@@ -53,26 +53,65 @@ class OverlayAnalisys():
         list_selected_wfs = dic_layers['wfs']
         list_selected_db = dic_layers['db']
 
+        feats_input = lyr_input.getFeatures()
+        lyr_input.selectAll()
+        bbox_lyr_input = lyr_input.boundingBoxOfSelected()
+                
+        dic_overlaps = {}
+        for feat in feats_input:
+            feat_geom = feat.geometry()
+
+            for lyr_shp in list_selected_shp:
+                feats_shp = lyr_shp.getFeatures(bbox_lyr_input)
+
+                for feat_shp in feats_shp:
+                    feat_shp_geom = feat_shp.geometry()
+
+                    if feat_geom.intersects(feat_shp_geom):
+                        if lyr_shp.name() not in dic_overlaps:
+                            dic_overlaps[lyr_shp.name()] = [lyr_shp, 1]
+                        else:
+                            dic_overlaps[lyr_shp.name()][1] += 1
+            
+            for lyr_db in list_selected_db:
+                feats_db = lyr_db.getFeatures(bbox_lyr_input)
+
+                for feat_db in feats_db:
+                    feat_db_geom = feat_db.geometry()
+
+                    if feat_geom.intersects(feat_db_geom):
+                        if lyr_db.name() not in dic_overlaps:
+                            dic_overlaps[lyr_db.name()] = [lyr_db, 1]
+                        else:
+                            dic_overlaps[lyr_db.name()][1] += 1
+            
+            for lyr_wfs in list_selected_wfs:
+                feats_wfs = lyr_wfs.getFeatures(bbox_lyr_input)
+
+                for feat_wfs in feats_wfs:
+                    feat_wfs_geom = feat_wfs.geometry()
+
+                    if feat_geom.intersects(feat_wfs_geom):
+                        if lyr_wfs.name() not in dic_overlaps:
+                            dic_overlaps[lyr_wfs.name()] = [lyr_wfs, 1]
+                        else:
+                            dic_overlaps[lyr_wfs.name()][1] += 1
+
+            for lyr_req in list_required:
+                feats_req = lyr_req.getFeatures(bbox_lyr_input)
+
+                for feat_req in feats_req:
+                    feat_req_geom = feat_req.geometry()
+
+                    if feat_geom.intersects(feat_req_geom):
+                        if lyr_req.name() not in dic_overlaps:
+                            dic_overlaps[lyr_req.name()] = [lyr_req, 1]
+                        else:
+                            dic_overlaps[lyr_req.name()][1] += 1
+
         
 
-
-
-        # gdf_buffered_shp, gdf_buffered_pg = self.handle_approximation_layers()
-
-        # input['Área Homologada_area'] = 0
-        # Comparação de sobreposição entre input e Shapefiles
-        input = self.analisys_shp(input, gdf_selected_shp)
-
-        # Comparação de sobreposição entre input e Shapefiles
-        input = self.analisys_wfs(input, gdf_selected_wfs)
-
-        # Comparação de sobreposição entre input e bases de dados de banco de dados
-        input = self.analysis_db(input, gdf_selected_db)
-
-        result = {'input': input, 'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp,
-                  'gdf_selected_wfs': gdf_selected_wfs, 'gdf_selected_db': gdf_selected_db}
-
-        return result
+        return dic_overlaps
 
     def analisys_shp(self, input, gdf_selected_shp):
         """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
