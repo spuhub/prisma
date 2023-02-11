@@ -58,7 +58,7 @@ class ResultWindow (QtWidgets.QDialog):
             cellLyrName = QtWidgets.QTableWidgetItem(lyrName)
             self.tbl_result.setItem(idx, 0, cellLyrName)
 
-            cellLyrOverlaps = QtWidgets.QTableWidgetItem(str(dic_overlaps[lyrName]))
+            cellLyrOverlaps = QtWidgets.QTableWidgetItem(str(dic_overlaps[lyrName][1]))
             self.tbl_result.setItem(idx, 1, cellLyrOverlaps)
 
 
