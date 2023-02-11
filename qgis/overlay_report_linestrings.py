@@ -147,7 +147,7 @@ class OverlayReportLinestrings():
         return camada_sem, camada_com
 
     def overlay_required(self, gdf_input, operation_config, camada_sem, camada_com):
-        for i in operation_config['operation_config']['required']:
+        for i in operation_config['operation_config']['obrigatorio']:
 
             for rowIndex, row in gdf_input.iterrows():
                 if i['tipo'] == 'shp':

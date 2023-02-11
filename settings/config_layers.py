@@ -11,13 +11,11 @@ from qgis.gui import QgsSymbolButton, QgsColorButton, QgsFileWidget
 from .json_tools import JsonTools
 from .env_tools import EnvTools
 from ..databases.db_connection import DbConnection
-import geopandas as gpd
 import random
-from ..databases.shp_handle import ShpHandle
 from .layer_infor import LayerInfor
 
 
-class ConfigLayers(QtWidgets.QDialog):
+class  ConfigLayers(QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
 

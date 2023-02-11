@@ -133,6 +133,6 @@ class OperationController:
                         i['usuario'] = login[0]
                         i['senha'] = login[1]
 
-        operation_config['required'] = self.data_required
+        operation_config['obrigatorio'] = self.data_required
 
         return operation_config

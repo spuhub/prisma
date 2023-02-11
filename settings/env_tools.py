@@ -1,17 +1,14 @@
 import os
 
-from PyQt5 import uic
-from PyQt5 import QtWidgets
 from PyQt5.QtCore import QSettings
 
 
 class EnvTools:
     """
-    Classe repsonsavel por manipular informações salva na cache do QGIS
+    Classe responsavel por manipular informações salva na cache do QGIS
     """
     def __init__(self):
         self.settings = QSettings()
-        #print(0)
 
     def store_credentials(self, base_id, user_name, password):
         """
@@ -25,7 +22,6 @@ class EnvTools:
         path = 'prisma/databases/' + base_id
         s.setValue(path + '/usuario', user_name)
         s.setValue(path + '/senha', password)
-
 
     def edit_credentials(self, base_id,new_user_name, new_password):
         """
@@ -48,7 +44,6 @@ class EnvTools:
         """
         s = QSettings()
         s.setValue('prisma/geocoding/keys/' + str(service_id), key)
-
 
     def store_current_geocoding_server(self, server_inf):
         """
@@ -138,7 +133,6 @@ class EnvTools:
         """
         try:
             s = QSettings()
-            #s.remove('prisma/json')
             server_inf = s.value('prisma/json')
             if server_inf is None:
                 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -147,7 +141,6 @@ class EnvTools:
                 return server_inf
 
         except Exception as erro:
-            print(erro)
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             return base_dir + "/settings/config_Json/dbtabases.json"
 

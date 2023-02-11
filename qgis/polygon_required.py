@@ -290,7 +290,7 @@ class PolygonRequired():
                     if name == x_layers:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
-            for x in self.operation_config['operation_config']['required']:
+            for x in self.operation_config['operation_config']['obrigatorio']:
                 if 'nomeFantasiaCamada' in x:
                     if name == x['nomeFantasiaCamada']:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]

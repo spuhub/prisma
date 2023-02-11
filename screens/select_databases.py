@@ -42,6 +42,7 @@ class SelectDatabases(QtWidgets.QDialog):
         self.btn_continuar.clicked.connect(self.next)
 
         self.load_lists()
+        
 
     def load_lists(self):
         """
@@ -159,12 +160,11 @@ class SelectDatabases(QtWidgets.QDialog):
         self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_wfs, selected_items_bd)
 
         # Leitura e manipulação dos dados
-        input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_wfs, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(
-            self.operation_config)
+        dic_layers = self.data_processing.data_preprocessing(self.operation_config)
 
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        gdf_result = overlay_analysis.overlay_analysis(input, input_standard, gdf_selected_shp, gdf_selected_wfs, gdf_selected_db, self.operation_config)
+        gdf_result = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
 
         data = {'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
                   'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_shp_standard': gdf_selected_shp_standard,

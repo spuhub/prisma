@@ -57,7 +57,6 @@ class LayoutManager():
         self.add_template_to_project(template_dir)
 
         # Folha de rosto
-        # teste
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Relatorio_FolhaA4_Retrato.qpt')
         self.add_template_to_project(template_dir)
 
@@ -189,7 +188,7 @@ class LayoutManager():
         """
         Extrai as camadas obrigatórias das bases de dados shp e db e do dicionário de configuração.
         """
-        self.operation_config['operation_config']['required'] = []
+        self.operation_config['operation_config']['obrigatorio'] = []
         new_operation_config = []
         gdf_required = []
         list_required = ['LPM Homologada', 'LTM Homologada', 'Área Homologada', 'LPM Não Homologada', 'LTM Não Homologada', 'Área Não Homologada']
@@ -197,7 +196,7 @@ class LayoutManager():
         shift = 0
         for index, base in enumerate(self.operation_config['operation_config']['shp']):
             if base['nomeFantasiaCamada'] in list_required:
-                self.operation_config['operation_config']['required'].append(base)
+                self.operation_config['operation_config']['obrigatorio'].append(base)
                 gdf_required.append(gdf_selected_shp.pop(index - shift))
                 shift += 1
             else:
@@ -210,7 +209,7 @@ class LayoutManager():
         for index, base in enumerate(self.operation_config['operation_config']['pg']):
             for name in base['nomeFantasiaTabelasCamadas']:
                 if name in list_required:
-                    self.operation_config['operation_config']['required'].append(base)
+                    self.operation_config['operation_config']['obrigatorio'].append(base)
                     gdf_required.append(gdf_selected_db.pop(index - shift))
                     shift += 1
                 else:
@@ -478,20 +477,20 @@ class LayoutManager():
 
                 if len(area) > 0:
                     show_qgis_areas = None
-                    if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
+                    if 'nomeFantasiaCamada' in self.operation_config['operation_config']['obrigatorio'][index]:
                         show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                         self.operation_config['operation_config']['required'][index][
+                                                         self.operation_config['operation_config']['obrigatorio'][index][
                                                              'nomeFantasiaCamada'])
                         show_qgis_areas.loadSldStyle(
-                            self.operation_config['operation_config']['required'][index]['estiloCamadas'][0]['stylePath'])
+                            self.operation_config['operation_config']['obrigatorio'][index]['estiloCamadas'][0]['stylePath'])
                     else:
                         if 'geom' in area:
                             area = area.drop(columns=['geom'])
                         show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                         self.operation_config['operation_config']['required'][index][
+                                                         self.operation_config['operation_config']['obrigatorio'][index][
                                                              'nomeFantasiaTabelasCamadas'][0])
                         show_qgis_areas.loadSldStyle(
-                            self.operation_config['operation_config']['required'][index]['estiloTabelasCamadas'][0][
+                            self.operation_config['operation_config']['obrigatorio'][index]['estiloTabelasCamadas'][0][
                                 'stylePath'])
 
                     show_qgis_areas.setCrs(QgsCoordinateReferenceSystem('EPSG:' + str(crs)))

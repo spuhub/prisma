@@ -145,7 +145,7 @@ class OverlayReportPolygons():
     def overlay_required(self, gdf_input, operation_config, camada_sem, camada_com):
         list_lines = ['LPM Homologada', 'LTM Homologada', 'LPM Não Homologada', 'LTM Não Homologada',
                       'LLTM Não Homologada', 'LMEO Não Homologada', 'LLTM Homologada', 'LMEO Homologada']
-        for i in operation_config['operation_config']['required']:
+        for i in operation_config['operation_config']['obrigatorio']:
             for rowIndex, row in gdf_input.iterrows():
                 if i['tipo'] == 'shp':
                     if type(i['nomeFantasiaCamada']) is list:

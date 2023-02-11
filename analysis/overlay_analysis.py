@@ -37,7 +37,7 @@ class OverlayAnalisys():
         """Método construtor da classe."""
         self.utils = Utils()
 
-    def overlay_analysis(self, input, input_standard, gdf_selected_shp, gdf_selected_wfs, gdf_selected_db, operation_config):
+    def overlay_analysis(self, dic_layers, operation_config):
         """
         Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas.
         Esta função é feita através da projeção geográfica.
@@ -46,6 +46,16 @@ class OverlayAnalisys():
         @return result: Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.
         """
         self.operation_config = operation_config
+
+        lyr_input = dic_layers['input']
+        list_required = dic_layers['required']
+        list_selected_shp = dic_layers['shp']
+        list_selected_wfs = dic_layers['wfs']
+        list_selected_db = dic_layers['db']
+
+        
+
+
 
         # gdf_buffered_shp, gdf_buffered_pg = self.handle_approximation_layers()
 
@@ -138,15 +148,6 @@ class OverlayAnalisys():
 
             index_db += 1
         return overlay_db
-
-    def handle_approximation_layers(self, gdf_buffered_shp, gdf_buffered_pg):
-        for index, value in enumerate(self.operation_config['shp']):
-            if 'aproximacao' in self.operation_config['shp'][index]:
-                gdf_buffered_shp[index] = self.utils.add_input_approximation_geographic(gdf_buffered_shp, self.operation_config['shp'][index][0])
-
-        for index, value in enumerate(self.operation_config['pg']):
-            if 'aproximacao' in self.operation_config['pg'][index]:
-                gdf_buffered_pg[index] = self.utils.add_input_approximation_geographic(gdf_buffered_pg[index], self.operation_config['pg'][index])
 
     def get_utm_crs(self, input, epsg_shp_dir):
         """Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.

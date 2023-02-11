@@ -49,7 +49,7 @@ class ResultWindow (QtWidgets.QDialog):
 
         # Configura quantidade de linhas e as colunas da tabela de resultados
         self.tbl_result.setColumnCount(2)
-        self.tbl_result.setRowCount(len(self.result['operation_config']['shp']) + len(self.result['operation_config']['pg']) + len(self.result['operation_config']['wfs']) + len(self.result['operation_config']['required']))
+        self.tbl_result.setRowCount(len(self.result['operation_config']['shp']) + len(self.result['operation_config']['pg']) + len(self.result['operation_config']['wfs']) + len(self.result['operation_config']['obrigatorio']))
         self.tbl_result.setHorizontalHeaderLabels(['Camada', 'Sobreposições'])
 
         self.tbl_result.horizontalHeader().setStretchLastSection(True)
@@ -138,7 +138,7 @@ class ResultWindow (QtWidgets.QDialog):
         e realiza a inserção deste valor na tabela.
         """
         gdf_result_shp = gpd.GeoDataFrame.from_dict(self.result['overlay_required'])
-        for i in self.result['operation_config']['required']:
+        for i in self.result['operation_config']['obrigatorio']:
             cont = 0
 
             for rowIndex, row in gdf_result_shp.iterrows():
