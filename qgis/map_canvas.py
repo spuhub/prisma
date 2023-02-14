@@ -16,26 +16,27 @@ class MapCanvas():
     """
     def __init__(self):
         """Método construtor da classe."""
-        self.operation_config = None
+        self.data = None
         self.utils = Utils()
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
 
 
-    def print_all_layers_qgis(self, operation_config):
+    def print_all_layers_qgis(self, data):
         """
         Função que printa no QGIS todas as camadas que estão sendo comparadas.
 
-        @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+        @keyword data: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
         """
-        self.operation_config = operation_config
-        input = operation_config['input']
-        input_standard = operation_config['input_standard']
+        self.data = data
+        input = data['layers']['input']
 
-        gdf_selected_shp = operation_config['gdf_selected_shp']
-        gdf_selected_wfs = operation_config['gdf_selected_wfs']
-        gdf_selected_db = operation_config['gdf_selected_db']
+        list_selected_shp = data['layers']['shp']
+        list_selected_wfs = data['layers']['wfs']
+        list_selected_db = data['layers']['db']
+        lista_layers = [input]
+        lista_layers += list_selected_db + list_selected_shp + list_selected_wfs
 
-        if 'basemap' in operation_config['operation_config']:
+        if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
@@ -43,97 +44,32 @@ class MapCanvas():
             layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
-        QApplication.instance().processEvents()
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
         QApplication.instance().processEvents()
 
-        # Carrega camadas shapefiles
-        index = -1
-        index_show_overlay = 0
-        input = input.to_crs(epsg='4326')
-        for area in gdf_selected_shp:
-            area = area.to_crs(epsg='4326')
-            index += 1
-
-            if len(area) > 0:
-                show_qgis_areas = QgsVectorLayer(area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
-                show_qgis_areas.loadSldStyle(operation_config['operation_config']['shp'][index]['estiloCamadas'][0]['stylePath'])
-                QgsProject.instance().addMapLayer(show_qgis_areas)
-
-        # Carrega camadas WFS
-        index = -1
-        index_show_overlay = 0
-        print(operation_config['operation_config']['wfs'])
-        input = input.to_crs(epsg='4326')
-        for area in gdf_selected_wfs:
-            area = area.to_crs(epsg='4326')
-            index += 1
-
-            if len(area) > 0:
-                show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                 operation_config['operation_config']['wfs'][index][
-                                                     'nomeFantasiaTabelasCamadas'])
-                show_qgis_areas.loadSldStyle(
-                    operation_config['operation_config']['wfs'][index]['estiloTabelasCamadas'])
-                QgsProject.instance().addMapLayer(show_qgis_areas)
-
-        # Exibe de sobreposição entre input e Postgis
-        index_db = 0
-        for db in gdf_selected_db:
-            index_layer = 0
-            for area in db:
-                if 'geom' in area:
-                    area = area.drop(columns=['geom'])
-
-                if len(area) > 0:
-                    show_qgis_areas = QgsVectorLayer(area.to_json(),
-                                                     operation_config['operation_config']['pg'][index_db][
-                                                         'nomeFantasiaTabelasCamadas'][index_layer])
-                    show_qgis_areas.loadSldStyle(
-                        operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer]['stylePath'])
-                    QgsProject.instance().addMapLayer(show_qgis_areas)
-                index_layer += 1
-            index_db += 1
-
-        if 'aproximacao' in operation_config['operation_config']:
-            show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
-
-            show_qgis_input.loadSldStyle(operation_config['operation_config']['sld_default_layers']['buffer'])
-
-            QgsProject.instance().addMapLayer(show_qgis_input)
-
-            show_qgis_input_standard = QgsVectorLayer(input_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
-
-            self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
-
-            QgsProject.instance().addMapLayer(show_qgis_input_standard)
-        else:
-            show_qgis_input = QgsVectorLayer(input.to_json(), "Feição de Estudo/Sobreposição")
-
-            self.get_input_standard_symbol(show_qgis_input.geometryType(), show_qgis_input)
-
-            QgsProject.instance().addMapLayer(show_qgis_input)
-
+        for layer in lista_layers:
+            QgsProject.instance().addMapLayer(layer)
+        
         # Repaint the canvas map
         iface.mapCanvas().refresh()
         # Da zoom na camada de input
         iface.zoomToActiveLayer()
 
-    def print_overlay_qgis(self, operation_config):
+    def print_overlay_qgis(self, data):
         """
         Função que printa no QGIS todas as camadas que apresentaram sobreposição entre camada de input e camadas selecionadas para comparação.
 
-        @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+        @keyword data: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
         """
-        self.operation_config = operation_config
-        input = operation_config['input']
-        input_standard = operation_config['input_standard']
+        self.data = data
+        input = self.data['input']
+        input_standard = data['input_standard']
 
-        gdf_selected_shp = operation_config['gdf_selected_shp']
-        gdf_selected_wfs = operation_config['gdf_selected_wfs']
-        gdf_selected_db = operation_config['gdf_selected_db']
+        gdf_selected_shp = data['gdf_selected_shp']
+        gdf_selected_wfs = data['gdf_selected_wfs']
+        gdf_selected_db = data['gdf_selected_db']
 
-        if 'basemap' in operation_config['operation_config']:
+        if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
         else:
             # Carrega camada mundial do OpenStreetMap
@@ -166,9 +102,9 @@ class MapCanvas():
                 print_input = True
 
                 gdf_area = gdf_area.drop_duplicates()
-                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), operation_config['operation_config']['shp'][index]['nomeFantasiaCamada'])
+                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), data['data']['shp'][index]['nomeFantasiaCamada'])
                 show_qgis_areas.loadSldStyle(
-                    operation_config['operation_config']['shp'][index]['estiloCamadas'][0]['stylePath'])
+                    data['data']['shp'][index]['estiloCamadas'][0]['stylePath'])
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e WFS
@@ -193,10 +129,10 @@ class MapCanvas():
 
                 gdf_area = gdf_area.drop_duplicates()
                 show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                 operation_config['operation_config']['wfs'][index][
+                                                 data['data']['wfs'][index][
                                                      'nomeFantasiaTabelasCamadas'])
                 show_qgis_areas.loadSldStyle(
-                    operation_config['operation_config']['wfs'][index]['estiloTabelasCamadas'])
+                    data['data']['wfs'][index]['estiloTabelasCamadas'])
                 QgsProject.instance().addMapLayer(show_qgis_areas)
 
         # Exibe de sobreposição entre input e Postgis
@@ -221,22 +157,22 @@ class MapCanvas():
                     gdf_area = gdf_area.drop_duplicates()
 
                     show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                     operation_config['operation_config']['pg'][index_db][
+                                                     data['data']['pg'][index_db][
                                                          'nomeFantasiaTabelasCamadas'][index_layer])
                     show_qgis_areas.loadSldStyle(
-                        operation_config['operation_config']['pg'][index_db]['estiloTabelasCamadas'][index_layer]['stylePath'])
+                        data['data']['pg'][index_db]['estiloTabelasCamadas'][index_layer]['stylePath'])
                     QgsProject.instance().addMapLayer(show_qgis_areas)
 
                 index_layer += 1
             index_db += 1
 
         if print_input:
-            if 'aproximacao' in operation_config['operation_config']:
+            if 'aproximacao' in data['operation_config']:
                 gdf_input = gdf_input.drop_duplicates()
 
                 show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Feição de Estudo/Sobreposição")
 
-                show_qgis_input.loadSldStyle(operation_config['operation_config']['sld_default_layers']['buffer'])
+                show_qgis_input.loadSldStyle(data['data']['sld_default_layers']['buffer'])
 
                 QgsProject.instance().addMapLayer(show_qgis_input)
 
@@ -319,15 +255,15 @@ class MapCanvas():
         # Point
         if geometry_type == 0:
             show_qgis_input.loadSldStyle(
-                self.operation_config['operation_config']['sld_default_layers']['default_input_point'])
+                self.data['data']['sld_default_layers']['default_input_point'])
         # Line String
         if geometry_type == 1:
             show_qgis_input.loadSldStyle(
-                self.operation_config['operation_config']['sld_default_layers']['default_input_line'])
+                self.data['data']['sld_default_layers']['default_input_line'])
         # Polígono
         elif geometry_type == 2:
             show_qgis_input.loadSldStyle(
-                self.operation_config['operation_config']['sld_default_layers']['default_input_polygon'])
+                self.data['data']['sld_default_layers']['default_input_polygon'])
 
     def get_input_standard_symbol(self, geometry_type, show_qgis_input):
         """
@@ -341,15 +277,15 @@ class MapCanvas():
         # Point
         if geometry_type == 0:
             show_qgis_input.loadSldStyle(
-                self.operation_config['operation_config']['sld_default_layers']['default_input_point'])
+                self.data['data']['sld_default_layers']['default_input_point'])
         # Line String
         if geometry_type == 1:
             show_qgis_input.loadSldStyle(
-                self.operation_config['operation_config']['sld_default_layers']['default_input_line'])
+                self.data['data']['sld_default_layers']['default_input_line'])
         # Polígono
         elif geometry_type == 2:
             show_qgis_input.loadSldStyle(
-                self.operation_config['operation_config']['sld_default_layers']['default_input_polygon'])
+                self.data['data']['sld_default_layers']['default_input_polygon'])
 
     def get_feature_symbol(self, geometry_type, style):
         """
