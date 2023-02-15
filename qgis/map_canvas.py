@@ -62,8 +62,9 @@ class MapCanvas():
         @keyword data: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
         """
         self.data = data
-        input = self.data['input']
+        input = data['layers']['input']
         list_overlaps = data['overlaps']
+        list_overlaps = [list_overlaps[item][0] for item in list_overlaps]
 
         lista_layers = [input]
         lista_layers += list_overlaps
