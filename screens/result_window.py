@@ -5,8 +5,6 @@ from ..qgis.map_canvas import MapCanvas
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-import geopandas as gpd
-
 class ResultWindow (QtWidgets.QDialog):
     """
     Classe responsável por fazer o backend da tela de resultados, que exibe a quatidade de sobreposição que aconteceu entre a camada de input e camadas de comparação; Da ao usuário opção para
@@ -60,7 +58,6 @@ class ResultWindow (QtWidgets.QDialog):
 
             cellLyrOverlaps = QtWidgets.QTableWidgetItem(str(dic_overlaps[lyrName][1]))
             self.tbl_result.setItem(idx, 1, cellLyrOverlaps)
-
 
     def print_overlay_qgis(self):
         """
