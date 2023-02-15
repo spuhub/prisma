@@ -15,7 +15,7 @@ from .linestring_required import LinestringRequired
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
-from PyPDF2 import PdfFileReader, PdfFileMerger
+from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
 from .overlay_report_linestrings import OverlayReportLinestrings
 
@@ -453,10 +453,10 @@ class Linestrings():
         pdf_name = "_".join(pdf_name.split("_", 3)[:3])
 
         pdf_files = [f for f in os.listdir(self.operation_config['path_output']) if f.startswith(pdf_name) and f.endswith(".pdf")]
-        merger = PdfFileMerger()
+        merger = PdfMerger()
 
         for filename in pdf_files:
-            merger.append(PdfFileReader(os.path.join(self.operation_config['path_output'], filename), "rb"))
+            merger.append(PdfReader(os.path.join(self.operation_config['path_output'], filename), "rb"))
 
         merger.write(os.path.join(self.operation_config['path_output'], pdf_name + ".pdf"))
 

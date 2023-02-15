@@ -30,13 +30,23 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
     cpf_cnpj = layout.itemById('CD_Compl_CPF_CNPJ').currentText()
     endereco = layout.itemById('CD_Compl_Logradouro').currentText()
     municipio_uf = layout.itemById('CD_Compl_Municipio').currentText()
-    area_total = str(layout.itemById('CD_Compl_Obs2').currentText())
-    area_total = area_total[22:-4]
+    
+    area_total: str = "0,00"
+    if 'areaLote' in gdf_input:
+        format_value = f'{gdf_input["areaLote"][0]:_.2f}'
+        format_value = format_value.replace('.', ',').replace('_', '.')
+        area_total = str(format_value)
+    
+
     centroide = str(layout.itemById('CD_Centroide').currentText())
     centroide = centroide.split('Y')
     txt_centroide = centroide[0][:-1] + '; Y' + centroide[1]
-    sobreposicao_uniao = str(layout.itemById('CD_Compl_Obs4').currentText())
-    sobreposicao_uniao = sobreposicao_uniao[41:-4]
+
+    sobreposicao_uniao: str = "0,00"
+    if 'Área Homologada' in gdf_input:
+            format_value = f'{gdf_input.iloc[0]["Área Homologada"]:_.2f}'
+            format_value = format_value.replace('.', ',').replace('_', '.')
+            sobreposicao_uniao = str(format_value)
 
     titulo_descricao = "descrição"
 
@@ -58,8 +68,11 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
     doc = SimpleDocTemplate(pdf_path, pagesize=letter, rightMargin=10 * mm, leftMargin=20 * mm, topMargin=30 * mm,
                             bottomMargin=35)
 
-    im = Image(os.path.join(os.path.dirname(__file__), "static/Brasao_Oficial_Colorido.png"), 35 * mm, 20 * mm)
-    im.hAlign = 'LEFT'
+    image_brasao = Image(os.path.join(os.path.dirname(__file__), "static/Brasao_Oficial_Colorido.png"), 20 * mm, 20 * mm)
+    image_brasao.hAlign = 'LEFT'
+
+    image_spu = Image(os.path.join(os.path.dirname(__file__), "static/spu.png"), 25 * mm, 20 * mm)
+    image_spu.hAlign = 'RIGHT'
 
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='titulo_principal', fontName="Times-Roman", fontSize=11))
@@ -71,7 +84,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
                     Paragraph(texto_titulo[3], styles["titulo_secun"]),
                     Paragraph(texto_titulo[4], styles["titulo_secun"])]
 
-    cabecalho_titulo = TablePDF([[im, grupo_titulo, ""]], colWidths=(30 * mm, 130 * mm, 42 * mm), rowHeights=(5 * mm))
+    cabecalho_titulo = TablePDF([[image_brasao, grupo_titulo, image_spu]], colWidths=(30 * mm, 125 * mm, 35 * mm), rowHeights=(5 * mm))
     Story.append(cabecalho_titulo)
 
     Story.append(Spacer(1, 11))
@@ -79,7 +92,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
     Story.append(Spacer(1, 11))
 
     styles.add(ParagraphStyle(name='titulo_terc', alignment=TA_CENTER, fontName="Times-Bold", textTransform="uppercase",
-                              fontSize=15))
+                              fontSize=15, backColor=(0.8, 0.8, 0.8), leading=17))
 
     Story.append(Paragraph(titulo_memorial_descr, styles["titulo_terc"]))
 
@@ -88,7 +101,7 @@ def gerardoc(gdf_input, gdf_vertices, pdf_name, pdf_path, layout, operation_conf
 
     dataCabecalho = [["Ocupante do Imóvel: " + ocupante_imovel, "CPF/CNPJ: " + cpf_cnpj]]
 
-    t = TablePDF(dataCabecalho, rowHeights=(5 * mm))
+    t = TablePDF(dataCabecalho, colWidths=(76 * mm, 100 * mm), rowHeights=(5 * mm))
     Story.append(t)
 
     dataCabecalho = [["Endereço: " + endereco], ["Municipio/UF: " + municipio_uf],
