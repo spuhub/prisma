@@ -63,11 +63,10 @@ class MapCanvas():
         """
         self.data = data
         input = self.data['input']
-        input_standard = data['input_standard']
+        list_overlaps = data['overlaps']
 
-        gdf_selected_shp = data['gdf_selected_shp']
-        gdf_selected_wfs = data['gdf_selected_wfs']
-        gdf_selected_db = data['gdf_selected_db']
+        lista_layers = [input]
+        lista_layers += list_overlaps
 
         if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
@@ -77,126 +76,11 @@ class MapCanvas():
             layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
 
         QgsProject.instance().addMapLayer(layer)
-        QApplication.instance().processEvents()
         QgsProject.instance().setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
         QApplication.instance().processEvents()
 
-        # Exibe de sobreposição entre input e Shapefiles
-        index = -1
-        index_show_overlay = 0
-        gdf_input = gpd.GeoDataFrame(columns = input.columns)
-        print_input = False
-        input = input.to_crs(epsg='4326')
-        for area in gdf_selected_shp:
-            area = area.to_crs(epsg='4326')
-            index += 1
-            gdf_area = gpd.GeoDataFrame(columns = area.columns)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        gdf_input.loc[index_show_overlay] = rowInput
-                        gdf_area.loc[index_show_overlay] = rowArea
-                        index_show_overlay += 1
-
-            if len(gdf_area) > 0:
-                print_input = True
-
-                gdf_area = gdf_area.drop_duplicates()
-                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(), data['data']['shp'][index]['nomeFantasiaCamada'])
-                show_qgis_areas.loadSldStyle(
-                    data['data']['shp'][index]['estiloCamadas'][0]['stylePath'])
-                QgsProject.instance().addMapLayer(show_qgis_areas)
-
-        # Exibe de sobreposição entre input e WFS
-        index = -1
-        index_show_overlay = 0
-        gdf_input = gpd.GeoDataFrame(columns=input.columns)
-        print_input = False
-        input = input.to_crs(epsg='4326')
-        for area in gdf_selected_wfs:
-            area = area.to_crs(epsg='4326')
-            index += 1
-            gdf_area = gpd.GeoDataFrame(columns=area.columns)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        gdf_input.loc[index_show_overlay] = rowInput
-                        gdf_area.loc[index_show_overlay] = rowArea
-                        index_show_overlay += 1
-
-            if len(gdf_area) > 0:
-                print_input = True
-
-                gdf_area = gdf_area.drop_duplicates()
-                show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                 data['data']['wfs'][index][
-                                                     'nomeFantasiaTabelasCamadas'])
-                show_qgis_areas.loadSldStyle(
-                    data['data']['wfs'][index]['estiloTabelasCamadas'])
-                QgsProject.instance().addMapLayer(show_qgis_areas)
-
-        # Exibe de sobreposição entre input e Postgis
-        index_db = 0
-        for db in gdf_selected_db:
-            index_layer = 0
-            for area in db:
-                gdf_area = gpd.GeoDataFrame(columns=area.columns)
-                for indexArea, rowArea in area.iterrows():
-                    for indexInput, rowInput in input.iterrows():
-                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            gdf_input.loc[index_show_overlay] = rowInput
-                            gdf_area.loc[index_show_overlay] = rowArea
-                            index_show_overlay += 1
-
-                if len(gdf_area) > 0:
-                    print_input = True
-
-                    if 'geom' in gdf_area:
-                        gdf_area = gdf_area.drop(columns=['geom'])
-
-                    gdf_area = gdf_area.drop_duplicates()
-
-                    show_qgis_areas = QgsVectorLayer(gdf_area.to_json(),
-                                                     data['data']['pg'][index_db][
-                                                         'nomeFantasiaTabelasCamadas'][index_layer])
-                    show_qgis_areas.loadSldStyle(
-                        data['data']['pg'][index_db]['estiloTabelasCamadas'][index_layer]['stylePath'])
-                    QgsProject.instance().addMapLayer(show_qgis_areas)
-
-                index_layer += 1
-            index_db += 1
-
-        if print_input:
-            if 'aproximacao' in data['operation_config']:
-                gdf_input = gdf_input.drop_duplicates()
-
-                show_qgis_input = QgsVectorLayer(gdf_input.to_json(), "Feição de Estudo/Sobreposição")
-
-                show_qgis_input.loadSldStyle(data['data']['sld_default_layers']['buffer'])
-
-                QgsProject.instance().addMapLayer(show_qgis_input)
-
-                input_standard = input_standard.to_crs(4326)
-                # gdf_input = gdf_input.to_crs(4326)
-                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db)
-
-                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(), "Feição de Estudo/Sobreposição (padrão)")
-
-                self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
-
-                QgsProject.instance().addMapLayer(show_qgis_input_standard)
-
-            else:
-                input_standard = input_standard.to_crs(4326)
-                # gdf_input = gdf_input.to_crs(4326)
-                get_overlay_standard = self.get_overlay_features(input, input_standard, gdf_selected_shp, gdf_selected_db)
-
-                show_qgis_input_standard = QgsVectorLayer(get_overlay_standard.to_json(),
-                                                          "Feição de Estudo/Sobreposição")
-
-                self.get_input_standard_symbol(show_qgis_input_standard.geometryType(), show_qgis_input_standard)
-
-                QgsProject.instance().addMapLayer(show_qgis_input_standard)
+        for layer in lista_layers:
+            QgsProject.instance().addMapLayer(layer)
 
             # Repaint the canvas map
             iface.mapCanvas().refresh()
