@@ -1,12 +1,12 @@
 {
     "sld_default_layers": {
-        "default_input_polygon": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "default_input_line": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/1_6_5_Trecho_Duto_L.sld",
-        "default_input_point": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/3_2_2_Trecho_Terreno_Marinha_A.sld",
-        "buffer": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/1_2_3_Massa_Dagua_A.sld",
-        "overlay_input_polygon": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/1_2_4_Terreno_Sujeito_Inundacao_A.sld",
-        "overlay_input_line": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/3_3_3_Trecho_LPM_L.sld",
-        "overlay_input_point": "C:\\Users/guibo/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\prisma\\utils/../styles/1_6_2_Estacao_Ferroviario_P.sld"
+        "default_input_polygon": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/input_A.sld",
+        "default_input_line": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/input_L.sld",
+        "default_input_point": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/input_P.sld",
+        "buffer": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/buffer_A.sld",
+        "overlay_input_polygon": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/sobreposicao_A.sld",
+        "overlay_input_line": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/sobreposicao_L.sld",
+        "overlay_input_point": "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\utils/../styles/default_layers/sobreposicao_P.sld"
     },
     "basemap": [
         [

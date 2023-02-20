@@ -1,14 +1,13 @@
 import sys
 import os.path
 
-import geopandas as gpd
-
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-from qgis.utils import iface
+from qgis.core import QgsFeature, QgsGeometry, QgsProject, QgsVectorLayer
+from qgis.gui import QgsMapToolIdentifyFeature
 
-class OverlayFeature (QtWidgets.QDialog):
+class OverlayFeature(QtWidgets.QDialog):
     """Classe que manipula a tela de teste de sobreposição através de uma feição selecionada do Prisma."""
 
     back_window = QtCore.pyqtSignal()
@@ -47,10 +46,34 @@ class OverlayFeature (QtWidgets.QDialog):
         layer = self.iface.activeLayer()
         selected_features = layer.selectedFeatures()
 
-        input = gpd.GeoDataFrame.from_features(selected_features, crs = iface.activeLayer().sourceCrs().authid())
+        input_features = []
+        for feature in selected_features:
+            geom = feature.geometry()
+            if not geom:
+                continue
+            input_feature = QgsFeature()
+            input_feature.setGeometry(geom)
+            input_feature.setFields(feature.fields())  # Define os campos da nova QgsFeature com base na QgsFeature original
+            input_feature.setAttributes(feature.attributes())  # Define os atributos da nova QgsFeature com base na QgsFeature original
+            input_features.append(input_feature)
+
+        if not input_features:
+            self.iface.messageBar().pushMessage("Erro", "Selecione uma feição para entrada.", level=Qgis.Critical)
+            return
+
+        # Cria um novo layer temporário a partir das feições selecionadas
+        input_layer = QgsVectorLayer("Polygon", "input_layer", "memory")
+        input_layer.startEditing()
+        input_layer.dataProvider().addAttributes(input_features[0].fields())  # Adiciona os campos do primeiro feature da lista
+        input_layer.updateFields()  # Atualiza os campos do novo layer
+        input_layer.dataProvider().addFeatures(input_features)  # Adiciona as features ao novo layer
+        input_layer.commitChanges()  # Salva as alterações
+
+        # Adiciona o layer temporário ao projeto
+        QgsProject.instance().addMapLayer(input_layer)
 
         self.hide()
-        data = {"operation": "feature", "input": input}
+        data = {"operation": "feature", "input": input_layer}
 
         # Caso usuário tenha inserido área de aproximação
         if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
