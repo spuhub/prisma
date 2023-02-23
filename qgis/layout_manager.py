@@ -53,11 +53,11 @@ class LayoutManager():
         self.index_input = None
 
         # Adiciona o layout ao projeto atual
-        template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Planta_FolhaA3_Paisagem.qpt')
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Planta_FolhaA3_Paisagem.qpt')
         self.add_template_to_project(template_dir)
 
         # Folha de rosto
-        template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Relatorio_FolhaA4_Retrato.qpt')
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Relatorio_FolhaA4_Retrato.qpt')
         self.add_template_to_project(template_dir)
 
         self.layout = None
@@ -75,7 +75,7 @@ class LayoutManager():
         self.linestrings = Linestrings(self.operation_config)
 
         # Diretório do shapefile para gerar dinamicamente os EPSG's
-        self.epsg_shp_dir = os.path.join(os.path.dirname(__file__), '..\shapefiles\Zonas_UTM_BR-EPSG4326.shp')
+        self.epsg_shp_dir = os.path.join(os.path.dirname(__file__), r'..\shapefiles\Zonas_UTM_BR-EPSG4326.shp')
 
     def pdf_generator(self):
         """Função onde se inicia a geração de PDF. A função chama funções de calculo de sobreposição de forma individual para

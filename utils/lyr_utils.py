@@ -1,7 +1,7 @@
 from qgis import processing
 from qgis.core import QgsVectorLayer
 
-def layer_reproject(layer_in:QgsVectorLayer, crs_out:int) -> QgsVectorLayer:
+def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=0) -> QgsVectorLayer:
     '''
         Função de apoio para execução de ferramenta de reprojeção do QGIS.
             Parameters:
