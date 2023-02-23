@@ -61,8 +61,17 @@ def layer_get_sirgas_epsg(layer_in:QgsVectorLayer) -> QgsVectorLayer:
 
     return lyr_return
 
-
 def lyr_input_process(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
+    '''
+        Função de chamada para processar todas as ferramentas no layer de entrada.
+            Parameters:
+                layer_in (QgsVectorLayer): Objeto QgsVectorLayer a ser reprojetado
+                crs_out (int): Código EPSG do Sistema de referencia de saída
+
+            Returns:
+                Memory_out (QgsVectorLayer): Objeto QgsVectorLayer em memória do layer de 
+                                             entrada com processamentos realizados
+    '''
     lyr_reproj = layer_reproject(layer_in, crs_out)
 
     lyr_fixed = layer_fix_geometries(lyr_reproj)
