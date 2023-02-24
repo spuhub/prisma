@@ -12,7 +12,6 @@ from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 
 from ..utils.utils import Utils
-from ..settings.env_tools import EnvTools
 from ..analysis.overlay_analysis import OverlayAnalisys
 from .polygons import Polygons
 from .linestrings import Linestrings
@@ -20,8 +19,6 @@ from .overlay_report_polygons import OverlayReportPolygons
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
-
-from urllib.parse import quote
 
 class LayoutManager():
     """Classe responsável por fazer a manipulação do Layout de impressão. Contém métodos para fazer o controle das feições carregadas para impressão,
@@ -57,7 +54,6 @@ class LayoutManager():
         self.add_template_to_project(template_dir)
 
         # Folha de rosto
-        # teste
         template_dir = os.path.join(os.path.dirname(__file__), 'layouts\Relatorio_FolhaA4_Retrato.qpt')
         self.add_template_to_project(template_dir)
 
