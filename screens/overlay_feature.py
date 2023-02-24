@@ -4,8 +4,7 @@ import os.path
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 
-from qgis.core import QgsFeature, QgsGeometry, QgsProject, QgsVectorLayer
-from qgis.gui import QgsMapToolIdentifyFeature
+from qgis.core import QgsFeature, QgsVectorLayer
 
 class OverlayFeature(QtWidgets.QDialog):
     """Classe que manipula a tela de teste de sobreposição através de uma feição selecionada do Prisma."""
@@ -21,7 +20,6 @@ class OverlayFeature(QtWidgets.QDialog):
 
         self.btn_voltar.clicked.connect(self.back)
         self.btn_continuar.clicked.connect(self.next)
-        self.get_selected_features()
 
     def back(self):
         """
@@ -58,19 +56,17 @@ class OverlayFeature(QtWidgets.QDialog):
             input_features.append(input_feature)
 
         if not input_features:
-            self.iface.messageBar().pushMessage("Erro", "Selecione uma feição para entrada.", level=Qgis.Critical)
+            self.iface.messageBar().pushMessage("Erro", "Selecione uma feição de entrada.", level=1)
             return
 
         # Cria um novo layer temporário a partir das feições selecionadas
-        input_layer = QgsVectorLayer("Polygon", "input_layer", "memory")
+        input_layer = QgsVectorLayer("Polygon", "input_layer", "memory", crs=layer.crs())
         input_layer.startEditing()
         input_layer.dataProvider().addAttributes(input_features[0].fields())  # Adiciona os campos do primeiro feature da lista
         input_layer.updateFields()  # Atualiza os campos do novo layer
         input_layer.dataProvider().addFeatures(input_features)  # Adiciona as features ao novo layer
         input_layer.commitChanges()  # Salva as alterações
 
-        # Adiciona o layer temporário ao projeto
-        QgsProject.instance().addMapLayer(input_layer)
 
         self.hide()
         data = {"operation": "feature", "input": input_layer}

@@ -25,5 +25,55 @@
             "False"
         ]
     ],
-    "obrigatorio": {}
+    "obrigatorio": {},
+    "base4": {
+        "id": "base4",
+        "tipo": "shp",
+        "nome": "\u00c1rea Militar",
+        "nomeFantasiaCamada": "\u00c1rea Militar",
+        "urlDowload": "asdf",
+        "diretorioLocal": "C:\\Users\\vinir\\Documents\\Area_Militar_A.shp",
+        "orgaoResponsavel": "SPU",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "20/02/2023",
+        "dataAquisicao": "20/02/2023",
+        "descricao": "Teste",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+            }
+        ]
+    },
+    "base5": {
+        "id": "base5",
+        "tipo": "shp",
+        "nome": "\u00c1rea Quilombola",
+        "nomeFantasiaCamada": "\u00c1rea Quilombola",
+        "urlDowload": "asdf",
+        "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
+        "orgaoResponsavel": "SPU",
+        "aproximacao": [
+            0.0
+        ],
+        "periodosReferencia": "22/02/2023",
+        "dataAquisicao": "22/02/2023",
+        "descricao": "asdf",
+        "estiloCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+            }
+        ]
+    }
 }

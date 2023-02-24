@@ -199,7 +199,7 @@ class Prisma:
             # show the dialog
             self.controller.show_main()
         # Run the dialog event loop
-        result = self.controller.main_window.exec_()
+        result = self.controller.main_window.show()
         # # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
