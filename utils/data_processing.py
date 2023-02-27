@@ -22,6 +22,6 @@ class DataProcessing():
         list_selected_wfs = self.handle_selections.read_selected_wfs(operation_config['wfs'])
         list_selected_db = self.handle_selections.read_selected_db(operation_config['pg'])
 
-        dic_lyr_retorno = {'input': lyr_input_process, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
+        dic_lyr_retorno = {'input': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
 
         return dic_lyr_retorno
