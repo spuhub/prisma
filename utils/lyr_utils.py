@@ -1,6 +1,13 @@
 import os
+
 from qgis import processing
-from qgis.core import QgsVectorLayer
+from qgis.core import (
+    QgsProject,
+    QgsVectorLayer,
+    QgsCoordinateTransform,
+    QgsCoordinateReferenceSystem
+
+)
 
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
@@ -61,7 +68,7 @@ def layer_get_sirgas_epsg(layer_in:QgsVectorLayer) -> QgsVectorLayer:
 
     return lyr_return
 
-def lyr_input_process(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
+def lyr_process(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
         Função de chamada para processar todas as ferramentas no layer de entrada.
             Parameters:
@@ -80,3 +87,47 @@ def lyr_input_process(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLay
     lyr_return.setName(layer_in.name())
 
     return lyr_return
+
+def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
+    """
+    Insere um buffer de tamanho especificado em todas as geometrias de uma camada do tipo QgsVectorLayer.
+
+    Parameters:
+        layer (QgsVectorLayer): Camada a ser bufferizada.
+        buffer_size (int): Tamanho do buffer em unidades do sistema de coordenadas da camada.
+
+    Returns:
+        QgsVectorLayer: A camada com as geometrias bufferizadas.
+    """
+    # Habilita a edição da camada
+    layer.startEditing()
+
+    # Itera sobre as features da camada, aplica o buffer e atualiza a geometria
+    for feature in layer.getFeatures():
+        geometry = feature.geometry()
+
+        # Obtém o EPSG do atributo "ESPG_S2000" e cria o objeto CRS correspondente
+        epsg = feature.attribute('EPSG_S2000')
+        layer_crs = QgsCoordinateReferenceSystem(f'EPSG:{epsg}')
+        default_crs = QgsCoordinateReferenceSystem('EPSG:4326')
+
+        # Cria as instâncias dos objetos de transformação de coordenadas
+        coord_transform_in = QgsCoordinateTransform(default_crs, layer_crs, QgsProject.instance())
+        coord_transform_out = QgsCoordinateTransform(layer_crs, default_crs, QgsProject.instance())
+
+        # Converte a geometria para o CRS de destino
+        geometry.transform(coord_transform_in)
+
+        # Insere o buffer na geometria
+        buffered_geometry = geometry.buffer(buffer_size, 5)
+
+        # Converte a geometria de volta para o CRS original
+        buffered_geometry.transform(coord_transform_out)
+
+        # Atualiza a geometria da feature
+        layer.changeGeometry(feature.id(), buffered_geometry)
+
+    # Salva as mudanças e finaliza a edição da camada
+    layer.commitChanges()
+
+    return layer
