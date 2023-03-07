@@ -73,6 +73,6 @@ class OverlayFeature(QtWidgets.QDialog):
 
         # Caso usuário tenha inserido área de aproximação
         if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-            data['aproximacao'] = float(self.txt_aproximacao.text())
+            data.setdefault('aproximacao', {})['input'] = float(self.txt_aproximacao.text())
 
         return data

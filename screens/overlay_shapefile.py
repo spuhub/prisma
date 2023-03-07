@@ -55,7 +55,7 @@ class OverlayShapefile (QtWidgets.QDialog):
 
                 if text_aproximacao.replace(".", '', 1).replace(",", '', 1).isnumeric():
                     if text_aproximacao != '' and float(self.txt_aproximacao.text()) > 0 :
-                        data['aproximacao'] = float(self.txt_aproximacao.text())
+                        data.setdefault('aproximacao', {})['input'] = float(self.txt_aproximacao.text())
 
                 self.continue_window.emit(data)
             else:

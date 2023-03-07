@@ -11,7 +11,7 @@ class HandleSelections():
 
         """
 
-    def read_selected_shp(self, selected_shapefiles):
+    def read_selected_shp(self, selected_shapefiles, operation_config):
         """
         Método que lê arquivos shapefiles selecionados para comparação.
 
@@ -29,9 +29,11 @@ class HandleSelections():
             lyr_shp_reproj.setName(nome_shp)
             list_selected_shp.append(lyr_shp_reproj)
 
-        return list_selected_shp
+            operation_config.setdefault('aproximacao', {})[nome_shp] = selected_shapefiles[shp]['aproximacao']
 
-    def read_selected_wfs(self, selected_wfs):
+        return list_selected_shp, operation_config
+
+    def read_selected_wfs(self, selected_wfs, operation_config):
         """
         Método que lê arquivos wfs selecionados para comparação.
 
@@ -49,9 +51,11 @@ class HandleSelections():
             lyr_wfs_reproj.setName(nome_wfs)
             list_selected_wfs.append(lyr_wfs_reproj)
 
-        return list_selected_wfs
+            operation_config.setdefault('aproximacao', {})[nome_wfs] = selected_wfs[wfs]['aproximacao']
 
-    def read_selected_db(self, selected_db):
+        return list_selected_wfs, operation_config
+
+    def read_selected_db(self, selected_db, operation_config):
         """
         Método que lê camadas do postgresql selecionados para comparação.
 
@@ -78,17 +82,42 @@ class HandleSelections():
             lyr_db_reproj.setName(camada)
             list_selected_db.append(lyr_db_reproj)
 
-        return list_selected_db
+            operation_config.setdefault('aproximacao', {})[camada] = item_db['aproximacao'][0]
 
-    def read_required_layers(self, required_list):
+        return list_selected_db, operation_config
+
+    def read_required_layers(self, required_list, operation_config):
         list_required = []
         for item in required_list:
             if item['tipo'] == 'shp':
-                lyr_shp = self.read_selected_shp([item])[0]
+                lyr_shp, operation_config = self.read_selected_shp([item], operation_config)[0]
         
                 list_required.append(lyr_shp)
             else:
-                lyr_db = self.read_selected_db([item])[0]
+                lyr_db, operation_config = self.read_selected_db([item], operation_config)[0]
                 list_required.append(lyr_db)
 
-        return list_required
+        return list_required, operation_config
+
+'''
+'TabelasDisponiveis':['faixa_dominio', 'faixa_seguranca', 'massa_dagua', 'area_especial', 'terras_interiores', 'trecho_area_indubitavel', 'municipio', 'trecho_ferroviario', 'trecho_rodoviario', 'trecho_terreno_acre..._marginal', 'trecho_terreno_marginal', 'unidade_federacao', 'parcela', 'terreno_sujeito_inundacao']
+'TipoTabelasDisponiveis':['', '', 'ST_Polygon', 'ST_Polygon', '', '', 'ST_MultiPolygon', 'ST_LineString', 'ST_LineString', '', '', 'ST_MultiPolygon', '', '']
+'aproximacao':[0.0]
+'baseDeDados':'prisma-teste'
+'dataAquisicao':'12/07/2022'
+'descricao':'Teste'
+'estiloTabelasCamadas':[{'color': '', 'line_color': '', 'line_style': '', 'style': '', 'stylePath': 'C:\\Users\\Marco\\A...gua_A.sld', 'width_border': ''}]
+'host':'localhost'
+'id':'base1'
+'maisInformacoesTabelas':[{}, {}, {}, {'dataAquisicao': '12/07/2022', 'descricao': 'sdafasd', 'orgaoResponsavel': 'fdasfdas', 'periodosReferencia': '12/07/2022'}, {}, {}, {'dataAquisicao': '12/07/2022', 'descricao': 'fasdfas', 'orgaoResponsavel': 'dsafads', 'periodosReferencia': '12/07/2022'}, {}, {}, {}, {}, {}, {}, {}]
+'nome':'Base 1'
+'nomeFantasiaTabelasCamadas':['Area Especial']
+'orgaoResponsavel':'SPU'
+'periodosReferencia':'12/07/2022'
+'porta':'5432'
+'selectedFields':{'0': ['idproduto', 'largura', 'unidademedida'], '1': ['nome', 'codidentificadorunico', 'codidentificadorunico'], '2': ['', '', '']}
+'senha':'1234'
+'tabelasCamadas':['area_especial']
+'tipo':'pg'
+'usuario':'postgres'
+'''
