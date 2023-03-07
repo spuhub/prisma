@@ -1,12 +1,5 @@
 .idea/
-__pycache__/
-controllers/__pycache__
-databases/__pycache__
-layout/__pycache__
-qgis/__pycache__
-screens/__pycache__
-settings/__pycache__
-utils/__pycache__
+**/__pycache__/
 
 settings/flag_dependencies
 settings/config_Json
