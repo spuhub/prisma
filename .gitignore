@@ -1,6 +1,5 @@
 .idea/
 __pycache__/
-/settings/config_Json
 controllers/__pycache__
 databases/__pycache__
 layout/__pycache__
@@ -10,7 +9,7 @@ settings/__pycache__
 utils/__pycache__
 
 settings/flag_dependencies
-settings/config_Json/dbtabases.json
+settings/config_Json
 
 wfs_layers
 
