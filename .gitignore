@@ -9,10 +9,10 @@ screens/__pycache__
 settings/__pycache__
 utils/__pycache__
 
+settings/flag_dependencies
+settings/config_Json/dbtabases.json
 
-wfs_layers/TESTE/IDE_ide_1103_mg_municipios_pol.geojson
+wfs_layers
 
 .vscode/launch.json
 .vscode/settings.json
-
-wfs_layers/IDE Sisema/IDE_ide_1101_mg_unidade_federacao_pol.geojson

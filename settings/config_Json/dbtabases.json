@@ -60,7 +60,7 @@
         "diretorioLocal": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\spu_intersect\\atlas\\Area_Quilombola_A.shp",
         "orgaoResponsavel": "SPU",
         "aproximacao": [
-            0.0
+            100.0
         ],
         "periodosReferencia": "22/02/2023",
         "dataAquisicao": "22/02/2023",
@@ -75,5 +75,236 @@
                 "stylePath": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
             }
         ]
+    },
+    "base6": {
+        "id": "base6",
+        "tipo": "pg",
+        "nome": "Base de dados 1",
+        "host": "localhost",
+        "porta": "5432",
+        "baseDeDados": "usucapiao",
+        "orgaoResponsavel": "SPU",
+        "periodosReferencia": "06/03/2023",
+        "dataAquisicao": "06/03/2023",
+        "descricao": "asdfdasfa",
+        "TabelasDisponiveis": [
+            "area_especial",
+            "faixa_dominio",
+            "faixa_seguranca",
+            "massa_dagua",
+            "municipio",
+            "parcela",
+            "terras_interiores",
+            "terreno_sujeito_inundacao",
+            "trecho_area_indubitavel",
+            "trecho_ferroviario",
+            "trecho_rodoviario",
+            "trecho_terreno_acrescido_marginal",
+            "trecho_terreno_marginal",
+            "unidade_federacao"
+        ],
+        "TipoTabelasDisponiveis": [
+            "ST_Polygon",
+            "",
+            "",
+            "ST_Polygon",
+            "ST_MultiPolygon",
+            "",
+            "",
+            "",
+            "",
+            "ST_LineString",
+            "ST_LineString",
+            "",
+            "",
+            "ST_MultiPolygon"
+        ],
+        "tabelasCamadas": [
+            "area_especial",
+            "municipio"
+        ],
+        "aproximacao": [
+            99.0,
+            0.0
+        ],
+        "nomeFantasiaTabelasCamadas": [
+            "Area Especial",
+            "Municipio"
+        ],
+        "maisInformacoesTabelas": [
+            {
+                "orgaoResponsavel": "rtrhgsdf",
+                "periodosReferencia": "06/03/2023",
+                "dataAquisicao": "06/03/2023",
+                "descricao": "gsd"
+            },
+            {},
+            {},
+            {},
+            {
+                "orgaoResponsavel": "dsfasdf",
+                "periodosReferencia": "06/03/2023",
+                "dataAquisicao": "06/03/2023",
+                "descricao": "dasfasd"
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+        ],
+        "estiloTabelasCamadas": [
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_2_Trecho_Terreno_Marinha_A.sld"
+            },
+            {
+                "line_style": "",
+                "line_color": "",
+                "width_border": "",
+                "style": "",
+                "color": "",
+                "stylePath": "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+            }
+        ]
+    },
+    "base7": {
+        "nome": "IBAMA",
+        "link": "http://siscom.ibama.gov.br/geoserver/ows?service=wfs&amp;version=1.3.0&amp;request=GetCapabilities",
+        "descricao_base": "sfd",
+        "tipo": "wfs",
+        "nomeFantasiaTabelasCamadas": [
+            "Mangue"
+        ],
+        "diretorio": [
+            "C:\\Users/vinir/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SPU-Prisma\\settings/../wfs_layers/IBAMA/publica_veg_mangue_a.geojson"
+        ],
+        "orgaoResponsavel": [
+            "SPU M"
+        ],
+        "periodoAquisicao": [
+            "07/03/2023"
+        ],
+        "periodosReferencia": [
+            "07/03/2023"
+        ],
+        "aproximacao": [
+            200.0
+        ],
+        "descricao": [
+            "fdsafads"
+        ],
+        "estiloTabelasCamadas": [
+            "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_3_Trecho_Terreno_Acrescido_Marinha_A.sld"
+        ],
+        "dataAquisicao": "07/03/2023",
+        "wfsSelecionadas": [
+            "veg_mangue_a"
+        ],
+        "tabelasCamadas": [
+            "publica:img_catalogo_landsat_a",
+            "publica:adm_comunicacidente_p",
+            "publica:vw_pmfs_ep_sinaflor_a",
+            "publica:vw_poa_ep_sinaflor_a",
+            "publica:vw_pmfs_es_sinaflor_a",
+            "publica:vw_poa_es_sinaflor_a",
+            "car:IMOVEL",
+            "publica:vw_upa_sinaflor_a",
+            "publica:adm_prioridade_conservacao_caatinga_a",
+            "publica:adm_prioridade_conservacao_cerrado_a",
+            "publica:adm_prioridade_conservacao_mata_atlantica_a",
+            "publica:adm_prioridade_conservacao_pantanal_a",
+            "publica:adm_prioridade_conservacao_zona_costeira_a",
+            "publica:adm_prioridade_conservacao_amazonia_a",
+            "publica:adm_prioridade_decreto_5092_a",
+            "publica:vw_poa_p_sinaflor_a",
+            "publica:vw_pmfs_pp_sinaflor_a",
+            "publica:adm_edif_pub_civil_ibama_p",
+            "aie_mob:emb_mais_atualizado",
+            "publica:img_foto_rio_doce_p",
+            "publica:img_grade_cbers_ccd_a",
+            "publica:img_grade_cbers_hrc_a",
+            "publica:img_grade_landsat_etm_a",
+            "publica:img_grade_rapid_eye_a",
+            "publica:veg_caatinga_mdbbs_2008_a",
+            "publica:veg_caatinga_mdbbs_2009_a",
+            "publica:veg_cerrado_mdbbs_2008_a",
+            "publica:veg_cerrado_mdbbs_2009_a",
+            "publica:veg_cerrado_mdbbs_2010_a",
+            "publica:veg_cerrado_mdbbs_2011_a",
+            "publica:veg_kernel_prodes_a",
+            "publica:veg_mangue_a",
+            "publica:veg_mata_atlantica_mdbbs_2008_a",
+            "publica:veg_mata_atlantica_mdbbs_2009_a",
+            "publica:veg_naofloresta_aml_a",
+            "publica:veg_pampa_mdbbs_2008_a",
+            "publica:veg_pampa_mdbbs_2009_a",
+            "publica:veg_pantanal_mdbbs_2008_a",
+            "publica:veg_pantanal_mdbbs_2009_a",
+            "publica:vw_asv_aasv_sinaflor_a",
+            "publica:vw_brasil_adm_auto_infracao_p",
+            "publica:vw_brasil_adm_embargo_a",
+            "publica:vw_uas_sinaflor_a",
+            "publica:vw_efp_aefp_sinaflor_a",
+            "publica:vw_pmfs_amf_sinaflor_a",
+            "publica:vw_sinaflo_ae_sinaflor_a"
+        ],
+        "tabelasCamadasNomesFantasia": [
+            "Catalogo Landsat",
+            "Comunicado de Acidente Ambiental P\u00fablico",
+            "Estradas Principais (PMFS)",
+            "Estradas Principais (POA)",
+            "Estradas Secund\u00e1rias (PMFS)",
+            "Estradas Secund\u00e1rias (POA)",
+            "IMOVEL",
+            "Limite da UPA(Unidade de Produ\u00e7\u00e3o Anual)",
+            "Prioridade conserva\u00e7\u00e3o Caatinga",
+            "Prioridade conserva\u00e7\u00e3o Cerrado",
+            "Prioridade conserva\u00e7\u00e3o Mata Atl\u00e2ntica",
+            "Prioridade conserva\u00e7\u00e3o Pantanal",
+            "Prioridade conserva\u00e7\u00e3o Zona Costeira",
+            "Prioridade de conserva\u00e7\u00e3o Amaz\u00f4nia",
+            "Prioridade para conserva\u00e7\u00e3o decreto 5092",
+            "P\u00e1tio",
+            "P\u00e1tio Principal",
+            "adm_edif_pub_civil_ibama_p",
+            "emb_mais_atualizado",
+            "img_foto_rio_doce_p",
+            "img_grade_cbers_ccd_a",
+            "img_grade_cbers_hrc_a",
+            "img_grade_landsat_etm_a",
+            "img_grade_rapid_eye_a",
+            "veg_caatinga_mdbbs_2008_a",
+            "veg_caatinga_mdbbs_2009_a",
+            "veg_cerrado_mdbbs_2008_a",
+            "veg_cerrado_mdbbs_2009_a",
+            "veg_cerrado_mdbbs_2010_a",
+            "veg_cerrado_mdbbs_2011_a",
+            "veg_kernel_prodes_a",
+            "veg_mangue_a",
+            "veg_mata_atlantica_mdbbs_2008_a",
+            "veg_mata_atlantica_mdbbs_2009_a",
+            "veg_naofloresta_aml_a",
+            "veg_pampa_mdbbs_2008_a",
+            "veg_pampa_mdbbs_2009_a",
+            "veg_pantanal_mdbbs_2008_a",
+            "veg_pantanal_mdbbs_2009_a",
+            "vw_asv_aasv_sinaflor_a",
+            "vw_brasil_adm_auto_infracao_p",
+            "vw_brasil_adm_embargo_a",
+            "\u00c1rea Solicitada Para Uso Alternativo do Solo",
+            "\u00c1rea de Explora\u00e7\u00e3o de Floresta Plantada",
+            "\u00c1rea de Manejo Florestal",
+            "\u00c1rea do Empreendimento"
+        ],
+        "id": "base7"
     }
 }
