@@ -24,6 +24,7 @@ class DataProcessing():
 
         # Adiciona buffer na camada de input
         lyr_input_buffer = insert_buffer(lyr_input, 100)
+        lyr_input_buffer.setName("Input Buffer")
 
         # Adiciona buffer nas camadas de comparação
         for layer in list_selected_shp:
@@ -35,6 +36,6 @@ class DataProcessing():
         for layer in list_selected_db:
             layer = insert_buffer(layer, 100)
 
-        dic_lyr_retorno = {'input': lyr_input_buffer, 'input_default': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
+        dic_lyr_retorno = {'input_default': lyr_input, 'input_buffer': lyr_input_buffer, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
 
         return dic_lyr_retorno

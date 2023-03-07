@@ -100,6 +100,8 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
         QgsVectorLayer: A camada com as geometrias bufferizadas.
     """
     # Habilita a edição da camada
+    layer = layer.clone()
+    
     layer.startEditing()
 
     # Itera sobre as features da camada, aplica o buffer e atualiza a geometria

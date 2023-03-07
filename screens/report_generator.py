@@ -5,8 +5,6 @@ from PyQt5.uic import loadUi
 from ..settings.env_tools import EnvTools
 
 from ..qgis.layout_manager import LayoutManager
-
-
 # from ..dbtools.shp_tools import ShpTools
 
 class ReportGenerator(QtWidgets.QDialog):
@@ -81,6 +79,6 @@ class ReportGenerator(QtWidgets.QDialog):
         self.btn_continuar.setHidden(True)
 
         lm = LayoutManager(self.data, self.progress_bar)
-        lm.pdf_generator()
+        # lm.pdf_generator()
 
         self.hide()

@@ -110,7 +110,6 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_req.name()][1] += 1
 
         
-
         return dic_overlaps
 
     def analisys_shp(self, input, gdf_selected_shp):
