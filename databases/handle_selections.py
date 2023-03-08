@@ -90,34 +90,10 @@ class HandleSelections():
         list_required = []
         for item in required_list:
             if item['tipo'] == 'shp':
-                lyr_shp, operation_config = self.read_selected_shp([item], operation_config)[0]
-        
-                list_required.append(lyr_shp)
+                lyr_shp, operation_config = self.read_selected_shp([item], operation_config)
+                list_required.append(lyr_shp[0])
             else:
-                lyr_db, operation_config = self.read_selected_db([item], operation_config)[0]
-                list_required.append(lyr_db)
+                lyr_db, operation_config = self.read_selected_db([item], operation_config)
+                list_required.append(lyr_db[0])
 
         return list_required, operation_config
-
-'''
-'TabelasDisponiveis':['faixa_dominio', 'faixa_seguranca', 'massa_dagua', 'area_especial', 'terras_interiores', 'trecho_area_indubitavel', 'municipio', 'trecho_ferroviario', 'trecho_rodoviario', 'trecho_terreno_acre..._marginal', 'trecho_terreno_marginal', 'unidade_federacao', 'parcela', 'terreno_sujeito_inundacao']
-'TipoTabelasDisponiveis':['', '', 'ST_Polygon', 'ST_Polygon', '', '', 'ST_MultiPolygon', 'ST_LineString', 'ST_LineString', '', '', 'ST_MultiPolygon', '', '']
-'aproximacao':[0.0]
-'baseDeDados':'prisma-teste'
-'dataAquisicao':'12/07/2022'
-'descricao':'Teste'
-'estiloTabelasCamadas':[{'color': '', 'line_color': '', 'line_style': '', 'style': '', 'stylePath': 'C:\\Users\\Marco\\A...gua_A.sld', 'width_border': ''}]
-'host':'localhost'
-'id':'base1'
-'maisInformacoesTabelas':[{}, {}, {}, {'dataAquisicao': '12/07/2022', 'descricao': 'sdafasd', 'orgaoResponsavel': 'fdasfdas', 'periodosReferencia': '12/07/2022'}, {}, {}, {'dataAquisicao': '12/07/2022', 'descricao': 'fasdfas', 'orgaoResponsavel': 'dsafads', 'periodosReferencia': '12/07/2022'}, {}, {}, {}, {}, {}, {}, {}]
-'nome':'Base 1'
-'nomeFantasiaTabelasCamadas':['Area Especial']
-'orgaoResponsavel':'SPU'
-'periodosReferencia':'12/07/2022'
-'porta':'5432'
-'selectedFields':{'0': ['idproduto', 'largura', 'unidademedida'], '1': ['nome', 'codidentificadorunico', 'codidentificadorunico'], '2': ['', '', '']}
-'senha':'1234'
-'tabelasCamadas':['area_especial']
-'tipo':'pg'
-'usuario':'postgres'
-'''

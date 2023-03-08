@@ -47,7 +47,7 @@ class OverlayAnalisys():
         """
         self.operation_config = operation_config
 
-        lyr_input = dic_layers['input']
+        lyr_input = dic_layers['input_default']
         list_required = dic_layers['required']
         list_selected_shp = dic_layers['shp']
         list_selected_wfs = dic_layers['wfs']
