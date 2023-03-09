@@ -47,9 +47,8 @@ class OverlayAnalisys():
         @return result: Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.
         """
         self.operation_config = operation_config
-        
-        # Pega as camadas
-        lyr_input = dic_layers['input']
+
+        lyr_input = dic_layers['input_default']
         list_required = dic_layers['required']
         list_selected_shp = dic_layers['shp']
         list_selected_wfs = dic_layers['wfs']

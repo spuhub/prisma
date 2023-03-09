@@ -36,7 +36,7 @@ class ResultWindow (QtWidgets.QDialog):
         """
         Exibe em uma lista a quantidade de sobreposições que se teve com determinada área
         """
-        lyr_input = self.data['layers']['input']
+        lyr_input = self.data['layers']['input_default']
         lyr_input.selectAll()
 
         dic_overlaps = self.data['overlaps']
