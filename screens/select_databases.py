@@ -164,8 +164,8 @@ class SelectDatabases(QtWidgets.QDialog):
 
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        dic_overlaps = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
+        dic_overlaps, lyr_overlap = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
 
-        data = {'layers': dic_layers, 'overlaps':dic_overlaps, 'operation_config': self.operation_config}
+        data = {'layers': dic_layers, 'lyr_overlap': lyr_overlap, 'overlaps': dic_overlaps, 'operation_config': self.operation_config}
 
         self.continue_window.emit(data)
