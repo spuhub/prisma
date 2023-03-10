@@ -29,11 +29,21 @@ class MapCanvas():
         """
         self.data = data
         input = data['layers']['input']
+        input_buffer = data['layers']['input_buffer'] if 'input_buffer' in data['layers'] else None
+        lyr_overlap = data['layers']['lyr_overlap'] if 'lyr_overlap' in data['layers'] else None
 
         list_selected_shp = data['layers']['shp']
         list_selected_wfs = data['layers']['wfs']
         list_selected_db = data['layers']['db']
-        lista_layers = [input]
+        
+        lista_layers = []
+        if input_buffer:
+            lista_layers = [input_buffer]
+            lista_layers += [input]
+        else:
+            lista_layers = [input]
+        if lyr_overlap:
+            lista_layers += [lyr_overlap]
         lista_layers += list_selected_db + list_selected_shp + list_selected_wfs
 
         if 'basemap' in data['operation_config']:
@@ -63,10 +73,18 @@ class MapCanvas():
         """
         self.data = data
         input = data['layers']['input']
+        input_buffer = data['layers']['input_buffer'] if 'input_buffer' in data['layers'] else None
+        lyr_overlap = data['layers']['lyr_overlap'] if 'lyr_overlap' in data['layers'] else None
         list_overlaps = data['overlaps']
         list_overlaps = [list_overlaps[item][0] for item in list_overlaps]
 
-        lista_layers = [input]
+        if input_buffer:
+            lista_layers = [input_buffer]
+            lista_layers += [input]
+        else:
+            lista_layers = [input]
+        if lyr_overlap:
+            lista_layers += [lyr_overlap]
         lista_layers += list_overlaps
 
         if 'basemap' in data['operation_config']:

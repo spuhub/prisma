@@ -39,11 +39,11 @@ class DataProcessing():
     
 
 
-        dic_lyr_retorno = {'input_default': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
+        dic_lyr_retorno = {'input': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
         
         # Trata o retorno da função caso usuário tenha inserido buffer na camada de entrada
         if input_buffer:
             lyr_input_buffer = insert_buffer(lyr_input, input_buffer)
-            dic_lyr_retorno.update({'input_buffer': lyr_input_buffer})
+            dic_lyr_retorno.update(input_buffer = lyr_input_buffer)
 
         return dic_lyr_retorno

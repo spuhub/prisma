@@ -24,8 +24,6 @@
 from ..utils.utils import Utils
 from qgis.core import QgsFeature, QgsVectorLayer
 
-import geopandas as gpd
-
 class OverlayAnalisys():
     """
     Classe utilizada para verificar quais áreas possuem sobreposição entre input de entrada e camadas de comparação.
@@ -48,7 +46,12 @@ class OverlayAnalisys():
         """
         self.operation_config = operation_config
 
-        lyr_input = dic_layers['input_default']
+        lyr_input = None
+        if 'input_buffer' in dic_layers:
+            lyr_input = dic_layers['input_buffer']
+        else:
+            lyr_input = dic_layers['input']
+            
         list_required = dic_layers['required']
         list_selected_shp = dic_layers['shp']
         list_selected_wfs = dic_layers['wfs']
@@ -128,9 +131,9 @@ class OverlayAnalisys():
         # Atualiza camada de sobreposição
         lyr_overlap.commitChanges()
         
-        return dic_overlaps(), lyr_overlap
+        return dic_overlaps, lyr_overlap
     
-    def _create_overlap_feature(feat_geom, feat_overlap_geom, provider, feat_attributes) -> None:
+    def _create_overlap_feature(self, feat_geom, feat_overlap_geom, provider, feat_attributes) -> None:
         """
         Função auxiliar que cria uma feição de sobreposição.
 
@@ -146,112 +149,3 @@ class OverlayAnalisys():
         
         # Adiciona a feição de sobreposição ao provedor de dados
         provider.addFeatures([overlap_feat])
-
-    def analisys_shp(self, input, gdf_selected_shp):
-        """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
-
-        @keyword input: Camada de input.
-        @keyword gdf_selected_shp: Camadas shapefiles selecionadas para comparação.
-        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
-        """
-        index = 0
-        overlay_shp = input.copy()
-        for area in gdf_selected_shp:
-            overlay_shp[self.operation_config['shp'][index]['nomeFantasiaCamada']] = False
-            area = area.to_crs(4326)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nomeFantasiaCamada']] = True
-                        # if str(input.geom_type) == str(area.geom_type):
-                        #     overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
-
-            index += 1
-        return overlay_shp
-
-    def analisys_wfs(self, input, gdf_selected_wfs):
-        """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
-
-        @keyword input: Camada de input.
-        @keyword gdf_selected_shp: Camadas shapefiles selecionadas para comparação.
-        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
-        """
-        index = 0
-        overlay_wfs = input.copy()
-        for area in gdf_selected_wfs:
-            overlay_wfs[self.operation_config['wfs'][index]['nomeFantasiaTabelasCamadas']] = False
-            area = area.to_crs(4326)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        overlay_wfs.loc[indexInput, self.operation_config['wfs'][index]['nomeFantasiaTabelasCamadas']] = True
-                        # if str(input.geom_type) == str(area.geom_type):
-                        #     overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
-
-            index += 1
-        return overlay_wfs
-
-    def analysis_db(self, input, gdf_selected_db):
-        """Verifica sobreposição entre camada de input e camadas de banco de dados selecionadas.
-
-        @keyword input: Camada de input.
-        @keyword gdf_selected_shp: Camadas de banco de dados selecionadas para comparação.
-        @return overlay_db: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
-        """
-        index_db = 0
-        overlay_db = input.copy()
-        # overlay_db['sobreposicao'] = False
-        for db in gdf_selected_db:
-            index_layer = 0
-            for layer_db in db:
-                overlay_db[self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = False
-                # layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
-                layer_db = layer_db.to_crs(4326)
-                for indexArea, rowArea in layer_db.iterrows():
-                    for indexInput, rowInput in input.iterrows():
-                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_db.loc[indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
-                                    index_layer]] = True
-                            # if str(input.geom_type) == str(layer_db.geom_type):
-                            #     overlay_db.loc[
-                            #         indexInput, str(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
-                            #             index_layer] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
-
-                index_layer += 1
-
-            index_db += 1
-        return overlay_db
-
-    def get_utm_crs(self, input, epsg_shp_dir):
-        """Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.
-
-        @keyword input: Camada de input.
-        @keyword epsg_shp_dir: Armazena o caminho do diretório, dentro do Prisma, em que se encontra o shapefile contendo a camada de Zonas UTM.
-        @return input: Retorna coluna contendo a zona UTM em que se encontra cada feiçõa de input.
-        """
-        input['crs_feature'] = None
-        epsg_shp = gpd.read_file(epsg_shp_dir)
-
-        # Caso input seja polígonos
-        if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon']:
-            for indexInput, rowInput in input.iterrows():
-                areamaior = 0
-                for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                    area = rowInput['geometry'].intersection(rowEpsg['geometry']).area
-                    if area > 0:
-                        if area > areamaior:
-                            input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                            areamaior = area
-
-        # Caso input seja linhas
-        elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString']:
-            for indexInput, rowInput in input.iterrows():
-                areamaior = 0
-                for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                    area = rowInput['geometry'].intersection(rowEpsg['geometry']).length
-                    if area > 0:
-                        if area > areamaior:
-                            input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                            areamaior = area
-
-        return input['crs_feature']
