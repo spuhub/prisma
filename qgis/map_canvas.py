@@ -35,6 +35,7 @@ class MapCanvas():
         list_selected_shp = data['layers']['shp']
         list_selected_wfs = data['layers']['wfs']
         list_selected_db = data['layers']['db']
+        list_selected_required = data['layers']['required']
         
         lista_layers = []
         if input_buffer:
@@ -42,9 +43,9 @@ class MapCanvas():
             lista_layers += [input]
         else:
             lista_layers = [input]
+        lista_layers += list_selected_required + list_selected_db + list_selected_shp + list_selected_wfs
         if lyr_overlap:
             lista_layers += [lyr_overlap]
-        lista_layers += list_selected_db + list_selected_shp + list_selected_wfs
 
         if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
