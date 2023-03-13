@@ -222,7 +222,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["urlDowload"] = self.url_dowload.text()
         confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
-        confg_dic["aproximacao"] = [self.faixa_proximidade.value()]
+        confg_dic["aproximacao"] = self.faixa_proximidade.value()
         dt = self.periodo_referencia_shp.dateTime()
         dt_string = dt.toString(self.periodo_referencia_shp.displayFormat())
         confg_dic["periodosReferencia"] = dt_string
@@ -541,7 +541,7 @@ class ConfigWindow(QtWidgets.QDialog):
             style = current_config["estiloCamadas"][0]
             self.style_path.setFilePath(style["stylePath"])
             self.textEdit_shp.setText(current_config["descricao"])
-            self.faixa_proximidade.setValue(current_config["aproximacao"][0])
+            self.faixa_proximidade.setValue(current_config["aproximacao"])
 
         if current_id == "0":
             self.nome_shp.clear()

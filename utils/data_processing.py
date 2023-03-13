@@ -3,6 +3,7 @@ from ..databases.handle_selections import HandleSelections
 from .utils import Utils
 from .lyr_utils import *
 from qgis.core import QgsVectorFileWriter
+from ..environment import CAMADA_ENTRADA, CAMADA_ENTRADA_BUFFER, CRS_PADRAO
 
 class DataProcessing():
     def __init__(self):
@@ -13,7 +14,8 @@ class DataProcessing():
     def data_preprocessing(self, operation_config):
         # Leitura do shapefile de input
         lyr_input = operation_config['input']
-        lyr_input = lyr_process(lyr_input, 4326)
+        lyr_input.setName(CAMADA_ENTRADA)
+        lyr_input = lyr_process(lyr_input, CRS_PADRAO)
         input_buffer = operation_config.get('aproximacao', {}).get('input', {})
 
         # Leitura de itens de comparação
@@ -27,7 +29,7 @@ class DataProcessing():
         # Adiciona buffer nas camadas de comparação
         for layer in list_selected_shp:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()][0])
+                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
 
         for layer in list_selected_wfs:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
@@ -36,14 +38,17 @@ class DataProcessing():
         for layer in list_selected_db:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
                 layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
-    
 
+        for layer in list_required:
+            if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
+                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
 
         dic_lyr_retorno = {'input': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
         
         # Trata o retorno da função caso usuário tenha inserido buffer na camada de entrada
         if input_buffer:
             lyr_input_buffer = insert_buffer(lyr_input, input_buffer)
+            lyr_input_buffer.setName(CAMADA_ENTRADA_BUFFER)
             dic_lyr_retorno.update(input_buffer = lyr_input_buffer)
 
         return dic_lyr_retorno

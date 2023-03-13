@@ -9,6 +9,8 @@ from qgis.core import (
 
 )
 
+from ..environment import CAMADA_ENTRADA
+
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
         Função de apoio para execução de ferramenta de reprojeção do QGIS.
@@ -99,9 +101,10 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
     Returns:
         QgsVectorLayer: A camada com as geometrias bufferizadas.
     """
-    # Habilita a edição da camada
-    layer = layer.clone()
-    
+    if layer.name() == CAMADA_ENTRADA:
+        layer = layer.clone()
+        
+    # Habilita a edição da camada    
     layer.startEditing()
 
     # Itera sobre as features da camada, aplica o buffer e atualiza a geometria
