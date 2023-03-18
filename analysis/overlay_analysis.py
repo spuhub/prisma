@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 from ..utils.utils import Utils
-from qgis.core import QgsFeature, QgsVectorLayer
+from qgis.core import QgsFeature, QgsVectorLayer, QgsField
 
 class OverlayAnalisys():
     """

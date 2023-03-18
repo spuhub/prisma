@@ -29,19 +29,31 @@ class DataProcessing():
         # Adiciona buffer nas camadas de comparação
         for layer in list_selected_shp:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         for layer in list_selected_wfs:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         for layer in list_selected_db:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         for layer in list_required:
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         dic_lyr_retorno = {'input': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
         
