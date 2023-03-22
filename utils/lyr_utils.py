@@ -82,10 +82,9 @@ def lyr_process(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
                                              entrada com processamentos realizados
     '''
     lyr_reproj = layer_reproject(layer_in, crs_out)
-
     lyr_fixed = layer_fix_geometries(lyr_reproj)
-
     lyr_return = layer_get_sirgas_epsg(lyr_fixed)
+
     lyr_return.setName(layer_in.name())
 
     return lyr_return
@@ -134,5 +133,23 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
 
     # Salva as mudanças e finaliza a edição da camada
     layer.commitChanges()
+
+    return layer
+
+def add_style(layer: QgsVectorLayer, sld_dir: str):
+    """
+    Aplica um estilo SLD a uma camada QgsVectorLayer.
+
+    Parameters:
+        layer (QgsVectorLayer): camada QgsVectorLayer a ser estilizada
+        sld_dir (str): caminho para o arquivo SLD a ser aplicado
+
+    """
+    # Abre o arquivo SLD e carrega seu conteúdo em um objeto QDomDocument
+    layer.loadSldStyle(sld_dir)
+    layer.triggerRepaint()
+
+    # Update the layer's style in the project
+    # QgsProject.instance().write()
 
     return layer

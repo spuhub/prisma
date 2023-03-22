@@ -16,6 +16,7 @@ class DataProcessing():
         lyr_input = operation_config['input']
         lyr_input.setName(CAMADA_ENTRADA)
         lyr_input = lyr_process(lyr_input, CRS_PADRAO)
+        lyr_input = add_style(lyr_input, "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_2_Trecho_Terreno_Marinha_A.sld")
         input_buffer = operation_config.get('aproximacao', {}).get('input', {})
 
         # Leitura de itens de comparação
