@@ -35,28 +35,40 @@ class DataProcessing():
             lyr_input = self.init_field_layer_name(lyr_input, layer.name())
             # Adiciona buffer nas camadas de comparação
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         for layer in list_selected_wfs:
             # Criar campo com o nome da camada de comparação
             lyr_input = self.init_field_layer_name(lyr_input, layer.name())
             # Adiciona buffer nas camadas de comparação
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         for layer in list_selected_db:
             # Criar campo com o nome da camada de comparação
             lyr_input = self.init_field_layer_name(lyr_input, layer.name())
             # Adiciona buffer nas camadas de comparação
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         for layer in list_required:
             # Criar campo com o nome da camada de comparação
             lyr_input = self.init_field_layer_name(lyr_input, layer.name())
             # Adiciona buffer nas camadas de comparação
             if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
-                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
+                buffer_size = operation_config['aproximacao'][layer.name()]
+                buffer_size = buffer_size if isinstance(buffer_size, int) else buffer_size[0]
+
+                layer = insert_buffer(layer, buffer_size)
 
         lyr_input.updateFields()
         dic_lyr_retorno = {'input': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
