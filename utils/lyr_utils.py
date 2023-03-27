@@ -9,7 +9,7 @@ from qgis.core import (
 
 )
 
-from ..environment import CAMADA_ENTRADA
+from ..environment import CAMADA_ENTRADA, CRS_PADRAO
 
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
@@ -70,11 +70,12 @@ def layer_get_sirgas_epsg(layer_in:QgsVectorLayer) -> QgsVectorLayer:
 
     return lyr_return
 
-def lyr_process(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
+def lyr_process(layer_in:QgsVectorLayer, operation_config: dict, crs_out:int=4326) -> QgsVectorLayer:
     '''
         Função de chamada para processar todas as ferramentas no layer de entrada.
             Parameters:
                 layer_in (QgsVectorLayer): Objeto QgsVectorLayer a ser reprojetado
+                operation_config (dict): Dicionário contendo configurações das camadas utilizadas
                 crs_out (int): Código EPSG do Sistema de referencia de saída
 
             Returns:
@@ -113,7 +114,7 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
         # Obtém o EPSG do atributo "ESPG_S2000" e cria o objeto CRS correspondente
         epsg = feature.attribute('EPSG_S2000')
         layer_crs = QgsCoordinateReferenceSystem(f'EPSG:{epsg}')
-        default_crs = QgsCoordinateReferenceSystem('EPSG:4326')
+        default_crs = QgsCoordinateReferenceSystem(f'EPSG:{CRS_PADRAO}')
 
         # Cria as instâncias dos objetos de transformação de coordenadas
         coord_transform_in = QgsCoordinateTransform(default_crs, layer_crs, QgsProject.instance())

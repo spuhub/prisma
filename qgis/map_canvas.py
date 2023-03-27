@@ -36,7 +36,7 @@ class MapCanvas():
         list_selected_wfs = data['layers']['wfs']
         list_selected_db = data['layers']['db']
         list_selected_required = data['layers']['required']
-        
+
         lista_layers = []
         if input_buffer:
             lista_layers = [input_buffer]
@@ -44,6 +44,7 @@ class MapCanvas():
         else:
             lista_layers = [input]
         lista_layers += list_selected_required + list_selected_db + list_selected_shp + list_selected_wfs
+
         if lyr_overlap:
             lista_layers += [lyr_overlap]
 

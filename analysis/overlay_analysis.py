@@ -24,6 +24,8 @@
 from ..utils.utils import Utils
 from qgis.core import QgsFeature, QgsVectorLayer
 
+from ..environment import CRS_PADRAO
+
 class OverlayAnalisys():
     """
     Classe utilizada para verificar quais áreas possuem sobreposição entre input de entrada e camadas de comparação.
@@ -62,17 +64,21 @@ class OverlayAnalisys():
         bbox_lyr_input = lyr_input.boundingBoxOfSelected()
 
         # Cria em memória a camada de interseção
-        lyr_overlap = QgsVectorLayer('Polygon?crs=epsg:4326', 'Interseções', 'memory')
+        lyr_overlap = QgsVectorLayer(f'Polygon?crs=epsg:{CRS_PADRAO}', 'Interseções', 'memory')
+        
         provider = lyr_overlap.dataProvider()
         provider.addAttributes(lyr_input.fields())
 
         lyr_overlap.updateFields()
                 
         dic_overlaps = {}
+        lyr_input.startEditing()
         for feat in feats_input:
             feat_geom = feat.geometry()
 
             for lyr_shp in list_selected_shp:
+                index = lyr_input.fields().indexFromName(lyr_shp.name())
+                # Início dos processos para comparação
                 feats_shp = lyr_shp.getFeatures(bbox_lyr_input)
 
                 for feat_shp in feats_shp:
@@ -84,9 +90,11 @@ class OverlayAnalisys():
                         else:
                             dic_overlaps[lyr_shp.name()][1] += 1
 
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
                         self._create_overlap_feature(feat_geom, feat_shp_geom, provider, feat.attributes())
             
             for lyr_db in list_selected_db:
+                index = lyr_input.fields().indexFromName(lyr_db.name())
                 feats_db = lyr_db.getFeatures(bbox_lyr_input)
 
                 for feat_db in feats_db:
@@ -98,9 +106,11 @@ class OverlayAnalisys():
                         else:
                             dic_overlaps[lyr_db.name()][1] += 1
 
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
                         self._create_overlap_feature(feat_geom, feat_db_geom, provider, feat.attributes())
             
             for lyr_wfs in list_selected_wfs:
+                index = lyr_input.fields().indexFromName(lyr_wfs.name())
                 feats_wfs = lyr_wfs.getFeatures(bbox_lyr_input)
 
                 for feat_wfs in feats_wfs:
@@ -112,9 +122,11 @@ class OverlayAnalisys():
                         else:
                             dic_overlaps[lyr_wfs.name()][1] += 1
 
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
                         self._create_overlap_feature(feat_geom, feat_wfs_geom, provider, feat.attributes())
 
             for lyr_req in list_required:
+                index = lyr_input.fields().indexFromName(lyr_req.name())
                 feats_req = lyr_req.getFeatures(bbox_lyr_input)
 
                 for feat_req in feats_req:
@@ -126,8 +138,11 @@ class OverlayAnalisys():
                         else:
                             dic_overlaps[lyr_req.name()][1] += 1
 
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
                         self._create_overlap_feature(feat_geom, feat_req_geom, provider, feat.attributes())
 
+        # Atualiza camada de entrada
+        lyr_input.commitChanges()
         # Atualiza camada de sobreposição
         lyr_overlap.commitChanges()
         

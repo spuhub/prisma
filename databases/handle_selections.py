@@ -1,6 +1,8 @@
 from qgis.core import QgsVectorLayer, QgsDataSourceUri
 from ..utils.lyr_utils import *
 
+from ..environment import CRS_PADRAO
+
 class HandleSelections():
     """
     Classe para leitura de objetos selecionados para comparação.
@@ -25,7 +27,7 @@ class HandleSelections():
             arq_shp = selected_shapefiles[shp]['diretorioLocal']
             nome_shp = selected_shapefiles[shp]['nome']
             lyr_shp = QgsVectorLayer(arq_shp, nome_shp, 'ogr')
-            lyr_shp_reproj = lyr_process(lyr_shp, 4326)
+            lyr_shp_reproj = lyr_process(lyr_shp, operation_config, CRS_PADRAO)
             lyr_shp_reproj.setName(nome_shp)
             list_selected_shp.append(lyr_shp_reproj)
 
@@ -47,7 +49,7 @@ class HandleSelections():
             arq_wfs = selected_wfs[wfs]['diretorio']
             nome_wfs = selected_wfs[wfs]['nomeFantasiaTabelasCamadas']
             lyr_wfs = QgsVectorLayer(arq_wfs, nome_wfs, 'ogr')
-            lyr_wfs_reproj = lyr_process(lyr_wfs, 4326)
+            lyr_wfs_reproj = lyr_process(lyr_wfs, operation_config, CRS_PADRAO)
             lyr_wfs_reproj.setName(nome_wfs)
             list_selected_wfs.append(lyr_wfs_reproj)
 
@@ -78,7 +80,7 @@ class HandleSelections():
             uri.setDataSource('public', f'{camada}', 'geom')
 
             lyr_db = QgsVectorLayer(uri.uri(False), camada, 'postgres')
-            lyr_db_reproj = lyr_process(lyr_db, 4326)
+            lyr_db_reproj = lyr_process(lyr_db, operation_config, CRS_PADRAO)
             lyr_db_reproj.setName(camada)
             list_selected_db.append(lyr_db_reproj)
 
