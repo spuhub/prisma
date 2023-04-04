@@ -27,6 +27,7 @@ class LayoutManager():
         self.identifica_info_sobrep()
         self.atualiza_gpkg_temp()
         self.export_relatorio_sintese()
+        self.export_relatorio_mapa()
         
     def atualiza_gpkg_temp(self):
         for layer_item in self.dic_layers:
@@ -111,4 +112,9 @@ class LayoutManager():
     def export_relatorio_sintese(self):
         project = QgsProject.instance().read(self.projeto_qgz)
         layout = 'Relatorio_FolhaA4_Retrato'
-        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output)
+        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, 'Relatorio')
+
+    def export_relatorio_mapa(self):
+        project = QgsProject.instance().read(self.projeto_qgz)
+        layout = 'Planta_FolhaA3_Paisagem'
+        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, 'Mapa')
