@@ -28,6 +28,7 @@ class LayoutManager():
         self.atualiza_gpkg_temp()
         self.export_relatorio_sintese()
         self.export_relatorio_mapa()
+        self.export_relatorio_unificado()
         
     def atualiza_gpkg_temp(self):
         for layer_item in self.dic_layers:
@@ -118,3 +119,8 @@ class LayoutManager():
         project = QgsProject.instance().read(self.projeto_qgz)
         layout = 'Planta_FolhaA3_Paisagem'
         lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, 'Mapa')
+    
+    def export_relatorio_unificado(self):
+        project = QgsProject.instance().read(self.projeto_qgz)
+        layout = 'Relatorio_Unificado'
+        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, '')
