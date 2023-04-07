@@ -121,7 +121,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_wfs.name()] = [lyr_wfs, 1]
                         else:
                             dic_overlaps[lyr_wfs.name()][1] += 1
-
+                        
                         lyr_input.changeAttributeValue(feat.id(), index, True)
                         self._create_overlap_feature(feat_geom, feat_wfs_geom, provider, feat.attributes())
 

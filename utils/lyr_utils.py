@@ -1,13 +1,7 @@
 import os
 
 from qgis import processing
-from qgis.core import (
-    QgsProject,
-    QgsVectorLayer,
-    QgsCoordinateTransform,
-    QgsCoordinateReferenceSystem
-
-)
+from qgis.core import (QgsProject,QgsVectorLayer, QgsCoordinateTransform, QgsCoordinateReferenceSystem)
 
 from ..environment import (
     NOME_CAMADA_ENTRADA,
@@ -210,3 +204,25 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     # QgsProject.instance().write()
 
     return layer
+
+def export_atlas_single_page(layer: QgsVectorLayer, layout_name: str, path_output: str, suffix: str) -> None:
+    for feature in layer.getFeatures():
+        logradouro = feature['logradouro']
+        logradouro = logradouro.replace(".", ' ').replace("/", "_").replace("'", "")
+        parameters = {
+            "COVERAGE_LAYER" : layer,
+            "DPI" : 60,
+            "FILTER_EXPRESSION" : f"logradouro='{logradouro}'",
+            "FORCE_VECTOR" : False,
+            "GEOREFERENCE" : True,
+            "INCLUDE_METADATA" : True,
+            "LAYERS" : None,
+            "LAYOUT" : layout_name,
+            "OUTPUT" : f"{path_output}/{logradouro}_{suffix}.pdf",
+            "SIMPLIFY" : True,
+            "SORTBY_EXPRESSION" : "$id",
+            "SORTBY_REVERSE" : False,
+            "TEXT_FORMAT" : 0
+            }
+        processing.run("native:atlaslayouttopdf", parameters)
+    
