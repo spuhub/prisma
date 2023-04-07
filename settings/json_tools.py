@@ -120,9 +120,9 @@ class JsonTools:
                         if data_required_layer[0] == base:
                             if data_json['tipo'] == 'pg':
                                 data_json['tabelasCamadas'] = [data_required_layer[1]]
-                                data_json['nomeFantasiaTabelasCamadas'] = [data_required_layer[2]]
+                                data_json['nomeFantasiaCamada'] = data_required_layer[2]
                             else:
-                                data_json['nomeFantasiaCamada'] = [data_required_layer[2]]
+                                data_json['nomeFantasiaCamada'] = data_required_layer[2]
                             required_list.append(data_json)
 
         return required_list

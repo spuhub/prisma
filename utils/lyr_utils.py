@@ -9,7 +9,12 @@ from qgis.core import (
 
 )
 
-from ..environment import CAMADA_ENTRADA, CRS_PADRAO
+from ..environment import (
+    NOME_CAMADA_ENTRADA,
+    NOME_CAMADA_ENTRADA_BUFFER,
+    NOME_CAMADA_SOBREPOSICAO,
+    CRS_PADRAO
+)
 
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
@@ -85,8 +90,8 @@ def lyr_process(layer_in:QgsVectorLayer, operation_config: dict, crs_out:int=432
     lyr_reproj = layer_reproject(layer_in, crs_out)
     lyr_fixed = layer_fix_geometries(lyr_reproj)
     lyr_return = layer_get_sirgas_epsg(lyr_fixed)
-
     lyr_return.setName(layer_in.name())
+    lyr_return = add_style(lyr_return, operation_config)
 
     return lyr_return
 
@@ -101,7 +106,7 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
     Returns:
         QgsVectorLayer: A camada com as geometrias bufferizadas.
     """
-    if layer.name() == CAMADA_ENTRADA:
+    if layer.name() == NOME_CAMADA_ENTRADA:
         layer = layer.clone()
         
     # Habilita a edição da camada    
@@ -137,20 +142,71 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
 
     return layer
 
-def add_style(layer: QgsVectorLayer, sld_dir: str):
+def add_style(layer: QgsVectorLayer, operation_config: dict):
     """
     Aplica um estilo SLD a uma camada QgsVectorLayer.
 
     Parameters:
         layer (QgsVectorLayer): camada QgsVectorLayer a ser estilizada
-        sld_dir (str): caminho para o arquivo SLD a ser aplicado
+        operation_config (dict): dicionário com as configurações da operação, incluindo o caminho para os arquivos SLD
 
+    Returns:
+        QgsVectorLayer: camada estilizada com o SLD
     """
-    # Abre o arquivo SLD e carrega seu conteúdo em um objeto QDomDocument
-    layer.loadSldStyle(sld_dir)
+    sld_path: str = ''
+    if layer.name() == NOME_CAMADA_ENTRADA:
+        # Identifica o tipo de geometria da camada
+        geometry_type = layer.geometryType()
+
+        # Seleciona o caminho para o arquivo SLD apropriado
+        if geometry_type == 0:  # Ponto
+            sld_path = operation_config['sld_default_layers']['default_input_point']
+        elif geometry_type == 1:  # Linha
+            sld_path = operation_config['sld_default_layers']['default_input_line']
+        elif geometry_type == 2:  # Polígono
+            sld_path = operation_config['sld_default_layers']['default_input_polygon']
+        else:
+            raise ValueError(f"Tipo de geometria inválido: {geometry_type}")
+        
+    elif layer.name() == NOME_CAMADA_ENTRADA_BUFFER:
+        sld_path = operation_config['sld_default_layers']['buffer']
+    
+    elif layer.name() == NOME_CAMADA_SOBREPOSICAO:
+        # Identifica o tipo de geometria da camada
+        geometry_type = layer.geometryType()
+
+        # Seleciona o caminho para o arquivo SLD apropriado
+        if geometry_type == 0:  # Ponto
+            sld_path = operation_config['sld_default_layers']['overlay_input_point']
+        elif geometry_type == 1:  # Linha
+            sld_path = operation_config['sld_default_layers']['overlay_input_line']
+        elif geometry_type == 2:  # Polígono
+            sld_path = operation_config['sld_default_layers']['overlay_input_polygon']
+        else:
+            raise ValueError(f"Tipo de geometria inválido: {geometry_type}")
+
+    else:
+        for layer_shp in operation_config['shp']:
+            if layer.name() == layer_shp['nomeFantasiaCamada']:
+                sld_path = layer_shp['estiloCamadas']
+        
+        for layer_db in operation_config['pg']:
+            if layer.name() == layer_db['nomeFantasiaCamada']:
+                sld_path = layer_db['estiloCamadas']
+
+        for layer_wfs in operation_config['wfs']:
+            if layer.name() == layer_wfs['nomeFantasiaCamada']:
+                sld_path = layer_wfs['estiloCamadas']
+
+        for layer_required in operation_config['obrigatorio']:
+            if layer.name() == layer_required['nomeFantasiaCamada']:
+                sld_path = layer_required['estiloCamadas']
+
+    # Carrega o arquivo SLD e aplica ao estilo da camada
+    layer.loadSldStyle(sld_path)
     layer.triggerRepaint()
 
-    # Update the layer's style in the project
+    # TODO: Atualiza o estilo da camada no projeto
     # QgsProject.instance().write()
 
     return layer

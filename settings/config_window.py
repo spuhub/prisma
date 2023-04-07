@@ -232,16 +232,8 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["dataAquisicao"] = dt_string
 
         confg_dic["descricao"] = self.textEdit_shp.toPlainText()
-        stryle = [{
-             "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath" : self.style_path.filePath(),
-        }]
 
-        confg_dic["estiloCamadas"] = stryle
+        confg_dic["estiloCamadas"] = self.style_path.filePath()
 
         if self.combo_box_shp.currentData() == "0":
             if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
@@ -538,8 +530,8 @@ class ConfigWindow(QtWidgets.QDialog):
             date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
             self.data_aquisicao_shp.setDate(date)
 
-            style = current_config["estiloCamadas"][0]
-            self.style_path.setFilePath(style["stylePath"])
+            style = current_config["estiloCamadas"]
+            self.style_path.setFilePath(style)
             self.textEdit_shp.setText(current_config["descricao"])
             self.faixa_proximidade.setValue(current_config["aproximacao"])
 
@@ -1453,7 +1445,7 @@ class ConfigWindow(QtWidgets.QDialog):
                     self.tbl_wfs.setItem(row_control, 0, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
-                        cellName = QtWidgets.QTableWidgetItem(item['nomeFantasiaTabelasCamadas'][layer_control])
+                        cellName = QtWidgets.QTableWidgetItem(item['nomeFantasiaCamada'][layer_control])
                     else:
                         cellName = QtWidgets.QTableWidgetItem("")
                     self.tbl_wfs.setItem(row_control, 1, cellName)
@@ -1488,7 +1480,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
                         cellName = QgsFileWidget()
-                        cellName.setFilePath(item['estiloTabelasCamadas'][layer_control])
+                        cellName.setFilePath(item['estiloCamadas'][layer_control])
                     else:
                         cellName = QgsFileWidget()
                     self.tbl_wfs.setCellWidget(row_control, 6, cellName)
@@ -1571,14 +1563,14 @@ class ConfigWindow(QtWidgets.QDialog):
         data['descricao_base'] = self.txt_descricao_wfs.text()
         data['tipo'] = 'wfs'
 
-        data['nomeFantasiaTabelasCamadas'] = []
+        data['nomeFantasiaCamada'] = []
         data['diretorio'] = []
         data['orgaoResponsavel'] = []
         data['periodoAquisicao'] = []
         data['periodosReferencia'] = []
         data['aproximacao'] = []
         data['descricao'] = []
-        data['estiloTabelasCamadas'] = []
+        data['estiloCamadas'] = []
 
         dt = self.date_aquisicao_wfs.dateTime()
         dt_string = dt.toString(self.date_aquisicao_wfs.displayFormat())
@@ -1605,7 +1597,7 @@ class ConfigWindow(QtWidgets.QDialog):
                         wfs_operations.download_wfs_layer(self.txt_link_wfs.text(), self.wfs_data[item][0], data['nome'])
                     except:
                         continue
-                data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
+                data['nomeFantasiaCamada'].append(self.tbl_wfs.item(item, 1).text())
                 data['diretorio'].append(file_path)
                 data['orgaoResponsavel'].append(self.tbl_wfs.item(item, 2).text())
 
@@ -1618,7 +1610,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 data["periodosReferencia"].append(dt_string)
 
                 data['aproximacao'].append(float(self.tbl_wfs.item(item, 5).text()))
-                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 6).filePath())
+                data['estiloCamadas'].append(self.tbl_wfs.cellWidget(item, 6).filePath())
                 data['descricao'].append(self.tbl_wfs.item(item, 7).text())
 
         if is_update:
@@ -1698,7 +1690,7 @@ class ConfigWindow(QtWidgets.QDialog):
             port = i['porta']
             host = i['host']
             dbase = i['baseDeDados']
-            nomes = i['nomeFantasiaTabelasCamadas']
+            nomes = i['nomeFantasiaCamada']
             id_base = i['id']
             self.tbl_col_bd.setRowCount(len(nomes))
             selectedFields = i['selectedFields']
@@ -1729,14 +1721,14 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.tbl_col_bd.setCellWidget(idx, 3, self.cmb_db_fields3)
         
         for wfs in range(len(self.source_wfs)):
-            for idx_wfs_layer in range(len(self.source_wfs[wfs]['nomeFantasiaTabelasCamadas'])):
+            for idx_wfs_layer in range(len(self.source_wfs[wfs]['nomeFantasiaCamada'])):
                 selectedFields = self.source_wfs[wfs]['selectedFields']
-                nome = self.source_wfs[wfs]['nomeFantasiaTabelasCamadas'][idx_wfs_layer]
+                nome = self.source_wfs[wfs]['nomeFantasiaCamada'][idx_wfs_layer]
                 geojson = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                 'wfs_layers', self.source_wfs[wfs]['nome'],
                 self.source_wfs[wfs]['diretorio'][idx_wfs_layer].split(r"/")[-1])
                 selectedFields_camada = selectedFields[str(idx_wfs_layer)]
-                self.tbl_col_wfs.setRowCount(len(self.source_wfs[wfs]['nomeFantasiaTabelasCamadas']))
+                self.tbl_col_wfs.setRowCount(len(self.source_wfs[wfs]['nomeFantasiaCamada']))
                 self.bases_wfs.append((self.source_wfs[wfs]['id'], idx_wfs_layer))
 
                 layer = QgsVectorLayer(geojson, "wfs",  "ogr")

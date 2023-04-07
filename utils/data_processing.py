@@ -6,7 +6,7 @@ from ..databases.handle_selections import HandleSelections
 from .utils import Utils
 from .lyr_utils import *
 
-from ..environment import CAMADA_ENTRADA, CAMADA_ENTRADA_BUFFER, CRS_PADRAO
+from ..environment import NOME_CAMADA_ENTRADA, NOME_CAMADA_ENTRADA_BUFFER, CRS_PADRAO
 
 class DataProcessing():
     def __init__(self):
@@ -17,9 +17,9 @@ class DataProcessing():
     def data_preprocessing(self, operation_config):
         # Leitura do shapefile de input
         lyr_input = operation_config['input']['layer']
-        lyr_input.setName(CAMADA_ENTRADA)
+        lyr_input.setName(NOME_CAMADA_ENTRADA)
         lyr_input = lyr_process(lyr_input, operation_config, CRS_PADRAO)
-        lyr_input = add_style(lyr_input, "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_2_Trecho_Terreno_Marinha_A.sld")
+        # lyr_input = add_style(lyr_input, "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_2_Trecho_Terreno_Marinha_A.sld")
         input_buffer = operation_config['input'].get('aproximacao', {})
 
         # Leitura de itens de comparação
@@ -64,7 +64,7 @@ class DataProcessing():
         # Trata o retorno da função caso usuário tenha inserido buffer na camada de entrada
         if input_buffer:
             lyr_input_buffer = insert_buffer(lyr_input, input_buffer)
-            lyr_input_buffer.setName(CAMADA_ENTRADA_BUFFER)
+            lyr_input_buffer.setName(NOME_CAMADA_ENTRADA_BUFFER)
             dic_lyr_retorno.update(input_buffer = lyr_input_buffer)
 
         return dic_lyr_retorno

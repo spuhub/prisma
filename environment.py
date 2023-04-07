@@ -1,4 +1,6 @@
-CAMADA_ENTRADA = 'Feição de Estudo'
-CAMADA_ENTRADA_BUFFER = 'Feição de Estudo (Buffer)'
+NOME_CAMADA_ENTRADA = 'Feição de Estudo'
+NOME_CAMADA_ENTRADA_BUFFER = 'Feição de Estudo (Buffer)'
+NOME_CAMADA_SOBREPOSICAO = 'Sobreposição'
+NOME_CAMADA_INTERSECAO = 'Interseções'
 
 CRS_PADRAO = 4326

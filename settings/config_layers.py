@@ -141,9 +141,9 @@ class  ConfigLayers(QtWidgets.QDialog):
         tabelasGeom = list(dataTables.keys())
 
         tabelasCamadas = []
-        nomeFantasiaTabelasCamadas =[]
+        nomeFantasiaCamada =[]
         descricaoTabelasCamadas = []
-        estiloTabelasCamadas = []
+        estiloCamadas = []
         aproximacao=[]
 
         if "TabelasDisponiveis" in config:
@@ -155,14 +155,14 @@ class  ConfigLayers(QtWidgets.QDialog):
         if "tabelasCamadas" in config:
             tabelasCamadas = config["tabelasCamadas"]
 
-        if "nomeFantasiaTabelasCamadas" in config:
-            nomeFantasiaTabelasCamadas = config["nomeFantasiaTabelasCamadas"]
+        if "nomeFantasiaCamada" in config:
+            nomeFantasiaCamada = config["nomeFantasiaCamada"]
 
         if "descricaoTabelasCamadas" in config:
             descricaoTabelasCamadas = config["descricaoTabelasCamadas"]
 
-        if "estiloTabelasCamadas" in config:
-            estiloTabelasCamadas = config["estiloTabelasCamadas"]
+        if "estiloCamadas" in config:
+            estiloCamadas = config["estiloCamadas"]
         if "aproximacao" in config:
             aproximacao = config["aproximacao"]
 
@@ -213,13 +213,13 @@ class  ConfigLayers(QtWidgets.QDialog):
                 itemidex = tabelasCamadas.index(tabelasGeom[i])
                 #print("itemindex",itemidex)
                 itemidex_aux = tabelasCamadas.index(tabelasGeom[i])
-                if(len(estiloTabelasCamadas) !=0):
+                if(len(estiloCamadas) !=0):
                     faixa_proximidade = aproximacao[itemidex]
 
                     defalt_proximidade = faixa_proximidade
                     print("faixa proximidade",faixa_proximidade)
 
-                    self.objects_file_style[i].setFilePath(estiloTabelasCamadas[itemidex]["stylePath"])
+                    self.objects_file_style[i].setFilePath(estiloCamadas[itemidex])
 
             self.objects_buffer.append(self.create_buffer_box("espessura" + "-" + str(i) + "-" + str(4), defalt_proximidade))
             self.table_layers.setCellWidget(i, 4, self.objects_buffer[i])
@@ -266,7 +266,7 @@ class  ConfigLayers(QtWidgets.QDialog):
             if self.objects_vai_usar[i].checkState():
                 aux.append(self.objects_nome_fantasia[i])
 
-        config["nomeFantasiaTabelasCamadas"] = aux
+        config["nomeFantasiaCamada"] = aux
 
         if "maisInformacoesTabelas" not in config:
             aux = []
@@ -277,16 +277,9 @@ class  ConfigLayers(QtWidgets.QDialog):
         aux = []
         for i in range(len(self.objects_tables_disponiveis)):
             if self.objects_vai_usar[i].checkState():
-                c = {"line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath": self.objects_file_style[i].filePath()
-                }
-                aux.append(c)
+                aux.append(self.objects_file_style[i].filePath())
 
-        config["estiloTabelasCamadas"] = aux
+        config["estiloCamadas"] = aux
 
         #print(config)
         self.setings02.edit_database(self.id_current_db,config)

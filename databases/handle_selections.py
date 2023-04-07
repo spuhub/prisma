@@ -25,7 +25,7 @@ class HandleSelections():
         # Cria uma lista com dados no formato QgsVectorLayer das áreas selecionadas para comparação
         for shp in range(len(selected_shapefiles)):
             arq_shp = selected_shapefiles[shp]['diretorioLocal']
-            nome_shp = selected_shapefiles[shp]['nome']
+            nome_shp = selected_shapefiles[shp]['nomeFantasiaCamada']
             lyr_shp = QgsVectorLayer(arq_shp, nome_shp, 'ogr')
             lyr_shp_reproj = lyr_process(lyr_shp, operation_config, CRS_PADRAO)
             lyr_shp_reproj.setName(nome_shp)
@@ -47,10 +47,10 @@ class HandleSelections():
         # Cria uma lista com dados no formato QgsVectorLayer das áreas selecionadas para comparação
         for wfs in range(len(selected_wfs)):
             arq_wfs = selected_wfs[wfs]['diretorio']
-            nome_wfs = selected_wfs[wfs]['nomeFantasiaTabelasCamadas']
+            nome_wfs = selected_wfs[wfs]['nomeFantasiaCamada']
             lyr_wfs = QgsVectorLayer(arq_wfs, nome_wfs, 'ogr')
+            lyr_wfs.setName(nome_wfs)
             lyr_wfs_reproj = lyr_process(lyr_wfs, operation_config, CRS_PADRAO)
-            lyr_wfs_reproj.setName(nome_wfs)
             list_selected_wfs.append(lyr_wfs_reproj)
 
             operation_config.setdefault('aproximacao', {})[nome_wfs] = selected_wfs[wfs]['aproximacao']
@@ -68,7 +68,8 @@ class HandleSelections():
 
         # Cria uma lista com dados no formato QgsVectorLayer das áreas selecionadas para comparação
         for item_db in selected_db:
-            camada = item_db['tabelasCamadas'][0]
+            camada = item_db['tabelasCamadas']
+            nome = item_db['nomeFantasiaCamada']
             host = item_db['host']
             dbase = item_db['baseDeDados']
             port = item_db['porta']
@@ -80,11 +81,11 @@ class HandleSelections():
             uri.setDataSource('public', f'{camada}', 'geom')
 
             lyr_db = QgsVectorLayer(uri.uri(False), camada, 'postgres')
+            lyr_db.setName(nome)
             lyr_db_reproj = lyr_process(lyr_db, operation_config, CRS_PADRAO)
-            lyr_db_reproj.setName(camada)
             list_selected_db.append(lyr_db_reproj)
 
-            operation_config.setdefault('aproximacao', {})[camada] = item_db['aproximacao'][0]
+            operation_config.setdefault('aproximacao', {})[camada] = item_db['aproximacao']
 
         return list_selected_db, operation_config
 

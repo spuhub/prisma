@@ -74,13 +74,13 @@ class OperationController:
             handled_items_wfs.append(handled_value)
 
         for i in self.data_wfs:
-            for key, layer in enumerate(i['nomeFantasiaTabelasCamadas']):
+            for key, layer in enumerate(i['nomeFantasiaCamada']):
                 for layer_req in handled_items_wfs:
                     if i['nome'] == layer_req[1] and layer == layer_req[0]:
                         operation_config['wfs'].append(dict(i))
-                        operation_config['wfs'][-1]['nomeFantasiaTabelasCamadas'] = layer
+                        operation_config['wfs'][-1]['nomeFantasiaCamada'] = layer
                         operation_config['wfs'][-1]['tabelasCamadas'] = i['tabelasCamadas'][key]
-                        operation_config['wfs'][-1]['estiloTabelasCamadas'] = i['estiloTabelasCamadas'][key]
+                        operation_config['wfs'][-1]['estiloCamadas'] = i['estiloCamadas'][key]
                         operation_config['wfs'][-1]['aproximacao'] = i['aproximacao'][key]
                         operation_config['wfs'][-1]['diretorio'] = i['diretorio'][key]
                         operation_config['wfs'][-1]['orgaoResponsavel'] = i['orgaoResponsavel'][key]
@@ -100,14 +100,14 @@ class OperationController:
             i['usuario'] = login[0]
             i['senha'] = login[1]
 
-            for key, layer in enumerate(i['nomeFantasiaTabelasCamadas']):
+            for key, layer in enumerate(i['nomeFantasiaCamada']):
                 for layer_req in handled_items_db:
                     if i['nome'] == layer_req[1] and layer == layer_req[0]:
                         operation_config['pg'].append(dict(i))
-                        operation_config['pg'][-1]['nomeFantasiaTabelasCamadas'] = [layer]
-                        operation_config['pg'][-1]['tabelasCamadas'] = [i['tabelasCamadas'][key]]
-                        operation_config['pg'][-1]['estiloTabelasCamadas'] = [i['estiloTabelasCamadas'][key]]
-                        operation_config['pg'][-1]['aproximacao'] = [i['aproximacao'][key]]
+                        operation_config['pg'][-1]['nomeFantasiaCamada'] = layer
+                        operation_config['pg'][-1]['tabelasCamadas'] = i['tabelasCamadas'][key]
+                        operation_config['pg'][-1]['estiloCamadas'] = i['estiloCamadas'][key]
+                        operation_config['pg'][-1]['aproximacao'] = i['aproximacao'][key]
 
         for i in self.data_required:
             if i['tipo'] == 'pg':

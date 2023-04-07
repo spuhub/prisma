@@ -207,7 +207,7 @@ class LayoutManager():
         new_operation_config = []
         shift = 0
         for index, base in enumerate(self.operation_config['operation_config']['pg']):
-            for name in base['nomeFantasiaTabelasCamadas']:
+            for name in base['nomeFantasiaCamada']:
                 if name in list_required:
                     self.operation_config['operation_config']['obrigatorio'].append(base)
                     gdf_required.append(gdf_selected_db.pop(index - shift))
@@ -487,7 +487,7 @@ class LayoutManager():
                             area = area.drop(columns=['geom'])
                         show_qgis_areas = QgsVectorLayer(area.to_json(),
                                                          self.operation_config['operation_config']['obrigatorio'][index][
-                                                             'nomeFantasiaTabelasCamadas'][0])
+                                                             'nomeFantasiaCamada'][0])
                         show_qgis_areas.loadSldStyle(
                             self.operation_config['operation_config']['obrigatorio'][index]['estiloTabelasCamadas'][0][
                                 'stylePath'])

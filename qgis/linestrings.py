@@ -159,10 +159,10 @@ class Linestrings():
                                 "nomeFantasiaCamada"] == "Área Não Homologada":
                         # Soma da área de interseção feita com feição de input e atual área comparada
                         # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                        if self.operation_config['operation_config']['obrigatorio'][index]['nome'] == 'Área Homologada':
+                        if self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada'] == 'Área Homologada':
                             self.gpd_area_homologada = gpd.overlay(input, area)
 
-                        if self.operation_config['operation_config']['obrigatorio'][index]['nome'] == 'Área Não Homologada':
+                        if self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada'] == 'Área Não Homologada':
                             self.gpd_area_nao_homologada = gpd.overlay(input, area)
 
                         input.loc[0, self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada']] = gpd.overlay(

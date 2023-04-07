@@ -72,7 +72,7 @@ class SelectDatabases(QtWidgets.QDialog):
                 self.list_shp.addItem(item)
 
         for db in range(len(self.data_bd)):
-            for db_layers in range(len(self.data_bd[db]['nomeFantasiaTabelasCamadas'])):
+            for db_layers in range(len(self.data_bd[db]['nomeFantasiaCamada'])):
                 is_required = False
                 for x in required_pg:
                     if x[0] == self.data_bd[db]['id'] and x[1] == self.data_bd[db]['tabelasCamadas'][db_layers]:
@@ -80,14 +80,14 @@ class SelectDatabases(QtWidgets.QDialog):
 
                 if is_required == False:
                     item = QtWidgets.QListWidgetItem(
-                        self.data_bd[db]['nomeFantasiaTabelasCamadas'][db_layers] + ' (' + self.data_bd[db]['nome'] + ')')
+                        self.data_bd[db]['nomeFantasiaCamada'][db_layers] + ' (' + self.data_bd[db]['nome'] + ')')
                     item.setFont(QFont('Arial', 10))
                     item.setSizeHint(QtCore.QSize(20, 30))
                     item.setFlags(item.flags())
                     self.list_bd.addItem(item)
 
         for db in range(len(self.data_wfs)):
-            for db_layers in range(len(self.data_wfs[db]['nomeFantasiaTabelasCamadas'])):
+            for db_layers in range(len(self.data_wfs[db]['nomeFantasiaCamada'])):
                 is_required = False
                 for x in required_pg:
                     if x[0] == self.data_wfs[db]['id'] and x[1] == self.data_wfs[db]['wfsSelecionadas'][db_layers]:
@@ -95,7 +95,7 @@ class SelectDatabases(QtWidgets.QDialog):
 
                 if is_required == False:
                     item = QtWidgets.QListWidgetItem(
-                        self.data_wfs[db]['nomeFantasiaTabelasCamadas'][db_layers] + ' (' + self.data_wfs[db]['nome'] + ')')
+                        self.data_wfs[db]['nomeFantasiaCamada'][db_layers] + ' (' + self.data_wfs[db]['nome'] + ')')
                     item.setFont(QFont('Arial', 10))
                     item.setSizeHint(QtCore.QSize(20, 30))
                     item.setFlags(item.flags())
