@@ -46,7 +46,7 @@ class MapCanvas():
         lista_layers += list_selected_required + list_selected_db + list_selected_shp + list_selected_wfs
 
         if lyr_overlap:
-            lista_layers += [lyr_overlap]
+            lista_layers += [lyr_overlap.clone()]
 
         if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
@@ -60,7 +60,7 @@ class MapCanvas():
         QApplication.instance().processEvents()
 
         for layer in lista_layers:
-            QgsProject.instance().addMapLayer(layer)
+            QgsProject.instance().addMapLayer(layer.clone())
         
         # Repaint the canvas map
         iface.mapCanvas().refresh()
@@ -101,7 +101,7 @@ class MapCanvas():
         QApplication.instance().processEvents()
 
         for layer in lista_layers:
-            QgsProject.instance().addMapLayer(layer)
+            QgsProject.instance().addMapLayer(layer.clone())
 
             # Repaint the canvas map
             iface.mapCanvas().refresh()
