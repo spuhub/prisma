@@ -6,7 +6,9 @@ from qgis.core import (QgsProject,QgsVectorLayer, QgsCoordinateTransform, QgsCoo
 from ..environment import (
     NOME_CAMADA_ENTRADA,
     NOME_CAMADA_ENTRADA_BUFFER,
-    NOME_CAMADA_SOBREPOSICAO,
+    NOME_CAMADA_INTERSECAO_PONTO,
+    NOME_CAMADA_INTERSECAO_LINHA,
+    NOME_CAMADA_INTERSECAO_POLIGONO,
     CRS_PADRAO
 )
 
@@ -165,7 +167,7 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     elif layer.name() == NOME_CAMADA_ENTRADA_BUFFER:
         sld_path = operation_config['sld_default_layers']['buffer']
     
-    elif layer.name() == NOME_CAMADA_SOBREPOSICAO:
+    elif layer.name() in [NOME_CAMADA_INTERSECAO_PONTO, NOME_CAMADA_INTERSECAO_LINHA, NOME_CAMADA_INTERSECAO_POLIGONO]:
         # Identifica o tipo de geometria da camada
         geometry_type = layer.geometryType()
 

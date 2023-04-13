@@ -30,7 +30,9 @@ class MapCanvas():
         self.data = data
         input = data['layers']['input']
         input_buffer = data['layers']['input_buffer'] if 'input_buffer' in data['layers'] else None
-        lyr_overlap = data['layers']['lyr_overlap'] if 'lyr_overlap' in data['layers'] else None
+        lyr_overlap_point = data['layers']['lyr_overlap_point'] if 'lyr_overlap_point' in data['layers'] else None
+        lyr_overlap_line = data['layers']['lyr_overlap_line'] if 'lyr_overlap_line' in data['layers'] else None
+        lyr_overlap_polygon = data['layers']['lyr_overlap_polygon'] if 'lyr_overlap_polygon' in data['layers'] else None
 
         list_selected_shp = data['layers']['shp']
         list_selected_wfs = data['layers']['wfs']
@@ -45,8 +47,12 @@ class MapCanvas():
             lista_layers = [input]
         lista_layers += list_selected_required + list_selected_db + list_selected_shp + list_selected_wfs
 
-        if lyr_overlap:
-            lista_layers += [lyr_overlap.clone()]
+        if lyr_overlap_point:
+            lista_layers += [lyr_overlap_point]
+        if lyr_overlap_line:
+            lista_layers += [lyr_overlap_line]
+        if lyr_overlap_polygon:
+            lista_layers += [lyr_overlap_polygon]
 
         if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
@@ -76,7 +82,9 @@ class MapCanvas():
         self.data = data
         input = data['layers']['input']
         input_buffer = data['layers']['input_buffer'] if 'input_buffer' in data['layers'] else None
-        lyr_overlap = data['layers']['lyr_overlap'] if 'lyr_overlap' in data['layers'] else None
+        lyr_overlap_point = data['layers']['lyr_overlap_point'] if 'lyr_overlap_point' in data['layers'] else None
+        lyr_overlap_line = data['layers']['lyr_overlap_line'] if 'lyr_overlap_line' in data['layers'] else None
+        lyr_overlap_polygon = data['layers']['lyr_overlap_polygon'] if 'lyr_overlap_polygon' in data['layers'] else None
         list_overlaps = data['overlaps']
         list_overlaps = [list_overlaps[item][0] for item in list_overlaps]
 
@@ -85,8 +93,12 @@ class MapCanvas():
             lista_layers += [input]
         else:
             lista_layers = [input]
-        if lyr_overlap:
-            lista_layers += [lyr_overlap]
+        if lyr_overlap_point:
+            lista_layers += [lyr_overlap_point]
+        if lyr_overlap_line:
+            lista_layers += [lyr_overlap_line]
+        if lyr_overlap_polygon:
+            lista_layers += [lyr_overlap_polygon]
         lista_layers += list_overlaps
 
         if 'basemap' in data['operation_config']:

@@ -66,7 +66,7 @@ class LayoutManager():
         
 
         for layer_item in self.dic_layers:
-            if layer_item not in ('input', 'input_buffer', 'lyr_overlap'):
+            if layer_item not in ('input', 'input_buffer', 'lyr_overlap_point', 'lyr_overlap_line', 'lyr_overlap_polygon'):
                 list_type = self.dic_layers[layer_item]
                 for idx, layer in enumerate(list_type):
                     for feature in self.lyr_input.getFeatures():

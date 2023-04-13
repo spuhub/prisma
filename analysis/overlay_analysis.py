@@ -22,9 +22,15 @@
  ***************************************************************************/
 """
 from ..utils.utils import Utils
-from qgis.core import QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import QgsFeature, QgsVectorLayer, QgsWkbTypes
+from ..utils.lyr_utils import lyr_process
 
-from ..environment import CRS_PADRAO
+from ..environment import (
+    CRS_PADRAO,
+    NOME_CAMADA_INTERSECAO_PONTO,
+    NOME_CAMADA_INTERSECAO_LINHA,
+    NOME_CAMADA_INTERSECAO_POLIGONO
+)
 
 class OverlayAnalisys():
     """
@@ -36,6 +42,9 @@ class OverlayAnalisys():
     """
     def __init__(self):
         """Método construtor da classe."""
+        self.provider_point = None
+        self.provider_line = None
+        self.provider_polygon = None
         self.utils = Utils()
 
     def overlay_analysis(self, dic_layers, operation_config):
@@ -64,15 +73,28 @@ class OverlayAnalisys():
         bbox_lyr_input = lyr_input.boundingBoxOfSelected()
 
         # Cria em memória a camada de interseção
-        lyr_overlap = QgsVectorLayer(f'Polygon?crs=epsg:{CRS_PADRAO}', 'Interseções', 'memory')
+        lyr_overlap_point = QgsVectorLayer(f'MultiPoint?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_PONTO, 'memory')
+        lyr_overlap_line = QgsVectorLayer(f'MultiLineString?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_LINHA, 'memory')
+        lyr_overlap_polygon = QgsVectorLayer(f'MultiPolygon?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_POLIGONO, 'memory')
         
-        provider = lyr_overlap.dataProvider()
-        provider.addAttributes(lyr_input.fields())
+        self.provider_point = lyr_overlap_point.dataProvider()
+        self.provider_point.addAttributes(lyr_input.fields())
 
-        lyr_overlap.updateFields()
+        self.provider_line = lyr_overlap_line.dataProvider()
+        self.provider_line.addAttributes(lyr_input.fields())
+
+        self.provider_polygon = lyr_overlap_polygon.dataProvider()
+        self.provider_polygon.addAttributes(lyr_input.fields())
+
+        lyr_overlap_point.updateFields()
+        lyr_overlap_line.updateFields()
+        lyr_overlap_polygon.updateFields()
                 
         dic_overlaps = {}
         lyr_input.startEditing()
+        lyr_overlap_point.startEditing()
+        lyr_overlap_line.startEditing()
+        lyr_overlap_polygon.startEditing()
         for feat in feats_input:
             feat_geom = feat.geometry()
 
@@ -91,7 +113,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_shp.name()][1] += 1
 
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_shp_geom, provider, feat.attributes())
+                        self._create_overlap_feature(feat_geom, feat_shp_geom, feat.attributes())
             
             for lyr_db in list_selected_db:
                 index = lyr_input.fields().indexFromName(lyr_db.name())
@@ -107,7 +129,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_db.name()][1] += 1
 
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_db_geom, provider, feat.attributes())
+                        self._create_overlap_feature(feat_geom, feat_db_geom, feat.attributes())
             
             for lyr_wfs in list_selected_wfs:
                 index = lyr_input.fields().indexFromName(lyr_wfs.name())
@@ -123,7 +145,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_wfs.name()][1] += 1
                         
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_wfs_geom, provider, feat.attributes())
+                        self._create_overlap_feature(feat_geom, feat_wfs_geom, feat.attributes())
 
             for lyr_req in list_required:
                 index = lyr_input.fields().indexFromName(lyr_req.name())
@@ -139,16 +161,31 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_req.name()][1] += 1
 
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_req_geom, provider, feat.attributes())
+                        self._create_overlap_feature(feat_geom, feat_req_geom, feat.attributes())
 
         # Atualiza camada de entrada
         lyr_input.commitChanges()
-        # Atualiza camada de sobreposição
-        lyr_overlap.commitChanges()
-        
-        return dic_overlaps, lyr_overlap
+        # Atualiza camadas de sobreposição
+        lyr_overlap_point.commitChanges()
+        lyr_overlap_line.commitChanges()
+        lyr_overlap_polygon.commitChanges()
+
+        # Adiciona os estilos às camadas de sobreposição
+        lyr_overlap_point = lyr_process(lyr_overlap_point, operation_config)
+        lyr_overlap_line = lyr_process(lyr_overlap_line, operation_config)
+        lyr_overlap_polygon = lyr_process(lyr_overlap_polygon, operation_config)
+
+        # Seta como None a variável caso não tenha nenhuma sobreposição
+        if lyr_overlap_point.featureCount() == 0:
+            lyr_overlap_point = None
+        if lyr_overlap_line.featureCount() == 0:
+            lyr_overlap_line = None
+        if lyr_overlap_polygon.featureCount() == 0:
+            lyr_overlap_polygon = None
+
+        return dic_overlaps, lyr_overlap_point, lyr_overlap_line, lyr_overlap_polygon
     
-    def _create_overlap_feature(self, feat_geom, feat_overlap_geom, provider, feat_attributes) -> None:
+    def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat_attributes) -> None:
         """
         Função auxiliar que cria uma feição de sobreposição.
 
@@ -159,8 +196,19 @@ class OverlayAnalisys():
         """
         # Cria a feição de sobreposição
         overlap_feat = QgsFeature()
-        overlap_feat.setGeometry(feat_geom.intersection(feat_overlap_geom))
+
+        geom_intersect = feat_geom.intersection(feat_overlap_geom)
+
+        overlap_feat.setGeometry(geom_intersect)
         overlap_feat.setAttributes(feat_attributes)
+
+        if geom_intersect.wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
+            self.provider_polygon.addFeatures([overlap_feat])
+
+        elif geom_intersect.wkbType() in [QgsWkbTypes.Point, QgsWkbTypes.MultiPoint]:
+            self.provider_point.addFeatures([overlap_feat])
+
+        elif geom_intersect.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+            self.provider_line.addFeatures([overlap_feat])
         
-        # Adiciona a feição de sobreposição ao provedor de dados
-        provider.addFeatures([overlap_feat])
+        
