@@ -33,6 +33,7 @@ class MapCanvas():
         lyr_overlap_point = data['layers']['lyr_overlap_point'] if 'lyr_overlap_point' in data['layers'] else None
         lyr_overlap_line = data['layers']['lyr_overlap_line'] if 'lyr_overlap_line' in data['layers'] else None
         lyr_overlap_polygon = data['layers']['lyr_overlap_polygon'] if 'lyr_overlap_polygon' in data['layers'] else None
+        lyr_vertices = data['layers']['lyr_vertices'] if 'lyr_vertices' in data['layers'] else None
 
         list_selected_shp = data['layers']['shp']
         list_selected_wfs = data['layers']['wfs']
@@ -53,6 +54,8 @@ class MapCanvas():
             lista_layers += [lyr_overlap_line]
         if lyr_overlap_polygon:
             lista_layers += [lyr_overlap_polygon]
+        if lyr_vertices:
+            lista_layers += [lyr_vertices]
 
         if 'basemap' in data['operation_config']:
             layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
@@ -85,6 +88,7 @@ class MapCanvas():
         lyr_overlap_point = data['layers']['lyr_overlap_point'] if 'lyr_overlap_point' in data['layers'] else None
         lyr_overlap_line = data['layers']['lyr_overlap_line'] if 'lyr_overlap_line' in data['layers'] else None
         lyr_overlap_polygon = data['layers']['lyr_overlap_polygon'] if 'lyr_overlap_polygon' in data['layers'] else None
+        lyr_vertices = data['layers']['lyr_vertices'] if 'lyr_vertices' in data['layers'] else None
         list_overlaps = data['overlaps']
         list_overlaps = [list_overlaps[item][0] for item in list_overlaps]
 
@@ -99,6 +103,8 @@ class MapCanvas():
             lista_layers += [lyr_overlap_line]
         if lyr_overlap_polygon:
             lista_layers += [lyr_overlap_polygon]
+        if lyr_vertices:
+            lista_layers += [lyr_vertices]
         lista_layers += list_overlaps
 
         if 'basemap' in data['operation_config']:

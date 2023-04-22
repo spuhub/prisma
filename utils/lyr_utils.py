@@ -9,8 +9,11 @@ from ..environment import (
     NOME_CAMADA_INTERSECAO_PONTO,
     NOME_CAMADA_INTERSECAO_LINHA,
     NOME_CAMADA_INTERSECAO_POLIGONO,
+    NOME_CAMADA_VERTICES,
     CRS_PADRAO
 )
+
+from .default_sld import slddefaultlayers
 
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
@@ -149,6 +152,12 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     Returns:
         QgsVectorLayer: camada estilizada com o SLD
     """
+    if layer.name() == NOME_CAMADA_VERTICES:
+        layer.loadNamedStyle(slddefaultlayers.VERTICES_LAYER.value)
+        layer.triggerRepaint()
+
+        return layer
+
     sld_path: str = ''
     if layer.name() == NOME_CAMADA_ENTRADA:
         # Identifica o tipo de geometria da camada

@@ -164,7 +164,7 @@ class SelectDatabases(QtWidgets.QDialog):
 
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        dic_overlaps, lyr_overlap_point, lyr_overlap_line, lyr_overlap_polygon = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
+        dic_overlaps, lyr_overlap_point, lyr_overlap_line, lyr_overlap_polygon, lyr_vertices = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
         
         if lyr_overlap_point:
             dic_layers.update(lyr_overlap_point = lyr_overlap_point)
@@ -172,6 +172,8 @@ class SelectDatabases(QtWidgets.QDialog):
             dic_layers.update(lyr_overlap_line = lyr_overlap_line)
         if lyr_overlap_polygon:
             dic_layers.update(lyr_overlap_polygon = lyr_overlap_polygon)
+        if lyr_vertices:
+            dic_layers.update(lyr_vertices = lyr_vertices)
 
         data = {'layers': dic_layers, 'overlaps': dic_overlaps, 'operation_config': self.operation_config}
 

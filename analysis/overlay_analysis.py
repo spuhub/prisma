@@ -22,14 +22,16 @@
  ***************************************************************************/
 """
 from ..utils.utils import Utils
-from qgis.core import QgsFeature, QgsVectorLayer, QgsWkbTypes
+from qgis.core import QgsFeature, QgsVectorLayer, QgsWkbTypes, QgsGeometry, QgsField, QgsFields, QgsPointXY
 from ..utils.lyr_utils import lyr_process
+from qgis.PyQt.QtCore import QVariant
 
 from ..environment import (
     CRS_PADRAO,
     NOME_CAMADA_INTERSECAO_PONTO,
     NOME_CAMADA_INTERSECAO_LINHA,
-    NOME_CAMADA_INTERSECAO_POLIGONO
+    NOME_CAMADA_INTERSECAO_POLIGONO,
+    NOME_CAMADA_VERTICES
 )
 
 class OverlayAnalisys():
@@ -76,6 +78,12 @@ class OverlayAnalisys():
         lyr_overlap_point = QgsVectorLayer(f'MultiPoint?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_PONTO, 'memory')
         lyr_overlap_line = QgsVectorLayer(f'MultiLineString?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_LINHA, 'memory')
         lyr_overlap_polygon = QgsVectorLayer(f'MultiPolygon?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_POLIGONO, 'memory')
+        lyr_vertices = QgsVectorLayer(f'MultiPoint?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_VERTICES, 'memory')
+
+        # Extrai vértices da camada de entrada
+        if lyr_input.wkbType() == QgsWkbTypes.Polygon or lyr_input.wkbType() == QgsWkbTypes.MultiPolygon:
+            lyr_vertices = self._extract_polygon_vertices(lyr_input)
+            lyr_vertices = lyr_process(lyr_vertices, operation_config)
         
         self.provider_point = lyr_overlap_point.dataProvider()
         self.provider_point.addAttributes(lyr_input.fields())
@@ -182,8 +190,10 @@ class OverlayAnalisys():
             lyr_overlap_line = None
         if lyr_overlap_polygon.featureCount() == 0:
             lyr_overlap_polygon = None
-
-        return dic_overlaps, lyr_overlap_point, lyr_overlap_line, lyr_overlap_polygon
+        if lyr_vertices.featureCount() == 0:
+            lyr_vertices = None
+        
+        return dic_overlaps, lyr_overlap_point, lyr_overlap_line, lyr_overlap_polygon, lyr_vertices
     
     def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat_attributes) -> None:
         """
@@ -210,5 +220,30 @@ class OverlayAnalisys():
 
         elif geom_intersect.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
             self.provider_line.addFeatures([overlap_feat])
+
+    
+    def _extract_polygon_vertices(self, layer):
+        vertices_layer = QgsVectorLayer('Point?crs={}'.format(layer.crs().authid()), 'vertices', 'memory')
+        vertices_layer_fields = QgsFields()
         
+        for field in layer.fields():
+            vertices_layer_fields.append(field)
         
+        vertices_layer_fields.append(QgsField('vertex_id', QVariant.Int))
+        vertices_layer_provider = vertices_layer.dataProvider()
+        vertices_layer_provider.addAttributes(vertices_layer_fields)
+        vertices_layer.updateFields()
+        
+        vertex_id = 0
+        for feature in layer.getFeatures():
+            geometry = feature.geometry()
+            for point in geometry.vertices():
+                new_feature = QgsFeature(vertices_layer_fields)
+                new_feature.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(point)))
+                new_feature.setAttributes(feature.attributes())
+                new_feature['vertex_id'] = vertex_id
+                vertex_id += 1
+                vertices_layer_provider.addFeature(new_feature)
+       
+        vertices_layer.setName(NOME_CAMADA_VERTICES)
+        return vertices_layer
