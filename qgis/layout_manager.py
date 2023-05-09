@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
 import os
 
-from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer, QgsVectorDataProvider, QgsField, QgsFeature
+from qgis.core import (
+    QgsProject,
+    QgsVectorFileWriter,
+    QgsVectorLayer, 
+    QgsField, 
+    QgsFeature, 
+    QgsPrintLayout,
+    QgsReadWriteContext,
+    QgsCoordinateReferenceSystem,
+    QgsRasterLayer
+    )
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtXml import QDomDocument
 from PyQt5 import QtCore
+from qgis.utils import iface
+from qgis.PyQt.QtCore import QVariant
+
 from ..utils import lyr_utils
+from ..utils.utils import Utils
 
 class LayoutManager():
     """Classe responsável por fazer a manipulação do Layout de impressão. 
@@ -15,38 +31,55 @@ class LayoutManager():
 
     def __init__(self, data, progress_bar):
 
+        self.feature: QgsFeature
         self.dic_layers = data['layers']
         self.possui_buffer = True if (('aproximacao' in data['operation_config']['input']) and data['operation_config']['input']['aproximacao'] > 0) else False
         self.lyr_input = self.dic_layers['input_buffer'] if self.possui_buffer else self.dic_layers['input']
         self.operation_config = data['operation_config']
         self.path_output = data['path_output']
         self.progress_bar = progress_bar
-        self.path_gpkg = os.path.join(os.path.dirname(__file__), 'layouts', 'Camadas', 'base_projeto.gpkg')
-        self.projeto_qgz = os.path.join(os.path.dirname(__file__), 'layouts', 'SPU-PRISMA_2.0_atlas.qgz')
-        
-        self.identifica_info_sobrep()
-        self.atualiza_gpkg_temp()
-        self.export_relatorio_sintese()
-        self.export_relatorio_mapa()
-        self.export_relatorio_unificado()
-        
-    def atualiza_gpkg_temp(self):
-        for layer_item in self.dic_layers:
-            
-            options = QgsVectorFileWriter.SaveVectorOptions()
-            options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer 
-            layer = self.dic_layers[layer_item]
 
-            if isinstance(layer , QgsVectorLayer):
-                options.layerName = layer.name()
-                writer = QgsVectorFileWriter.writeAsVectorFormat(layer, self.path_gpkg , options)
-                writer = None
-            else:
-                for idx, item in enumerate(layer):
-                    options.layerName = item.name()
-                    writer = QgsVectorFileWriter.writeAsVectorFormat(self.dic_layers[layer_item][idx], self.path_gpkg , options)
-                    writer = None
-                                        
+        self.utils = Utils()
+        self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
+        
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Planta_FolhaA3_Paisagem.qpt')
+        self.add_template_to_project(template_dir)
+
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Relatorio_FolhaA4_Retrato.qpt')
+        self.add_template_to_project(template_dir)
+
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Folha_VerticesA4_Retrato.qpt')
+        self.add_template_to_project(template_dir)
+
+        lyr_com_sobrep, lyr_sem_sobrep = self.identifica_info_sobrep()
+
+        basemap_layer: QgsVectorLayer
+        if 'basemap' in data['operation_config']:
+            basemap_layer = QgsRasterLayer(self.basemap_link, self.basemap_name, 'wms')
+        else:
+            # Carrega camada mundial do OpenStreetMap
+            tms = 'type=xyz&url=http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            basemap_layer = QgsRasterLayer(tms, 'OpenStreetMap', 'wms')
+
+        QgsProject.instance().addMapLayer(lyr_com_sobrep)
+        QgsProject.instance().addMapLayer(lyr_sem_sobrep)
+        QgsProject.instance().addMapLayer(basemap_layer)
+        QgsProject.instance().addMapLayer(self.lyr_input)
+
+        for feature in self.lyr_input.getFeatures():
+            self.feature = feature
+
+            for layer in self.dic_layers['required']:
+                QgsProject.instance().addMapLayer(layer.clone())
+
+                # Repaint the canvas map
+                iface.mapCanvas().refresh()
+
+            self.export_relatorio_sintese()
+            self.export_relatorio_mapa()
+            # self.export_relatorio_vertices()
+        
+
     def identifica_info_sobrep(self):
         dic_lyr_com_sobrep = {}
         dic_lyr_sem_sobrep = {}
@@ -63,13 +96,19 @@ class LayoutManager():
         lyr_com_sobrep.updateFields()
         lyr_sem_sobrep.updateFields()
 
-        
+        # Adiciona um novo campo "id_feature" na camada
+        self.lyr_input.startEditing()
+        new_field = QgsField("id", QVariant.Int)
+        self.lyr_input.dataProvider().addAttributes([new_field])
+        self.lyr_input.updateFields()
 
         for layer_item in self.dic_layers:
-            if layer_item not in ('input', 'input_buffer', 'lyr_overlap_point', 'lyr_overlap_line', 'lyr_overlap_polygon'):
+            if layer_item not in ('input', 'input_buffer', 'lyr_vertices', 'lyr_overlap_point', 'lyr_overlap_line', 'lyr_overlap_polygon'):
                 list_type = self.dic_layers[layer_item]
                 for idx, layer in enumerate(list_type):
                     for feature in self.lyr_input.getFeatures():
+                        index = self.lyr_input.fields().indexFromName('id')
+                        self.lyr_input.changeAttributeValue(feature.id(), index, feature.id())
                         value = feature[layer.name()]
                         if value:
                             if feature.id() not in dic_lyr_com_sobrep:
@@ -81,6 +120,8 @@ class LayoutManager():
                                 dic_lyr_sem_sobrep[feature.id()] = [layer.name()]
                             else:
                                 dic_lyr_sem_sobrep[feature.id()].append(layer.name())
+        
+        self.lyr_input.commitChanges()
         
         for item in dic_lyr_com_sobrep:
             feat = QgsFeature(lyr_com_sobrep.fields())
@@ -101,26 +142,92 @@ class LayoutManager():
         lyr_com_sobrep.dataProvider().addFeatures(list_feats_com_sobrep)
         lyr_sem_sobrep.dataProvider().addFeatures(list_feats_sem_sobrep)
 
-        options = QgsVectorFileWriter.SaveVectorOptions()
-        options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer 
-        options.layerName = lyr_com_sobrep.name()
-        writer = QgsVectorFileWriter.writeAsVectorFormat(lyr_com_sobrep, self.path_gpkg , options)
-        writer = None
-        options.layerName = lyr_sem_sobrep.name()
-        writer = QgsVectorFileWriter.writeAsVectorFormat(lyr_sem_sobrep, self.path_gpkg , options)
-        writer = None
+        return lyr_com_sobrep, lyr_sem_sobrep
+
+    def handle_layers(self, data):
+        """
+        Função que printa no QGIS todas as camadas que apresentaram sobreposição entre camada de input e camadas selecionadas para comparação.
+
+        @keyword data: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
+        """
+        if input_buffer:
+            lista_layers = [input_buffer]
+            lista_layers += [input]
+        else:
+            lista_layers = [input]
+        if lyr_overlap_point:
+            lista_layers += [lyr_overlap_point]
+        if lyr_overlap_line:
+            lista_layers += [lyr_overlap_line]
+        if lyr_overlap_polygon:
+            lista_layers += [lyr_overlap_polygon]
+        if lyr_vertices:
+            lista_layers += [lyr_vertices]
+        lista_layers += list_overlaps
+
+        QgsProject.instance().addMapLayer(layer)
+        QApplication.instance().processEvents()
+
+        for layer in lista_layers:
+            QgsProject.instance().addMapLayer(layer.clone())
+
+            # Repaint the canvas map
+            iface.mapCanvas().refresh()
+            # Da zoom na camada de input
+            iface.zoomToActiveLayer()
+
+    def add_template_to_project(self, template_dir):
+        """
+        Adiciona o template do layout ao projeto atual.
+        @keyword template_dir: Variável armazena o local do layout.
+        """
+        project = QgsProject.instance()
+        layout = QgsPrintLayout(project)
+        document = QDomDocument()
+
+        # Leitura do template
+        template_file = open(template_dir)
+        template_content = template_file.read()
+        template_file.close()
+        document.setContent(template_content)
+
+        # Adição do template no projeto
+        layout.loadFromTemplate(document, QgsReadWriteContext())
+        project.layoutManager().addLayout(layout)
 
     def export_relatorio_sintese(self):
-        project = QgsProject.instance().read(self.projeto_qgz)
-        layout = 'Relatorio_FolhaA4_Retrato'
-        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, 'Relatorio')
+        layout_name = 'Relatorio_FolhaA4_Retrato'
+        layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
+
+        # verificar se o layout tem um atlas
+        if layout.atlas():
+            atlas = layout.atlas()
+            atlas.setCoverageLayer(self.lyr_input)
+            
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.path_output, 'Relatorio')
 
     def export_relatorio_mapa(self):
-        project = QgsProject.instance().read(self.projeto_qgz)
-        layout = 'Planta_FolhaA3_Paisagem'
-        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, 'Mapa')
-    
-    def export_relatorio_unificado(self):
-        project = QgsProject.instance().read(self.projeto_qgz)
-        layout = 'Relatorio_Unificado'
-        lyr_utils.export_atlas_single_page(self.lyr_input, layout, self.path_output, '')
+        layout_name = 'Planta_FolhaA3_Paisagem'
+
+        layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
+
+        # verificar se o layout tem um atlas
+        if layout.atlas():
+            atlas = layout.atlas()
+            atlas.setCoverageLayer(self.lyr_input)
+
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.path_output, 'Mapa')
+
+    def export_relatorio_vertices(self):
+        layout_name = 'Folha_VerticesA4_Retrato'
+
+        layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
+
+        # verificar se o layout tem um atlas
+        if layout.atlas():
+            atlas = layout.atlas()
+            atlas.setCoverageLayer(self.lyr_input)
+
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.path_output, 'Vértices')
+
+        
