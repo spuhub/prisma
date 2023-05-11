@@ -222,7 +222,7 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
 
     return layer
 
-def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_name: str, path_output: str, suffix: str) -> None:
+def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_name: str, pdf_name: str, path_output: str, suffix: str) -> None:
     logradouro = feature['logradouro']
     logradouro = logradouro.replace(".", ' ').replace("/", "_").replace("'", "")
     parameters = {
@@ -234,7 +234,7 @@ def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_
         "INCLUDE_METADATA" : True,
         "LAYERS" : None,
         "LAYOUT" : layout_name,
-        "OUTPUT" : f"{path_output}/{logradouro}_{suffix}.pdf",
+        "OUTPUT" : f"{path_output}/{pdf_name}_{suffix}.pdf",
         "SIMPLIFY" : True,
         "SORTBY_EXPRESSION" : "$id",
         "SORTBY_REVERSE" : False,

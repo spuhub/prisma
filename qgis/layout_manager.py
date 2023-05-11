@@ -12,6 +12,8 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsRasterLayer
     )
+from PyPDF2 import PdfReader, PdfMerger
+from datetime import datetime
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtXml import QDomDocument
 from PyQt5 import QtCore
@@ -30,6 +32,10 @@ class LayoutManager():
     """
 
     def __init__(self, data, progress_bar):
+
+        date_and_time = datetime.now()
+        self.time = date_and_time.strftime('%Y-%m-%d_%H-%M-%S')
+        self.pdf_name: str = ''
 
         self.feature: QgsFeature
         self.dic_layers = data['layers']
@@ -66,18 +72,20 @@ class LayoutManager():
         QgsProject.instance().addMapLayer(basemap_layer)
         QgsProject.instance().addMapLayer(self.lyr_input)
 
+        for layer in self.dic_layers['required']:
+            QgsProject.instance().addMapLayer(layer.clone())
+
+        # Repaint the canvas map
+        iface.mapCanvas().refresh()
+
         for feature in self.lyr_input.getFeatures():
             self.feature = feature
-
-            for layer in self.dic_layers['required']:
-                QgsProject.instance().addMapLayer(layer.clone())
-
-                # Repaint the canvas map
-                iface.mapCanvas().refresh()
+            self.pdf_name = f'{feature["logradouro"]}_{self.time}'
 
             self.export_relatorio_sintese()
             self.export_relatorio_mapa()
             # self.export_relatorio_vertices()
+            self.merge_pdf()
         
 
     def identifica_info_sobrep(self):
@@ -204,7 +212,7 @@ class LayoutManager():
             atlas = layout.atlas()
             atlas.setCoverageLayer(self.lyr_input)
             
-        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.path_output, 'Relatorio')
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_A_Relatorio')
 
     def export_relatorio_mapa(self):
         layout_name = 'Planta_FolhaA3_Paisagem'
@@ -216,10 +224,30 @@ class LayoutManager():
             atlas = layout.atlas()
             atlas.setCoverageLayer(self.lyr_input)
 
-        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.path_output, 'Mapa')
+        lyr_com_sobrep = QgsProject.instance().mapLayersByName('Com_Sobreposicao')[0]   
+        column_index = lyr_com_sobrep.fields().indexFromName('list_layer')
+        
+        feature_encontrada = None
+        for feature in lyr_com_sobrep.getFeatures():
+            if feature['feat_id'] == self.feature.id():
+                feature_encontrada = feature
+                break
+
+        item_layout = layout.itemById('CD_Compl_Obs1')
+        item_layout.setText('Lote não sobrepõe Área Homologada')
+        if feature_encontrada:
+            column_value = feature_encontrada.attribute(column_index)
+            
+            if "Área Homologada" in column_value:
+                item_layout.setText('Lote sobrepõe Área Homologada')
+                item_layout = layout.itemById('CD_Titulo')
+                item_layout.setText(f'Caracterização: Áreas da União')
+
+
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_B_Mapa')
 
     def export_relatorio_vertices(self):
-        layout_name = 'Folha_VerticesA4_Retrato'
+        layout_name = 'relatorio'
 
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
 
@@ -228,6 +256,20 @@ class LayoutManager():
             atlas = layout.atlas()
             atlas.setCoverageLayer(self.lyr_input)
 
-        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.path_output, 'Vértices')
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, 'Vértices')
 
+    def merge_pdf(self):
+        pdf_name = "_".join(self.pdf_name.split("_", 3)[:3])
+
+        pdf_files = [f for f in os.listdir(self.path_output) if f.startswith(pdf_name) and f.endswith(".pdf")]
+        merger = PdfMerger()
+
+        for filename in pdf_files:
+            merger.append(PdfReader(os.path.join(self.path_output, filename), "rb"))
+
+        merger.write(os.path.join(self.path_output, pdf_name + ".pdf"))
+
+        for filename in os.listdir(self.path_output):
+            if pdf_name in filename and filename.count("_") > 2:
+                os.remove(self.path_output + "/" + filename)
         
