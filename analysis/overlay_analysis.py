@@ -86,7 +86,7 @@ class OverlayAnalisys():
             lyr_vertices = lyr_process(lyr_vertices, operation_config)
         
         fields = lyr_input.fields()
-        novo_campo = QgsField('Com_Sobreposicao', QVariant.String)
+        novo_campo = QgsField('Camada_sobreposicao', QVariant.String)
         fields.append(novo_campo)
 
         self.provider_point = self.lyr_overlap_point.dataProvider()
@@ -126,7 +126,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_shp.name()][1] += 1
 
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_shp_geom, feat.fields(), feat.attributes(), lyr_shp.name())
+                        self._create_overlap_feature(feat_geom, feat_shp_geom, feat, lyr_shp.name())
             
             for lyr_db in list_selected_db:
                 index = lyr_input.fields().indexFromName(lyr_db.name())
@@ -142,7 +142,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_db.name()][1] += 1
 
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_db_geom, feat.fields(), feat.attributes(), lyr_db.name())
+                        self._create_overlap_feature(feat_geom, feat_db_geom, feat, lyr_db.name())
             
             for lyr_wfs in list_selected_wfs:
                 index = lyr_input.fields().indexFromName(lyr_wfs.name())
@@ -158,7 +158,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_wfs.name()][1] += 1
                         
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_wfs_geom, feat.fields(), feat.attributes(), lyr_wfs.name())
+                        self._create_overlap_feature(feat_geom, feat_wfs_geom, feat, lyr_wfs.name())
 
             for lyr_req in list_required:
                 index = lyr_input.fields().indexFromName(lyr_req.name())
@@ -174,7 +174,7 @@ class OverlayAnalisys():
                             dic_overlaps[lyr_req.name()][1] += 1
 
                         lyr_input.changeAttributeValue(feat.id(), index, True)
-                        self._create_overlap_feature(feat_geom, feat_req_geom, feat.fields(), feat.attributes(), lyr_req.name())
+                        self._create_overlap_feature(feat_geom, feat_req_geom, feat, lyr_req.name())
 
         # Atualiza camada de entrada
         lyr_input.commitChanges()
@@ -196,7 +196,7 @@ class OverlayAnalisys():
         
         return dic_overlaps, self.lyr_overlap_point, self.lyr_overlap_line, self.lyr_overlap_polygon, lyr_vertices
     
-    def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat_fields, feat_attributes, lyr_overlap_name) -> None:
+    def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat, lyr_overlap_name) -> None:
         """
         Função auxiliar que cria uma feição de sobreposição.
 
@@ -205,6 +205,9 @@ class OverlayAnalisys():
         @param provider: provedor de dados onde a feição de sobreposição será adicionada
         @param feat_attributes: atributos da feição do input
         """
+        feat_fields = feat.fields()
+        feat_attributes = feat.attributes()
+        
         # Cria a feição de sobreposição
         overlap_feat = QgsFeature()
 
@@ -213,8 +216,12 @@ class OverlayAnalisys():
 
         novo_campo = QgsField('Camada_sobreposicao', QVariant.String)
         feat_fields.append(novo_campo)
-        overlap_feat.setFields(feat_fields)
         feat_attributes.append(lyr_overlap_name)
+        novo_campo = QgsField('logradouro', QVariant.String)
+        feat_fields.append(novo_campo)
+        feat_attributes.append(feat.attribute('logradouro'))
+
+        overlap_feat.setFields(feat_fields)
         overlap_feat.setAttributes(feat_attributes)
 
         if geom_intersect.wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
@@ -245,10 +252,11 @@ class OverlayAnalisys():
             geometria.transform(transformacao)
             soma_areas += geometria.area()
 
-        format_value = f'{soma_areas:_.2f}'
-        format_value = format_value.replace('.', ',').replace('_', '.')
+        # soma_areas_arredondada = round(soma_areas, 2)
+        # format_value = "{:,.2f}".format(soma_areas_arredondada).replace(",", ".")
+        # [%'Área total do imóvel: '  ||  round($area, 2)  ||  ' m².'%]
 
-        return format_value
+        return soma_areas
     
     def _extract_polygon_vertices(self, layer):
         vertices_layer = QgsVectorLayer('Point?crs={}'.format(layer.crs().authid()), 'vertices', 'memory')
