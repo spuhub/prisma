@@ -25,6 +25,7 @@ from qgis.PyQt.QtCore import QVariant
 from ..utils import lyr_utils
 from ..utils.utils import Utils
 from ..analysis.overlay_analysis import OverlayAnalisys
+from ..settings.env_tools import EnvTools
 from ..environment import NOME_CAMADA_INTERSECAO_POLIGONO, NOME_CAMADA_INTERSECAO_LINHA
 
 class LayoutManager():
@@ -44,6 +45,8 @@ class LayoutManager():
 
         self.feature: QgsFeature
         self.dic_layers = data['layers']
+        self.dic_layers_ever = data['layers'].copy()
+        self.overlaps = data['overlaps']
         self.possui_buffer = True if (('aproximacao' in data['operation_config']['input']) and data['operation_config']['input']['aproximacao'] > 0) else False
         self.lyr_input = self.dic_layers['input_buffer'] if self.possui_buffer else self.dic_layers['input']
         self.operation_config = data['operation_config']
@@ -89,7 +92,7 @@ class LayoutManager():
             self.feature = feature
             self.pdf_name = f'{feature["logradouro"]}_{self.time}'
 
-            self.handle_required_layers(data['layers'])
+            self.handle_required_layers(self.dic_layers_ever)
 
             self.export_relatorio_sintese()
             self.export_relatorio_mapa()
@@ -108,7 +111,7 @@ class LayoutManager():
         if self.feature.geometry().wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
             if lyr_overlay_polygon:
                 for feature_overlay in lyr_overlay_polygon.getFeatures():
-                    if feature_overlay.attribute('Com_Sobreposicao') == 'Área Homologada' and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                    if feature_overlay.attribute('Camada_sobreposicao') == 'Área Homologada' and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
                         nova_feature = QgsFeature()
                         nova_feature.setGeometry(feature_overlay.geometry())
                         provider.addFeatures([nova_feature])
@@ -223,27 +226,17 @@ class LayoutManager():
     def export_relatorio_sintese(self):
         layout_name = 'Relatorio_FolhaA4_Retrato'
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
-
-        # verificar se o layout tem um atlas
-        if layout.atlas():
-            atlas = layout.atlas()
-            atlas.setCoverageLayer(self.lyr_input)
             
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_A_Relatorio')
 
     def export_relatorio_mapa(self):
         layout_name = 'Planta_FolhaA3_Paisagem'
-
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
-
-        # verificar se o layout tem um atlas
-        if layout.atlas():
-            atlas = layout.atlas()
-            atlas.setCoverageLayer(self.lyr_input)
 
         lyr_com_sobrep = QgsProject.instance().mapLayersByName('Com_Sobreposicao')[0]   
         column_index = lyr_com_sobrep.fields().indexFromName('list_layer')
         
+        get_overlay_area = None
         feature_encontrada = None
         for feature in lyr_com_sobrep.getFeatures():
             if feature['feat_id'] == self.feature.id():
@@ -253,6 +246,7 @@ class LayoutManager():
         item_layout = layout.itemById('CD_Compl_Obs1')
         item_layout.setText('Lote não sobrepõe Área Homologada')
         overlay_uniao_area = layout.itemById('CD_Compl_Obs4')
+        overlay_uniao_area.setText("Área de sobreposição com Área Homologada: 0,00 m².")
         if feature_encontrada:
             column_value = feature_encontrada.attribute(column_index)
             
@@ -264,10 +258,8 @@ class LayoutManager():
                 get_overlay_area = QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_POLIGONO)[0] or QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_LINHA)[0]
                 if get_overlay_area:
                     overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
-                else:
-                    overlay_uniao_area.setText("Área de sobreposição com Área Homologada: 0,00 m².")
 
-
+        self.handle_text(layout)
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_B_Mapa')
 
     def export_relatorio_vertices(self):
@@ -275,12 +267,7 @@ class LayoutManager():
 
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
 
-        # verificar se o layout tem um atlas
-        if layout.atlas():
-            atlas = layout.atlas()
-            atlas.setCoverageLayer(self.lyr_input)
-
-        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, 'Vértices')
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, '_C_Vértices')
 
     def merge_pdf(self):
         pdf_name = "_".join(self.pdf_name.split("_", 3)[:3])
@@ -296,4 +283,19 @@ class LayoutManager():
         for filename in os.listdir(self.path_output):
             if pdf_name in filename and filename.count("_") > 2:
                 os.remove(self.path_output + "/" + filename)
-        
+
+    def handle_text(self, layout):
+        """
+        Faz a manipulação de alguns dados textuais presentes no layout de impressão.
+
+        @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        """
+        et = EnvTools()
+        headers = et.get_report_hearder()
+
+        spu = layout.itemById('CD_UnidadeSPU')
+        spu.setText(headers['superintendencia'])
+
+        sector = layout.itemById('CD_SubUnidadeSPU')
+        sector.setText(headers['setor'])
