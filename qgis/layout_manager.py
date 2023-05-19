@@ -26,7 +26,7 @@ from ..utils import lyr_utils
 from ..utils.utils import Utils
 from ..analysis.overlay_analysis import OverlayAnalisys
 from ..settings.env_tools import EnvTools
-from ..environment import NOME_CAMADA_INTERSECAO_POLIGONO, NOME_CAMADA_INTERSECAO_LINHA
+from ..environment import NOME_CAMADA_INTERSECAO_POLIGONO, NOME_CAMADA_INTERSECAO_LINHA, NOME_CAMADA_INTERSECAO_PONTO
 
 class LayoutManager():
     """Classe responsável por fazer a manipulação do Layout de impressão. 
@@ -118,11 +118,17 @@ class LayoutManager():
                 overlay_layer.setName(NOME_CAMADA_INTERSECAO_POLIGONO)
 
         elif self.feature.geometry().wkbType() in [QgsWkbTypes.Point, QgsWkbTypes.MultiPoint]:
-            pass
+            if lyr_overlay_point:
+                for feature_overlay in lyr_overlay_point.getFeatures():
+                    if feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                        nova_feature = QgsFeature()
+                        nova_feature.setGeometry(feature_overlay.geometry())
+                        provider.addFeatures([nova_feature])
+                overlay_layer.setName(NOME_CAMADA_INTERSECAO_PONTO)
 
         elif self.feature.geometry().wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
-            if lyr_overlay_polygon:
-                for feature_overlay in lyr_overlay_polygon.getFeatures():
+            if lyr_overlay_line:
+                for feature_overlay in lyr_overlay_line.getFeatures():
                     if feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
                         nova_feature = QgsFeature()
                         nova_feature.setGeometry(feature_overlay.geometry())
@@ -255,8 +261,10 @@ class LayoutManager():
                 item_layout = layout.itemById('CD_Titulo')
                 item_layout.setText(f'Caracterização: Áreas da União')
 
-                get_overlay_area = QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_POLIGONO)[0] or QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_LINHA)[0]
+                get_overlay_area = QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_POLIGONO) or QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_LINHA)
                 if get_overlay_area:
+                    if isinstance(get_overlay_area, list):
+                        get_overlay_area = get_overlay_area[0]
                     overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
 
         self.handle_text(layout)
