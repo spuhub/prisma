@@ -245,7 +245,7 @@ class LayoutManager():
 
         item_layout = layout.itemById('CD_Compl_Obs1')
         item_layout.setText('Lote não sobrepõe Área Homologada')
-        overlay_uniao_area = layout.itemById('CD_Compl_Obs4')
+        overlay_uniao_area = layout.itemById('CD_Compl_Obs3')
         overlay_uniao_area.setText("Área de sobreposição com Área Homologada: 0,00 m².")
         if feature_encontrada:
             column_value = feature_encontrada.attribute(column_index)
