@@ -25,6 +25,7 @@ from qgis.PyQt.QtCore import QVariant
 from ..utils import lyr_utils
 from ..utils.utils import Utils
 from ..analysis.overlay_analysis import OverlayAnalisys
+from ..settings.env_tools import EnvTools
 from ..environment import NOME_CAMADA_INTERSECAO_POLIGONO, NOME_CAMADA_INTERSECAO_LINHA
 
 class LayoutManager():
@@ -258,7 +259,7 @@ class LayoutManager():
                 if get_overlay_area:
                     overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
 
-
+        self.handle_text(layout)
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_B_Mapa')
 
     def export_relatorio_vertices(self):
@@ -266,7 +267,7 @@ class LayoutManager():
 
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
 
-        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, 'Vértices')
+        lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, '_C_Vértices')
 
     def merge_pdf(self):
         pdf_name = "_".join(self.pdf_name.split("_", 3)[:3])
@@ -282,4 +283,19 @@ class LayoutManager():
         for filename in os.listdir(self.path_output):
             if pdf_name in filename and filename.count("_") > 2:
                 os.remove(self.path_output + "/" + filename)
-        
+
+    def handle_text(self, layout):
+        """
+        Faz a manipulação de alguns dados textuais presentes no layout de impressão.
+
+        @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        """
+        et = EnvTools()
+        headers = et.get_report_hearder()
+
+        spu = layout.itemById('CD_UnidadeSPU')
+        spu.setText(headers['superintendencia'])
+
+        sector = layout.itemById('CD_SubUnidadeSPU')
+        sector.setText(headers['setor'])

@@ -252,11 +252,11 @@ class OverlayAnalisys():
             geometria.transform(transformacao)
             soma_areas += geometria.area()
 
-        # soma_areas_arredondada = round(soma_areas, 2)
-        # format_value = "{:,.2f}".format(soma_areas_arredondada).replace(",", ".")
-        # [%'Área total do imóvel: '  ||  round($area, 2)  ||  ' m².'%]
+        soma_areas_arredondada = round(soma_areas, 2)
+        format_value = f'{soma_areas_arredondada:_.2f}'
+        format_value = format_value.replace('.', ',').replace('_', '.')
 
-        return soma_areas
+        return format_value
     
     def _extract_polygon_vertices(self, layer):
         vertices_layer = QgsVectorLayer('Point?crs={}'.format(layer.crs().authid()), 'vertices', 'memory')
