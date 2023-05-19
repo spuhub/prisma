@@ -52,10 +52,6 @@ class MemorialConversion (QtWidgets.QDialog):
             
             lista_coords = self.extrai_coords(self.path_input)
 
-
-                
-            
-
         else:
             self.iface.messageBar().pushMessage("Error", "Selecione um pdf de entrada.", level=1)
 
@@ -84,7 +80,5 @@ class MemorialConversion (QtWidgets.QDialog):
             longitude = float(coords.split(', ')[0].replace(".", "").replace("E ", "").replace(",","."))
             ring.AddPoint(longitude, latitude)
 
-        crs = self.select_crs.crs().authid()
-        
         poly.AddGeometry(ring)
         
