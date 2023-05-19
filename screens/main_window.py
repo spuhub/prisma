@@ -20,6 +20,7 @@ class MainWindow (QtWidgets.QDialog):
     switch_overlay_feature = QtCore.pyqtSignal()
     switch_overlay_shapefile = QtCore.pyqtSignal()
     switch_overlay_coordinates = QtCore.pyqtSignal()
+    switch_memorial_conversion = QtCore.pyqtSignal()
 
     def __init__(self, iface):
         """Método construtor da classe."""
@@ -35,6 +36,7 @@ class MainWindow (QtWidgets.QDialog):
         self.btn_ponto.clicked.connect(self.go_to_point)
         self.btn_feicao.clicked.connect(self.go_to_feature)
         self.btn_shapefile.clicked.connect(self.go_to_shapefile)
+        self.btn_memorial.clicked.connect(self.go_to_memorial)
 
         self.ui.closeEvent = self.close_event
         self.control = 1
@@ -67,3 +69,6 @@ class MainWindow (QtWidgets.QDialog):
     def go_to_config(self):
         """Abre a tela de configuração."""
         self.switch_config.emit()
+
+    def go_to_memorial(self):
+        self.switch_memorial_conversion.emit()

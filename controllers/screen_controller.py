@@ -31,6 +31,7 @@ class Controller:
         self.main_window.switch_overlay_point.connect(self.show_overlay_point)
         self.main_window.switch_overlay_feature.connect(self.show_overlay_feature)
         self.main_window.switch_overlay_shapefile.connect(self.show_overlay_shapefile)
+        self.main_window.switch_memorial_conversion.connect(self.show_memorial_conversion)
 
         self.main_window.show()
 
@@ -99,3 +100,13 @@ class Controller:
         self.result_window = ResultWindow(data)
         self.result_window.report_generator_window.connect(self.show_report_generator)
         self.result_window.show()
+
+    def show_memorial_conversion(self):
+        """
+        Função acionada (e também serve como controller) para mostrar a tela de busca através de input shapefile do prisma.
+        """
+        from ..screens.memorial_conversion import MemorialConversion
+        self.overlay_shapefile_window = MemorialConversion(self.iface)
+        self.overlay_shapefile_window.back_window.connect(self.show_main)
+        self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
+        self.overlay_shapefile_window.show()
