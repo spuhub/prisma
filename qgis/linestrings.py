@@ -152,53 +152,53 @@ class Linestrings():
                 area = area.to_crs(crs)
                 area.set_crs(allow_override=True, crs=crs)
 
-                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                    if self.operation_config['operation_config']['required'][index][
+                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['obrigatorio'][index]:
+                    if self.operation_config['operation_config']['obrigatorio'][index][
                         "nomeFantasiaCamada"] == "Área Homologada" or \
-                            self.operation_config['operation_config']['required'][index][
+                            self.operation_config['operation_config']['obrigatorio'][index][
                                 "nomeFantasiaCamada"] == "Área Não Homologada":
                         # Soma da área de interseção feita com feição de input e atual área comparada
                         # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                        if self.operation_config['operation_config']['required'][index]['nome'] == 'Área Homologada':
+                        if self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada'] == 'Área Homologada':
                             self.gpd_area_homologada = gpd.overlay(input, area)
 
-                        if self.operation_config['operation_config']['required'][index]['nome'] == 'Área Não Homologada':
+                        if self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada'] == 'Área Não Homologada':
                             self.gpd_area_nao_homologada = gpd.overlay(input, area)
 
-                        input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                        input.loc[0, self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada']] = gpd.overlay(
                             input, area).length.sum()
                     else:
                         points = input.unary_union.intersection(area.unary_union)
                         if not points.is_empty:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaCamada']] = True
                         else:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaCamada']] = False
                 else:
-                    if self.operation_config['operation_config']['required'][index][
+                    if self.operation_config['operation_config']['obrigatorio'][index][
                         "nomeFantasiaTabelasCamadas"][0] == "Área Homologada" or \
-                            self.operation_config['operation_config']['required'][index][
+                            self.operation_config['operation_config']['obrigatorio'][index][
                                 "nomeFantasiaTabelasCamadas"][0] == "Área Não Homologada":
                         # Soma da área de interseção feita com feição de input e atual área comparada
                         # Essa soma é atribuida a uma nova coluna, identificada pelo nome da área comparada. Ex área quilombola: 108.4
-                        if self.operation_config['operation_config']['required'][index]['nomeFantasiaTabelasCamadas'][0] == 'Área Homologada':
+                        if self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaTabelasCamadas'][0] == 'Área Homologada':
                             self.gpd_area_homologada = gpd.overlay(input, area)
 
-                        if self.operation_config['operation_config']['required'][index][
+                        if self.operation_config['operation_config']['obrigatorio'][index][
                             'nomeFantasiaTabelasCamadas'][0] == 'Área Não Homologada':
                             self.gpd_area_nao_homologada = gpd.overlay(input, area)
 
-                        input.loc[0, self.operation_config['operation_config']['required'][index][
+                        input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
                             input, area).length.sum()
                     else:
                         points = input.unary_union.intersection(area.unary_union)
                         if not points.is_empty:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaTabelasCamadas']] = True
                         else:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaTabelasCamadas']] = False
 
             index += 1
@@ -535,7 +535,7 @@ class Linestrings():
                     if name == x_layers:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
-            for x in self.operation_config['operation_config']['required']:
+            for x in self.operation_config['operation_config']['obrigatorio']:
                 if 'nomeFantasiaCamada' in x:
                     if name == x['nomeFantasiaCamada']:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]

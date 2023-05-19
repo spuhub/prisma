@@ -47,11 +47,11 @@ class OverlayPoint (QtWidgets.QDialog):
         if self.txt_logradouro.text() != '' and self.txt_numero.text() != '' and self.txt_bairro.text() != '' and self.txt_cidade.text() != '' and self.txt_uf.text() != '':
             input = self.handle_address()
 
-            data = {"operation": "coordinate", "input": input}
+            data = {'operation': 'coordinate', 'input': {'layer': input}}
 
             # Caso usuário tenha inserido área de aproximação
             if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-                data['aproximacao'] = float(self.txt_aproximacao.text())
+                data['input'].update(aproximacao = float(self.txt_aproximacao.text()))
 
             self.hide()
             self.continue_window.emit(data)
@@ -60,11 +60,11 @@ class OverlayPoint (QtWidgets.QDialog):
             if self.txt_epsg.text().isnumeric():
                 input = self.handle_coordinate()
 
-                data = {"operation": "coordinate", "input": input}
+                data = {'operation': 'coordinate', 'input': {'layer': input}}
 
                 # Caso usuário tenha inserido área de aproximação
                 if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-                    data['aproximacao'] = float(self.txt_aproximacao.text())
+                    data['input'].update(aproximacao = float(self.txt_aproximacao.text()))
 
                 self.hide()
                 self.continue_window.emit(data)
@@ -98,7 +98,7 @@ class OverlayPoint (QtWidgets.QDialog):
             # points = geocode(address, provider='google', api_key='AIzaSyD5FVX9EaxuM2ekd1t0ijtNE5BYq8D32io', user_agent='csc_user_ht', timeout=10)
             return dataframe
 
-        except():
+        except Exception as e:
             iface.messageBar().pushMessage("Error", "Endereço não encontrado ou serviço indisponível no momento.",
                                                 level=1)
 

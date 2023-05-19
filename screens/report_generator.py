@@ -1,31 +1,21 @@
-import json
-import sys
 import os.path
-
-import geopandas as gpd
-
-from qgis.PyQt.QtWidgets import QAction
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 from PyQt5.uic import loadUi
 from ..settings.env_tools import EnvTools
 
 from ..qgis.layout_manager import LayoutManager
-
-
 # from ..dbtools.shp_tools import ShpTools
 
 class ReportGenerator(QtWidgets.QDialog):
-    def __init__(self, result):
-        self.result = result
+    def __init__(self, data):
+        self.data = data
         self.path_output = ""
         super(ReportGenerator, self).__init__()
         self.envtools = EnvTools()
         loadUi(os.path.join(os.path.dirname(__file__), 'report_generator.ui'), self)
         self.fill_fields()
-        # self.buttonBox.accepted.connect(self.report_generator)
-        #self.buttonBox.rejected.connect(self.envtools.clear_repor_header)
-
+        
         self.btn_output.clicked.connect(self.handle_output)
 
         self.progress_bar.setHidden(True)
@@ -58,7 +48,6 @@ class ReportGenerator(QtWidgets.QDialog):
     def report_generator(self):
         self.save_fields()
 
-        # inserir aqui os outros codigos.
 
     def hidden_fields(self):
         self.label.setHidden(True)
@@ -84,12 +73,12 @@ class ReportGenerator(QtWidgets.QDialog):
         self.save_fields()
         self.hidden_fields()
 
-        self.result['path_output'] = self.path_output
+        self.data['path_output'] = self.path_output
 
         self.btn_voltar.setHidden(True)
         self.btn_continuar.setHidden(True)
 
-        lm = LayoutManager(self.result, self.progress_bar)
-        lm.pdf_generator()
+        lm = LayoutManager(self.data, self.progress_bar)
+        # lm.pdf_generator()
 
         self.hide()

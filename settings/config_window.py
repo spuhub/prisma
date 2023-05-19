@@ -3,8 +3,9 @@ import os.path
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QTableWidgetItem, QComboBox
 from qgis.gui import QgsFileWidget, QgsDateTimeEdit
+from qgis.core import QgsVectorLayer, QgsDataSourceUri
 
 from .config_layers import ConfigLayers
 from .json_tools import JsonTools
@@ -92,7 +93,14 @@ class ConfigWindow(QtWidgets.QDialog):
         self.combo_box_shp.currentIndexChanged.connect(self.enable_disable_delete_shp)
         self.combo_box_base.currentIndexChanged.connect(self.enable_disable_delete_bd)
         self.combo_wfs.currentIndexChanged.connect(self.handle_combo_wfs)
-        #self.tabWidget.clicked.connect(self.)
+        # Signal para tratar click no tabWidget
+        self.tabWidget.tabBarClicked.connect(self.handle_tabwidget)
+
+        # Listas para armazenar bases carregadas nas configuracoes de camada
+        self.bases_shp = []
+        self.bases_bd = []
+        self.bases_wfs = []
+
 
     # self.btext.clicked.connect(self.hiderheader)
 
@@ -214,7 +222,7 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["urlDowload"] = self.url_dowload.text()
         confg_dic["diretorioLocal"] = self.diretorioLocalshp.filePath()
         confg_dic["orgaoResponsavel"] = self.orgao_responsavel_shp.text()
-        confg_dic["aproximacao"] = [self.faixa_proximidade.value()]
+        confg_dic["aproximacao"] = self.faixa_proximidade.value()
         dt = self.periodo_referencia_shp.dateTime()
         dt_string = dt.toString(self.periodo_referencia_shp.displayFormat())
         confg_dic["periodosReferencia"] = dt_string
@@ -224,16 +232,8 @@ class ConfigWindow(QtWidgets.QDialog):
         confg_dic["dataAquisicao"] = dt_string
 
         confg_dic["descricao"] = self.textEdit_shp.toPlainText()
-        stryle = [{
-             "line_style": "",
-                "line_color": "",
-                "width_border": "",
-                "style": "",
-                "color": "",
-                "stylePath" : self.style_path.filePath(),
-        }]
 
-        confg_dic["estiloCamadas"] = stryle
+        confg_dic["estiloCamadas"] = self.style_path.filePath()
 
         if self.combo_box_shp.currentData() == "0":
             if confg_dic["nome"] == "" and self.tabWidget.currentIndex() == 0:
@@ -530,10 +530,10 @@ class ConfigWindow(QtWidgets.QDialog):
             date = QtCore.QDate(int(get_date[2]), int(get_date[1]), int(get_date[0]))
             self.data_aquisicao_shp.setDate(date)
 
-            style = current_config["estiloCamadas"][0]
-            self.style_path.setFilePath(style["stylePath"])
+            style = current_config["estiloCamadas"]
+            self.style_path.setFilePath(style)
             self.textEdit_shp.setText(current_config["descricao"])
-            self.faixa_proximidade.setValue(current_config["aproximacao"][0])
+            self.faixa_proximidade.setValue(current_config["aproximacao"])
 
         if current_id == "0":
             self.nome_shp.clear()
@@ -1003,6 +1003,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         except Exception as e:
             print(e)
+    
     def add_action_lpm_nao_homologada(self):
         try:
             id_base_selec = self.comboBox_base_lpm_n_hom.currentData()[0]
@@ -1444,7 +1445,7 @@ class ConfigWindow(QtWidgets.QDialog):
                     self.tbl_wfs.setItem(row_control, 0, cellName)
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
-                        cellName = QtWidgets.QTableWidgetItem(item['nomeFantasiaTabelasCamadas'][layer_control])
+                        cellName = QtWidgets.QTableWidgetItem(item['nomeFantasiaCamada'][layer_control])
                     else:
                         cellName = QtWidgets.QTableWidgetItem("")
                     self.tbl_wfs.setItem(row_control, 1, cellName)
@@ -1479,7 +1480,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
                     if item['tabelasCamadasNomesFantasia'][index] in item['wfsSelecionadas']:
                         cellName = QgsFileWidget()
-                        cellName.setFilePath(item['estiloTabelasCamadas'][layer_control])
+                        cellName.setFilePath(item['estiloCamadas'][layer_control])
                     else:
                         cellName = QgsFileWidget()
                     self.tbl_wfs.setCellWidget(row_control, 6, cellName)
@@ -1562,14 +1563,14 @@ class ConfigWindow(QtWidgets.QDialog):
         data['descricao_base'] = self.txt_descricao_wfs.text()
         data['tipo'] = 'wfs'
 
-        data['nomeFantasiaTabelasCamadas'] = []
+        data['nomeFantasiaCamada'] = []
         data['diretorio'] = []
         data['orgaoResponsavel'] = []
         data['periodoAquisicao'] = []
         data['periodosReferencia'] = []
         data['aproximacao'] = []
         data['descricao'] = []
-        data['estiloTabelasCamadas'] = []
+        data['estiloCamadas'] = []
 
         dt = self.date_aquisicao_wfs.dateTime()
         dt_string = dt.toString(self.date_aquisicao_wfs.displayFormat())
@@ -1596,7 +1597,7 @@ class ConfigWindow(QtWidgets.QDialog):
                         wfs_operations.download_wfs_layer(self.txt_link_wfs.text(), self.wfs_data[item][0], data['nome'])
                     except:
                         continue
-                data['nomeFantasiaTabelasCamadas'].append(self.tbl_wfs.item(item, 1).text())
+                data['nomeFantasiaCamada'].append(self.tbl_wfs.item(item, 1).text())
                 data['diretorio'].append(file_path)
                 data['orgaoResponsavel'].append(self.tbl_wfs.item(item, 2).text())
 
@@ -1609,7 +1610,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 data["periodosReferencia"].append(dt_string)
 
                 data['aproximacao'].append(float(self.tbl_wfs.item(item, 5).text()))
-                data['estiloTabelasCamadas'].append(self.tbl_wfs.cellWidget(item, 6).filePath())
+                data['estiloCamadas'].append(self.tbl_wfs.cellWidget(item, 6).filePath())
                 data['descricao'].append(self.tbl_wfs.item(item, 7).text())
 
         if is_update:
@@ -1637,10 +1638,168 @@ class ConfigWindow(QtWidgets.QDialog):
         path = self.path_json.filePath()
         self.credencials.store_path_json(path)
 
-
     def fill_path_json(self):
         path = self.credencials.get_path_json()
         self.path_json.setFilePath(str(path))
 
     def path_mudou(self):
         self.path_json_mudou_flag = 1
+
+    def handle_tabwidget(self, index):
+        """
+            função para tratar signal de click no TabWidget
+        """
+        if index == 3:
+            self.bases_shp = []
+            self.bases_bd = []
+            self.bases_wfs = []
+            self.config_col_tab()
+
+    def config_col_tab(self):
+        self.tbl_col_shp.setRowCount(len(self.source_shp))
+
+        for idx, shp in enumerate(self.source_shp):
+            nome = shp['nomeFantasiaCamada']
+            id_base = shp['id']
+            caminho = shp['diretorioLocal']
+            selectedFields = shp['selectedFields']
+            self.bases_shp.append(id_base)
+            layer = QgsVectorLayer(caminho, f"{nome}",  "ogr")
+
+            field_names = [field.name() for field in layer.fields()] 
+            self.cmb_shp_fields1 = comboColunas(self.tbl_col_shp, field_names)
+            self.cmb_shp_fields2 = comboColunas(self.tbl_col_shp, field_names)
+            self.cmb_shp_fields3 = comboColunas(self.tbl_col_shp, field_names)
+
+            self.cmb_shp_fields1.setCurrentText(selectedFields[0])
+            self.cmb_shp_fields2.setCurrentText(selectedFields[1])
+            self.cmb_shp_fields3.setCurrentText(selectedFields[2])
+
+            qitem_nome = QTableWidgetItem(f"{nome}")
+
+            self.tbl_col_shp.setItem(idx, 0, qitem_nome)
+            self.tbl_col_shp.setCellWidget(idx, 1, self.cmb_shp_fields1)
+            self.tbl_col_shp.setCellWidget(idx, 2, self.cmb_shp_fields2)
+            self.tbl_col_shp.setCellWidget(idx, 3, self.cmb_shp_fields3)
+            
+
+        et = EnvTools()
+        for i in self.source_databases:
+            user, pwd = et.get_credentials(i['id'])
+
+            port = i['porta']
+            host = i['host']
+            dbase = i['baseDeDados']
+            nomes = i['nomeFantasiaCamada']
+            id_base = i['id']
+            self.tbl_col_bd.setRowCount(len(nomes))
+            selectedFields = i['selectedFields']
+            
+            uri = QgsDataSourceUri()
+            uri.setConnection(host, port, dbase, user, pwd)
+
+            for idx, camada in enumerate(i['tabelasCamadas']):
+                selectedFields_camada = selectedFields[str(idx)]
+                uri.setDataSource('public', f'{camada}', 'geom')
+                layer = QgsVectorLayer(uri.uri(False), camada, 'postgres')
+                field_names = [field.name() for field in layer.fields()]
+                self.cmb_db_fields1 = comboColunas(self.tbl_col_bd, field_names)
+                self.cmb_db_fields2 = comboColunas(self.tbl_col_bd, field_names)
+                self.cmb_db_fields3 = comboColunas(self.tbl_col_bd, field_names)
+
+                self.cmb_db_fields1.setCurrentText(selectedFields_camada[0])
+                self.cmb_db_fields2.setCurrentText(selectedFields_camada[1])
+                self.cmb_db_fields3.setCurrentText(selectedFields_camada[2])
+
+                self.bases_bd.append((id_base, idx))
+                
+                qitem_nome = QTableWidgetItem(f"{nomes[idx]}")
+
+                self.tbl_col_bd.setItem(idx, 0, qitem_nome)
+                self.tbl_col_bd.setCellWidget(idx, 1, self.cmb_db_fields1)
+                self.tbl_col_bd.setCellWidget(idx, 2, self.cmb_db_fields2)
+                self.tbl_col_bd.setCellWidget(idx, 3, self.cmb_db_fields3)
+        
+        for wfs in range(len(self.source_wfs)):
+            for idx_wfs_layer in range(len(self.source_wfs[wfs]['nomeFantasiaCamada'])):
+                selectedFields = self.source_wfs[wfs]['selectedFields']
+                nome = self.source_wfs[wfs]['nomeFantasiaCamada'][idx_wfs_layer]
+                geojson = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                'wfs_layers', self.source_wfs[wfs]['nome'],
+                self.source_wfs[wfs]['diretorio'][idx_wfs_layer].split(r"/")[-1])
+                selectedFields_camada = selectedFields[str(idx_wfs_layer)]
+                self.tbl_col_wfs.setRowCount(len(self.source_wfs[wfs]['nomeFantasiaCamada']))
+                self.bases_wfs.append((self.source_wfs[wfs]['id'], idx_wfs_layer))
+
+                layer = QgsVectorLayer(geojson, "wfs",  "ogr")
+                field_names = [field.name() for field in layer.fields()]
+
+                self.cmb_wfs_fields1 = comboColunas(self.tbl_col_wfs, field_names)
+                self.cmb_wfs_fields2 = comboColunas(self.tbl_col_wfs, field_names)
+                self.cmb_wfs_fields3 = comboColunas(self.tbl_col_wfs, field_names)
+
+                self.cmb_wfs_fields1.setCurrentText(selectedFields_camada[0])
+                self.cmb_wfs_fields2.setCurrentText(selectedFields_camada[1])
+                self.cmb_wfs_fields3.setCurrentText(selectedFields_camada[2])
+
+                qitem_nome = QTableWidgetItem(nome)
+
+                self.tbl_col_wfs.setItem(idx_wfs_layer, 0, qitem_nome)
+                self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 1, self.cmb_wfs_fields1)
+                self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 2, self.cmb_wfs_fields2)
+                self.tbl_col_wfs.setCellWidget(idx_wfs_layer, 3, self.cmb_wfs_fields3)
+
+    def save_col_tab(self):
+        if self.tabWidget.currentIndex() != 3:
+            return
+        # Salva colunas SHP
+        for row in range(self.tbl_col_shp.rowCount()):
+            base_shp = self.bases_shp[row]
+            config = self.search_base_shp(base_shp)
+
+            self.cmb_shp_fields1 = self.tbl_col_shp.cellWidget(row, 1)
+            self.cmb_shp_fields2 = self.tbl_col_shp.cellWidget(row, 2)
+            self.cmb_shp_fields3 = self.tbl_col_shp.cellWidget(row, 3)
+
+            config["selectedFields"] = (self.cmb_shp_fields1.currentText(),self.cmb_shp_fields2.currentText(),self.cmb_shp_fields3.currentText())
+            self.settings.edit_database(base_shp, config)
+
+        # Salva colunas BD
+        for row in range(self.tbl_col_bd.rowCount()):
+            base_bd, idx_camada = self.bases_bd[row]
+
+            self.cmb_db_fields1 = self.tbl_col_bd.cellWidget(row, 1)
+            self.cmb_db_fields2 = self.tbl_col_bd.cellWidget(row, 2)
+            self.cmb_db_fields3 = self.tbl_col_bd.cellWidget(row, 3)
+
+            config = self.search_base_pg(base_bd)
+            if "selectedFields" in config:
+                config['selectedFields'][idx_camada] = (self.cmb_db_fields1.currentText(),self.cmb_db_fields2.currentText(),self.cmb_db_fields3.currentText())
+            else:
+                config["selectedFields"] = {idx_camada: (self.cmb_db_fields1.currentText(),self.cmb_db_fields2.currentText(),self.cmb_db_fields3.currentText())}
+
+            self.settings.edit_database(base_bd, config)
+
+        # Salva colunas WFS
+        for row in range(self.tbl_col_wfs.rowCount()):
+            base_wfs, idx_camada = self.bases_wfs[row]
+
+            self.cmb_wfs_fields1 = self.tbl_col_wfs.cellWidget(row, 1)
+            self.cmb_wfs_fields2 = self.tbl_col_wfs.cellWidget(row, 2)
+            self.cmb_wfs_fields3 = self.tbl_col_wfs.cellWidget(row, 3)
+
+            config = self.settings.get_source_data(base_wfs)
+            
+            if "selectedFields" in config:
+                config['selectedFields'][idx_camada] = (self.cmb_wfs_fields1.currentText(),self.cmb_wfs_fields2.currentText(),self.cmb_wfs_fields3.currentText())
+            else:
+                config["selectedFields"] = {idx_camada: (self.cmb_wfs_fields1.currentText(),self.cmb_wfs_fields2.currentText(),self.cmb_wfs_fields3.currentText())}
+
+            self.settings.edit_database(base_wfs, config) 
+
+
+class comboColunas(QComboBox):
+    def __init__(self, parent, lista_itens):
+        super().__init__(parent)
+        self.addItems(lista_itens)
+        self.setCurrentIndex(-1)

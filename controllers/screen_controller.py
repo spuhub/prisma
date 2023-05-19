@@ -31,9 +31,8 @@ class Controller:
         self.main_window.switch_overlay_point.connect(self.show_overlay_point)
         self.main_window.switch_overlay_feature.connect(self.show_overlay_feature)
         self.main_window.switch_overlay_shapefile.connect(self.show_overlay_shapefile)
+        self.main_window.switch_memorial_conversion.connect(self.show_memorial_conversion)
 
-        # if not self.first_start:
-        # self.first_start = True
         self.main_window.show()
 
     def show_config(self):
@@ -85,19 +84,29 @@ class Controller:
         self.select_databases.continue_window.connect(self.show_result_window)
         self.select_databases.show()
 
-    def show_report_generator(self, result):
+    def show_report_generator(self, data):
         """
         Função acionada (e também serve como controller) para mostrar a tela onde o usuário insere os dados de cabeçalho e local onde devem ser gerados os relatórios PDF do prisma.
         """
         from ..screens.report_generator import ReportGenerator
-        self.report_generator = ReportGenerator(result)
+        self.report_generator = ReportGenerator(data)
         self.report_generator.show()
 
-    def show_result_window(self, result):
+    def show_result_window(self, data):
         """
         Função acionada (e também serve como controller) para mostrar a tela de resultados do prisma.
         """
         from ..screens.result_window import ResultWindow
-        self.result_window = ResultWindow(result)
+        self.result_window = ResultWindow(data)
         self.result_window.report_generator_window.connect(self.show_report_generator)
         self.result_window.show()
+
+    def show_memorial_conversion(self):
+        """
+        Função acionada (e também serve como controller) para mostrar a tela de busca através de input shapefile do prisma.
+        """
+        from ..screens.memorial_conversion import MemorialConversion
+        self.overlay_shapefile_window = MemorialConversion(self.iface)
+        self.overlay_shapefile_window.back_window.connect(self.show_main)
+        self.overlay_shapefile_window.continue_window.connect(self.show_select_databases)
+        self.overlay_shapefile_window.show()

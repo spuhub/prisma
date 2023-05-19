@@ -1,155 +1,98 @@
-from ..databases.db_connection import DbConnection
-from ..databases.shp_handle import ShpHandle
-from .utils import Utils
+from qgis.core import QgsField, QgsFeatureRequest
+from PyQt5.QtCore import QVariant
 
-import geopandas as gpd
-from shapely.wkt import loads
+from ..databases.db_connection import DbConnection
+from ..databases.handle_selections import HandleSelections
+from .utils import Utils
+from .lyr_utils import *
+
+from ..environment import NOME_CAMADA_ENTRADA, NOME_CAMADA_ENTRADA_BUFFER, CRS_PADRAO
 
 class DataProcessing():
     def __init__(self):
         """Método construtor da classe."""
-        self.shp_handle = ShpHandle()
+        self.handle_selections = HandleSelections()
         self.utils = Utils()
 
     def data_preprocessing(self, operation_config):
         # Leitura do shapefile de input
-        input = operation_config['input']
-        input = input.to_crs(4326)
-        input_standard = input.copy()
+        lyr_input = operation_config['input']['layer']
+        lyr_input.setName(NOME_CAMADA_ENTRADA)
+        lyr_input = lyr_process(lyr_input, operation_config, CRS_PADRAO)
+        # lyr_input = add_style(lyr_input, "C:\\Users\\vinir\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\SPU-Prisma\\styles\\3_2_2_Trecho_Terreno_Marinha_A.sld")
+        input_buffer = operation_config['input'].get('aproximacao', {})
 
-        # Cálculo do buffer de proximidade
-        if 'aproximacao' in operation_config:
-            input = self.utils.add_input_approximation_geographic(input, operation_config['aproximacao'])
+        # Leitura de itens de comparação
+        dic_lyr_retorno = {}
+  
+        list_required, operation_config = self.handle_selections.read_required_layers(operation_config['obrigatorio'], operation_config)
+        list_selected_shp, operation_config = self.handle_selections.read_selected_shp(operation_config['shp'], operation_config)
+        list_selected_wfs, operation_config = self.handle_selections.read_selected_wfs(operation_config['wfs'], operation_config)
+        list_selected_db, operation_config = self.handle_selections.read_selected_db(operation_config['pg'], operation_config)
 
-        # Leitura de shapefiles de comparação
-        gdf_selected_shp = self.shp_handle.read_selected_shp(operation_config['shp'])
-        gdf_selected_wfs = self.shp_handle.read_selected_wfs(operation_config['wfs'])
+        for layer in list_selected_shp:
+            # Criar campo com o nome da camada de comparação
+            lyr_input = self.init_field_layer_name(lyr_input, layer.name())
+            # Adiciona buffer nas camadas de comparação
+            if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
+                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
 
-        scaled_input = self.utils.add_input_scale(input)
-        # Aquisição dos dados vindos de banco de dados
-        gdf_selected_db = self.get_db_layers(scaled_input, operation_config['pg'])
-        # Cria Geodataframe selecionados como bases de dados obrigatórios
-        gdf_selected_shp, gdf_selected_db, operation_config = self.get_required_layers(scaled_input, operation_config, gdf_selected_shp, gdf_selected_db)
-        gdf_selected_shp_standard = gdf_selected_shp.copy()
+        for layer in list_selected_wfs:
+            # Criar campo com o nome da camada de comparação
+            lyr_input = self.init_field_layer_name(lyr_input, layer.name())
+            # Adiciona buffer nas camadas de comparação
+            if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
+                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
 
-        for index, layer in enumerate(gdf_selected_shp):
-            if 'aproximacao' in operation_config['shp'][index] and operation_config['shp'][index]['aproximacao'][0] > 0:
-                gdf_selected_shp[index] = self.utils.add_input_approximation_geographic(layer, operation_config['shp'][index]['aproximacao'][0])
+        for layer in list_selected_db:
+            # Criar campo com o nome da camada de comparação
+            lyr_input = self.init_field_layer_name(lyr_input, layer.name())
+            # Adiciona buffer nas camadas de comparação
+            if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
+                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
 
-        # Elimina feições de comparação distantes das feições de input
-        gdf_selected_shp = self.eliminate_distant_features_shp(scaled_input, gdf_selected_shp)
-        gdf_selected_wfs = self.eliminate_invalid_geometrys(gdf_selected_wfs)
+        for layer in list_required:
+            # Criar campo com o nome da camada de comparação
+            lyr_input = self.init_field_layer_name(lyr_input, layer.name())
+            # Adiciona buffer nas camadas de comparação
+            if operation_config.get('aproximacao') and operation_config['aproximacao'].get(layer.name()):
+                layer = insert_buffer(layer, operation_config['aproximacao'][layer.name()])
 
-        for index, layer in enumerate(gdf_selected_wfs):
-            if 'aproximacao' in operation_config['wfs'][index] and operation_config['wfs'][index]['aproximacao'] > 0:
-                gdf_selected_wfs[index] = self.utils.add_input_approximation_geographic(layer, operation_config['wfs'][index]['aproximacao'])
+        lyr_input.updateFields()
+        dic_lyr_retorno = {'input': lyr_input, 'required': list_required, 'db': list_selected_db, 'shp': list_selected_shp, 'wfs': list_selected_wfs}
+        
+        # Trata o retorno da função caso usuário tenha inserido buffer na camada de entrada
+        if input_buffer:
+            lyr_input_buffer = insert_buffer(lyr_input, input_buffer)
+            lyr_input_buffer.setName(NOME_CAMADA_ENTRADA_BUFFER)
+            dic_lyr_retorno.update(input_buffer = lyr_input_buffer)
 
-        # Elimina feições de comparação distantes das feições de input
-        gdf_selected_wfs = self.eliminate_distant_features_shp(scaled_input, gdf_selected_wfs)
-
-        return input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_wfs, gdf_selected_db, operation_config
-
-    def eliminate_invalid_geometrys(self, gdf_selected_wfs):
-        '''
-        Elimina geometrias inválidas vindas da base de dados WFS
-        :param gdf_selected_wfs:
-        :return:
-        '''
-        for i in range(len(gdf_selected_wfs)):
-            gdf_selected_wfs[i] = gdf_selected_wfs[i].to_crs(4326)
-            for indexArea, rowArea in gdf_selected_wfs[i].iterrows():
-                if 'geometry' not in rowArea:
-                    gdf_selected_wfs[i].drop(indexArea, inplace=True)
-                    continue
-
-                if rowArea['geometry'] == None:
-                    gdf_selected_wfs[i].drop(indexArea, inplace=True)
-                    continue
-
-                if not rowArea['geometry'].is_valid:
-                    gdf_selected_wfs[i].drop(indexArea, inplace=True)
-
-        return gdf_selected_wfs
-
-    def get_db_layers(self, scaled_input, operation_config):
+        return dic_lyr_retorno
+    
+    def init_field_layer_name(self, layer, field_name):
         """
-        Carrega as bases de dados selecionadas para conparação, vindas de banco de dados
+        Função que cria para um novo campo no shapefile de input.
+        Esse campo tem o nome de uma das camadas de comparação, que armazenara True caso haja sobreposição
+        e False caso não exista sobreposição entre feição de entrada e camada de comparação 
+
+        @param layer: Camada de entrada
+        @param field_name: Nome fantasia da camada de comparação
         """
-        # Configuração acesso banco de dados Postgis junto das camadas que serão utilizadas
-        databases = []
-        for db in operation_config:
-            if 'aproximacao' in db:
-                databases.append(
-                    {'connection': DbConnection(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
-                     'layers': db['tabelasCamadas'], 'buffer': db['aproximacao']})
-            else:
-                databases.append(
-                    {'connection': DbConnection(db['host'], db['porta'], db['baseDeDados'], db['usuario'], db['senha']),
-                     'layers': db['tabelasCamadas'], 'buffer': None})
+        layer_provider = layer.dataProvider()
+        # Adiciona um novo campo ao layer
+        layer_provider.addAttributes([QgsField(field_name, QVariant.Bool)])
 
-        # Cria lista com as bases de dados dos bancos de dados que foram selecionadas para comparação
-        gdf_selected_db = []
-        for index_db, database in enumerate(databases):
-            layers_db = []
-            for index, layer in enumerate(database['layers']):
-                approximation = None
-                if database['buffer'] != None:
-                    approximation = database['buffer'][index] / 111319.5432
-                gdf, crs = database['connection'].CalculateIntersectGPD(scaled_input, layer, approximation,
-                                                                        (str(scaled_input.crs)).replace('epsg:', ''))
-                if len(gdf) > 0 and crs != None:
-                    # gdf.crs = {'init': 'epsg:' + str(crs)}
+        # Atualiza os campos
+        layer.updateFields()
 
-                    layers_db.append(gpd.GeoDataFrame(gdf, crs=crs, geometry='geometry'))
+        # Obtém o índice do novo campo
+        field_index = layer.fields().indexFromName(field_name)
 
-            gdf_selected_db.append(layers_db)
-        return gdf_selected_db
+        # Cria um objeto QgsFeatureRequest para selecionar todos os recursos da camada
+        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
 
-    def get_required_layers(self, scaled_input, operation_config, gdf_selected_shp, gdf_selected_db):
-        for i in range(len(operation_config['required'])):
-            if operation_config['required'][i]['tipo'] == 'shp':
-                operation_config['shp'].append(operation_config['required'][i])
-                get_shp = self.shp_handle.read_selected_shp([operation_config['required'][i]])[0]
-                gdf_selected_shp.append(get_shp)
-            else:
-                operation_config['pg'].append(operation_config['required'][i])
-                get_db = self.get_db_layers(scaled_input, [operation_config['required'][i]])[0]
-                gdf_selected_db.append(get_db)
+        # Loop sobre todos os recursos da camada e atualiza o novo campo com o valor padrão
+        for feat in layer.getFeatures(request):
+            layer.changeAttributeValue(feat.id(), field_index, False)
 
-        # gdf_required = self.to_list(gdf_required)
-        return gdf_selected_shp, gdf_selected_db, operation_config
-
-    def eliminate_distant_features_shp(self, scaled_input, gdf_selected_shp):
-        """Método utilizado para eliminar feições das camadas de comparação que estão distantes das feições de input.
-        Serve para melhorar o desempenho para processamentos futuros, como por exemplo geração de plantas PDF e mostrar áreas no mostrador do QGIS.
-        Vale ressaltar que essa função existe somente para shapefile pois, com banco de dados essa operação já acontece no lado do banco de dados
-
-        @keyword scaled_input: Camada de input, com o acrescimo da função escala para obter, através de teste de sobreposição, áreas próximas ao input.
-        @keyword gdf_selected_shp: Camadas de banco de dados selecionadas para comparação.
-        @return gdf_selected_shp: Retorna as camadas shapefiles contendo somente áreas próximas à camada de input.
-        """
-        index = 0
-        for i in range(len(gdf_selected_shp)):
-            gdf_selected_shp[i]['close_input'] = False
-            gdf_selected_shp[i] = gdf_selected_shp[i].to_crs(4326)
-            for indexArea, rowArea in gdf_selected_shp[i].iterrows():
-                for indexInput, rowInput in scaled_input.iterrows():
-                    if (rowInput['geometry'].intersection(rowArea['geometry'])):
-                        gdf_selected_shp[i].loc[indexArea, 'close_input'] = True
-            index += 1
-
-        for i in range(len(gdf_selected_shp)):
-            # Obriga a sempre manter ao menos um registro no GeoDataFrame
-            # Serve para pegar o tipo da geometria posteriormente durante as comparações
-            gdf_selected_shp[i].loc[0, 'close_input'] = True
-            # Exclui áreas que não foram classificadas como perto do input (sem sobreposição ao input escalado)
-            gdf_selected_shp[i] = gdf_selected_shp[i].query("close_input == True")
-            gdf_selected_shp[i] = gdf_selected_shp[i].drop(columns=['close_input'])
-
-        return gdf_selected_shp
-
-    def to_list(self, gdf):
-        if isinstance(gdf, list):
-            return [sub_elem for elem in gdf for sub_elem in self.to_list(elem)]
-        else:
-            return [gdf]
+        return layer

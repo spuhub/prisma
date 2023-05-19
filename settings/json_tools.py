@@ -14,7 +14,6 @@ class JsonTools:
         current_path = env.get_path_json()
         self.json_path = base_dir + "/settings/config_Json/dbtabases.json"
         if current_path != "" and current_path is not None and current_path != "None":
-            print("entrou", current_path)
             self.json_path = current_path
 
 
@@ -121,9 +120,9 @@ class JsonTools:
                         if data_required_layer[0] == base:
                             if data_json['tipo'] == 'pg':
                                 data_json['tabelasCamadas'] = [data_required_layer[1]]
-                                data_json['nomeFantasiaTabelasCamadas'] = [data_required_layer[2]]
+                                data_json['nomeFantasiaCamada'] = data_required_layer[2]
                             else:
-                                data_json['nomeFantasiaCamada'] = [data_required_layer[2]]
+                                data_json['nomeFantasiaCamada'] = data_required_layer[2]
                             required_list.append(data_json)
 
         return required_list

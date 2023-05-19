@@ -22,8 +22,17 @@
  ***************************************************************************/
 """
 from ..utils.utils import Utils
+from qgis.core import QgsFeature, QgsVectorLayer, QgsWkbTypes, QgsGeometry, QgsField, QgsFields, QgsPointXY, QgsCoordinateReferenceSystem, QgsProject, QgsCoordinateTransform
+from ..utils.lyr_utils import lyr_process
+from qgis.PyQt.QtCore import QVariant
 
-import geopandas as gpd
+from ..environment import (
+    CRS_PADRAO,
+    NOME_CAMADA_INTERSECAO_PONTO,
+    NOME_CAMADA_INTERSECAO_LINHA,
+    NOME_CAMADA_INTERSECAO_POLIGONO,
+    NOME_CAMADA_VERTICES
+)
 
 class OverlayAnalisys():
     """
@@ -35,9 +44,12 @@ class OverlayAnalisys():
     """
     def __init__(self):
         """Método construtor da classe."""
+        self.provider_point = None
+        self.provider_line = None
+        self.provider_polygon = None
         self.utils = Utils()
 
-    def overlay_analysis(self, input, input_standard, gdf_selected_shp, gdf_selected_wfs, gdf_selected_db, operation_config):
+    def overlay_analysis(self, dic_layers, operation_config):
         """
         Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas.
         Esta função é feita através da projeção geográfica.
@@ -47,137 +59,227 @@ class OverlayAnalisys():
         """
         self.operation_config = operation_config
 
-        # gdf_buffered_shp, gdf_buffered_pg = self.handle_approximation_layers()
+        lyr_input = None
+        if 'input_buffer' in dic_layers:
+            lyr_input = dic_layers['input_buffer']
+        else:
+            lyr_input = dic_layers['input']
+            
+        list_required = dic_layers['required']
+        list_selected_shp = dic_layers['shp']
+        list_selected_wfs = dic_layers['wfs']
+        list_selected_db = dic_layers['db']
 
-        # input['Área Homologada_area'] = 0
-        # Comparação de sobreposição entre input e Shapefiles
-        input = self.analisys_shp(input, gdf_selected_shp)
+        feats_input = lyr_input.getFeatures()
+        lyr_input.selectAll()
+        bbox_lyr_input = lyr_input.boundingBoxOfSelected()
 
-        # Comparação de sobreposição entre input e Shapefiles
-        input = self.analisys_wfs(input, gdf_selected_wfs)
+        # Cria em memória a camada de interseção
+        self.lyr_overlap_point = QgsVectorLayer(f'MultiPoint?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_PONTO, 'memory')
+        self.lyr_overlap_line = QgsVectorLayer(f'MultiLineString?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_LINHA, 'memory')
+        self.lyr_overlap_polygon = QgsVectorLayer(f'MultiPolygon?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_POLIGONO, 'memory')
+        lyr_vertices = QgsVectorLayer(f'Point?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_VERTICES, 'memory')
 
-        # Comparação de sobreposição entre input e bases de dados de banco de dados
-        input = self.analysis_db(input, gdf_selected_db)
+        # Extrai vértices da camada de entrada
+        if lyr_input.wkbType() == QgsWkbTypes.Polygon or lyr_input.wkbType() == QgsWkbTypes.MultiPolygon:
+            lyr_vertices = self._extract_polygon_vertices(lyr_input)
+            lyr_vertices = lyr_process(lyr_vertices, operation_config)
+        
+        fields = lyr_input.fields()
+        novo_campo = QgsField('Camada_sobreposicao', QVariant.String)
+        fields.append(novo_campo)
 
-        result = {'input': input, 'input_standard': input_standard, 'gdf_selected_shp': gdf_selected_shp,
-                  'gdf_selected_wfs': gdf_selected_wfs, 'gdf_selected_db': gdf_selected_db}
+        self.provider_point = self.lyr_overlap_point.dataProvider()
+        self.provider_point.addAttributes(fields)
 
-        return result
+        self.provider_line = self.lyr_overlap_line.dataProvider()
+        self.provider_line.addAttributes(fields)
 
-    def analisys_shp(self, input, gdf_selected_shp):
-        """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
+        self.provider_polygon = self.lyr_overlap_polygon.dataProvider()
+        self.provider_polygon.addAttributes(fields)
 
-        @keyword input: Camada de input.
-        @keyword gdf_selected_shp: Camadas shapefiles selecionadas para comparação.
-        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
+        self.lyr_overlap_point.updateFields()
+        self.lyr_overlap_line.updateFields()
+        self.lyr_overlap_polygon.updateFields()
+                
+        dic_overlaps = {}
+        lyr_input.startEditing()
+        self.lyr_overlap_point.startEditing()
+        self.lyr_overlap_line.startEditing()
+        self.lyr_overlap_polygon.startEditing()
+        
+        for feat in feats_input:
+            feat_geom = feat.geometry()
+
+            for lyr_shp in list_selected_shp:
+                index = lyr_input.fields().indexFromName(lyr_shp.name())
+                # Início dos processos para comparação
+                feats_shp = lyr_shp.getFeatures(bbox_lyr_input)
+
+                for feat_shp in feats_shp:
+                    feat_shp_geom = feat_shp.geometry()
+
+                    if feat_geom.intersects(feat_shp_geom):
+                        if lyr_shp.name() not in dic_overlaps:
+                            dic_overlaps[lyr_shp.name()] = [lyr_shp, 1]
+                        else:
+                            dic_overlaps[lyr_shp.name()][1] += 1
+
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
+                        self._create_overlap_feature(feat_geom, feat_shp_geom, feat, lyr_shp.name())
+            
+            for lyr_db in list_selected_db:
+                index = lyr_input.fields().indexFromName(lyr_db.name())
+                feats_db = lyr_db.getFeatures(bbox_lyr_input)
+
+                for feat_db in feats_db:
+                    feat_db_geom = feat_db.geometry()
+
+                    if feat_geom.intersects(feat_db_geom):
+                        if lyr_db.name() not in dic_overlaps:
+                            dic_overlaps[lyr_db.name()] = [lyr_db, 1]
+                        else:
+                            dic_overlaps[lyr_db.name()][1] += 1
+
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
+                        self._create_overlap_feature(feat_geom, feat_db_geom, feat, lyr_db.name())
+            
+            for lyr_wfs in list_selected_wfs:
+                index = lyr_input.fields().indexFromName(lyr_wfs.name())
+                feats_wfs = lyr_wfs.getFeatures(bbox_lyr_input)
+
+                for feat_wfs in feats_wfs:
+                    feat_wfs_geom = feat_wfs.geometry()
+
+                    if feat_geom.intersects(feat_wfs_geom):
+                        if lyr_wfs.name() not in dic_overlaps:
+                            dic_overlaps[lyr_wfs.name()] = [lyr_wfs, 1]
+                        else:
+                            dic_overlaps[lyr_wfs.name()][1] += 1
+                        
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
+                        self._create_overlap_feature(feat_geom, feat_wfs_geom, feat, lyr_wfs.name())
+
+            for lyr_req in list_required:
+                index = lyr_input.fields().indexFromName(lyr_req.name())
+                feats_req = lyr_req.getFeatures(bbox_lyr_input)
+
+                for feat_req in feats_req:
+                    feat_req_geom = feat_req.geometry()
+
+                    if feat_geom.intersects(feat_req_geom):
+                        if lyr_req.name() not in dic_overlaps:
+                            dic_overlaps[lyr_req.name()] = [lyr_req, 1]
+                        else:
+                            dic_overlaps[lyr_req.name()][1] += 1
+
+                        lyr_input.changeAttributeValue(feat.id(), index, True)
+                        self._create_overlap_feature(feat_geom, feat_req_geom, feat, lyr_req.name())
+
+        # Atualiza camada de entrada
+        lyr_input.commitChanges()
+
+        # Adiciona os estilos às camadas de sobreposição
+        self.lyr_overlap_point = lyr_process(self.lyr_overlap_point, operation_config)
+        self.lyr_overlap_line = lyr_process(self.lyr_overlap_line, operation_config)
+        self.lyr_overlap_polygon = lyr_process(self.lyr_overlap_polygon, operation_config)
+
+        # Seta como None a variável caso não tenha nenhuma sobreposição
+        if self.lyr_overlap_point.featureCount() == 0:
+            self.lyr_overlap_point = None
+        if self.lyr_overlap_line.featureCount() == 0:
+            self.lyr_overlap_line = None
+        if self.lyr_overlap_polygon.featureCount() == 0:
+            self.lyr_overlap_polygon = None
+        if lyr_vertices.featureCount() == 0:
+            lyr_vertices = None
+        
+        return dic_overlaps, self.lyr_overlap_point, self.lyr_overlap_line, self.lyr_overlap_polygon, lyr_vertices
+    
+    def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat, lyr_overlap_name) -> None:
         """
-        index = 0
-        overlay_shp = input.copy()
-        for area in gdf_selected_shp:
-            overlay_shp[self.operation_config['shp'][index]['nomeFantasiaCamada']] = False
-            area = area.to_crs(4326)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        overlay_shp.loc[indexInput, self.operation_config['shp'][index]['nomeFantasiaCamada']] = True
-                        # if str(input.geom_type) == str(area.geom_type):
-                        #     overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+        Função auxiliar que cria uma feição de sobreposição.
 
-            index += 1
-        return overlay_shp
-
-    def analisys_wfs(self, input, gdf_selected_wfs):
-        """Verifica sobreposição entre camada de input e camadas shapefiles selecionadas.
-
-        @keyword input: Camada de input.
-        @keyword gdf_selected_shp: Camadas shapefiles selecionadas para comparação.
-        @return overlay_shp: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
+        @param feat_geom: geometria da feição do input
+        @param feat_overlap_geom: geometria da feição em que houve sobreposição
+        @param provider: provedor de dados onde a feição de sobreposição será adicionada
+        @param feat_attributes: atributos da feição do input
         """
-        index = 0
-        overlay_wfs = input.copy()
-        for area in gdf_selected_wfs:
-            overlay_wfs[self.operation_config['wfs'][index]['nomeFantasiaTabelasCamadas']] = False
-            area = area.to_crs(4326)
-            for indexArea, rowArea in area.iterrows():
-                for indexInput, rowInput in input.iterrows():
-                    if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                        overlay_wfs.loc[indexInput, self.operation_config['wfs'][index]['nomeFantasiaTabelasCamadas']] = True
-                        # if str(input.geom_type) == str(area.geom_type):
-                        #     overlay_shp.loc[indexInput, str(self.operation_config['shp'][index]['nomeFantasiaCamada'] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+        feat_fields = feat.fields()
+        feat_attributes = feat.attributes()
+        
+        # Cria a feição de sobreposição
+        overlap_feat = QgsFeature()
 
-            index += 1
-        return overlay_wfs
+        geom_intersect = feat_geom.intersection(feat_overlap_geom)
+        overlap_feat.setGeometry(geom_intersect)
 
-    def analysis_db(self, input, gdf_selected_db):
-        """Verifica sobreposição entre camada de input e camadas de banco de dados selecionadas.
+        novo_campo = QgsField('Camada_sobreposicao', QVariant.String)
+        feat_fields.append(novo_campo)
+        feat_attributes.append(lyr_overlap_name)
+        novo_campo = QgsField('logradouro', QVariant.String)
+        feat_fields.append(novo_campo)
+        feat_attributes.append(feat.attribute('logradouro'))
 
-        @keyword input: Camada de input.
-        @keyword gdf_selected_shp: Camadas de banco de dados selecionadas para comparação.
-        @return overlay_db: Retorna camada contendo um campo True para feições de comparação que se sobrepuseram a camada de input.
-        """
-        index_db = 0
-        overlay_db = input.copy()
-        # overlay_db['sobreposicao'] = False
-        for db in gdf_selected_db:
-            index_layer = 0
-            for layer_db in db:
-                overlay_db[self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][index_layer]] = False
-                # layer_db.geometry = gpd.GeoSeries.from_wkt(layer_db['geometry'])
-                layer_db = layer_db.to_crs(4326)
-                for indexArea, rowArea in layer_db.iterrows():
-                    for indexInput, rowInput in input.iterrows():
-                        if (rowArea['geometry'].intersection(rowInput['geometry'])):
-                            overlay_db.loc[indexInput, self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
-                                    index_layer]] = True
-                            # if str(input.geom_type) == str(layer_db.geom_type):
-                            #     overlay_db.loc[
-                            #         indexInput, str(self.operation_config['pg'][index_db]['nomeFantasiaTabelasCamadas'][
-                            #             index_layer] + "_area")] += (rowArea['geometry'].intersection(rowInput['geometry'])).area
+        overlap_feat.setFields(feat_fields)
+        overlap_feat.setAttributes(feat_attributes)
 
-                index_layer += 1
+        if geom_intersect.wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
+            self.provider_polygon.addFeatures([overlap_feat])
 
-            index_db += 1
-        return overlay_db
+        elif geom_intersect.wkbType() in [QgsWkbTypes.Point, QgsWkbTypes.MultiPoint]:
+            self.provider_point.addFeatures([overlap_feat])
 
-    def handle_approximation_layers(self, gdf_buffered_shp, gdf_buffered_pg):
-        for index, value in enumerate(self.operation_config['shp']):
-            if 'aproximacao' in self.operation_config['shp'][index]:
-                gdf_buffered_shp[index] = self.utils.add_input_approximation_geographic(gdf_buffered_shp, self.operation_config['shp'][index][0])
+        elif geom_intersect.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+            self.provider_line.addFeatures([overlap_feat])
 
-        for index, value in enumerate(self.operation_config['pg']):
-            if 'aproximacao' in self.operation_config['pg'][index]:
-                gdf_buffered_pg[index] = self.utils.add_input_approximation_geographic(gdf_buffered_pg[index], self.operation_config['pg'][index])
+        # Atualiza camadas de sobreposição
+        self.lyr_overlap_point.commitChanges()
+        self.lyr_overlap_line.commitChanges()
+        self.lyr_overlap_polygon.commitChanges()
+    
+    def calcular_soma_areas(self, layer: QgsVectorLayer, epsg: str) -> str:
+        soma_areas = 0.0
 
-    def get_utm_crs(self, input, epsg_shp_dir):
-        """Para cada feição da camada de input, através da análise de sobreposição, verifica em qual zona UTM a mesma se encontra.
+        sistema_origem = layer.crs()
+        sistema_destino = QgsCoordinateReferenceSystem(f'EPSG:{epsg}')
+        transformacao = QgsCoordinateTransform(sistema_origem, sistema_destino, QgsProject.instance())
 
-        @keyword input: Camada de input.
-        @keyword epsg_shp_dir: Armazena o caminho do diretório, dentro do Prisma, em que se encontra o shapefile contendo a camada de Zonas UTM.
-        @return input: Retorna coluna contendo a zona UTM em que se encontra cada feiçõa de input.
-        """
-        input['crs_feature'] = None
-        epsg_shp = gpd.read_file(epsg_shp_dir)
 
-        # Caso input seja polígonos
-        if input.iloc[0]['geometry'].type in ['Polygon', 'MultiPolygon']:
-            for indexInput, rowInput in input.iterrows():
-                areamaior = 0
-                for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                    area = rowInput['geometry'].intersection(rowEpsg['geometry']).area
-                    if area > 0:
-                        if area > areamaior:
-                            input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                            areamaior = area
+        for feature in layer.getFeatures():
+            geometria = feature.geometry()
 
-        # Caso input seja linhas
-        elif input.iloc[0]['geometry'].type in ['LineString', 'MultiLineString']:
-            for indexInput, rowInput in input.iterrows():
-                areamaior = 0
-                for indexEpsg, rowEpsg in epsg_shp.iterrows():
-                    area = rowInput['geometry'].intersection(rowEpsg['geometry']).length
-                    if area > 0:
-                        if area > areamaior:
-                            input.loc[indexInput, 'crs_feature'] = rowEpsg['EPSG_S2000']
-                            areamaior = area
+            geometria.transform(transformacao)
+            soma_areas += geometria.area()
 
-        return input['crs_feature']
+        soma_areas_arredondada = round(soma_areas, 2)
+        format_value = f'{soma_areas_arredondada:_.2f}'
+        format_value = format_value.replace('.', ',').replace('_', '.')
+
+        return format_value
+    
+    def _extract_polygon_vertices(self, layer):
+        vertices_layer = QgsVectorLayer('Point?crs={}'.format(layer.crs().authid()), 'vertices', 'memory')
+        vertices_layer_fields = QgsFields()
+        
+        for field in layer.fields():
+            vertices_layer_fields.append(field)
+        
+        vertices_layer_fields.append(QgsField('vertex_id', QVariant.Int))
+        vertices_layer_provider = vertices_layer.dataProvider()
+        vertices_layer_provider.addAttributes(vertices_layer_fields)
+        vertices_layer.updateFields()
+        
+        vertex_id = 0
+        for feature in layer.getFeatures():
+            geometry = feature.geometry()
+            for point in geometry.vertices():
+                new_feature = QgsFeature(vertices_layer_fields)
+                new_feature.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(point)))
+                new_feature.setAttributes(feature.attributes())
+                new_feature['vertex_id'] = vertex_id
+                vertex_id += 1
+                vertices_layer_provider.addFeature(new_feature)
+       
+        vertices_layer.setName(NOME_CAMADA_VERTICES)
+        return vertices_layer

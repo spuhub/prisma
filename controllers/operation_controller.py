@@ -42,20 +42,6 @@ class OperationController:
         elif (operation_config['operation'] == 'feature'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_wfs, selected_items_shp)
 
-            # Quando uma camada é pega do QGis, alguns campos são retornados em formato de objeto QVariant
-            # Esses dados sempre são nulos e podem ser apagados, que é oq está sendo feito
-            # Veja: https://github.com/geopandas/geopandas/issues/2269
-            input = operation_config['input']
-            columns = list(input)
-
-            for i in range(len(input)):
-                for column in columns:
-                    if column in input:
-                        if type(input.iloc[i][column]) == QVariant:
-                            input = input.drop(column, axis=1)
-
-            operation_config['input'] = input
-
         elif (operation_config['operation'] == 'coordinate'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_wfs, selected_items_shp)
 
@@ -88,13 +74,13 @@ class OperationController:
             handled_items_wfs.append(handled_value)
 
         for i in self.data_wfs:
-            for key, layer in enumerate(i['nomeFantasiaTabelasCamadas']):
+            for key, layer in enumerate(i['nomeFantasiaCamada']):
                 for layer_req in handled_items_wfs:
                     if i['nome'] == layer_req[1] and layer == layer_req[0]:
                         operation_config['wfs'].append(dict(i))
-                        operation_config['wfs'][-1]['nomeFantasiaTabelasCamadas'] = layer
+                        operation_config['wfs'][-1]['nomeFantasiaCamada'] = layer
                         operation_config['wfs'][-1]['tabelasCamadas'] = i['tabelasCamadas'][key]
-                        operation_config['wfs'][-1]['estiloTabelasCamadas'] = i['estiloTabelasCamadas'][key]
+                        operation_config['wfs'][-1]['estiloCamadas'] = i['estiloCamadas'][key]
                         operation_config['wfs'][-1]['aproximacao'] = i['aproximacao'][key]
                         operation_config['wfs'][-1]['diretorio'] = i['diretorio'][key]
                         operation_config['wfs'][-1]['orgaoResponsavel'] = i['orgaoResponsavel'][key]
@@ -114,14 +100,14 @@ class OperationController:
             i['usuario'] = login[0]
             i['senha'] = login[1]
 
-            for key, layer in enumerate(i['nomeFantasiaTabelasCamadas']):
+            for key, layer in enumerate(i['nomeFantasiaCamada']):
                 for layer_req in handled_items_db:
                     if i['nome'] == layer_req[1] and layer == layer_req[0]:
                         operation_config['pg'].append(dict(i))
-                        operation_config['pg'][-1]['nomeFantasiaTabelasCamadas'] = [layer]
-                        operation_config['pg'][-1]['tabelasCamadas'] = [i['tabelasCamadas'][key]]
-                        operation_config['pg'][-1]['estiloTabelasCamadas'] = [i['estiloTabelasCamadas'][key]]
-                        operation_config['pg'][-1]['aproximacao'] = [i['aproximacao'][key]]
+                        operation_config['pg'][-1]['nomeFantasiaCamada'] = layer
+                        operation_config['pg'][-1]['tabelasCamadas'] = i['tabelasCamadas'][key]
+                        operation_config['pg'][-1]['estiloCamadas'] = i['estiloCamadas'][key]
+                        operation_config['pg'][-1]['aproximacao'] = i['aproximacao'][key]
 
         for i in self.data_required:
             if i['tipo'] == 'pg':
@@ -133,6 +119,6 @@ class OperationController:
                         i['usuario'] = login[0]
                         i['senha'] = login[1]
 
-        operation_config['required'] = self.data_required
+        operation_config['obrigatorio'] = self.data_required
 
         return operation_config

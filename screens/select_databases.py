@@ -42,6 +42,7 @@ class SelectDatabases(QtWidgets.QDialog):
         self.btn_continuar.clicked.connect(self.next)
 
         self.load_lists()
+        
 
     def load_lists(self):
         """
@@ -71,7 +72,7 @@ class SelectDatabases(QtWidgets.QDialog):
                 self.list_shp.addItem(item)
 
         for db in range(len(self.data_bd)):
-            for db_layers in range(len(self.data_bd[db]['nomeFantasiaTabelasCamadas'])):
+            for db_layers in range(len(self.data_bd[db]['nomeFantasiaCamada'])):
                 is_required = False
                 for x in required_pg:
                     if x[0] == self.data_bd[db]['id'] and x[1] == self.data_bd[db]['tabelasCamadas'][db_layers]:
@@ -79,14 +80,14 @@ class SelectDatabases(QtWidgets.QDialog):
 
                 if is_required == False:
                     item = QtWidgets.QListWidgetItem(
-                        self.data_bd[db]['nomeFantasiaTabelasCamadas'][db_layers] + ' (' + self.data_bd[db]['nome'] + ')')
+                        self.data_bd[db]['nomeFantasiaCamada'][db_layers] + ' (' + self.data_bd[db]['nome'] + ')')
                     item.setFont(QFont('Arial', 10))
                     item.setSizeHint(QtCore.QSize(20, 30))
                     item.setFlags(item.flags())
                     self.list_bd.addItem(item)
 
         for db in range(len(self.data_wfs)):
-            for db_layers in range(len(self.data_wfs[db]['nomeFantasiaTabelasCamadas'])):
+            for db_layers in range(len(self.data_wfs[db]['nomeFantasiaCamada'])):
                 is_required = False
                 for x in required_pg:
                     if x[0] == self.data_wfs[db]['id'] and x[1] == self.data_wfs[db]['wfsSelecionadas'][db_layers]:
@@ -94,7 +95,7 @@ class SelectDatabases(QtWidgets.QDialog):
 
                 if is_required == False:
                     item = QtWidgets.QListWidgetItem(
-                        self.data_wfs[db]['nomeFantasiaTabelasCamadas'][db_layers] + ' (' + self.data_wfs[db]['nome'] + ')')
+                        self.data_wfs[db]['nomeFantasiaCamada'][db_layers] + ' (' + self.data_wfs[db]['nome'] + ')')
                     item.setFont(QFont('Arial', 10))
                     item.setSizeHint(QtCore.QSize(20, 30))
                     item.setFlags(item.flags())
@@ -159,15 +160,21 @@ class SelectDatabases(QtWidgets.QDialog):
         self.operation_config = oc.get_operation(self.operation_config, selected_items_shp, selected_items_wfs, selected_items_bd)
 
         # Leitura e manipulação dos dados
-        input, input_standard, gdf_selected_shp, gdf_selected_shp_standard, gdf_selected_wfs, gdf_selected_db, self.operation_config = self.data_processing.data_preprocessing(
-            self.operation_config)
+        dic_layers = self.data_processing.data_preprocessing(self.operation_config)
 
         # Teste de sobreposição
         overlay_analysis = OverlayAnalisys()
-        gdf_result = overlay_analysis.overlay_analysis(input, input_standard, gdf_selected_shp, gdf_selected_wfs, gdf_selected_db, self.operation_config)
+        dic_overlaps, lyr_overlap_point, lyr_overlap_line, lyr_overlap_polygon, lyr_vertices = overlay_analysis.overlay_analysis(dic_layers, self.operation_config)
+        
+        if lyr_overlap_point:
+            dic_layers.update(lyr_overlap_point = lyr_overlap_point)
+        if lyr_overlap_line:
+            dic_layers.update(lyr_overlap_line = lyr_overlap_line)
+        if lyr_overlap_polygon:
+            dic_layers.update(lyr_overlap_polygon = lyr_overlap_polygon)
+        if lyr_vertices:
+            dic_layers.update(lyr_vertices = lyr_vertices)
 
-        data = {'input': gdf_result['input'], 'input_standard': gdf_result['input_standard'],
-                  'gdf_selected_shp': gdf_result['gdf_selected_shp'], 'gdf_selected_shp_standard': gdf_selected_shp_standard,
-                  'gdf_selected_wfs': gdf_result['gdf_selected_wfs'], 'gdf_selected_db': gdf_result['gdf_selected_db'], 'operation_config': self.operation_config}
+        data = {'layers': dic_layers, 'overlaps': dic_overlaps, 'operation_config': self.operation_config}
 
         self.continue_window.emit(data)

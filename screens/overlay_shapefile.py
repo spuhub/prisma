@@ -1,9 +1,9 @@
 import os.path
-import geopandas as gpd
 
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
+from qgis.core import QgsVectorLayer
 
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 from PyQt5.uic import loadUi
 
 
@@ -43,14 +43,19 @@ class OverlayShapefile (QtWidgets.QDialog):
         # Testa se o diretório do shp de entrada foi inserido
         if (self.path_input != ""):
             # Testa se o shp de entrada possui os campos obrigatórios
-            input = gpd.read_file(self.path_input)
-            if 'cpf_cnpj' and 'logradouro' in input:
+            lyr_input = QgsVectorLayer(self.path_input, 'Input', 'ogr')
+            fields = [field.name() for field in lyr_input.fields()]
+            
+            if 'cpf_cnpj' and 'logradouro' in fields:
                 self.hide()
-                data = {"operation": "shapefile", "input": input}
+                data = {'operation': 'shapefile', 'input': {'layer': lyr_input}}
 
                 # Caso usuário tenha inserido área de aproximação
-                if self.txt_aproximacao.text() != '' and float(self.txt_aproximacao.text()) > 0:
-                    data['aproximacao'] = float(self.txt_aproximacao.text())
+                text_aproximacao = self.txt_aproximacao.text()
+
+                if text_aproximacao.replace(".", '', 1).replace(",", '', 1).isnumeric():
+                    if text_aproximacao != '' and float(self.txt_aproximacao.text()) > 0 :
+                        data['input'].update(aproximacao = float(self.txt_aproximacao.text()))
 
                 self.continue_window.emit(data)
             else:

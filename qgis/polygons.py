@@ -136,15 +136,15 @@ class Polygons():
                 area = area.to_crs(crs)
                 area.set_crs(allow_override=True, crs=crs)
 
-                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['required'][index]:
-                    if self.operation_config['operation_config']['required'][index][
+                if 'nomeFantasiaCamada' in self.operation_config['operation_config']['obrigatorio'][index]:
+                    if self.operation_config['operation_config']['obrigatorio'][index][
                         "nomeFantasiaCamada"] == "Área Homologada" or \
-                            self.operation_config['operation_config']['required'][index][
+                            self.operation_config['operation_config']['obrigatorio'][index][
                                 "nomeFantasiaCamada"] == "Área Não Homologada":
-                        input.loc[0, self.operation_config['operation_config']['required'][index]['nomeFantasiaCamada']] = gpd.overlay(
+                        input.loc[0, self.operation_config['operation_config']['obrigatorio'][index]['nomeFantasiaCamada']] = gpd.overlay(
                             input, area).area.sum()
 
-                        if self.operation_config['operation_config']['required'][index][
+                        if self.operation_config['operation_config']['obrigatorio'][index][
                             "nomeFantasiaCamada"] == "Área Homologada":
                             data = []
                             # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e área homologada.
@@ -162,21 +162,21 @@ class Polygons():
                         has_overlay = len(gpd.overlay(area, input))
 
                         if has_overlay > 0:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaCamada']] = True
                         else:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaCamada']] = False
                 else:
-                    if self.operation_config['operation_config']['required'][index][
+                    if self.operation_config['operation_config']['obrigatorio'][index][
                         "nomeFantasiaTabelasCamadas"][0] == "Área Homologada" or \
-                            self.operation_config['operation_config']['required'][index][
+                            self.operation_config['operation_config']['obrigatorio'][index][
                                 "nomeFantasiaTabelasCamadas"][0] == "Área Não Homologada":
-                        input.loc[0, self.operation_config['operation_config']['required'][index][
+                        input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                             'nomeFantasiaTabelasCamadas']] = gpd.overlay(
                             input, area).area.sum()
 
-                        if self.operation_config['operation_config']['required'][index][
+                        if self.operation_config['operation_config']['obrigatorio'][index][
                             "nomeFantasiaTabelasCamadas"][0] == "Área Homologada":
                             data = []
                             # Armazena em um novo GeoDataFrame (intersection) as áreas de interseção entre feição de entrada e área homologada.
@@ -192,10 +192,10 @@ class Polygons():
                     else:
                         has_overlay = len(gpd.overlay(area, input))
                         if has_overlay > 0:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaTabelasCamadas']] = True
                         else:
-                            input.loc[0, self.operation_config['operation_config']['required'][index][
+                            input.loc[0, self.operation_config['operation_config']['obrigatorio'][index][
                                 'nomeFantasiaTabelasCamadas']] = False
             index += 1
         input = input.reset_index(drop=True)
@@ -560,7 +560,7 @@ class Polygons():
                     if name == x_layers:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
-            for x in self.operation_config['operation_config']['required']:
+            for x in self.operation_config['operation_config']['obrigatorio']:
                 if 'nomeFantasiaCamada' in x:
                     if name == x['nomeFantasiaCamada']:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
