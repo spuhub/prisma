@@ -239,7 +239,7 @@ class OverlayAnalisys():
         self.lyr_overlap_polygon.commitChanges()
     
     def calcular_soma_areas(self, layer: QgsVectorLayer, epsg: str) -> str:
-        soma_areas = 0.0
+        soma_geometria = 0.0
 
         sistema_origem = layer.crs()
         sistema_destino = QgsCoordinateReferenceSystem(f'EPSG:{epsg}')
@@ -248,12 +248,15 @@ class OverlayAnalisys():
 
         for feature in layer.getFeatures():
             geometria = feature.geometry()
-
             geometria.transform(transformacao)
-            soma_areas += geometria.area()
 
-        soma_areas_arredondada = round(soma_areas, 2)
-        format_value = f'{soma_areas_arredondada:_.2f}'
+            if geometria.wkbType() == QgsWkbTypes.LineString or geometria.wkbType() == QgsWkbTypes.MultiLineString:
+                soma_geometria += geometria.length()
+            elif geometria.wkbType() == QgsWkbTypes.Polygon or geometria.wkbType() == QgsWkbTypes.MultiPolygon:
+                soma_geometria += geometria.area()
+
+        soma_geometria_arredondada = round(soma_geometria, 2)
+        format_value = f'{soma_geometria_arredondada:_.2f}'
         format_value = format_value.replace('.', ',').replace('_', '.')
 
         return format_value

@@ -92,30 +92,44 @@ class LayoutManager():
             self.feature = feature
             self.pdf_name = f'{feature["logradouro"]}_{self.time}'
 
-            self.handle_required_layers(self.dic_layers_ever)
-
+            self.handle_layers(self.dic_layers_ever, "Área Homologada")
             self.export_relatorio_sintese()
-            self.export_relatorio_mapa()
+            self.export_relatorio_mapa("Área Homologada")
             # self.export_relatorio_vertices()
             self.remover_camadas_intersecoes()
             self.merge_pdf()
+
+        self.remover_camadas_obrigatorias()
+
+        for feature in self.lyr_input.getFeatures():
+            self.feature = feature
+            self.pdf_name = f'{feature["logradouro"]}_{self.time}'
+            for layer_comp in self.dic_layers_ever['shp']:
+                if feature.attribute(layer_comp.name()) == True: # TODO: REMOVER ISSO
+                    print_lyr = layer_comp.clone()
+                    QgsProject.instance().addMapLayer(print_lyr)
+                    self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.export_relatorio_mapa(layer_comp.name())
+                    # self.export_relatorio_vertices()
+                    QgsProject.instance().removeMapLayer(print_lyr.id())
+                    self.remover_camadas_intersecoes()
+                    self.merge_pdf()
         
-    def handle_required_layers(self, data):
+    def handle_layers(self, data, lyr_comp_name):
         lyr_overlay_point = data['lyr_overlap_point'] if 'lyr_overlap_point' in data else None
         lyr_overlay_line = data['lyr_overlap_line'] if 'lyr_overlap_line' in data else None
         lyr_overlay_polygon = data['lyr_overlap_polygon'] if 'lyr_overlap_polygon' in data else None
-        
-        overlay_layer = QgsVectorLayer("Polygon?crs=EPSG:4326", "Nova Camada", "memory")
-        provider = overlay_layer.dataProvider()
 
         if self.feature.geometry().wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
+            overlay_layer = QgsVectorLayer("Polygon?crs=EPSG:4326", NOME_CAMADA_INTERSECAO_POLIGONO, "memory")
+            provider = overlay_layer.dataProvider()
             if lyr_overlay_polygon:
                 for feature_overlay in lyr_overlay_polygon.getFeatures():
-                    if feature_overlay.attribute('Camada_sobreposicao') == 'Área Homologada' and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                    if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
                         nova_feature = QgsFeature()
                         nova_feature.setGeometry(feature_overlay.geometry())
                         provider.addFeatures([nova_feature])
-                overlay_layer.setName(NOME_CAMADA_INTERSECAO_POLIGONO)
+                QgsProject.instance().addMapLayer(overlay_layer)
 
         elif self.feature.geometry().wkbType() in [QgsWkbTypes.Point, QgsWkbTypes.MultiPoint]:
             if lyr_overlay_point:
@@ -127,20 +141,30 @@ class LayoutManager():
                 overlay_layer.setName(NOME_CAMADA_INTERSECAO_PONTO)
 
         elif self.feature.geometry().wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+            overlay_layer = QgsVectorLayer("LineString?crs=EPSG:4326", NOME_CAMADA_INTERSECAO_LINHA, "memory")
+            provider = overlay_layer.dataProvider()
             if lyr_overlay_line:
                 for feature_overlay in lyr_overlay_line.getFeatures():
-                    if feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                    if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
                         nova_feature = QgsFeature()
                         nova_feature.setGeometry(feature_overlay.geometry())
                         provider.addFeatures([nova_feature])
-                overlay_layer.setName(NOME_CAMADA_INTERSECAO_LINHA)
+                QgsProject.instance().addMapLayer(overlay_layer)
         
-        QgsProject.instance().addMapLayer(overlay_layer)
+        
         
 
     def remover_camadas_intersecoes(self):
         camadas = QgsProject.instance().mapLayers().values()
         nomes_camadas_remover = ["Interseções (Polígono)", "Interseções (Linha)", "Interseções (Ponto)"]
+
+        for camada in camadas:
+            if camada.name() in nomes_camadas_remover:
+                QgsProject.instance().removeMapLayer(camada)
+
+    def remover_camadas_obrigatorias(self):
+        camadas = QgsProject.instance().mapLayers().values()
+        nomes_camadas_remover = ["Área Homologada", "Área não Homologada", "LTM Homologada", "LTM não Homologada", "LPM Homologada", "LPM não Homologada"]
 
         for camada in camadas:
             if camada.name() in nomes_camadas_remover:
@@ -235,7 +259,7 @@ class LayoutManager():
             
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_A_Relatorio')
 
-    def export_relatorio_mapa(self):
+    def export_relatorio_mapa(self, layer_name):
         layout_name = 'Planta_FolhaA3_Paisagem'
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
 
@@ -250,22 +274,22 @@ class LayoutManager():
                 break
 
         item_layout = layout.itemById('CD_Compl_Obs1')
-        item_layout.setText('Lote não sobrepõe Área Homologada')
+        item_layout.setText(f'Lote não sobrepõe {layer_name}')
         overlay_uniao_area = layout.itemById('CD_Compl_Obs3')
-        overlay_uniao_area.setText("Área de sobreposição com Área Homologada: 0,00 m².")
+        overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: 0,00 m².")
         if feature_encontrada:
             column_value = feature_encontrada.attribute(column_index)
             
-            if "Área Homologada" in column_value:
-                item_layout.setText('Lote sobrepõe Área Homologada')
+            if layer_name in column_value:
+                item_layout.setText(f'Lote sobrepõe {layer_name}')
                 item_layout = layout.itemById('CD_Titulo')
-                item_layout.setText(f'Caracterização: Áreas da União')
+                item_layout.setText(f'Caracterização: {layer_name}')
 
                 get_overlay_area = QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_POLIGONO) or QgsProject.instance().mapLayersByName(NOME_CAMADA_INTERSECAO_LINHA)
                 if get_overlay_area:
                     if isinstance(get_overlay_area, list):
                         get_overlay_area = get_overlay_area[0]
-                    overlay_uniao_area.setText("Área de sobreposição com Área Homologada: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
+                    overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
 
         self.handle_text(layout)
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_B_Mapa')
