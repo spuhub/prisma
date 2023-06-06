@@ -22,9 +22,6 @@
  ***************************************************************************/
 """
 """Todas os metodos de percistencia do postgres vao aqui"""
-import geopandas as gpd
-import pandas as pd
-
 from shapely.wkt import loads
 
 import psycopg2
@@ -171,49 +168,6 @@ class DbConnection:
             return rows
         else:
             return t
-
-        # return a geodataframe with intersects with  polygono
-    def CalculateIntersectGPD(self, input, tableName, approximation, sridLayer):
-
-        t = []
-        if self.GEtNumberLineOfTable(tableName) > 0:
-            comp = sridLayer
-            sridLayer = "".join(c for c in comp if c.isdecimal())
-
-            sridTable = self.GEtSridTable(tableName)
-            gdf = None
-
-            input = input.to_wkt()
-            for indexInput, rowInput in input.iterrows():
-                # sql = "select *, ST_AsText(geom) as geometry from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + rowInput['geometry'].to_wkt() + "'," + str(
-                #     sridLayer) + ")," + str(sridTable) + " ))"
-
-                sql = ""
-                if approximation == None:
-                    sql = "select ST_AsText(ST_Transform(ta.geom," + str(sridTable) + ")," + str(sridLayer) + \
-                          ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('"\
-                        + rowInput['geometry'] + "'," + str(
-                        sridLayer) + ")," + str(sridTable) + " ))"
-                else:
-                    sql = "select ST_AsText(ST_Transform(ST_Buffer(ta.geom, " + str(approximation) + ", 16)," + str(
-                        sridTable) + ")," + str(sridLayer) + \
-                          ") as geometry, * from " + tableName + " as ta where ST_Intersects(ta.geom, ST_Transform(ST_GeomFromText('" \
-                          + rowInput['geometry'] + "'," + str(
-                        sridLayer) + ")," + str(sridTable) + " ))"
-                self.conn.set_client_encoding('utf-8')
-                if gdf is not None:
-                    gdf = pd.concat([gdf, gpd.GeoDataFrame.from_postgis(sql, self.conn)], ignore_index = True)
-                else:
-                    gdf = gpd.GeoDataFrame(gpd.GeoDataFrame.from_postgis(sql, self.conn), crs = sridTable, geometry='geometry')
-
-            gdf.geometry = gdf['geometry'].apply(loads)
-
-            gdf = gdf.drop_duplicates(subset=['geometry'], keep='first')
-            gdf = gdf.reset_index()
-
-            return gdf, sridTable
-        else:
-            return [], None
 
     def CAlculateIntersectByPoint(self, pointCoord, tableName, sridPoint, raio):
         t = []

@@ -3,16 +3,14 @@ import os
 
 from qgis.core import (
     QgsProject,
-    QgsVectorFileWriter,
     QgsVectorLayer, 
     QgsField, 
     QgsFeature, 
     QgsPrintLayout,
     QgsReadWriteContext,
-    QgsCoordinateReferenceSystem,
     QgsRasterLayer,
     QgsWkbTypes,
-    QgsGeometry
+    QgsWkbTypes
     )
 from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
@@ -276,7 +274,10 @@ class LayoutManager():
         item_layout = layout.itemById('CD_Compl_Obs1')
         item_layout.setText(f'Lote não sobrepõe {layer_name}')
         overlay_uniao_area = layout.itemById('CD_Compl_Obs3')
-        overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: 0,00 m².")
+        if self.feature.geometry().wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
+            overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: 0,00 m².")
+        elif self.feature.geometry().wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+            overlay_uniao_area.setText(f"Sobreposição com {layer_name}: 0,00 m.")
         if feature_encontrada:
             column_value = feature_encontrada.attribute(column_index)
             
@@ -289,9 +290,15 @@ class LayoutManager():
                 if get_overlay_area:
                     if isinstance(get_overlay_area, list):
                         get_overlay_area = get_overlay_area[0]
-                    overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
+                    if self.feature.geometry().wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
+                        overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
+                    elif self.feature.geometry().wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+                        overlay_uniao_area.setText(f"Sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m.")
 
         self.handle_text(layout)
+        iface.mapCanvas().refresh()
+        main_map = layout.itemById('Planta_Principal')
+        main_map.refresh()
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_B_Mapa')
 
     def export_relatorio_vertices(self):
