@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="font">
       <font>
        <pointsize>10</pointsize>
@@ -631,6 +634,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_config_col">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>Configurar colunas</string>
       </attribute>

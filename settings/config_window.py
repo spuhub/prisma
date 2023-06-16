@@ -1656,6 +1656,8 @@ class ConfigWindow(QtWidgets.QDialog):
             self.config_col_tab()
 
     def config_col_tab(self):
+        # O return é temporário, para evitar erros. Função teve sua implementação interrompida
+        return
         self.tbl_col_shp.setRowCount(len(self.source_shp))
 
         for idx, shp in enumerate(self.source_shp):

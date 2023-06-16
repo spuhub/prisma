@@ -8,7 +8,7 @@
                              -------------------
         begin                : 2021-09-29
         copyright            : (C) 2021 by Zago
-        email                : guilherme.nascimento@economia.gov.br
+        email                : guilherme.nascimento@economia.gov.br; vinirafaelsch@gmail.com; vinirafaelsch@gmail.com; marcoaurelio.reliquias@gmail.com
         git sha              : $Format:%H$
  ***************************************************************************/
 
