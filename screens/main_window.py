@@ -5,12 +5,15 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 from qgis.utils import reloadPlugin
 
-from PyQt5.QtWidgets import QShortcut
+from PyQt5.QtWidgets import QShortcut, QMessageBox
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt
 
-
+from ..settings.install_dependecies import instala_dependencias, verifica_flag_dependencias
 from ..utils.pre_config_json import pre_config_json
+
+arq_dependencias = os.path.join(os.path.dirname(os.path.dirname(__file__)),'settings', 'dependencies')
+flag_dependencias = os.path.join(os.path.dirname(os.path.dirname(__file__)),'settings','flag_dependencies')
 
 class MainWindow (QtWidgets.QDialog):
     """Classe que manipula a tela principal do Prisma."""
@@ -29,8 +32,20 @@ class MainWindow (QtWidgets.QDialog):
 
         self.ui = loadUi(os.path.join(os.path.dirname(__file__), 'main_window.ui'), self)
         
-        # Aproveita a função para realizar a pré-configuração do arquivo json
-        pre_config_json()
+        # Se False, dependencias ainda não instaladas
+        if verifica_flag_dependencias(flag_dependencias) == "False":
+            # Aproveita a função para realizar a pré-configuração do arquivo json
+            pre_config_json()
+
+            msg = QMessageBox(self)
+            ret = msg.question(self, 'Download Dependências ', "É necessario fazer o download de algumas dependências para o Prisma funcionar corretamente! Deseja fazer o Download das Dependências?", QMessageBox.Yes | QMessageBox.Cancel)
+            if ret == QMessageBox.Yes:
+                instala_dependencias(arq_dependencias)
+                with open(flag_dependencias, "w", encoding='utf-8') as file:
+                    file.write("True")
+                 
+                ret = msg.question(self, 'Reinicio do Sistema Necessário', "É necessario fechar o QGIS para aplicar as instalações", QMessageBox.Ok)
+                sys.exit()
         
         self.btn_config.clicked.connect(self.go_to_config)
         self.btn_ponto.clicked.connect(self.go_to_point)
