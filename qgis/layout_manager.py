@@ -10,7 +10,8 @@ from qgis.core import (
     QgsReadWriteContext,
     QgsRasterLayer,
     QgsWkbTypes,
-    QgsWkbTypes
+    QgsWkbTypes,
+    QgsCoordinateReferenceSystem
     )
 from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
@@ -103,7 +104,29 @@ class LayoutManager():
             self.feature = feature
             self.pdf_name = f'{feature["logradouro"]}_{self.time}'
             for layer_comp in self.dic_layers_ever['shp']:
-                if feature.attribute(layer_comp.name()) == True: # TODO: REMOVER ISSO
+                if feature.attribute(layer_comp.name()) == True:
+                    print_lyr = layer_comp.clone()
+                    QgsProject.instance().addMapLayer(print_lyr)
+                    self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.export_relatorio_mapa(layer_comp.name())
+                    # self.export_relatorio_vertices()
+                    QgsProject.instance().removeMapLayer(print_lyr.id())
+                    self.remover_camadas_intersecoes()
+                    self.merge_pdf()
+
+            for layer_comp in self.dic_layers_ever['db']:
+                if feature.attribute(layer_comp.name()) == True:
+                    print_lyr = layer_comp.clone()
+                    QgsProject.instance().addMapLayer(print_lyr)
+                    self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.export_relatorio_mapa(layer_comp.name())
+                    # self.export_relatorio_vertices()
+                    QgsProject.instance().removeMapLayer(print_lyr.id())
+                    self.remover_camadas_intersecoes()
+                    self.merge_pdf()
+
+            for layer_comp in self.dic_layers_ever['wfs']:
+                if feature.attribute(layer_comp.name()) == True:
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
@@ -260,6 +283,14 @@ class LayoutManager():
     def export_relatorio_mapa(self, layer_name):
         layout_name = 'Planta_FolhaA3_Paisagem'
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
+
+        main_map = layout.itemById('Planta_Principal')
+        localization_map = layout.itemById('Planta_Localizacao')
+        crs = QgsCoordinateReferenceSystem(int(self.feature.attribute('EPSG_S2000')))
+        main_map.setCrs(crs)
+        main_map.refresh()
+        localization_map.setCrs(crs)
+        localization_map.refresh()
 
         lyr_com_sobrep = QgsProject.instance().mapLayersByName('Com_Sobreposicao')[0]   
         column_index = lyr_com_sobrep.fields().indexFromName('list_layer')
