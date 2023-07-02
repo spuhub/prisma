@@ -95,14 +95,14 @@ class MemorialConversion (QtWidgets.QDialog):
             if self.rdbtn_pdf.isChecked():
                 pdfFileObj = open(self.path_input, 'rb')
 
-                pdf_reader = PyPDF2.PdfFileReader(pdfFileObj)
-                totalPages = pdf_reader.numPages
+                pdf_reader = PyPDF2.PdfReader(pdfFileObj)
+                totalPages = len(pdf_reader.pages)
                 text_out = ""
                 
 
                 for i in range(0, totalPages):
-                    pages = pdf_reader.getPage(i)
-                    text = pages.extractText()
+                    pages = pdf_reader.pages[i]
+                    text = pages.extract_text()
                     text_out += text
 
                 lista_coords = re.findall(regex_str, text_out)
