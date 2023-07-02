@@ -6,7 +6,7 @@
 name=Prisma
 qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
-version=5.0.1
+version=5.0.2
 author=Zago
 email=guilherme.nascimento@economia.gov.br
 
@@ -38,6 +38,8 @@ changelog=Version 3.0 (22/07/2022):
             - Remoção da biblioteca Geopandas
          Version 5.0.1 (19/06/2023):
             - Correção de bugs
+         Version 5.0.2 (02/07/2023):
+            - Correção de bug em biblioteca utilizada
 
 # Tags are comma separated with spaces allowed
 tags=python
