@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1662</width>
-    <height>894</height>
+    <width>902</width>
+    <height>537</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Configurações</string>
@@ -31,7 +37,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -213,7 +219,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QTextEdit" name="textEdit_shp"/>
+          <widget class="QTextEdit" name="textEdit_shp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -463,7 +476,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QTextEdit" name="textEdit_bd"/>
+            <widget class="QTextEdit" name="textEdit_bd">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -629,7 +649,14 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="tbl_wfs"/>
+        <widget class="QTableWidget" name="tbl_wfs">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
