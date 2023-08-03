@@ -40,6 +40,10 @@ changelog=Version 3.0 (22/07/2022):
             - Correção de bugs
          Version 5.0.2 (02/07/2023):
             - Correção de bug em biblioteca utilizada
+         Version 5.0.3 (03/08/2023):
+            - Reajuste no tamanho das telas
+            - Adição da funcionalidade de scroll para tela de configuração
+            - Adição do manual de usuário v5.0 na pasta do plugin
 
 # Tags are comma separated with spaces allowed
 tags=python
