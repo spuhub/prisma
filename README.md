@@ -61,8 +61,8 @@ Manual do usuário disponível [aqui](https://github.com/cgdag/SPU-Prisma/tree/m
 
 ### Líder de Projeto:
 * Núcleo Regional de Geoinformação (NUGEO-SPU-SC)
-* Jeuid Oliveira Junior (jeuid.junior@economia.gov.br)
+* Jeuid Oliveira Junior (jeuid.junior@gestao.gov.br)
 
 ### Desenvolvedores:
-* Guilherme Henrique (guilherme.nascimento@economia.gov.br)
-* Vinicius Rafael (vinicius.schneider@economia.gov.br)
+* Guilherme Henrique (guilherme.nascimento@gestao.gov.br)
+* Vinicius Rafael (vinicius.schneider@gestao.gov.br)
