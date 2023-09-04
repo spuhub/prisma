@@ -6,7 +6,7 @@
 name=Prisma
 qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
-version=5.0.3
+version=5.0.4
 author=Zago
 email=guilherme.nascimento@economia.gov.br
 
@@ -44,6 +44,8 @@ changelog=Version 3.0 (22/07/2022):
             - Reajuste no tamanho das telas
             - Adição da funcionalidade de scroll para tela de configuração
             - Adição do manual de usuário v5.0 na pasta do plugin
+         Version 5.0.4 (04/09/2023):
+            - Correção de bug na funcionalidade de importar geometria de um memorial descritivo
 
 # Tags are comma separated with spaces allowed
 tags=python

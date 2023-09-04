@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SPU-PRISMA v5.0.3</string>
+   <string>SPU-PRISMA v5.0.4</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

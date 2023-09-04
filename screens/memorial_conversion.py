@@ -103,11 +103,11 @@ class MemorialConversion (QtWidgets.QDialog):
                 for i in range(0, totalPages):
                     pages = pdf_reader.pages[i]
                     text = pages.extract_text()
-                    text_out += text
+                    text_out += text.replace("\n", "").replace(" ", "")
 
                 lista_coords = re.findall(regex_str, text_out)
             else:
-                lista_coords = re.findall(regex_str, self.txt_copied)
+                lista_coords = re.findall(regex_str, self.txt_copied.replace("\n", "").replace(" ", ""))
 
             return lista_coords
     
@@ -119,11 +119,36 @@ class MemorialConversion (QtWidgets.QDialog):
             mem_layer = QgsVectorLayer(f"Polygon?crs={self.select_crs.crs().authid().lower()}", "Memorial Descritivo - PDF", "Memory")
             QgsProject.instance().addMapLayer(mem_layer)
             poly_coords = []
+            # split_by = self.combo_seperador.currentText()
+            split_by = self.combo_seperador.currentText()
+            first_lat = True if self.combo_lat_long.currentText() == "Latitude" else False
 
+            split_by = fr"(?<=\d){split_by}(?=[A-Za-z])|(?<=[A-Za-z]){split_by}(?=\d)"
+            
             for idx, coords in enumerate(lista):
-                latitude = float(coords.split(', ')[1].replace(".", "").replace("N ", "").replace(",","."))
-                longitude = float(coords.split(', ')[0].replace(".", "").replace("E ", "").replace(",","."))
-                poly_coords.append((longitude, latitude))
+                latitude = ""
+                longitude = ""
+                coords = coords.replace("m", "")
+                vertice = re.split(split_by, coords)[1 if first_lat else 0]
+                for i, char in enumerate(vertice):
+                    if char.isdigit():
+                        latitude = str(latitude) + char
+
+                    elif char == ",":
+                        if i > 0 and i < len(vertice):
+                            if vertice[i - 1].isdigit() and vertice[i + 1].isdigit():
+                                latitude = str(latitude) + "."
+                vertice = re.split(split_by, coords)[0 if first_lat else 1]
+                for i, char in enumerate(vertice):
+                    if char.isdigit():
+                        longitude = str(longitude) + char
+
+                    elif char == ",":
+                        if i > 0 and i < len(vertice) - 1:
+                            if vertice[i - 1].isdigit() and vertice[i + 1].isdigit():
+                                longitude = str(longitude) + "."
+
+                poly_coords.append((float(longitude), float(latitude)))
 
             polygon = QgsGeometry.fromPolygonXY( [[ QgsPointXY( pair[0], pair[1] ) for pair in poly_coords ]])
             feature = QgsFeature()
@@ -144,8 +169,9 @@ class MemorialConversion (QtWidgets.QDialog):
             if character.isdigit():
                 str_return += '\d'
             elif character.isspace():
-                str_return += '\s'
+                pass
             else:
                 str_return += character
         return str_return
+
             
