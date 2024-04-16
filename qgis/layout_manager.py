@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 
 from qgis.core import (
     QgsProject,
@@ -55,13 +56,15 @@ class LayoutManager():
         self.utils = Utils()
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
         
-        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Planta_FolhaA3_Paisagem.qpt')
+        is_windows = sys.platform.startswith('win')
+        
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Planta_FolhaA3_Paisagem.qpt' if is_windows else r'layouts/Planta_FolhaA3_Paisagem.qpt')
         self.add_template_to_project(template_dir)
 
-        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Relatorio_FolhaA4_Retrato.qpt')
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Relatorio_FolhaA4_Retrato.qpt' if is_windows else r'layouts/Relatorio_FolhaA4_Retrato.qpt')
         self.add_template_to_project(template_dir)
 
-        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Folha_VerticesA4_Retrato.qpt')
+        template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Folha_VerticesA4_Retrato.qpt' if is_windows else r'layouts/Folha_VerticesA4_Retrato.qpt')
         self.add_template_to_project(template_dir)
 
         lyr_com_sobrep, lyr_sem_sobrep = self.identifica_info_sobrep()
