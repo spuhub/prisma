@@ -26,6 +26,7 @@ import os
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+from processing.core.Processing import Processing
 
 from PyQt5.uic import loadUi
 
@@ -186,6 +187,9 @@ class Prisma:
 
     def run(self):
         """Run method that performs all the real work"""
+        # Garante que o modulo processing será inicializado junto ao plugin
+        Processing.initialize()
+
         # Import the code for the dialog
         from .controllers.screen_controller import Controller
         # Create the dialog with elements (after translation) and keep reference

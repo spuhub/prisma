@@ -278,6 +278,8 @@ class LayoutManager():
         layout_name = 'Relatorio_FolhaA4_Retrato'
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
             
+        self.handle_text_sintese(layout)
+
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_A_Relatorio')
 
     def export_relatorio_mapa(self, layer_name):
@@ -326,7 +328,7 @@ class LayoutManager():
                     elif self.feature.geometry().wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
                         overlay_uniao_area.setText(f"Sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m.")
 
-        self.handle_text(layout)
+        self.handle_text_mapa(layout)
         iface.mapCanvas().refresh()
         main_map = layout.itemById('Planta_Principal')
         main_map.refresh()
@@ -354,12 +356,11 @@ class LayoutManager():
             if pdf_name in filename and filename.count("_") > 2:
                 os.remove(self.path_output + "/" + filename)
 
-    def handle_text(self, layout):
+    def handle_text_mapa(self, layout):
         """
-        Faz a manipulação de alguns dados textuais presentes no layout de impressão.
+        Faz a manipulação de alguns dados textuais presentes no layout de impressão no relatório de mapa.
 
-        @keyword index_1: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
-        @keyword index_2: Variável utilizada para pegar dados armazenados no arquivo Json, exemplo: pegar informções como estilização ou nome da camada.
+        @keyword layout: Variável que armazena o objeto de manipulação do layout de relatório de mapa.
         """
         et = EnvTools()
         headers = et.get_report_hearder()
@@ -369,3 +370,27 @@ class LayoutManager():
 
         sector = layout.itemById('CD_SubUnidadeSPU')
         sector.setText(headers['setor'])
+
+    def handle_text_sintese(self, layout):
+        """
+        Faz a manipulação de alguns dados textuais presentes no layout de impressão no relatório síntese.
+
+        @keyword layout: Variável que armazena o objeto de manipulação do layout de relatório síntese
+        """
+        et = EnvTools()
+        headers = et.get_report_hearder()
+
+        ministerio = layout.itemById('CD_Cabecalho_Ministerio')
+        ministerio.setText(headers['ministerio'])
+
+        secretaria_especial = layout.itemById('CD_Cabecalho_Secretaria_Esp')
+        secretaria_especial.setText(headers['secretariaEspecial'])
+
+        secretaria = layout.itemById('CD_Cabecalho_Secretaria')
+        secretaria.setText(headers['secretaria'])
+
+        superintendencia = layout.itemById('CD_Cabecalho_Superintendencia')
+        superintendencia.setText(headers['superintendencia'])
+
+        setor = layout.itemById('CD_Cabecalho_Setor')
+        setor.setText(headers['setor'])
