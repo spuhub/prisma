@@ -52,8 +52,9 @@ class LayoutManager():
         self.operation_config = data['operation_config']
         self.path_output = data['path_output']
         self.progress_bar = progress_bar
-
+        self.project_layers = []
         self.utils = Utils()
+        self.current_year: str = str(datetime.now().year)
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
         
         is_windows = sys.platform.startswith('win')
@@ -111,6 +112,7 @@ class LayoutManager():
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
                     self.export_relatorio_mapa(layer_comp.name())
                     # self.export_relatorio_vertices()
                     QgsProject.instance().removeMapLayer(print_lyr.id())
@@ -122,6 +124,7 @@ class LayoutManager():
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
                     self.export_relatorio_mapa(layer_comp.name())
                     # self.export_relatorio_vertices()
                     QgsProject.instance().removeMapLayer(print_lyr.id())
@@ -133,6 +136,7 @@ class LayoutManager():
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
                     self.export_relatorio_mapa(layer_comp.name())
                     # self.export_relatorio_vertices()
                     QgsProject.instance().removeMapLayer(print_lyr.id())
@@ -374,6 +378,8 @@ class LayoutManager():
         sector = layout.itemById('CD_SubUnidadeSPU')
         sector.setText(headers['setor'])
 
+        self.fill_data_source(layout)
+
     def handle_text_sintese(self, layout):
         """
         Faz a manipulação de alguns dados textuais presentes no layout de impressão no relatório síntese.
@@ -397,3 +403,59 @@ class LayoutManager():
 
         setor = layout.itemById('CD_Cabecalho_Setor')
         setor.setText(headers['setor'])
+
+    def fill_data_source(self, layout):
+        prisma_layers = [
+            'Feição de Estudo (padrão)',
+            'Feição de Estudo',
+            'Interseções (Polígono)',
+            'Interseções (Linha)',
+            'Interseções (Ponto)',
+            'Vértices',
+            'Linhas',
+            'Com_Sobreposicao',
+            'Sem_Sobreposicao'
+            ]
+        field_data_source = layout.itemById('CD_FonteDados')
+
+        all_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
+        print_layers = [value for value in all_layers if value not in prisma_layers]
+
+        data_source = self.get_data_source(print_layers)
+
+        text = ''
+        for item in print_layers:
+            if item != self.basemap_name:
+                text_item = data_source[item][0] + " (" + data_source[item][1].split('/')[-1] +"), "
+                if text_item not in text:
+                    text += text_item
+
+        text += self.basemap_name + " (" + self.current_year + ")."
+        field_data_source.setText(text)
+
+    def get_data_source(self, layers_name):
+        data_source = {}
+        for name in layers_name:
+            for x in self.operation_config['shp']:
+                if name == x['nomeFantasiaCamada']:
+                    data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['wfs']:
+                if name == x['nomeFantasiaTabelasCamadas']:
+                    data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['pg']:
+                for x_layers in x['nomeFantasiaTabelasCamadas']:
+                    if name == x_layers:
+                        data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+            for x in self.operation_config['obrigatorio']:
+                if 'nomeFantasiaCamada' in x:
+                    if name == x['nomeFantasiaCamada']:
+                        data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+                else:
+                    for x_layers in x['nomeFantasiaTabelasCamadas']:
+                        if name == x_layers:
+                            data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
+
+        return data_source
