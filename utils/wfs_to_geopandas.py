@@ -21,28 +21,31 @@ class WfsOperations:
 
       def download_wfs_layer(self, link_wfs, layer, base_name):
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',
-                  TYPENAME=layer, OUTPUTFORMAT='json')
+                              TYPENAME=layer, OUTPUTFORMAT='json')
 
             url = requests.Request('GET', link_wfs, params=params).prepare().url
             response = requests.get(url)
 
             if response.ok:
-                  layer = layer\
-                        .replace(':', '_')\
-                        .replace('*', '_')\
-                        .replace('/', '_')\
-                        .replace('\\', '_')
+                  safe_layer_name = layer.replace(':', '_').replace('*', '_').replace('/', '_').replace('\\', '_')
 
-                  dir = os.path.dirname(__file__) + '/../wfs_layers/' + str(base_name)
-                  print(dir)
-                  if not os.path.isdir(dir):
-                        os.mkdir(dir)
+                  script_dir = os.path.dirname(os.path.abspath(__file__))
+                  dir_path = os.path.join(script_dir, '..', 'wfs_layers', str(base_name))
 
-                  file_path = dir + '/' + layer + ".geojson"
-                  open(file_path, "wb").write(response.content)
+                  if not os.path.exists(dir_path):
+                        try:
+                              os.makedirs(dir_path)
+                        except OSError as e:
+                              print(f"Erro ao criar diretório: {dir_path}: {e}")
+                              return False
+
+                  file_path = os.path.join(dir_path, safe_layer_name + ".geojson")
+                  with open(file_path, "wb") as file:
+                        file.write(response.content)
 
                   return True
             return False
+
 
       def update_wfs_layer(self, link_wfs, layer, base_name):
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',

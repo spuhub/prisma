@@ -407,6 +407,7 @@ class LayoutManager():
     def fill_data_source(self, layout):
         prisma_layers = [
             'Feição de Estudo (padrão)',
+            'Feição de Estudo (Buffer)',
             'Feição de Estudo',
             'Interseções (Polígono)',
             'Interseções (Linha)',
@@ -441,11 +442,11 @@ class LayoutManager():
                     data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
             for x in self.operation_config['wfs']:
-                if name == x['nomeFantasiaTabelasCamadas']:
+                if name == x['nomeFantasiaCamada']:
                     data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
             for x in self.operation_config['pg']:
-                for x_layers in x['nomeFantasiaTabelasCamadas']:
+                for x_layers in x['nomeFantasiaCamada']:
                     if name == x_layers:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
@@ -454,7 +455,7 @@ class LayoutManager():
                     if name == x['nomeFantasiaCamada']:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
                 else:
-                    for x_layers in x['nomeFantasiaTabelasCamadas']:
+                    for x_layers in x['nomeFantasiaCamada']:
                         if name == x_layers:
                             data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
