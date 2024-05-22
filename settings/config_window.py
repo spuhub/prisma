@@ -109,6 +109,8 @@ class ConfigWindow(QtWidgets.QDialog):
         Método responsável pegar da interface as informações configuração de base de dados do PostgreSQL e salvar no Json de configuração.
         @return: void
         """
+        if self.tabWidget.currentIndex() != 1:
+            return
         confg_dic = {}
         id_current_db = self.combo_box_base.currentData()
 
@@ -208,6 +210,8 @@ class ConfigWindow(QtWidgets.QDialog):
         Método responsável pegar da interface as informações configuração de base de dados Shapefile e salvar no Json de configuração.
         @return:
         """
+        if self.tabWidget.currentIndex() != 0:
+            return
         id_current_db = self.combo_box_shp.currentData()
         current_config = self.search_base_shp(id_current_db)
         confg_dic = {}

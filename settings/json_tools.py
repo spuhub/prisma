@@ -1,4 +1,5 @@
 import os
+import re
 import json
 from .env_tools import EnvTools
 
@@ -182,9 +183,10 @@ class JsonTools:
                 dados = json.load(f)
                 f.close()
 
-            numofItens = len(list(dados.keys()))
-
-            dbid = id_base or ("base" + str(numofItens + 1))
+            key = list(dados.keys())[-1]    
+            dbid: str
+            base_number = self.extrair_numeros(dados[key]['id']) if 'id' in dados[key] else [0]
+            dbid = id_base or "base" + str(base_number[0] + 1)
             db_json_conf["id"] = dbid
             dados[dbid] = db_json_conf
 
@@ -193,6 +195,10 @@ class JsonTools:
             f.close()
 
         return dbid
+
+    def extrair_numeros(self, string):
+        numeros = re.findall(r'\d+', string)
+        return [int(numero) for numero in numeros]
 
     def edit_database(self, db_id, db_json_new_conf):
         """
