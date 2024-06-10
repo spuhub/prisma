@@ -31,7 +31,11 @@ from ..environment import (
     NOME_CAMADA_INTERSECAO_PONTO,
     NOME_CAMADA_INTERSECAO_LINHA,
     NOME_CAMADA_INTERSECAO_POLIGONO,
-    NOME_CAMADA_VERTICES
+    NOME_CAMADA_VERTICES,
+    CAMADA_DE_PONTO,
+    CAMADA_DE_LINHA,
+    CAMADA_DE_POLIGONO
+    
 )
 
 class OverlayAnalisys():
@@ -81,7 +85,7 @@ class OverlayAnalisys():
         lyr_vertices = QgsVectorLayer(f'Point?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_VERTICES, 'memory')
 
         # Extrai vértices da camada de entrada
-        if lyr_input.wkbType() == QgsWkbTypes.Polygon or lyr_input.wkbType() == QgsWkbTypes.MultiPolygon:
+        if QgsWkbTypes.displayString(lyr_input.wkbType()) in CAMADA_DE_POLIGONO:
             lyr_vertices = self._extract_polygon_vertices(lyr_input)
             lyr_vertices = lyr_process(lyr_vertices, operation_config)
         
@@ -117,6 +121,7 @@ class OverlayAnalisys():
                 feats_shp = lyr_shp.getFeatures(bbox_lyr_input)
 
                 for feat_shp in feats_shp:
+                    
                     feat_shp_geom = feat_shp.geometry()
 
                     if feat_geom.intersects(feat_shp_geom):
@@ -193,7 +198,7 @@ class OverlayAnalisys():
             self.lyr_overlap_polygon = None
         if lyr_vertices.featureCount() == 0:
             lyr_vertices = None
-        
+
         return dic_overlaps, self.lyr_overlap_point, self.lyr_overlap_line, self.lyr_overlap_polygon, lyr_vertices
     
     def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat, lyr_overlap_name) -> None:
@@ -224,13 +229,13 @@ class OverlayAnalisys():
         overlap_feat.setFields(feat_fields)
         overlap_feat.setAttributes(feat_attributes)
 
-        if geom_intersect.wkbType() in [QgsWkbTypes.Polygon, QgsWkbTypes.MultiPolygon]:
+        if QgsWkbTypes.displayString(geom_intersect.wkbType()) in CAMADA_DE_POLIGONO:
             self.provider_polygon.addFeatures([overlap_feat])
 
-        elif geom_intersect.wkbType() in [QgsWkbTypes.Point, QgsWkbTypes.MultiPoint]:
+        elif QgsWkbTypes.displayString(geom_intersect.wkbType()) in CAMADA_DE_PONTO:
             self.provider_point.addFeatures([overlap_feat])
 
-        elif geom_intersect.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+        elif QgsWkbTypes.displayString(geom_intersect.wkbType()) in CAMADA_DE_LINHA:
             self.provider_line.addFeatures([overlap_feat])
 
         # Atualiza camadas de sobreposição
@@ -245,16 +250,13 @@ class OverlayAnalisys():
         sistema_destino = QgsCoordinateReferenceSystem(f'EPSG:{epsg}')
         transformacao = QgsCoordinateTransform(sistema_origem, sistema_destino, QgsProject.instance())
 
-
         for feature in layer.getFeatures():
             geometria = feature.geometry()
             geometria.transform(transformacao)
-
-            if geometria.wkbType() == QgsWkbTypes.LineString or geometria.wkbType() == QgsWkbTypes.MultiLineString:
+            if QgsWkbTypes.displayString(geometria.wkbType()) in CAMADA_DE_LINHA:
                 soma_geometria += geometria.length()
-            elif geometria.wkbType() == QgsWkbTypes.Polygon or geometria.wkbType() == QgsWkbTypes.MultiPolygon:
+            elif QgsWkbTypes.displayString(geometria.wkbType()) in CAMADA_DE_POLIGONO:
                 soma_geometria += geometria.area()
-
         soma_geometria_arredondada = round(soma_geometria, 2)
         format_value = f'{soma_geometria_arredondada:_.2f}'
         format_value = format_value.replace('.', ',').replace('_', '.')
@@ -286,3 +288,4 @@ class OverlayAnalisys():
        
         vertices_layer.setName(NOME_CAMADA_VERTICES)
         return vertices_layer
+    
