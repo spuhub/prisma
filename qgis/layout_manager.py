@@ -132,6 +132,7 @@ class LayoutManager():
                     self.merge_pdf()
 
             for layer_comp in self.dic_layers_ever['db']:
+                self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
                 if feature.attribute(layer_comp.name()) == True:
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
@@ -144,6 +145,7 @@ class LayoutManager():
                     self.merge_pdf()
 
             for layer_comp in self.dic_layers_ever['wfs']:
+                self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
                 if feature.attribute(layer_comp.name()) == True:
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
@@ -164,7 +166,9 @@ class LayoutManager():
         provider_polygon = overlay_layer_polygon.dataProvider()
         overlay_layer_line = QgsVectorLayer("LineString?crs=EPSG:4326", NOME_CAMADA_INTERSECAO_LINHA, "memory")
         provider_line = overlay_layer_line.dataProvider()
-        
+        overlay_layer_point = QgsVectorLayer("Point?crs=EPSG:4326", NOME_CAMADA_INTERSECAO_PONTO, "memory")
+        provider_point = overlay_layer_point.dataProvider()
+        #AQUI
         if QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_POLIGONO:
             if self.lyr_comp_geometry in CAMADA_DE_POLIGONO:
                 if lyr_overlay_polygon and lyr_overlay_polygon.featureCount() > 0:
@@ -184,14 +188,14 @@ class LayoutManager():
                             provider_line.addFeatures([nova_feature])
                     QgsProject.instance().addMapLayer(overlay_layer_line)
 
-            # elif self.feature.geometry().wkbType() in CAMADA_DE_PONTO:
-            #     if lyr_overlay_point:
-            #         for feature_overlay in lyr_overlay_point.getFeatures():
-            #             if feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
-            #                 nova_feature = QgsFeature()
-            #                 nova_feature.setGeometry(feature_overlay.geometry())
-            #                 provider.addFeatures([nova_feature])
-            #         overlay_layer.setName(NOME_CAMADA_INTERSECAO_PONTO)
+            elif self.lyr_comp_geometry in CAMADA_DE_PONTO:
+                if lyr_overlay_point and lyr_overlay_point.featureCount() > 0:
+                    for feature_overlay in lyr_overlay_point.getFeatures():
+                        if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                            nova_feature = QgsFeature()
+                            nova_feature.setGeometry(feature_overlay.geometry())
+                            provider_point.addFeatures([nova_feature])
+                    QgsProject.instance().addMapLayer(overlay_layer_point)
 
         elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_LINHA:
             if lyr_overlay_line and lyr_overlay_line.featureCount() > 0:
@@ -201,7 +205,15 @@ class LayoutManager():
                         nova_feature.setGeometry(feature_overlay.geometry())
                         provider_line.addFeatures([nova_feature])
                 QgsProject.instance().addMapLayer(overlay_layer_line)
-        
+
+        elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_PONTO:
+                if lyr_overlay_point:
+                    for feature_overlay in lyr_overlay_point.getFeatures():
+                        if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                            nova_feature = QgsFeature()
+                            nova_feature.setGeometry(feature_overlay.geometry())
+                            provider_point.addFeatures([nova_feature])
+                    QgsProject.instance().addMapLayer(overlay_layer_point)
         
         
 
@@ -359,6 +371,9 @@ class LayoutManager():
                         overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
                     elif self.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_LINHA:
                         overlay_uniao_area.setText(f"Sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m.")
+                    elif self.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_PONTO:
+                        overlay_uniao_area.setText(f"")
+
 
         self.handle_text_mapa(layout)
         iface.mapCanvas().refresh()
@@ -471,8 +486,8 @@ class LayoutManager():
                     data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
             for x in self.operation_config['pg']:
-                for x_layers in x['nomeFantasiaCamada']:
-                    if name == x_layers:
+                if 'nomeFantasiaCamada' in x:
+                    if name == x['nomeFantasiaCamada']:
                         data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
             for x in self.operation_config['obrigatorio']:

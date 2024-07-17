@@ -114,11 +114,22 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
     if layer.name() == NOME_CAMADA_ENTRADA:
         layer = layer.clone()
         
+    buffered_layer = QgsVectorLayer(f'MultiPolygon?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_ENTRADA_BUFFER, 'memory')
+
+    # Copia os campos da camada de entrada para a camade de buffer
+    fields = layer.fields()
+    buffered_layer.dataProvider().addAttributes(fields)
+    buffered_layer.updateFields()
+
     # Habilita a edição da camada    
-    layer.startEditing()
+    buffered_layer.startEditing()
 
     # Itera sobre as features da camada, aplica o buffer e atualiza a geometria
     for feature in layer.getFeatures():
+        # Adicionar na camada de buffer as feições com os mesmos valores presentes na camada de entrada
+        new_feature = QgsFeature(buffered_layer.fields())
+        new_feature.setAttributes(feature.attributes())
+
         geometry = feature.geometry()
 
         # Obtém o EPSG do atributo "ESPG_S2000" e cria o objeto CRS correspondente
@@ -140,12 +151,14 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
         buffered_geometry.transform(coord_transform_out)
 
         # Atualiza a geometria da feature
-        layer.changeGeometry(feature.id(), buffered_geometry)
+        #buffered_layer.changeGeometry(feature.id(), buffered_geometry)
+        new_feature.setGeometry(buffered_geometry)
+        buffered_layer.addFeature(new_feature)
 
-    # Salva as mudanças e finaliza a edição da camada
-    layer.commitChanges()
+    # Salva as mudanças na nova camada
+    buffered_layer.commitChanges()
 
-    return layer
+    return buffered_layer
 
 def add_style(layer: QgsVectorLayer, operation_config: dict):
     """
@@ -227,7 +240,7 @@ def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_
     logradouro = logradouro.replace(".", ' ').replace("/", "_").replace("'", "")
     parameters = {
         "COVERAGE_LAYER" : layer,
-        "DPI" : 60,
+        "DPI" : 200,
         "FILTER_EXPRESSION" : f"logradouro='{logradouro}'",
         "FORCE_VECTOR" : False,
         "GEOREFERENCE" : True,
