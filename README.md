@@ -64,5 +64,5 @@ Manual do usuário disponível [aqui](https://github.com/cgdag/SPU-Prisma/tree/m
 * Jeuid Oliveira Junior (jeuid.junior@gestao.gov.br)
 
 ### Desenvolvedores:
+* Vinicius Rafael Schneider (vinirafaelsch@gmail.com)
 * Guilherme Henrique (guilherme.nascimento@gestao.gov.br)
-* Vinicius Rafael (vinicius.schneider@gestao.gov.br)

@@ -8,7 +8,7 @@ qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
 version=5.0.4
 author=Zago
-email=guilherme.nascimento@economia.gov.br
+email=vinirafaelsch@gmail.com;
 
 about=Plugin to perform characterization and overlap analysis of properties with areas of the Federal Government
 

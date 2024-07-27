@@ -8,7 +8,7 @@
 
 """
 
-__author__ = 'guilherme.nascimento@economia.gov.br'
+__author__ = 'vinirafaelsch@gmail.com'
 __date__ = '2021-09-29'
 __copyright__ = 'Copyright 2021, Zago'
 

@@ -42,5 +42,5 @@ Ao cadastrar as bases no plugin será gerado um JSON de curadoria e pré configu
 
 ## Contato dos Desenvolvedores (contact)
 
+* Vinicius Rafael Schneider (vinirafaelsch@gmail.com)
 * Guilherme Henrique (guilherme.nascimento@economia.gov.br)
-* Vinicius Rafael (vinicius.schneider@economia.gov.br)
