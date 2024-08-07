@@ -67,7 +67,7 @@
   </renderer-v2>
   <labeling type="simple">
     <settings calloutType="simple">
-      <text-style fontUnderline="0" fontLetterSpacing="0" legendString="Aa" fontWordSpacing="0" fontSizeMapUnitScale="3x:0,0,0,0,0,0" previewBkgrdColor="0,0,0,255" isExpression="1" capitalization="0" fontItalic="0" fontWeight="75" fontSizeUnit="Point" allowHtml="0" fieldName="$id+1" fontFamily="Calibri" fontKerning="1" textOpacity="1" multilineHeight="1" fontStrikeout="0" textColor="0,0,0,255" textOrientation="horizontal" blendMode="0" fontSize="9" useSubstitutions="0" namedStyle="Bold">
+      <text-style fontUnderline="0" fontLetterSpacing="0" legendString="Aa" fontWordSpacing="0" fontSizeMapUnitScale="3x:0,0,0,0,0,0" previewBkgrdColor="0,0,0,255" isExpression="1" capitalization="0" fontItalic="0" fontWeight="75" fontSizeUnit="Point" allowHtml="0" fieldName="vertex_id" fontFamily="Calibri" fontKerning="1" textOpacity="1" multilineHeight="1" fontStrikeout="0" textColor="0,0,0,255" textOrientation="horizontal" blendMode="0" fontSize="9" useSubstitutions="0" namedStyle="Bold">
         <families/>
         <text-buffer bufferSizeUnits="Point" bufferOpacity="1" bufferSize="1.5" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferNoFill="1" bufferDraw="1" bufferJoinStyle="128" bufferBlendMode="0" bufferColor="255,255,255,255"/>
         <text-mask maskJoinStyle="128" maskSize="0" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskedSymbolLayers="" maskSizeUnits="MM" maskOpacity="1" maskEnabled="0" maskType="0"/>

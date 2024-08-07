@@ -16,6 +16,7 @@ from ..environment import (
     NOME_CAMADA_INTERSECAO_LINHA,
     NOME_CAMADA_INTERSECAO_POLIGONO,
     NOME_CAMADA_VERTICES,
+    NOME_CAMADA_QUOTAS,
     CRS_PADRAO
 )
 
@@ -173,6 +174,12 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     """
     if layer.name() == NOME_CAMADA_VERTICES:
         layer.loadNamedStyle(slddefaultlayers.VERTICES_LAYER.value)
+        layer.triggerRepaint()
+
+        return layer
+    
+    if layer.name() == NOME_CAMADA_QUOTAS:
+        layer.loadNamedStyle(slddefaultlayers.QUOTAS_LAYER.value)
         layer.triggerRepaint()
 
         return layer

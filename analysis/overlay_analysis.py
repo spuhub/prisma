@@ -22,7 +22,18 @@
  ***************************************************************************/
 """
 from ..utils.utils import Utils
-from qgis.core import QgsFeature, QgsVectorLayer, QgsWkbTypes, QgsGeometry, QgsField, QgsFields, QgsPointXY, QgsCoordinateReferenceSystem, QgsProject, QgsCoordinateTransform
+from qgis.core import (
+    QgsFeature, 
+    QgsVectorLayer, 
+    QgsWkbTypes, 
+    QgsGeometry, 
+    QgsField, 
+    QgsFields, 
+    QgsPointXY, 
+    QgsCoordinateReferenceSystem, 
+    QgsProject, 
+    QgsCoordinateTransform
+    )
 from ..utils.lyr_utils import lyr_process
 from qgis.PyQt.QtCore import QVariant
 
@@ -32,6 +43,7 @@ from ..environment import (
     NOME_CAMADA_INTERSECAO_LINHA,
     NOME_CAMADA_INTERSECAO_POLIGONO,
     NOME_CAMADA_VERTICES,
+    NOME_CAMADA_QUOTAS,
     CAMADA_DE_PONTO,
     CAMADA_DE_LINHA,
     CAMADA_DE_POLIGONO
@@ -83,11 +95,15 @@ class OverlayAnalisys():
         self.lyr_overlap_line = QgsVectorLayer(f'MultiLineString?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_LINHA, 'memory')
         self.lyr_overlap_polygon = QgsVectorLayer(f'MultiPolygon?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_INTERSECAO_POLIGONO, 'memory')
         lyr_vertices = QgsVectorLayer(f'Point?crs=epsg:{CRS_PADRAO}', NOME_CAMADA_VERTICES, 'memory')
+        lyr_quotas = QgsVectorLayer('LineString?crs=epsg:4326', NOME_CAMADA_QUOTAS, 'memory')
 
         # Extrai vértices da camada de entrada
         if QgsWkbTypes.displayString(lyr_input.wkbType()) in CAMADA_DE_POLIGONO:
             lyr_vertices = self._extract_polygon_vertices(lyr_input)
             lyr_vertices = lyr_process(lyr_vertices, operation_config)
+
+            lyr_quotas = self._create_linestring_from_points(lyr_vertices)
+            lyr_quotas = lyr_process(lyr_quotas, operation_config)
         
         fields = lyr_input.fields()
         novo_campo = QgsField('Camada_sobreposicao', QVariant.String)
@@ -199,7 +215,7 @@ class OverlayAnalisys():
         if lyr_vertices.featureCount() == 0:
             lyr_vertices = None
 
-        return dic_overlaps, self.lyr_overlap_point, self.lyr_overlap_line, self.lyr_overlap_polygon, lyr_vertices
+        return dic_overlaps, self.lyr_overlap_point, self.lyr_overlap_line, self.lyr_overlap_polygon, lyr_vertices, lyr_quotas
     
     def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat, lyr_overlap_name) -> None:
         """
@@ -274,18 +290,54 @@ class OverlayAnalisys():
         vertices_layer_provider = vertices_layer.dataProvider()
         vertices_layer_provider.addAttributes(vertices_layer_fields)
         vertices_layer.updateFields()
-        
-        vertex_id = 0
+        vertices_layer.startEditing()
         for feature in layer.getFeatures():
+            vertex_id = 1
             geometry = feature.geometry()
             for point in geometry.vertices():
                 new_feature = QgsFeature(vertices_layer_fields)
                 new_feature.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(point)))
-                new_feature.setAttributes(feature.attributes())
-                new_feature['vertex_id'] = vertex_id
+                attrs = feature.attributes()
+                attrs.append(vertex_id)
+                new_feature.setAttributes(attrs)
                 vertex_id += 1
                 vertices_layer_provider.addFeature(new_feature)
        
         vertices_layer.setName(NOME_CAMADA_VERTICES)
+        vertices_layer.commitChanges()
         return vertices_layer
     
+    def _create_linestring_from_points(self, point_layer):
+        # Cria um novo layer de linhas com CRS EPSG:4326
+        line_layer = QgsVectorLayer('LineString?crs=epsg:4326', NOME_CAMADA_QUOTAS, 'memory')
+        provider = line_layer.dataProvider()
+
+        # Adiciona campos ao novo layer de linhas
+        provider.addAttributes([QgsField('ID', QVariant.Int)])
+        line_layer.updateFields()
+
+        # Obtém todos os pontos/multipontos do layer de pontos
+        points = []
+        for feat in point_layer.getFeatures():
+            geom = feat.geometry()
+            if geom.isMultipart():
+                points.extend(geom.asMultiPoint())
+            else:
+                points.append(geom.asPoint())
+
+        # Itera sobre os pontos e cria linhas entre eles
+        for i in range(len(points) - 1):
+            point1 = points[i]
+            point2 = points[i + 1]
+
+            # Cria uma nova feature de linha
+            line = QgsFeature()
+            line.setGeometry(QgsGeometry.fromPolylineXY([QgsPointXY(point1), QgsPointXY(point2)]))
+            line.setAttributes([i])
+            provider.addFeature(line)
+
+        # Atualiza as extensões do layer de linhas
+        line_layer.updateExtents()
+        return line_layer
+
+            

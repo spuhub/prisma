@@ -33,7 +33,9 @@ from ..environment import (
     NOME_CAMADA_INTERSECAO_POLIGONO,
     CAMADA_DE_PONTO,
     CAMADA_DE_LINHA,
-    CAMADA_DE_POLIGONO
+    CAMADA_DE_POLIGONO,
+    NOME_CAMADA_VERTICES,
+    NOME_CAMADA_QUOTAS
     
 )
 
@@ -107,10 +109,12 @@ class LayoutManager():
             self.pdf_name = f'{feature["logradouro"]}_{self.time}'
 
             self.handle_layers(self.dic_layers_ever, "Área Homologada")
+            self.adiciona_camada_vertices()
             self.export_relatorio_sintese()
             self.export_relatorio_mapa("Área Homologada")
             # self.export_relatorio_vertices()
-            self.remover_camadas_intersecoes()
+            self.remover_camadas("Interseções")
+            self.remover_camadas("Vértices")
             self.merge_pdf()
 
         self.remover_camadas_obrigatorias()
@@ -124,11 +128,12 @@ class LayoutManager():
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.adiciona_camada_vertices()
                     self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
                     self.export_relatorio_mapa(layer_comp.name())
                     # self.export_relatorio_vertices()
                     QgsProject.instance().removeMapLayer(print_lyr.id())
-                    self.remover_camadas_intersecoes()
+                    self.remover_camadas("Interseções")
                     self.merge_pdf()
 
             for layer_comp in self.dic_layers_ever['db']:
@@ -137,11 +142,12 @@ class LayoutManager():
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.adiciona_camada_vertices()
                     self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
                     self.export_relatorio_mapa(layer_comp.name())
                     # self.export_relatorio_vertices()
                     QgsProject.instance().removeMapLayer(print_lyr.id())
-                    self.remover_camadas_intersecoes()
+                    self.remover_camadas("Interseções")
                     self.merge_pdf()
 
             for layer_comp in self.dic_layers_ever['wfs']:
@@ -150,12 +156,15 @@ class LayoutManager():
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
                     self.handle_layers(self.dic_layers_ever, layer_comp.name())
+                    self.adiciona_camada_vertices()
                     self.project_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values()]
                     self.export_relatorio_mapa(layer_comp.name())
                     # self.export_relatorio_vertices()
                     QgsProject.instance().removeMapLayer(print_lyr.id())
-                    self.remover_camadas_intersecoes()
+                    self.remover_camadas("Interseções")
                     self.merge_pdf()
+
+            self.remover_camadas("Vértices")
         
     def handle_layers(self, data, lyr_comp_name):
         lyr_overlay_point = data['lyr_overlap_point'] if 'lyr_overlap_point' in data else None
@@ -168,7 +177,7 @@ class LayoutManager():
         provider_line = overlay_layer_line.dataProvider()
         overlay_layer_point = QgsVectorLayer("Point?crs=EPSG:4326", NOME_CAMADA_INTERSECAO_PONTO, "memory")
         provider_point = overlay_layer_point.dataProvider()
-        #AQUI
+        
         if QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_POLIGONO:
             if self.lyr_comp_geometry in CAMADA_DE_POLIGONO:
                 if lyr_overlay_polygon and lyr_overlay_polygon.featureCount() > 0:
@@ -216,14 +225,23 @@ class LayoutManager():
                     QgsProject.instance().addMapLayer(overlay_layer_point)
         
         
-
-    def remover_camadas_intersecoes(self):
+    # Remove camadas de interseções ou camadas de vértices/quotas já utilizadas
+    def remover_camadas(self, type):
         camadas = QgsProject.instance().mapLayers().values()
-        nomes_camadas_remover = ["Interseções (Polígono)", "Interseções (Linha)", "Interseções (Ponto)"]
+        nomes_camadas_remover = ["Interseções (Polígono)", "Interseções (Linha)", "Interseções (Ponto)"] if type == "Interseções" else [NOME_CAMADA_VERTICES, NOME_CAMADA_QUOTAS]
 
         for camada in camadas:
             if camada.name() in nomes_camadas_remover:
                 QgsProject.instance().removeMapLayer(camada)
+
+    def adiciona_camada_vertices(self):
+        lyr_vertices = self.dic_layers_ever['lyr_vertices'] if 'lyr_vertices' in self.dic_layers_ever else None
+        lyr_quotas = self.dic_layers_ever['lyr_quotas'] if 'lyr_quotas' in self.dic_layers_ever else None
+        
+        if lyr_vertices:
+            QgsProject.instance().addMapLayer(lyr_vertices.clone())
+        if lyr_quotas:
+            QgsProject.instance().addMapLayer(lyr_quotas.clone())
 
     def remover_camadas_obrigatorias(self):
         camadas = QgsProject.instance().mapLayers().values()
@@ -256,7 +274,7 @@ class LayoutManager():
         self.lyr_input.updateFields()
 
         for layer_item in self.dic_layers:
-            if layer_item not in ('input', 'input_buffer', 'lyr_vertices', 'lyr_overlap_point', 'lyr_overlap_line', 'lyr_overlap_polygon'):
+            if layer_item not in ('input', 'input_buffer', 'lyr_vertices', 'lyr_quotas', 'lyr_overlap_point', 'lyr_overlap_line', 'lyr_overlap_polygon'):
                 list_type = self.dic_layers[layer_item]
                 for idx, layer in enumerate(list_type):
                     for feature in self.lyr_input.getFeatures():
@@ -452,8 +470,8 @@ class LayoutManager():
             'Interseções (Polígono)',
             'Interseções (Linha)',
             'Interseções (Ponto)',
-            'Vértices',
-            'Linhas',
+            NOME_CAMADA_VERTICES,
+            NOME_CAMADA_QUOTAS,
             'Com_Sobreposicao',
             'Sem_Sobreposicao'
             ]

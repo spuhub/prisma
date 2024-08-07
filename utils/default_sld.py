@@ -10,3 +10,4 @@ class slddefaultlayers(Enum):
     LINE_SLD_OVERLAY = f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_L.sld"
     POINT_SLD_OVERLAY = f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_P.sld"
     VERTICES_LAYER = f"{os.path.dirname(__file__)}/../styles/default_layers/Estilo_Vertice_P.qml"
+    QUOTAS_LAYER = f"{os.path.dirname(__file__)}/../styles/default_layers/Estilo_Linhas_de_Cota_L.qml"

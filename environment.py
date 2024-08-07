@@ -7,6 +7,7 @@ NOME_CAMADA_INTERSECAO_PONTO = 'Interseções (Ponto)'
 NOME_CAMADA_INTERSECAO_LINHA = 'Interseções (Linha)'
 NOME_CAMADA_INTERSECAO_POLIGONO = 'Interseções (Polígono)'
 NOME_CAMADA_VERTICES = 'Vértices'
+NOME_CAMADA_QUOTAS = 'Linhas'
 
 CAMADA_DE_PONTO = ['Point', 'MultiPoint']
 CAMADA_DE_LINHA = ['LineString', 'MultiLineString']
