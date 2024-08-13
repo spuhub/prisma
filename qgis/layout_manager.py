@@ -135,6 +135,7 @@ class LayoutManager():
                     QgsProject.instance().removeMapLayer(print_lyr.id())
                     self.remover_camadas("Interseções")
                     self.merge_pdf()
+                    self.remover_camadas("Vértices")
 
             for layer_comp in self.dic_layers_ever['db']:
                 self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
@@ -149,6 +150,7 @@ class LayoutManager():
                     QgsProject.instance().removeMapLayer(print_lyr.id())
                     self.remover_camadas("Interseções")
                     self.merge_pdf()
+                    self.remover_camadas("Vértices")
 
             for layer_comp in self.dic_layers_ever['wfs']:
                 self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
@@ -163,8 +165,7 @@ class LayoutManager():
                     QgsProject.instance().removeMapLayer(print_lyr.id())
                     self.remover_camadas("Interseções")
                     self.merge_pdf()
-
-            self.remover_camadas("Vértices")
+                    self.remover_camadas("Vértices")
         
     def handle_layers(self, data, lyr_comp_name):
         lyr_overlay_point = data['lyr_overlap_point'] if 'lyr_overlap_point' in data else None
