@@ -6,7 +6,8 @@ from qgis.core import (
     QgsVectorLayer,
     QgsCoordinateTransform,
     QgsCoordinateReferenceSystem,
-    QgsFeature
+    QgsFeature,
+    QgsWkbTypes
     )
 
 from ..environment import (
@@ -15,6 +16,9 @@ from ..environment import (
     NOME_CAMADA_INTERSECAO_PONTO,
     NOME_CAMADA_INTERSECAO_LINHA,
     NOME_CAMADA_INTERSECAO_POLIGONO,
+    CAMADA_DE_PONTO,
+    CAMADA_DE_LINHA,
+    CAMADA_DE_POLIGONO,
     NOME_CAMADA_VERTICES,
     NOME_CAMADA_QUOTAS,
     CRS_PADRAO
@@ -173,13 +177,13 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
         QgsVectorLayer: camada estilizada com o SLD
     """
     if layer.name() == NOME_CAMADA_VERTICES:
-        layer.loadNamedStyle(slddefaultlayers.VERTICES_LAYER.value)
+        layer.loadNamedStyle(slddefaultlayers.VERTICES_LAYER.get_path())
         layer.triggerRepaint()
 
         return layer
     
     if layer.name() == NOME_CAMADA_QUOTAS:
-        layer.loadNamedStyle(slddefaultlayers.QUOTAS_LAYER.value)
+        layer.loadNamedStyle(slddefaultlayers.QUOTAS_LAYER.get_path())
         layer.triggerRepaint()
 
         return layer
@@ -187,14 +191,14 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     sld_path: str = ''
     if layer.name() == NOME_CAMADA_ENTRADA:
         # Identifica o tipo de geometria da camada
-        geometry_type = layer.geometryType()
+        geometry_type = get_general_geom_type_name(layer)
 
         # Seleciona o caminho para o arquivo SLD apropriado
-        if geometry_type == 0:  # Ponto
+        if geometry_type in CAMADA_DE_PONTO:  # Ponto
             sld_path = operation_config['sld_default_layers']['default_input_point']
-        elif geometry_type == 1:  # Linha
+        elif geometry_type in CAMADA_DE_LINHA:  # Linha
             sld_path = operation_config['sld_default_layers']['default_input_line']
-        elif geometry_type == 2:  # Polígono
+        elif geometry_type in CAMADA_DE_POLIGONO:  # Polígono
             sld_path = operation_config['sld_default_layers']['default_input_polygon']
         else:
             raise ValueError(f"Tipo de geometria inválido: {geometry_type}")
@@ -204,14 +208,13 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     
     elif layer.name() in [NOME_CAMADA_INTERSECAO_PONTO, NOME_CAMADA_INTERSECAO_LINHA, NOME_CAMADA_INTERSECAO_POLIGONO]:
         # Identifica o tipo de geometria da camada
-        geometry_type = layer.geometryType()
-
+        geometry_type = get_general_geom_type_name(layer)
         # Seleciona o caminho para o arquivo SLD apropriado
-        if geometry_type == 0:  # Ponto
+        if geometry_type in CAMADA_DE_PONTO:  # Ponto
             sld_path = operation_config['sld_default_layers']['overlay_input_point']
-        elif geometry_type == 1:  # Linha
+        elif geometry_type in CAMADA_DE_LINHA:  # Linha
             sld_path = operation_config['sld_default_layers']['overlay_input_line']
-        elif geometry_type == 2:  # Polígono
+        elif geometry_type in CAMADA_DE_POLIGONO:  # Polígono
             sld_path = operation_config['sld_default_layers']['overlay_input_polygon']
         else:
             raise ValueError(f"Tipo de geometria inválido: {geometry_type}")
@@ -234,7 +237,7 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
                 sld_path = layer_required['estiloCamadas']
 
     # Carrega o arquivo SLD e aplica ao estilo da camada
-    layer.loadSldStyle(sld_path)
+    layer.loadSldStyle(os.path.normpath(sld_path))
     layer.triggerRepaint()
 
     # TODO: Atualiza o estilo da camada no projeto
@@ -261,3 +264,12 @@ def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_
         "TEXT_FORMAT" : 0
         }
     processing.run("native:atlaslayouttopdf", parameters)
+
+def get_general_geom_type_name(geom):
+        geom_type = geom.geometryType()
+        if geom_type == QgsWkbTypes.PointGeometry:
+            return 'Point'
+        elif geom_type == QgsWkbTypes.LineGeometry:
+            return 'LineString'
+        elif geom_type == QgsWkbTypes.PolygonGeometry:
+            return 'Polygon'

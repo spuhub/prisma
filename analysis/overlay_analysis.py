@@ -201,9 +201,9 @@ class OverlayAnalisys():
         lyr_input.commitChanges()
 
         # Adiciona os estilos às camadas de sobreposição
-        self.lyr_overlap_point = lyr_process(self.lyr_overlap_point, operation_config)
-        self.lyr_overlap_line = lyr_process(self.lyr_overlap_line, operation_config)
-        self.lyr_overlap_polygon = lyr_process(self.lyr_overlap_polygon, operation_config)
+        self.lyr_overlap_point = lyr_process(self.lyr_overlap_point, operation_config, CRS_PADRAO)
+        self.lyr_overlap_line = lyr_process(self.lyr_overlap_line, operation_config, CRS_PADRAO)
+        self.lyr_overlap_polygon = lyr_process(self.lyr_overlap_polygon, operation_config, CRS_PADRAO)
 
         # Seta como None a variável caso não tenha nenhuma sobreposição
         if self.lyr_overlap_point.featureCount() == 0:

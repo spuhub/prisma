@@ -11,9 +11,9 @@ from qgis.core import (
     QgsReadWriteContext,
     QgsRasterLayer,
     QgsWkbTypes,
-    QgsWkbTypes,
     QgsCoordinateReferenceSystem
     )
+
 from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
 from qgis.PyQt.QtWidgets import QApplication
@@ -35,7 +35,8 @@ from ..environment import (
     CAMADA_DE_LINHA,
     CAMADA_DE_POLIGONO,
     NOME_CAMADA_VERTICES,
-    NOME_CAMADA_QUOTAS
+    NOME_CAMADA_QUOTAS,
+    CRS_PADRAO
     
 )
 
@@ -123,7 +124,7 @@ class LayoutManager():
             self.feature = feature
             self.pdf_name = f'{feature["logradouro"]}_{self.time}'
             for layer_comp in self.dic_layers_ever['shp']:
-                self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
+                self.lyr_comp_geometry = lyr_utils.get_general_geom_type_name(layer_comp)
                 if feature.attribute(layer_comp.name()) == True:
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
@@ -138,7 +139,7 @@ class LayoutManager():
                     self.remover_camadas("Vértices")
 
             for layer_comp in self.dic_layers_ever['db']:
-                self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
+                self.lyr_comp_geometry = lyr_utils.get_general_geom_type_name(layer_comp)
                 if feature.attribute(layer_comp.name()) == True:
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
@@ -153,7 +154,7 @@ class LayoutManager():
                     self.remover_camadas("Vértices")
 
             for layer_comp in self.dic_layers_ever['wfs']:
-                self.lyr_comp_geometry = self.get_general_geom_type_name(layer_comp)
+                self.lyr_comp_geometry = lyr_utils.get_general_geom_type_name(layer_comp)
                 if feature.attribute(layer_comp.name()) == True:
                     print_lyr = layer_comp.clone()
                     QgsProject.instance().addMapLayer(print_lyr)
@@ -187,6 +188,7 @@ class LayoutManager():
                             nova_feature = QgsFeature()
                             nova_feature.setGeometry(feature_overlay.geometry())
                             provider_polygon.addFeatures([nova_feature])
+                    overlay_layer_polygon = lyr_utils.lyr_process(overlay_layer_polygon, self.operation_config, CRS_PADRAO)
                     QgsProject.instance().addMapLayer(overlay_layer_polygon)
 
             elif self.lyr_comp_geometry in CAMADA_DE_LINHA:
@@ -196,6 +198,7 @@ class LayoutManager():
                             nova_feature = QgsFeature()
                             nova_feature.setGeometry(feature_overlay.geometry())
                             provider_line.addFeatures([nova_feature])
+                    overlay_layer_line = lyr_utils.lyr_process(overlay_layer_line, self.operation_config, CRS_PADRAO)
                     QgsProject.instance().addMapLayer(overlay_layer_line)
 
             elif self.lyr_comp_geometry in CAMADA_DE_PONTO:
@@ -205,6 +208,7 @@ class LayoutManager():
                             nova_feature = QgsFeature()
                             nova_feature.setGeometry(feature_overlay.geometry())
                             provider_point.addFeatures([nova_feature])
+                    overlay_layer_point = lyr_utils.lyr_process(overlay_layer_point, self.operation_config, CRS_PADRAO)
                     QgsProject.instance().addMapLayer(overlay_layer_point)
 
         elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_LINHA:
@@ -214,6 +218,7 @@ class LayoutManager():
                         nova_feature = QgsFeature()
                         nova_feature.setGeometry(feature_overlay.geometry())
                         provider_line.addFeatures([nova_feature])
+                overlay_layer_line = lyr_utils.lyr_process(overlay_layer_line, self.operation_config, CRS_PADRAO)
                 QgsProject.instance().addMapLayer(overlay_layer_line)
 
         elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_PONTO:
@@ -223,6 +228,7 @@ class LayoutManager():
                             nova_feature = QgsFeature()
                             nova_feature.setGeometry(feature_overlay.geometry())
                             provider_point.addFeatures([nova_feature])
+                    overlay_layer_point = lyr_utils.lyr_process(overlay_layer_point, self.operation_config, CRS_PADRAO)
                     QgsProject.instance().addMapLayer(overlay_layer_point)
         
         
@@ -386,11 +392,11 @@ class LayoutManager():
                 if get_overlay_area:
                     if isinstance(get_overlay_area, list):
                         get_overlay_area = get_overlay_area[0]
-                    if self.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_POLIGONO:
+                    if lyr_utils.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_POLIGONO:
                         overlay_uniao_area.setText(f"Área de sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m².")
-                    elif self.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_LINHA:
+                    elif lyr_utils.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_LINHA:
                         overlay_uniao_area.setText(f"Sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m.")
-                    elif self.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_PONTO:
+                    elif lyr_utils.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_PONTO:
                         overlay_uniao_area.setText(f"")
 
 
@@ -520,11 +526,3 @@ class LayoutManager():
 
         return data_source
     
-    def get_general_geom_type_name(self, geom):
-        geom_type = geom.geometryType()
-        if geom_type == QgsWkbTypes.PointGeometry:
-            return 'Point'
-        elif geom_type == QgsWkbTypes.LineGeometry:
-            return 'LineString'
-        elif geom_type == QgsWkbTypes.PolygonGeometry:
-            return 'Polygon'
