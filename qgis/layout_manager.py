@@ -212,14 +212,27 @@ class LayoutManager():
                     QgsProject.instance().addMapLayer(overlay_layer_point)
 
         elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_LINHA:
-            if lyr_overlay_line and lyr_overlay_line.featureCount() > 0:
-                for feature_overlay in lyr_overlay_line.getFeatures():
-                    if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
-                        nova_feature = QgsFeature()
-                        nova_feature.setGeometry(feature_overlay.geometry())
-                        provider_line.addFeatures([nova_feature])
-                overlay_layer_line = lyr_utils.lyr_process(overlay_layer_line, self.operation_config, CRS_PADRAO)
-                QgsProject.instance().addMapLayer(overlay_layer_line)
+            if self.lyr_comp_geometry in CAMADA_DE_POLIGONO:
+                print("Polígono")
+                if lyr_overlay_line and lyr_overlay_line.featureCount() > 0:
+                    print("Maior que 0")
+                    for feature_overlay in lyr_overlay_line.getFeatures():
+                        if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                            print("Entrou")
+                            nova_feature = QgsFeature()
+                            nova_feature.setGeometry(feature_overlay.geometry())
+                            provider_line.addFeatures([nova_feature])
+                    overlay_layer_line = lyr_utils.lyr_process(overlay_layer_line, self.operation_config, CRS_PADRAO)
+                    QgsProject.instance().addMapLayer(overlay_layer_line)
+            elif self.lyr_comp_geometry in CAMADA_DE_LINHA:
+                if lyr_overlay_point and lyr_overlay_point.featureCount() > 0:
+                    for feature_overlay in lyr_overlay_point.getFeatures():
+                        if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
+                            nova_feature = QgsFeature()
+                            nova_feature.setGeometry(feature_overlay.geometry())
+                            provider_point.addFeatures([nova_feature])
+                    overlay_layer_point = lyr_utils.lyr_process(overlay_layer_point, self.operation_config, CRS_PADRAO)
+                    QgsProject.instance().addMapLayer(overlay_layer_point)
 
         elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_PONTO:
                 if lyr_overlay_point:
