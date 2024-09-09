@@ -213,12 +213,9 @@ class LayoutManager():
 
         elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_LINHA:
             if self.lyr_comp_geometry in CAMADA_DE_POLIGONO:
-                print("Polígono")
                 if lyr_overlay_line and lyr_overlay_line.featureCount() > 0:
-                    print("Maior que 0")
                     for feature_overlay in lyr_overlay_line.getFeatures():
                         if feature_overlay.attribute('Camada_sobreposicao') == lyr_comp_name and feature_overlay.attribute('logradouro') == self.feature.attribute('logradouro'):
-                            print("Entrou")
                             nova_feature = QgsFeature()
                             nova_feature.setGeometry(feature_overlay.geometry())
                             provider_line.addFeatures([nova_feature])

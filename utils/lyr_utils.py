@@ -247,7 +247,7 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
 
 def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_name: str, pdf_name: str, path_output: str, suffix: str) -> None:
     logradouro = feature['logradouro']
-    logradouro = logradouro.replace(".", ' ').replace("/", "_").replace("'", "")
+
     parameters = {
         "COVERAGE_LAYER" : layer,
         "DPI" : 200,
