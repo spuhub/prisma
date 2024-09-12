@@ -58,6 +58,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.btn_delete_wfs.clicked.connect(self.delete_wfs_config)
         self.delete_base.clicked.connect(self.delete_bd)
         self.combo_wfs.activated.connect(self.fill_data_wfs)
+        self.style_path.setDefaultRoot(self.get_project_path())
 
         self.comboBox_base_lpm_hom.currentIndexChanged.connect(self.add_action_lpm_homologada)
         self.comboBox_base_lpm_n_hom.currentIndexChanged.connect(self.add_action_lpm_nao_homologada)
@@ -1802,6 +1803,11 @@ class ConfigWindow(QtWidgets.QDialog):
 
             self.settings.edit_database(base_wfs, config) 
 
+    def get_project_path(self):
+        get_root = os.path.dirname(__file__).split("prisma")[0] + "prisma"
+        formated_path = os.path.normpath(get_root)
+
+        return formated_path
 
 class comboColunas(QComboBox):
     def __init__(self, parent, lista_itens):
