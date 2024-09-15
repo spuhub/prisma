@@ -14,6 +14,12 @@ from qgis.core import (
     QgsCoordinateReferenceSystem
     )
 
+# Importa a biblioteca PyPDF2 da pasta da pasta libs
+current_dir = os.path.dirname(__file__)
+plugin_dir = os.path.abspath(os.path.join(current_dir, '..'))
+libs_dir = os.path.join(plugin_dir, 'libs')
+sys.path.append(os.path.normpath(libs_dir))
+
 from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
 from qgis.PyQt.QtWidgets import QApplication

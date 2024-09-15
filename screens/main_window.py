@@ -37,15 +37,15 @@ class MainWindow (QtWidgets.QDialog):
             # Aproveita a função para realizar a pré-configuração do arquivo json
             pre_config_json()
 
-            msg = QMessageBox(self)
-            ret = msg.question(self, 'Download Dependências ', "É necessario fazer o download de algumas dependências para o Prisma funcionar corretamente! Deseja fazer o Download das Dependências?", QMessageBox.Yes | QMessageBox.Cancel)
-            if ret == QMessageBox.Yes:
-                instala_dependencias(arq_dependencias)
-                with open(flag_dependencias, "w", encoding='utf-8') as file:
-                    file.write("True")
+            # msg = QMessageBox(self)
+            # ret = msg.question(self, 'Download Dependências ', "É necessario fazer o download de algumas dependências para o Prisma funcionar corretamente! Deseja fazer o Download das Dependências?", QMessageBox.Yes | QMessageBox.Cancel)
+            # if ret == QMessageBox.Yes:
+            #    instala_dependencias(arq_dependencias)
+            #    with open(flag_dependencias, "w", encoding='utf-8') as file:
+            #        file.write("True")
                  
-                ret = msg.question(self, 'Reinicio do Sistema Necessário', "É necessario fechar o QGIS para aplicar as instalações", QMessageBox.Ok)
-                sys.exit()
+            #    ret = msg.question(self, 'Reinicio do Sistema Necessário', "É necessario fechar o QGIS para aplicar as instalações", QMessageBox.Ok)
+            #    sys.exit()
         
         self.btn_config.clicked.connect(self.go_to_config)
         self.btn_ponto.clicked.connect(self.go_to_point)
