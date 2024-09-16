@@ -6,7 +6,7 @@
 name=Prisma
 qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
-version=5.1
+version=5.2
 author=Zago
 email=vinirafaelsch@gmail.com;
 
@@ -52,6 +52,12 @@ changelog=Version 3.0 (22/07/2022):
             - Preenchimento do cabeçalho com dados inseridos pelo usuário
             - Comparações envolvendo Polígono (entrada) e Linha (comparação)
             - Comparações envolvendo Polígono (entrada) e Ponto (comparação)
+         Version 5.2 (15/09/2024):
+            - Empacotamento de bibliotecas (Elimina etapa de instalação de pacotes na primeira execução)
+            - Adição de vértices e linhas de cotas para polígonos de entrada
+            - Estilos nas camadas através de arquivos .sld
+            - Comparação linha com linha
+            - Alteração logo SPU
 
 # Tags are comma separated with spaces allowed
 tags=python
