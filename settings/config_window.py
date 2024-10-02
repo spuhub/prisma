@@ -1252,18 +1252,18 @@ class ConfigWindow(QtWidgets.QDialog):
             current_tipo = self.comboBox_base_area_uniao_n_hom.itemData(self.comboBox_base_area_uniao_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_area_uniao_n_hom.currentText()
             if current_tipo == 'shp':
-                config["area_nao_homologada"] = [current_base, "", "Área Não Homologada"]
+                config["area_nao_homologada"] = [current_base, "", "Área não Homologada"]
             else:
-                config["area_nao_homologada"] = [current_base, current_camada, "Área Não Homologada"]
+                config["area_nao_homologada"] = [current_base, current_camada, "Área não Homologada"]
 
         if self.groupBox_lmeo_n_hom.isChecked():
             current_base = self.comboBox_base_lmeo_n_hom.itemData(self.comboBox_base_lmeo_n_hom.currentIndex())[0]
             current_tipo = self.comboBox_base_lmeo_n_hom.itemData(self.comboBox_base_lmeo_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lmeo_n_hom.currentText()
             if current_tipo == 'shp':
-                config["lmeo_nao_homologada"] = [current_base, "", "LMEO Não Homologada"]
+                config["lmeo_nao_homologada"] = [current_base, "", "LMEO não Homologada"]
             else:
-                config["lmeo_nao_homologada"] = [current_base, current_camada, "LMEO Não Homologada"]
+                config["lmeo_nao_homologada"] = [current_base, current_camada, "LMEO não Homologada"]
 
 
         if self.groupBox_lltm_n_hom.isChecked():
@@ -1271,9 +1271,9 @@ class ConfigWindow(QtWidgets.QDialog):
             current_tipo = self.comboBox_base_lltm_n_hom.itemData(self.comboBox_base_lltm_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lltm_n_hom.currentText()
             if current_tipo == 'shp':
-                config["lltm_nao_homologada"] = [current_base, "", "LLTM Não Homologada"]
+                config["lltm_nao_homologada"] = [current_base, "", "LLTM não Homologada"]
             else:
-                config["lltm_nao_homologada"] = [current_base, current_camada, "LLTM Não Homologada"]
+                config["lltm_nao_homologada"] = [current_base, current_camada, "LLTM não Homologada"]
 
 
         if self.groupBox_lpm_n_hom.isChecked():
@@ -1281,9 +1281,9 @@ class ConfigWindow(QtWidgets.QDialog):
             current_tipo = self.comboBox_base_lpm_n_hom.itemData(self.comboBox_base_lpm_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_lpm_n_hom.currentText()
             if current_tipo == 'shp':
-                config["lpm_nao_homologada"] = [current_base, "", "LPM Não Homologada"]
+                config["lpm_nao_homologada"] = [current_base, "", "LPM não Homologada"]
             else:
-                config["lpm_nao_homologada"] = [current_base, current_camada, "LPM Não Homologada"]
+                config["lpm_nao_homologada"] = [current_base, current_camada, "LPM não Homologada"]
 
 
         if self.groupBox_ltm_n_hom.isChecked():
@@ -1291,9 +1291,9 @@ class ConfigWindow(QtWidgets.QDialog):
             current_tipo = self.comboBox_base_ltm_n_hom.itemData(self.comboBox_base_ltm_n_hom.currentIndex())[1]
             current_camada = self.comboBox_camada_ltm_n_hom.currentText()
             if current_tipo == 'shp':
-                config["ltm_nao_homologada"] = [current_base, "", "LTM Não Homologada"]
+                config["ltm_nao_homologada"] = [current_base, "", "LTM não Homologada"]
             else:
-                config["ltm_nao_homologada"] = [current_base, current_camada, "LTM Não Homologada"]
+                config["ltm_nao_homologada"] = [current_base, current_camada, "LTM não Homologada"]
 
 
         self.settings.set_camadas_base_obrigatoria(config)

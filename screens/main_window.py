@@ -12,6 +12,13 @@ from PyQt5.QtCore import Qt
 from ..settings.install_dependecies import instala_dependencias, verifica_flag_dependencias
 from ..utils.pre_config_json import pre_config_json
 
+## EMPACOTAMENTO DE BIBLIOTECAS ##
+# Importa a biblioteca PyPDF2 da pasta da pasta libs do Prisma
+current_dir = os.path.dirname(__file__)
+plugin_dir = os.path.abspath(os.path.join(current_dir, '..'))
+libs_dir = os.path.join(plugin_dir, 'libs')
+sys.path.append(os.path.normpath(libs_dir))
+
 arq_dependencias = os.path.join(os.path.dirname(os.path.dirname(__file__)),'settings', 'dependencies')
 flag_dependencias = os.path.join(os.path.dirname(os.path.dirname(__file__)),'settings','flag_dependencies')
 

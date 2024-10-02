@@ -14,12 +14,6 @@ from qgis.core import (
     QgsCoordinateReferenceSystem
     )
 
-# Importa a biblioteca PyPDF2 da pasta da pasta libs
-current_dir = os.path.dirname(__file__)
-plugin_dir = os.path.abspath(os.path.join(current_dir, '..'))
-libs_dir = os.path.join(plugin_dir, 'libs')
-sys.path.append(os.path.normpath(libs_dir))
-
 from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
 from qgis.PyQt.QtWidgets import QApplication
@@ -369,6 +363,9 @@ class LayoutManager():
         layout_name = 'Planta_FolhaA3_Paisagem'
         layout = QgsProject.instance().layoutManager().layoutByName(layout_name)
 
+        item_nao_homologada = layout.itemById('CD_Compl_Obs4')
+        item_area_nao_homologada = layout.itemById('CD_Compl_Obs5')
+
         main_map = layout.itemById('Planta_Principal')
         localization_map = layout.itemById('Planta_Localizacao')
         crs = QgsCoordinateReferenceSystem(int(self.feature.attribute('EPSG_S2000')))
@@ -414,6 +411,21 @@ class LayoutManager():
                         overlay_uniao_area.setText(f"Sobreposição com {layer_name}: " + str(self.overlay_analisys.calcular_soma_areas(get_overlay_area, self.feature.attribute('EPSG_S2000'))) + " m.")
                     elif lyr_utils.get_general_geom_type_name(get_overlay_area) in CAMADA_DE_PONTO:
                         overlay_uniao_area.setText(f"")
+            
+            if layer_name == "Área Homologada":
+                overlay_area_nao_homologada = self.overlay_nao_homologada()
+
+                item_nao_homologada.setText("Lote não sobrepõe Área não Homologada")
+                if "Área não Homologada" in column_value:
+                    item_nao_homologada.setText("Lote sobrepõe Área não Homologada")
+                
+                if lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_POLIGONO:
+                    item_area_nao_homologada.setText(f"Área de sobreposição com Área não Homologada: " + str(self.overlay_analisys.calcular_soma_areas(overlay_area_nao_homologada, self.feature.attribute('EPSG_S2000'))) + " m².")
+                elif lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_LINHA:
+                    item_area_nao_homologada.setText(f"Sobreposição com Área não Homologada: " + str(self.overlay_analisys.calcular_soma_areas(overlay_area_nao_homologada, self.feature.attribute('EPSG_S2000'))) + " m.")
+                elif lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_PONTO:
+                    item_area_nao_homologada.setText(f"")
+                # item_area_nao_homologada.setText(f"Sobreposição Área não Homologada: {overlay_area_nao_homologada} m.")
 
 
         self.handle_text_mapa(layout)
@@ -421,6 +433,10 @@ class LayoutManager():
         main_map = layout.itemById('Planta_Principal')
         main_map.refresh()
         lyr_utils.export_atlas_single_page(self.lyr_input, self.feature, layout_name, self.pdf_name, self.path_output, f'{self.time}_B_Mapa')
+
+        if item_nao_homologada != None and item_area_nao_homologada != None:
+            item_nao_homologada.setText("")
+            item_area_nao_homologada.setText("")
 
     def export_relatorio_vertices(self):
         layout_name = 'relatorio'
@@ -541,4 +557,48 @@ class LayoutManager():
                             data_source[str(name)] = [x['orgaoResponsavel'], x['periodosReferencia']]
 
         return data_source
+        
+    def overlay_nao_homologada(self):
+        get_nao_homologada = QgsProject.instance().mapLayersByName('Área não Homologada')
+        if not get_nao_homologada:
+            return 0.00
+                
+        nao_homologada = get_nao_homologada[0]
+        overlay_geometries = []
+        geom_feature = self.feature.geometry()
+        
+        for feat in nao_homologada.getFeatures():
+            geom = feat.geometry()
+            # Verificar se há interseção
+            if geom_feature.intersects(geom):
+                intersecao = geom_feature.intersection(geom)
+                overlay_geometries.append(intersecao)
+        
+        # Criar um novo QgsVectorLayer em memória
+        crs = nao_homologada.crs()
+        mem_layer = None
+
+        if QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_POLIGONO:
+            mem_layer = QgsVectorLayer('Polygon?crs=' + crs.authid(), 'Interseções Não Homologada', 'memory')
+        elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_LINHA:
+            mem_layer = QgsVectorLayer('LineString?crs=' + crs.authid(), 'Interseções Não Homologada', 'memory')
+        elif QgsWkbTypes.displayString(self.feature.geometry().wkbType()) in CAMADA_DE_PONTO:
+            mem_layer = QgsVectorLayer('Point?crs=' + crs.authid(), 'Interseções Não Homologada', 'memory')
+
+        mem_layer_data = mem_layer.dataProvider()
+        
+        # Adicionar as geometrias de interseção como novas features
+        new_features = []
+        for geom in overlay_geometries:
+            new_feat = QgsFeature()
+            new_feat.setGeometry(geom)
+            new_features.append(new_feat)
+        
+        mem_layer_data.addFeatures(new_features)
+        mem_layer.updateExtents()
+        
+        # total_overlay = self.overlay_analisys.calcular_soma_areas(mem_layer, self.feature.attribute('EPSG_S2000'))
+        return mem_layer
     
+
+        
