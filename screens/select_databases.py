@@ -3,6 +3,10 @@ import os
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QFont
 from PyQt5.uic import loadUi
+from PyQt5.QtWidgets import QMessageBox
+
+from qgis.utils import iface
+from qgis.core import QgsProject
 
 from ..settings.json_tools import JsonTools
 from ..utils.data_processing import DataProcessing
@@ -142,7 +146,18 @@ class SelectDatabases(QtWidgets.QDialog):
         camadas sobrepostas, configuração da operação, etc..
         """
         self.hide()
+        
+        # Salvar o projeto atual antes de prosseguir
+        iface.actionNewProject().trigger()
 
+        project = QgsProject.instance()
+
+        # Verificar se o projeto foi modificado
+        if project.isDirty():
+            self.message_project_dirty()
+            return
+
+        # Início no processo de tratamento das bases selecionadas
         selected_items_shp = []
         selected_items_wfs = []
         selected_items_bd = []
@@ -180,3 +195,12 @@ class SelectDatabases(QtWidgets.QDialog):
         data = {'layers': dic_layers, 'overlaps': dic_overlaps, 'operation_config': self.operation_config}
 
         self.continue_window.emit(data)
+
+    def message_project_dirty(self):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information) 
+        msg_box.setWindowTitle("SPU-Prisma")  
+        msg_box.setText("PROCESSO ABORTADO! Para executar essa funcionalidade do SPU-Prisma o seu projeto deve estar vazio.") 
+        msg_box.setStandardButtons(QMessageBox.Ok) 
+
+        msg_box.exec_()

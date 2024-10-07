@@ -1,4 +1,3 @@
-import sys
 import os.path
 
 from PyQt5 import QtCore, QtWidgets
