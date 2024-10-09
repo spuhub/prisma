@@ -1,5 +1,5 @@
 import os.path
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from PyQt5 import QtWidgets
 from PyQt5.uic import loadUi
 from ..settings.env_tools import EnvTools
@@ -82,3 +82,12 @@ class ReportGenerator(QtWidgets.QDialog):
         # lm.pdf_generator()
 
         self.hide()
+
+        # Mostra mensagem de que o processo de gerar PDF's foi finalizado com sucesso
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information) 
+        msg_box.setWindowTitle("SPU-Prisma")  
+        msg_box.setText("PDF's gerados com sucesso.") 
+        msg_box.setStandardButtons(QMessageBox.Ok) 
+        msg_box.exec_()
+        

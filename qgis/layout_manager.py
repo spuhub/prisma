@@ -600,5 +600,3 @@ class LayoutManager():
         # total_overlay = self.overlay_analisys.calcular_soma_areas(mem_layer, self.feature.attribute('EPSG_S2000'))
         return mem_layer
     
-
-        
