@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import math
 
 from qgis.core import (
     QgsProject,
@@ -16,11 +17,11 @@ from qgis.core import (
 
 from PyPDF2 import PdfReader, PdfMerger
 from datetime import datetime
-from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtXml import QDomDocument
 from PyQt5 import QtCore
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
+from PyQt5.QtWidgets import QApplication
 
 from ..utils import lyr_utils
 from ..utils.utils import Utils
@@ -64,12 +65,24 @@ class LayoutManager():
         self.lyr_input = self.dic_layers['input_buffer'] if self.possui_buffer else self.dic_layers['input']
         self.operation_config = data['operation_config']
         self.path_output = data['path_output']
-        self.progress_bar = progress_bar
         self.project_layers = []
         self.utils = Utils()
         self.current_year: str = str(datetime.now().year)
         self.basemap_name, self.basemap_link = self.utils.get_active_basemap()
+
+        self.progress_bar = progress_bar
+        self.progress_bar.setHidden(False)
+        self.progress_bar.setRange(0, 100)        
+        self.actual_progress = 0
+        self.progress_bar.setValue(self.actual_progress)
+        self.total_comp = len(self.dic_layers_ever['shp']) + len(self.dic_layers_ever['db']) + len(self.dic_layers_ever['wfs'])
         
+        for lyr in self.dic_layers_ever['required']: 
+            if lyr.name() == "Área Homologada":
+                self.total_comp = self.total_comp + 1
+            
+        self.total_comp = self.total_comp * self.lyr_input.featureCount()
+
         is_windows = sys.platform.startswith('win')
         
         template_dir = os.path.join(os.path.dirname(__file__), r'layouts\Planta_FolhaA3_Paisagem.qpt' if is_windows else r'layouts/Planta_FolhaA3_Paisagem.qpt')
@@ -117,6 +130,7 @@ class LayoutManager():
             self.remover_camadas("Interseções")
             self.remover_camadas("Vértices")
             self.merge_pdf()
+            self.update_progress_bar()
 
         self.remover_camadas_obrigatorias()
 
@@ -137,6 +151,7 @@ class LayoutManager():
                     self.remover_camadas("Interseções")
                     self.merge_pdf()
                     self.remover_camadas("Vértices")
+                self.update_progress_bar()
 
             for layer_comp in self.dic_layers_ever['db']:
                 self.lyr_comp_geometry = lyr_utils.get_general_geom_type_name(layer_comp)
@@ -152,6 +167,7 @@ class LayoutManager():
                     self.remover_camadas("Interseções")
                     self.merge_pdf()
                     self.remover_camadas("Vértices")
+                self.update_progress_bar()
 
             for layer_comp in self.dic_layers_ever['wfs']:
                 self.lyr_comp_geometry = lyr_utils.get_general_geom_type_name(layer_comp)
@@ -167,6 +183,7 @@ class LayoutManager():
                     self.remover_camadas("Interseções")
                     self.merge_pdf()
                     self.remover_camadas("Vértices")
+                self.update_progress_bar()
         
     def handle_layers(self, data, lyr_comp_name):
         lyr_overlay_point = data['lyr_overlap_point'] if 'lyr_overlap_point' in data else None
@@ -599,4 +616,12 @@ class LayoutManager():
         
         # total_overlay = self.overlay_analisys.calcular_soma_areas(mem_layer, self.feature.attribute('EPSG_S2000'))
         return mem_layer
+    
+    def update_progress_bar(self):
+        self.actual_progress = self.actual_progress + 1
+        actual_progress = self.actual_progress * 100 / self.total_comp
+        self.progress_bar.setValue(math.ceil(actual_progress))
+
+        # Força o processamento dos eventos da UI
+        QApplication.processEvents()
     
