@@ -506,9 +506,6 @@ class LayoutManager():
         ministerio = layout.itemById('CD_Cabecalho_Ministerio')
         ministerio.setText(headers['ministerio'])
 
-        secretaria_especial = layout.itemById('CD_Cabecalho_Secretaria_Esp')
-        secretaria_especial.setText(headers['secretariaEspecial'])
-
         secretaria = layout.itemById('CD_Cabecalho_Secretaria')
         secretaria.setText(headers['secretaria'])
 

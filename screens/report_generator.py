@@ -25,7 +25,6 @@ class ReportGenerator(QtWidgets.QDialog):
 
     def save_fields(self):
         field = {"ministerio": self.ministerio.text(),
-                 "secretariaEspecial": self.secretariaEspecial.text(),
                  "secretaria": self.secretaria.text(),
                  "superintendencia": self.superintendencia.text(),
                  "setor": self.setor.text()}
@@ -36,8 +35,6 @@ class ReportGenerator(QtWidgets.QDialog):
         field = self.envtools.get_report_hearder()
         if "ministerio" in field:
             self.ministerio.setText(field["ministerio"])
-        if "secretariaEspecial" in field:
-            self.secretariaEspecial.setText(field["secretariaEspecial"])
         if "secretaria" in field:
             self.secretaria.setText(field["secretaria"])
         if "superintendencia" in field:
@@ -51,13 +48,11 @@ class ReportGenerator(QtWidgets.QDialog):
 
     def hidden_fields(self):
         self.label.setHidden(True)
-        self.label_2.setHidden(True)
         self.label_3.setHidden(True)
         self.label_4.setHidden(True)
         self.label_5.setHidden(True)
         self.label_6.setHidden(True)
         self.ministerio.setHidden(True)
-        self.secretariaEspecial.setHidden(True)
         self.secretaria.setHidden(True)
         self.superintendencia.setHidden(True)
         self.setor.setHidden(True)
