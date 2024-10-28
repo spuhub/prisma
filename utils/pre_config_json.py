@@ -11,13 +11,13 @@ def pre_config_json():
     json_data = json_tools.get_json()
 
     data: dict = {
-        "default_input_polygon": f"{os.path.dirname(__file__)}/../styles/default_layers/input_A.sld",
-        "default_input_line": f"{os.path.dirname(__file__)}/../styles/default_layers/input_L.sld",
-        "default_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/input_P.sld",
-        "buffer": f"{os.path.dirname(__file__)}/../styles/default_layers/buffer_A.sld",
-        "overlay_input_polygon": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_A.sld",
-        "overlay_input_line": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_L.sld",
-        "overlay_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_P.sld"
+        "default_input_polygon": f"{os.path.dirname(__file__)}/../styles/default_layers/input_A.qml",
+        "default_input_line": f"{os.path.dirname(__file__)}/../styles/default_layers/input_L.qml",
+        "default_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/input_P.qml",
+        "buffer": f"{os.path.dirname(__file__)}/../styles/default_layers/buffer_A.qml",
+        "overlay_input_polygon": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_A.qml",
+        "overlay_input_line": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_L.qml",
+        "overlay_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_P.qml"
     }
 
     json_data.update(sld_default_layers = data)

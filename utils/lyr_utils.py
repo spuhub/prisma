@@ -24,7 +24,7 @@ from ..environment import (
     CRS_PADRAO
 )
 
-from .default_sld import slddefaultlayers
+from .default_styles import default_styles
 
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
     '''
@@ -177,13 +177,13 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
         QgsVectorLayer: camada estilizada com o SLD
     """
     if layer.name() == NOME_CAMADA_VERTICES:
-        layer.loadNamedStyle(slddefaultlayers.VERTICES_LAYER.get_path())
+        layer.loadNamedStyle(default_styles.VERTICES_LAYER.get_path())
         layer.triggerRepaint()
 
         return layer
     
     if layer.name() == NOME_CAMADA_QUOTAS:
-        layer.loadNamedStyle(slddefaultlayers.QUOTAS_LAYER.get_path())
+        layer.loadNamedStyle(default_styles.QUOTAS_LAYER.get_path())
         layer.triggerRepaint()
 
         return layer
@@ -236,8 +236,13 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
             if layer.name() == layer_required['nomeFantasiaCamada']:
                 sld_path = layer_required['estiloCamadas']
 
-    # Carrega o arquivo SLD e aplica ao estilo da camada
-    layer.loadSldStyle(os.path.normpath(sld_path))
+    # Identifica o tipo de estilo para a camada e o aplica
+    print(sld_path)
+    if sld_path.endswith('.qml'):
+        layer.loadNamedStyle(os.path.normpath(sld_path))
+    elif sld_path.endswith('.sld'):
+        layer.loadSldStyle(os.path.normpath(sld_path))
+
     layer.triggerRepaint()
 
     # TODO: Atualiza o estilo da camada no projeto

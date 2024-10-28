@@ -34,7 +34,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Logradouro</string>
+            <string>Logradouro *</string>
            </property>
           </widget>
          </item>
@@ -134,7 +134,7 @@
          <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Cidade</string>
+            <string>Cidade *</string>
            </property>
           </widget>
          </item>
@@ -175,7 +175,7 @@
          <item>
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>UF</string>
+            <string>UF *</string>
            </property>
           </widget>
          </item>
@@ -246,7 +246,7 @@
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
-            <string>Longitude</string>
+            <string>Longitude *</string>
            </property>
           </widget>
          </item>
@@ -273,7 +273,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>longitude</string>
+            <string>Longitude</string>
            </property>
            <property name="cursorMoveStyle">
             <enum>Qt::LogicalMoveStyle</enum>
@@ -287,7 +287,7 @@
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Latitude</string>
+            <string>Latitude *</string>
            </property>
           </widget>
          </item>
@@ -314,7 +314,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>latitude</string>
+            <string>Latitude</string>
            </property>
            <property name="cursorMoveStyle">
             <enum>Qt::LogicalMoveStyle</enum>
@@ -333,7 +333,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Sistema de coordenadas</string>
+            <string>Sistema de coordenadas *</string>
            </property>
           </widget>
          </item>
