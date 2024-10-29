@@ -431,17 +431,18 @@ class LayoutManager():
             
             if layer_name == "Área Homologada":
                 overlay_area_nao_homologada = self.overlay_nao_homologada()
-
-                item_nao_homologada.setText("Lote não sobrepõe Área não Homologada")
-                if "Área não Homologada" in column_value:
-                    item_nao_homologada.setText("Lote sobrepõe Área não Homologada")
-                
-                if lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_POLIGONO:
-                    item_area_nao_homologada.setText(f"Área de sobreposição com Área não Homologada: " + str(self.overlay_analisys.calcular_soma_areas(overlay_area_nao_homologada, self.feature.attribute('EPSG_S2000'))) + " m².")
-                elif lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_LINHA:
-                    item_area_nao_homologada.setText(f"Sobreposição com Área não Homologada: " + str(self.overlay_analisys.calcular_soma_areas(overlay_area_nao_homologada, self.feature.attribute('EPSG_S2000'))) + " m.")
-                elif lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_PONTO:
-                    item_area_nao_homologada.setText(f"")
+    
+                if overlay_area_nao_homologada:
+                    item_nao_homologada.setText("Lote não sobrepõe Área não Homologada")
+                    if "Área não Homologada" in column_value:
+                        item_nao_homologada.setText("Lote sobrepõe Área não Homologada")
+                    
+                    if lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_POLIGONO:
+                        item_area_nao_homologada.setText(f"Área de sobreposição com Área não Homologada: " + str(self.overlay_analisys.calcular_soma_areas(overlay_area_nao_homologada, self.feature.attribute('EPSG_S2000'))) + " m².")
+                    elif lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_LINHA:
+                        item_area_nao_homologada.setText(f"Sobreposição com Área não Homologada: " + str(self.overlay_analisys.calcular_soma_areas(overlay_area_nao_homologada, self.feature.attribute('EPSG_S2000'))) + " m.")
+                    elif lyr_utils.get_general_geom_type_name(overlay_area_nao_homologada) in CAMADA_DE_PONTO:
+                        item_area_nao_homologada.setText(f"")
                 # item_area_nao_homologada.setText(f"Sobreposição Área não Homologada: {overlay_area_nao_homologada} m.")
 
 
@@ -575,7 +576,7 @@ class LayoutManager():
     def overlay_nao_homologada(self):
         get_nao_homologada = QgsProject.instance().mapLayersByName('Área não Homologada')
         if not get_nao_homologada:
-            return 0.00
+            return False
                 
         nao_homologada = get_nao_homologada[0]
         overlay_geometries = []
