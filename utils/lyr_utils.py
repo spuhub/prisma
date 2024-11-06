@@ -167,14 +167,14 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
 
 def add_style(layer: QgsVectorLayer, operation_config: dict):
     """
-    Aplica um estilo SLD a uma camada QgsVectorLayer.
+    Aplica um estilo a uma camada QgsVectorLayer.
 
     Parameters:
         layer (QgsVectorLayer): camada QgsVectorLayer a ser estilizada
-        operation_config (dict): dicionário com as configurações da operação, incluindo o caminho para os arquivos SLD
+        operation_config (dict): dicionário com as configurações da operação, incluindo o caminho para os arquivos SLD/QML
 
     Returns:
-        QgsVectorLayer: camada estilizada com o SLD
+        QgsVectorLayer: camada estilizada com o SLD/QML
     """
     if layer.name() == NOME_CAMADA_VERTICES:
         layer.loadNamedStyle(default_styles.VERTICES_LAYER.get_path())
@@ -188,60 +188,60 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
 
         return layer
 
-    sld_path: str = ''
+    style_path: str = ''
     if layer.name() == NOME_CAMADA_ENTRADA:
         # Identifica o tipo de geometria da camada
         geometry_type = get_general_geom_type_name(layer)
 
-        # Seleciona o caminho para o arquivo SLD apropriado
+        # Seleciona o caminho para o arquivo SLD/QML apropriado
         if geometry_type in CAMADA_DE_PONTO:  # Ponto
-            sld_path = operation_config['sld_default_layers']['default_input_point']
+            style_path = operation_config['style_default_layers']['default_input_point']
         elif geometry_type in CAMADA_DE_LINHA:  # Linha
-            sld_path = operation_config['sld_default_layers']['default_input_line']
+            style_path = operation_config['style_default_layers']['default_input_line']
         elif geometry_type in CAMADA_DE_POLIGONO:  # Polígono
-            sld_path = operation_config['sld_default_layers']['default_input_polygon']
+            style_path = operation_config['style_default_layers']['default_input_polygon']
         else:
             raise ValueError(f"Tipo de geometria inválido: {geometry_type}")
         
     elif layer.name() == NOME_CAMADA_ENTRADA_BUFFER:
-        sld_path = operation_config['sld_default_layers']['buffer']
+        style_path = operation_config['style_default_layers']['buffer']
     
     elif layer.name() in [NOME_CAMADA_INTERSECAO_PONTO, NOME_CAMADA_INTERSECAO_LINHA, NOME_CAMADA_INTERSECAO_POLIGONO]:
         # Identifica o tipo de geometria da camada
         geometry_type = get_general_geom_type_name(layer)
-        # Seleciona o caminho para o arquivo SLD apropriado
+        # Seleciona o caminho para o arquivo SLD/QML apropriado
         if geometry_type in CAMADA_DE_PONTO:  # Ponto
-            sld_path = operation_config['sld_default_layers']['overlay_input_point']
+            style_path = operation_config['style_default_layers']['overlay_input_point']
         elif geometry_type in CAMADA_DE_LINHA:  # Linha
-            sld_path = operation_config['sld_default_layers']['overlay_input_line']
+            style_path = operation_config['style_default_layers']['overlay_input_line']
         elif geometry_type in CAMADA_DE_POLIGONO:  # Polígono
-            sld_path = operation_config['sld_default_layers']['overlay_input_polygon']
+            style_path = operation_config['style_default_layers']['overlay_input_polygon']
         else:
             raise ValueError(f"Tipo de geometria inválido: {geometry_type}")
 
     else:
         for layer_shp in operation_config['shp']:
             if layer.name() == layer_shp['nomeFantasiaCamada']:
-                sld_path = layer_shp['estiloCamadas']
+                style_path = layer_shp['estiloCamadas']
         
         for layer_db in operation_config['pg']:
             if layer.name() == layer_db['nomeFantasiaCamada']:
-                sld_path = layer_db['estiloCamadas']
+                style_path = layer_db['estiloCamadas']
 
         for layer_wfs in operation_config['wfs']:
             if layer.name() == layer_wfs['nomeFantasiaCamada']:
-                sld_path = layer_wfs['estiloCamadas']
+                style_path = layer_wfs['estiloCamadas']
 
         for layer_required in operation_config['obrigatorio']:
             if layer.name() == layer_required['nomeFantasiaCamada']:
-                sld_path = layer_required['estiloCamadas']
+                style_path = layer_required['estiloCamadas']
 
     # Identifica o tipo de estilo para a camada e o aplica
-    print(sld_path)
-    if sld_path.endswith('.qml'):
-        layer.loadNamedStyle(os.path.normpath(sld_path))
-    elif sld_path.endswith('.sld'):
-        layer.loadSldStyle(os.path.normpath(sld_path))
+    print(style_path)
+    if style_path.endswith('.qml'):
+        layer.loadNamedStyle(os.path.normpath(style_path))
+    elif style_path.endswith('.sld'):
+        layer.loadSldStyle(os.path.normpath(style_path))
 
     layer.triggerRepaint()
 

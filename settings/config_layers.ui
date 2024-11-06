@@ -62,7 +62,7 @@
      </row>
      <column>
       <property name="text">
-       <string>Usar?</string>
+       <string>Usar? *</string>
       </property>
       <property name="font">
        <font>
@@ -76,7 +76,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Nome Camada</string>
+       <string>Nome Camada *</string>
       </property>
       <property name="font">
        <font>
@@ -90,7 +90,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Nome Fantasia</string>
+       <string>Nome Fantasia *</string>
       </property>
       <property name="font">
        <font>
@@ -132,7 +132,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Estilo</string>
+       <string>Estilo *</string>
       </property>
       <property name="font">
        <font>
@@ -146,7 +146,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Mais Informações</string>
+       <string>Mais Informações *</string>
       </property>
       <property name="font">
        <font>

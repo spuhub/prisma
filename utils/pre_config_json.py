@@ -20,5 +20,5 @@ def pre_config_json():
         "overlay_input_point": f"{os.path.dirname(__file__)}/../styles/default_layers/sobreposicao_P.qml"
     }
 
-    json_data.update(sld_default_layers = data)
+    json_data.update(style_default_layers = data)
     json_tools.insert_data(json_data)

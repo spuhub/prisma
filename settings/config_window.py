@@ -38,7 +38,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.fill_combo_box_shp()
         self.fill_combo_box_geocoding_server()
         self.fill_basemap()
-        self.fill_sld_default_layers()
+        self.fill_style_default_layers()
 
         self.newbdID = ''
         self.newshpID = ''
@@ -186,7 +186,7 @@ class ConfigWindow(QtWidgets.QDialog):
         self.save_mandatory_layers()
         self.save_geocoding_key()
         self.save_basemap()
-        self.save_sld_default_layers()
+        self.save_style_default_layers()
         self.save_wfs_config()
 
         self.store_path_json()
@@ -284,7 +284,7 @@ class ConfigWindow(QtWidgets.QDialog):
 
         self.settings.insert_data(json_complete)
 
-    def save_sld_default_layers(self):
+    def save_style_default_layers(self):
         json_complete = self.settings.get_json()
 
         default_input_polygon = self.qfw_entrada_poligono.filePath()
@@ -299,71 +299,71 @@ class ConfigWindow(QtWidgets.QDialog):
 
         # Tratando campo de sld para input polígono
         if len(default_input_polygon) == 0:
-            json_complete['sld_default_layers']['default_input_polygon'] = default_styles.POLYGON_STYLE_INPUT.value
+            json_complete['style_default_layers']['default_input_polygon'] = default_styles.POLYGON_STYLE_INPUT.value
         else:
-            json_complete['sld_default_layers']['default_input_polygon'] = default_input_polygon
+            json_complete['style_default_layers']['default_input_polygon'] = default_input_polygon
 
         # Tratando campo de sld para input linha
         if len(default_input_line) == 0:
-            json_complete['sld_default_layers']['default_input_line'] = default_styles.LINE_STYLE_INPUT.value
+            json_complete['style_default_layers']['default_input_line'] = default_styles.LINE_STYLE_INPUT.value
         else:
-            json_complete['sld_default_layers']['default_input_line'] = default_input_line
+            json_complete['style_default_layers']['default_input_line'] = default_input_line
 
         # Tratando campo de sld para input ponto
         if len(default_input_point) == 0:
-            json_complete['sld_default_layers']['default_input_point'] = default_styles.POINT_STYLE_INPUT.value
+            json_complete['style_default_layers']['default_input_point'] = default_styles.POINT_STYLE_INPUT.value
         else:
-            json_complete['sld_default_layers']['default_input_point'] = default_input_point
+            json_complete['style_default_layers']['default_input_point'] = default_input_point
 
         # Tratando campo de sld para buffer
         if len(buffer) == 0:
-            json_complete['sld_default_layers']['buffer'] = default_styles.BUFFER_SLD.value
+            json_complete['style_default_layers']['buffer'] = default_styles.BUFFER_STYLE.value
         else:
-            json_complete['sld_default_layers']['buffer'] = buffer
+            json_complete['style_default_layers']['buffer'] = buffer
 
         # Tratando campo de sld para camada sobreposição Polígono
         if len(overlay_input_polygon) == 0:
-            json_complete['sld_default_layers']['overlay_input_polygon'] = default_styles.POLYGON_SLD_OVERLAY.value
+            json_complete['style_default_layers']['overlay_input_polygon'] = default_styles.POLYGON_STYLE_OVERLAY.value
         else:
-            json_complete['sld_default_layers']['overlay_input_polygon'] = overlay_input_polygon
+            json_complete['style_default_layers']['overlay_input_polygon'] = overlay_input_polygon
 
         # Tratando campo de sld para camada sobreposição Linha
         if len(overlay_input_line) == 0:
-            json_complete['sld_default_layers']['overlay_input_line'] = default_styles.LINE_SLD_OVERLAY.value
+            json_complete['style_default_layers']['overlay_input_line'] = default_styles.LINE_STYLE_OVERLAY.value
         else:
-            json_complete['sld_default_layers']['overlay_input_line'] = overlay_input_line
+            json_complete['style_default_layers']['overlay_input_line'] = overlay_input_line
 
         # Tratando campo de sld para camada sobreposição Ponto
         if len(overlay_input_point) == 0:
-            json_complete['sld_default_layers']['overlay_input_point'] = default_styles.POINT_SLD_OVERLAY.value
+            json_complete['style_default_layers']['overlay_input_point'] = default_styles.POINT_STYLE_OVERLAY.value
         else:
-            json_complete['sld_default_layers']['overlay_input_point'] = overlay_input_point
+            json_complete['style_default_layers']['overlay_input_point'] = overlay_input_point
 
         self.settings.insert_data(json_complete)
 
-    def fill_sld_default_layers(self):
+    def fill_style_default_layers(self):
         json_complete = self.settings.get_json()
 
-        if 'sld_default_layers' in json_complete and 'default_input_polygon' in json_complete['sld_default_layers']:
-            self.qfw_entrada_poligono.setFilePath(json_complete['sld_default_layers']['default_input_polygon'])
+        if 'style_default_layers' in json_complete and 'default_input_polygon' in json_complete['style_default_layers']:
+            self.qfw_entrada_poligono.setFilePath(json_complete['style_default_layers']['default_input_polygon'])
 
-        if 'sld_default_layers' in json_complete and 'default_input_line' in json_complete['sld_default_layers']:
-            self.qfw_entrada_linha.setFilePath(json_complete['sld_default_layers']['default_input_line'])
+        if 'style_default_layers' in json_complete and 'default_input_line' in json_complete['style_default_layers']:
+            self.qfw_entrada_linha.setFilePath(json_complete['style_default_layers']['default_input_line'])
 
-        if 'sld_default_layers' in json_complete and 'default_input_point' in json_complete['sld_default_layers']:
-            self.qfw_entrada_ponto.setFilePath(json_complete['sld_default_layers']['default_input_point'])
+        if 'style_default_layers' in json_complete and 'default_input_point' in json_complete['style_default_layers']:
+            self.qfw_entrada_ponto.setFilePath(json_complete['style_default_layers']['default_input_point'])
 
-        if 'sld_default_layers' in json_complete and 'buffer' in json_complete['sld_default_layers']:
-            self.qfw_buffer.setFilePath(json_complete['sld_default_layers']['buffer'])
+        if 'style_default_layers' in json_complete and 'buffer' in json_complete['style_default_layers']:
+            self.qfw_buffer.setFilePath(json_complete['style_default_layers']['buffer'])
 
-        if 'sld_default_layers' in json_complete and 'overlay_input_polygon' in json_complete['sld_default_layers']:
-            self.qfw_sobreposicao_poligono.setFilePath(json_complete['sld_default_layers']['overlay_input_polygon'])
+        if 'style_default_layers' in json_complete and 'overlay_input_polygon' in json_complete['style_default_layers']:
+            self.qfw_sobreposicao_poligono.setFilePath(json_complete['style_default_layers']['overlay_input_polygon'])
 
-        if 'sld_default_layers' in json_complete and 'overlay_input_line' in json_complete['sld_default_layers']:
-            self.qfw_sobreposicao_linha.setFilePath(json_complete['sld_default_layers']['overlay_input_line'])
+        if 'style_default_layers' in json_complete and 'overlay_input_line' in json_complete['style_default_layers']:
+            self.qfw_sobreposicao_linha.setFilePath(json_complete['style_default_layers']['overlay_input_line'])
 
-        if 'sld_default_layers' in json_complete and 'overlay_input_point' in json_complete['sld_default_layers']:
-            self.qfw_sobreposicao_ponto.setFilePath(json_complete['sld_default_layers']['overlay_input_point'])
+        if 'style_default_layers' in json_complete and 'overlay_input_point' in json_complete['style_default_layers']:
+            self.qfw_sobreposicao_ponto.setFilePath(json_complete['style_default_layers']['overlay_input_point'])
 
     def reset_default_layers(self):
         self.qfw_entrada_poligono.setFilePath(default_styles.POLYGON_STYLE_INPUT.value)
@@ -1368,7 +1368,7 @@ class ConfigWindow(QtWidgets.QDialog):
         # Configura quantidade de linhas e as colunas da tabela de resultados
         self.tbl_wfs.setColumnCount(8)
         self.tbl_wfs.setRowCount(len(self.wfs_data))
-        self.tbl_wfs.setHorizontalHeaderLabels(['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo de aquisição", "Periodo de referência", "Faixa de proximidade", "Arquivo SLD", "Descrição"])
+        self.tbl_wfs.setHorizontalHeaderLabels(['Camada *', 'Nome Fantasia *', "Órgão Responsável *", "Periodo de aquisição *", "Periodo de referência *", "Faixa de proximidade", "Estilo *", "Descrição"])
 
         self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
         self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -1426,8 +1426,8 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.tbl_wfs.setColumnCount(9)
                 self.tbl_wfs.setRowCount(len(item['tabelasCamadas']))
                 self.tbl_wfs.setHorizontalHeaderLabels(
-                    ['Camada', 'Nome Fantasia', "Órgão Responsável", "Periodo de aquisição", "Periodo de referência", "Faixa de proximidade",
-                     "Arquivo SLD", "Descrição", "Atualizar camada"])
+                    ['Camada *', 'Nome Fantasia *', "Órgão Responsável *", "Periodo de aquisição *", "Periodo de referência *", "Faixa de proximidade",
+                     "Estilo *", "Descrição", "Atualizar camada"])
 
                 self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
                 self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)

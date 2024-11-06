@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>Orgão Responsável</string>
+        <string>Orgão Responsável *</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
        <item>
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>Periodo de Referência</string>
+          <string>Periodo de Referência *</string>
          </property>
         </widget>
        </item>
@@ -57,7 +57,7 @@
        <item>
         <widget class="QLabel" name="label_9">
          <property name="text">
-          <string>Data de Aquisição</string>
+          <string>Data de Aquisição *</string>
          </property>
         </widget>
        </item>

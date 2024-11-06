@@ -166,68 +166,68 @@ class MapCanvas():
 
         return get_overlay_standard
 
-    def get_input_symbol(self, geometry_type, show_qgis_input):
-        """
-        Estilização dinâmica para diferentes tipos de geometrias (Área de input).
+    # def get_input_symbol(self, geometry_type, show_qgis_input):
+    #     """
+    #     Estilização dinâmica para diferentes tipos de geometrias (Área de input).
 
-        @keyword geometry_type: Tipo de geometria da área de input (com ou se buffer de área de aproximação).
-        @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
-        """
-        symbol = None
+    #     @keyword geometry_type: Tipo de geometria da área de input (com ou se buffer de área de aproximação).
+    #     @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
+    #     """
+    #     symbol = None
 
-        # Point
-        if geometry_type == 0:
-            show_qgis_input.loadSldStyle(
-                self.data['data']['sld_default_layers']['default_input_point'])
-        # Line String
-        if geometry_type == 1:
-            show_qgis_input.loadSldStyle(
-                self.data['data']['sld_default_layers']['default_input_line'])
-        # Polígono
-        elif geometry_type == 2:
-            show_qgis_input.loadSldStyle(
-                self.data['data']['sld_default_layers']['default_input_polygon'])
+    #     # Point
+    #     if geometry_type == 0:
+    #         show_qgis_input.loadSldStyle(
+    #             self.data['data']['style_default_layers']['default_input_point'])
+    #     # Line String
+    #     if geometry_type == 1:
+    #         show_qgis_input.loadSldStyle(
+    #             self.data['data']['style_default_layers']['default_input_line'])
+    #     # Polígono
+    #     elif geometry_type == 2:
+    #         show_qgis_input.loadSldStyle(
+    #             self.data['data']['style_default_layers']['default_input_polygon'])
 
-    def get_input_standard_symbol(self, geometry_type, show_qgis_input):
-        """
-        Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação).
+    # def get_input_standard_symbol(self, geometry_type, show_qgis_input):
+    #     """
+    #     Estilização dinâmica para diferentes tipos de geometrias (Área de input sem o buffer de aproximação).
 
-        @keyword geometry_type: Tipo de geometria da área de input sem o buffer de aproximação.
-        @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
-        """
-        symbol = None
+    #     @keyword geometry_type: Tipo de geometria da área de input sem o buffer de aproximação.
+    #     @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
+    #     """
+    #     symbol = None
 
-        # Point
-        if geometry_type == 0:
-            show_qgis_input.loadSldStyle(
-                self.data['data']['sld_default_layers']['default_input_point'])
-        # Line String
-        if geometry_type == 1:
-            show_qgis_input.loadSldStyle(
-                self.data['data']['sld_default_layers']['default_input_line'])
-        # Polígono
-        elif geometry_type == 2:
-            show_qgis_input.loadSldStyle(
-                self.data['data']['sld_default_layers']['default_input_polygon'])
+    #     # Point
+    #     if geometry_type == 0:
+    #         show_qgis_input.loadSldStyle(
+    #             self.data['data']['style_default_layers']['default_input_point'])
+    #     # Line String
+    #     if geometry_type == 1:
+    #         show_qgis_input.loadSldStyle(
+    #             self.data['data']['style_default_layers']['default_input_line'])
+    #     # Polígono
+    #     elif geometry_type == 2:
+    #         show_qgis_input.loadSldStyle(
+    #             self.data['data']['style_default_layers']['default_input_polygon'])
 
-    def get_feature_symbol(self, geometry_type, style):
-        """
-        Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação).
+    # def get_feature_symbol(self, geometry_type, style):
+    #     """
+    #     Estilização dinâmica para diferentes tipos de geometrias (Áreas de comparação).
 
-        @keyword geometry_type: Tipo de geometria da área de comparação.
-        @keyword style: Variável armazena o estilo que será usado para a projeção de uma determinada camada. Este estilo é obtido através do arquivo JSON de configuração.
-        @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
-        """
-        symbol = None
+    #     @keyword geometry_type: Tipo de geometria da área de comparação.
+    #     @keyword style: Variável armazena o estilo que será usado para a projeção de uma determinada camada. Este estilo é obtido através do arquivo JSON de configuração.
+    #     @return symbol: Retorna o objeto contendo a estilização de uma determinada camada.
+    #     """
+    #     symbol = None
 
-        # Point
-        if geometry_type == 0 or geometry_type == 4:
-            symbol = QgsMarkerSymbol.createSimple(style)
-        # Line String
-        elif geometry_type == 1 or geometry_type == 5:
-            symbol = QgsLineSymbol.createSimple(style)
-        # Polígono
-        elif geometry_type == 2 or geometry_type == 6:
-            symbol = QgsFillSymbol.createSimple(style)
+    #     # Point
+    #     if geometry_type == 0 or geometry_type == 4:
+    #         symbol = QgsMarkerSymbol.createSimple(style)
+    #     # Line String
+    #     elif geometry_type == 1 or geometry_type == 5:
+    #         symbol = QgsLineSymbol.createSimple(style)
+    #     # Polígono
+    #     elif geometry_type == 2 or geometry_type == 6:
+    #         symbol = QgsFillSymbol.createSimple(style)
 
-        return symbol
+    #     return symbol
