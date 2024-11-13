@@ -1,4 +1,4 @@
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 
 class Controller:
     """
@@ -42,10 +42,11 @@ class Controller:
         Função acionada (e também serve como controller) para mostrar a tela de configuração do prisma.
         """
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("SPU-Prisma")
         msg.setText("Carregando configurações")
         msg.show()
+
+        QApplication.processEvents()
 
         from ..settings.config_window import ConfigWindow
         self.config_window = ConfigWindow()
