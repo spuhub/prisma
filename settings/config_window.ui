@@ -140,7 +140,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_2"/>
+              <widget class="QLineEdit" name="geometry_type">
+               <property name="placeholderText">
+                <string>Tipo de Geometria</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -1400,7 +1404,7 @@
                <item>
                 <widget class="QComboBox" name="combo_box_servico_geocod">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -1431,7 +1435,7 @@
                <item>
                 <widget class="QLineEdit" name="key_geo_cod">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="text">
                   <string/>
