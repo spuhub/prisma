@@ -1,3 +1,5 @@
+from qgis.PyQt.QtWidgets import QMessageBox
+
 class Controller:
     """
     Classe que faz o controle das telas.
@@ -39,9 +41,16 @@ class Controller:
         """
         Função acionada (e também serve como controller) para mostrar a tela de configuração do prisma.
         """
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("SPU-Prisma")
+        msg.setText("Carregando configurações")
+        msg.show()
+
         from ..settings.config_window import ConfigWindow
         self.config_window = ConfigWindow()
         self.config_window.back_window.connect(self.show_main)
+        msg.close()
         self.config_window.show()
 
     def show_overlay_point(self):
