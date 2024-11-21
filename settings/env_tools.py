@@ -2,7 +2,6 @@ import os
 
 from PyQt5.QtCore import QSettings
 
-
 class EnvTools:
     """
     Classe responsavel por manipular informações salva na cache do QGIS

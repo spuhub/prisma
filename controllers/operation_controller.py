@@ -1,9 +1,6 @@
 from ..settings.json_tools import JsonTools
 from ..settings.env_tools import EnvTools
 
-from PyQt5.QtCore import QVariant
-
-
 class OperationController:
     """
     Classe utilizada para criar um dicionário com especificações da operação que será feita.

@@ -8,6 +8,11 @@ from ..qgis.layout_manager import LayoutManager
 # from ..dbtools.shp_tools import ShpTools
 
 class ReportGenerator(QtWidgets.QDialog):
+    """
+    Classe onde o usuário escolhe em qual diretório ele irá salvar os PDF's de saída. Também é aqui que são definidos os 
+    campos de cabeçalho que constarão no PDF
+
+    """
     def __init__(self, data):
         self.data = data
         self.path_output = ""

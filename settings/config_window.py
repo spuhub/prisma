@@ -13,7 +13,7 @@ from .env_tools import EnvTools
 from ..screens.report_generator import ReportGenerator
 from ..databases.db_connection import DbConnection
 from ..utils.default_styles import default_styles
-from ..utils.wfs_to_geopandas import WfsOperations
+from ..utils.wfs_2_qgs_layer import WfsOperations
 
 
 class ConfigWindow(QtWidgets.QDialog):
@@ -1368,7 +1368,7 @@ class ConfigWindow(QtWidgets.QDialog):
         # Configura quantidade de linhas e as colunas da tabela de resultados
         self.tbl_wfs.setColumnCount(8)
         self.tbl_wfs.setRowCount(len(self.wfs_data))
-        self.tbl_wfs.setHorizontalHeaderLabels(['Camada *', 'Nome Fantasia *', "Órgão Responsável *", "Periodo de aquisição *", "Periodo de referência *", "Faixa de proximidade", "Estilo *", "Descrição"])
+        self.tbl_wfs.setHorizontalHeaderLabels(['Camada *', 'Nome Fantasia *', "Órgão Responsável *", "Periodo de aquisição *", "Periodo de referência *", "Faixa de proximidade", "Estilo *", "Descrição *"])
 
         self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
         self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -1427,7 +1427,7 @@ class ConfigWindow(QtWidgets.QDialog):
                 self.tbl_wfs.setRowCount(len(item['tabelasCamadas']))
                 self.tbl_wfs.setHorizontalHeaderLabels(
                     ['Camada *', 'Nome Fantasia *', "Órgão Responsável *", "Periodo de aquisição *", "Periodo de referência *", "Faixa de proximidade",
-                     "Estilo *", "Descrição", "Atualizar camada"])
+                     "Estilo *", "Descrição *", "Atualizar camada"])
 
                 self.tbl_wfs.horizontalHeader().setStretchLastSection(True)
                 self.tbl_wfs.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)

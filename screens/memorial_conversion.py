@@ -8,7 +8,6 @@ from PyQt5.uic import loadUi
 import PyPDF2
 import os, re
 
-
 class MemorialConversion (QtWidgets.QDialog):
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal(dict)

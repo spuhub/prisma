@@ -5,11 +5,11 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUi
 from qgis.utils import reloadPlugin
 
-from PyQt5.QtWidgets import QShortcut, QMessageBox
+from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt
 
-from ..settings.install_dependecies import instala_dependencias, verifica_flag_dependencias
+from ..settings.install_dependecies import verifica_flag_dependencias
 from ..utils.pre_config_json import pre_config_json
 
 ## EMPACOTAMENTO DE BIBLIOTECAS ##

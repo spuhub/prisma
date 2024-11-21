@@ -22,8 +22,6 @@
  ***************************************************************************/
 """
 """Todas os metodos de percistencia do postgres vao aqui"""
-from shapely.wkt import loads
-
 import psycopg2
 
 class DbConnection:

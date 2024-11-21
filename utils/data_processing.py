@@ -1,7 +1,6 @@
 from qgis.core import QgsField, QgsFeatureRequest
 from PyQt5.QtCore import QVariant
 
-from ..databases.db_connection import DbConnection
 from ..databases.handle_selections import HandleSelections
 from .utils import Utils
 from .lyr_utils import *

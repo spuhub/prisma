@@ -1,4 +1,3 @@
-import sys
 import os.path
 
 from PyQt5 import QtCore, QtWidgets
@@ -13,6 +12,10 @@ from ..settings.env_tools import EnvTools
 
 class OverlayPoint (QtWidgets.QDialog):
     """
+
+    ESSA TELA ESTÁ TEMPORÁRIAMENTE DESATIVADA. ATENTAR-SE POIS O CÓDIGO AINDA ESTA COM GEOPANDAS
+
+
     Classe que manipula a tela de teste de sobreposição utilizando um ponto (lat e long) ou endereço inserido.
     """
     back_window = QtCore.pyqtSignal()
