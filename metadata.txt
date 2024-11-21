@@ -7,7 +7,7 @@ name=Prisma
 qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
 version=5.2
-author=Zago
+author=SPU
 email=vinirafaelsch@gmail.com;
 
 about=Plugin to perform characterization and overlap analysis of properties with areas of the Federal Government

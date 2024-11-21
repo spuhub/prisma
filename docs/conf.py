@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Prisma'
-copyright = '2022, Zago'
-author = 'Zago'
+copyright = '2022, SPU'
+author = 'SPU'
 
 # The short X.Y version
 version = ''
@@ -130,7 +130,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Prisma.tex', 'Prisma Documentation',
-     'Zago', 'manual'),
+     'SPU', 'manual'),
 ]
 
 

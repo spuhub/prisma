@@ -8,7 +8,7 @@
                               -------------------
         begin                : 2021-09-29
         git sha              : $Format:%H$
-        copyright            : (C) 2021 by Zago
+        copyright            : (C) 2021 by Zago / SPU
         email                : vinirafaelsch@gmail.com; guilherme.nascimento@economia.gov.br; marcoaurelio.reliquias@gmail.com
  ***************************************************************************/
 
