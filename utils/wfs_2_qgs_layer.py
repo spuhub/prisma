@@ -1,9 +1,7 @@
 import os
 
-import geopandas as gpd
 import requests
 from owslib.wfs import WebFeatureService
-from qgis.core import QgsProject, QgsVectorLayer, QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol, QgsRasterLayer, QgsCoordinateReferenceSystem
 
 class WfsOperations:
 
