@@ -6,7 +6,7 @@
 name=Prisma
 qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
-version=5.2
+version=6.0
 author=SPU
 email=vinirafaelsch@gmail.com;
 
@@ -58,6 +58,18 @@ changelog=Version 3.0 (22/07/2022):
             - Estilos nas camadas através de arquivos .sld
             - Comparação linha com linha
             - Alteração logo SPU
+         Version 6.0 (25/11/2024):
+            - Opção de salvar o projeto antes de gerar os PDF's
+            - Mensagem de conclusão na geração de PDF's
+            - Barra de progresso
+            - Ajustes de textos nos PDF's
+            - Alteração no estilo das camadas padrões do SPU-Prisma
+            - Remoção do campo Secretaria Especial
+            - Estilização de camadas através de arquivos QML
+            - Mudança no Autor do plugin
+            - Notificação de que as configurações estão sendo carregadas
+            - Limpeza de código
+            - Correção de bugs
 
 # Tags are comma separated with spaces allowed
 tags=python
