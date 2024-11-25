@@ -25,6 +25,24 @@
 import psycopg2
 
 class DbConnection:
+    """
+    Classe utilizada para realizar operações em banco de dados.
+
+    @ivar GETtForeignKeyRelationTable: Retorna uma tabela com informações sobre as chaves estrangeiras de uma tabela específica.
+    @ivar GEtSridTable: Retorna o SRID de uma tabela que possui uma coluna geométrica. Retorna um único valor correspondente ao SRID encontrado.
+    @ivar GEtNumberLineOfTable: Retorna o número de linhas de uma tabela.
+    @ivar GEtAllTables: Retorna uma lista com os nomes de todas as tabelas de um esquema específico.
+    @ivar GEtTablesGeo: Retorna uma lista com os nomes das tabelas que possuem colunas geométricas no esquema especificado.
+    @ivar CAlculateIntersect: Retorna os registros de uma tabela que intersectam com um polígono específico.
+    @ivar CAlculateIntersectByPoint: Retorna os registros de uma tabela que intersectam com um buffer circular de um ponto específico.
+    @ivar CReatePoint: Retorna um ponto transformado de um sistema de coordenadas inicial para o sistema EPSG 4674.
+    @ivar GEtTableColum: Retorna uma lista com os nomes das colunas de uma tabela específica em um esquema.
+    @ivar GEtTablesCollumnsAll: Retorna um dicionário contendo as colunas de todas as tabelas em uma lista de tabelas.
+    @ivar GEtGeomTypeTable: Retorna o tipo geométrico da coluna "geom" de uma tabela específica.
+    @ivar GEtDataTypeColumns: Retorna um dicionário com os tipos de dados de todas as colunas de uma tabela.
+    @ivar GEtAllTypeGeomOFGeomColum: Retorna um dicionário com o tipo geométrico de todas as tabelas que possuem uma coluna geométrica em um esquema.
+    @ivar testConnection: Testa a conexão com o banco de dados.
+    """
 
     def __init__(self, host, port, db, user, password):
         """Constructor."""

@@ -55,7 +55,6 @@ class OverlayAnalisys():
     Classe utilizada para verificar quais áreas possuem sobreposição entre input de entrada e camadas de comparação.
 
     @ivar operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
-    @ivar shp_handle: Armazena classe para leitura de arquivos shapefile.
     @ivar utils: Armazena classe contendo algumas funções úteis para o código.
     """
     def __init__(self):
@@ -262,6 +261,13 @@ class OverlayAnalisys():
         self.lyr_overlap_polygon.commitChanges()
     
     def calcular_soma_areas(self, layer: QgsVectorLayer, epsg: str) -> str:
+        """
+        Função que calcula a soma das áreas ou comprimentos das geometrias de uma camada.
+
+        @param layer: camada do tipo QgsVectorLayer onde o calculo irá ser executado.
+        @param epsg: código EPSG do sistema de referência de destino.
+        @return: string formatada contendo a soma total das áreas (para polígonos) ou comprimentos (para linhas).
+        """
         soma_geometria = 0.0
 
         sistema_origem = layer.crs()
@@ -282,6 +288,12 @@ class OverlayAnalisys():
         return format_value
     
     def _extract_polygon_vertices(self, layer):
+        """
+        Função auxiliar que extrai os vértices de uma camada do tipo polígono e cria uma nova camada de pontos.
+
+        @param layer: camada do tipo QgsVectorLayer com geometrias de polígono que terão os seus vértices extraídos.
+        @return: nova camada do tipo QgsVectorLayer contendo os pontos extraídos.
+        """
         vertices_layer = QgsVectorLayer('Point?crs={}'.format(layer.crs().authid()), 'vertices', 'memory')
         vertices_layer_fields = QgsFields()
         
@@ -312,6 +324,13 @@ class OverlayAnalisys():
         return vertices_layer
     
     def _create_linestring_from_points(self, point_layer):
+        """
+        Função que cria uma camada de linhas conectando pontos consecutivos de uma camada de pontos.
+
+        @param point_layer: camada do tipo QgsVectorLayer contendo pontos ou multipontos.
+        @return: nova camada do tipo QgsVectorLayer contendo as linhas criadas. As linhas conectam pontos consecutivos 
+                 que pertencem à mesma feição, identificadas pelo atributo 'feature_id'.
+        """
         line_layer = QgsVectorLayer('LineString?crs=epsg:4326', NOME_CAMADA_QUOTAS, 'memory')
         provider = line_layer.dataProvider()
 
