@@ -25,7 +25,7 @@ import os
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QDockWidget, QMenuBar
 from processing.core.Processing import Processing
 
 from PyQt5.uic import loadUi
@@ -67,10 +67,16 @@ class Prisma:
         self.actions = []
         self.menu = self.tr(u'&SPUGeo')
 
+        self.toolbar = iface.mainWindow().findChild(QToolBar, u'SpuGeo')
+
+        if not self.toolbar:
+            print (self.toolbar)
+            self.toolbar = self.iface.addToolBar(u'SpuGeo')
+            self.toolbar.setObjectName(u'SpuGeo')
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
-        self.first_start = None
-        self.controller = None
+        #self.first_start = None
+        #self.controller = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -151,7 +157,8 @@ class Prisma:
 
         if add_to_toolbar:
             # Adds plugin icon to Plugins toolbar
-            self.iface.addToolBarIcon(action)
+            self.toolbar.addAction(action)
+            #self.iface.addToolBarIcon(action)
 
         if add_to_menu:
             self.iface.addPluginToMenu(
