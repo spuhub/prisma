@@ -17,7 +17,19 @@ from ..utils.wfs_2_qgs_layer import WfsOperations
 
 
 class ConfigWindow(QtWidgets.QDialog):
-    """Classe reponsavel por manipular a janela de configuração principal"""
+    """
+    Gerencia a janela principal de configuração do plugin PRISMA.
+
+    Permite a configuração de bancos de dados PostgreSQL, shapefiles, serviços WFS, camadas obrigatórias, 
+    e estilos padrão. Também realiza validações e armazena as configurações no formato JSON.
+
+    Atributos:
+        back_window (QtCore.pyqtSignal): Sinal emitido ao cancelar as configurações.
+        continue_window (QtCore.pyqtSignal): Sinal emitido ao prosseguir para outra etapa.
+        settings (JsonTools): Utilitário para manipulação de arquivos de configuração JSON.
+        credencials (EnvTools): Gerencia as credenciais e caminhos do projeto.
+        ...
+    """
 
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
@@ -106,8 +118,13 @@ class ConfigWindow(QtWidgets.QDialog):
 
     def save_bd_config_json(self):
         """
-        Método responsável pegar da interface as informações configuração de base de dados do PostgreSQL e salvar no Json de configuração.
-        @return: void
+        Salva as configurações de um banco de dados PostgreSQL no arquivo de configuração JSON.
+
+        Realiza validações sobre os campos da interface gráfica antes de salvar ou editar 
+        uma entrada no JSON. Gera um novo ID caso a configuração seja nova.
+
+        Raises:
+            Exception: Se ocorrer erro na conexão com o banco de dados.
         """
         if self.tabWidget.currentIndex() != 1:
             return
@@ -524,7 +541,6 @@ class ConfigWindow(QtWidgets.QDialog):
         """
         Função responsável por buscar no Json de configurações as informações da base de dados Shapefile, Selecionadaa no
         combobox e preencher os campos do formulario na interfasse gráfica.
-        @return:  void
         """
         current_id = self.combo_box_shp.currentData()
         current_config = self.search_base_shp(current_id)
@@ -1833,6 +1849,15 @@ class ConfigWindow(QtWidgets.QDialog):
         self.comboBox_base_lmeo_n_hom.clear()
 
 class comboColunas(QComboBox):
+    """
+    Representa um combobox customizado para exibir colunas de camadas em uma tabela.
+
+    Utilizado na aba de configuração de colunas, onde os campos podem ser alterados dinamicamente 
+    para camadas específicas.
+
+    Métodos:
+        __init__: Inicializa o combo com os itens fornecidos.
+    """
     def __init__(self, parent, lista_itens):
         super().__init__(parent)
         self.addItems(lista_itens)

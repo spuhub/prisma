@@ -27,15 +27,16 @@ from ..environment import (
 from .default_styles import default_styles
 
 def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer:
-    '''
-        Função de apoio para execução de ferramenta de reprojeção do QGIS.
-            Parameters:
-                layer_in (QgsVectorLayer): Objeto QgsVectorLayer a ser reprojetado
-                crs_out (int): Código EPSG do Sistema de referencia de saída
+    """
+    Reprojeta uma camada geoespacial para um Sistema de Referência de Coordenadas (CRS) especificado.
 
-            Returns:
-                Memory_out (QgsVectorLayer): Objeto QgsVectorLayer em memória do objeto reprojetado
-    '''
+    Args:
+        layer_in (QgsVectorLayer): Camada de entrada a ser reprojetada.
+        crs_out (int): Código EPSG do CRS de saída. Padrão: 4326 (WGS 84).
+
+    Returns:
+        QgsVectorLayer: Camada reprojetada em memória.
+    """
     parameter = {'INPUT': layer_in,
                  'TARGET_CRS': f'EPSG:{crs_out}',
                  'OUTPUT': 'memory:'
@@ -45,14 +46,15 @@ def layer_reproject(layer_in:QgsVectorLayer, crs_out:int=4326) -> QgsVectorLayer
     return lyr_return
     
 def layer_fix_geometries(layer_in:QgsVectorLayer) -> QgsVectorLayer:
-    '''
-        Função de apoio para execução de ferramenta de correção de geometrias do QGIS.
-            Parameters:
-                layer_in (QgsVectorLayer): Objeto QgsVectorLayer a ser corrigido
-                
-            Returns:
-                Memory_out (QgsVectorLayer): Objeto QgsVectorLayer em memória do objeto corrigido
-    '''
+    """
+    Corrige possíveis inconsistências geométricas em uma camada geoespacial.
+
+    Args:
+        layer_in (QgsVectorLayer): Camada de entrada a ser corrigida.
+
+    Returns:
+        QgsVectorLayer: Camada corrigida em memória.
+    """
     parameter = {'INPUT': layer_in,
                  'OUTPUT': 'memory:'
                 }
@@ -61,14 +63,15 @@ def layer_fix_geometries(layer_in:QgsVectorLayer) -> QgsVectorLayer:
     return lyr_return
 
 def layer_get_sirgas_epsg(layer_in:QgsVectorLayer) -> QgsVectorLayer:
-    '''
-        Função de apoio para identificação de Zona Sirgas 2000.
-            Parameters:
-                layer_in (QgsVectorLayer): Objeto QgsVectorLayer de entrada
-                
-            Returns:
-                Memory_out (QgsVectorLayer): Objeto QgsVectorLayer em memória do objeto com as zonas
-    '''
+    """
+    Identifica as zonas SIRGAS 2000 associadas a uma camada geoespacial.
+
+    Args:
+        layer_in (QgsVectorLayer): Camada de entrada para identificação.
+
+    Returns:
+        QgsVectorLayer: Camada de saída com as zonas SIRGAS 2000 atribuídas.
+    """
     shp_zonas_sirgas = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
                                     'shapefiles', 
                                     'Zonas_UTM_BR-EPSG4326.shp')
@@ -86,17 +89,17 @@ def layer_get_sirgas_epsg(layer_in:QgsVectorLayer) -> QgsVectorLayer:
     return lyr_return
 
 def lyr_process(layer_in:QgsVectorLayer, operation_config: dict, crs_out:int=4326) -> QgsVectorLayer:
-    '''
-        Função de chamada para processar todas as ferramentas no layer de entrada.
-            Parameters:
-                layer_in (QgsVectorLayer): Objeto QgsVectorLayer a ser reprojetado
-                operation_config (dict): Dicionário contendo configurações das camadas utilizadas
-                crs_out (int): Código EPSG do Sistema de referencia de saída
+    """
+    Processa uma camada geoespacial aplicando reprojeção, correção geométrica e adição de estilos.
 
-            Returns:
-                Memory_out (QgsVectorLayer): Objeto QgsVectorLayer em memória do layer de 
-                                             entrada com processamentos realizados
-    '''
+    Args:
+        layer_in (QgsVectorLayer): Camada de entrada a ser processada.
+        operation_config (dict): Configurações da operação, incluindo estilos.
+        crs_out (int): Código EPSG do CRS de saída. Padrão: 4326 (WGS 84).
+
+    Returns:
+        QgsVectorLayer: Camada processada e estilizada.
+    """
     lyr_reproj = layer_reproject(layer_in, crs_out)
     lyr_fixed = layer_fix_geometries(lyr_reproj)
     lyr_return = layer_get_sirgas_epsg(lyr_fixed)
@@ -107,14 +110,14 @@ def lyr_process(layer_in:QgsVectorLayer, operation_config: dict, crs_out:int=432
 
 def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
     """
-    Insere um buffer de tamanho especificado em todas as geometrias de uma camada do tipo QgsVectorLayer.
+    Cria um buffer em torno das geometrias de uma camada.
 
-    Parameters:
-        layer (QgsVectorLayer): Camada a ser bufferizada.
-        buffer_size (int): Tamanho do buffer em unidades do sistema de coordenadas da camada.
+    Args:
+        layer (QgsVectorLayer): Camada de entrada.
+        buffer_size (int): Tamanho do buffer em unidades do CRS da camada.
 
     Returns:
-        QgsVectorLayer: A camada com as geometrias bufferizadas.
+        QgsVectorLayer: Camada com geometrias bufferizadas.
     """
     if layer.name() == NOME_CAMADA_ENTRADA:
         layer = layer.clone()
@@ -167,14 +170,14 @@ def insert_buffer(layer: QgsVectorLayer, buffer_size: int) -> QgsVectorLayer:
 
 def add_style(layer: QgsVectorLayer, operation_config: dict):
     """
-    Aplica um estilo a uma camada QgsVectorLayer.
+    Aplica um estilo a uma camada geoespacial.
 
-    Parameters:
-        layer (QgsVectorLayer): camada QgsVectorLayer a ser estilizada
-        operation_config (dict): dicionário com as configurações da operação, incluindo o caminho para os arquivos SLD/QML
+    Args:
+        layer (QgsVectorLayer): Camada a ser estilizada.
+        operation_config (dict): Configurações da operação, incluindo caminhos de arquivos SLD/QML.
 
     Returns:
-        QgsVectorLayer: camada estilizada com o SLD/QML
+        QgsVectorLayer: Camada estilizada.
     """
     if layer.name() == NOME_CAMADA_VERTICES:
         layer.loadNamedStyle(default_styles.VERTICES_LAYER.get_path())
@@ -251,6 +254,17 @@ def add_style(layer: QgsVectorLayer, operation_config: dict):
     return layer
 
 def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_name: str, pdf_name: str, path_output: str, suffix: str) -> None:
+    """
+    Exporta uma página do atlas para PDF com base em uma camada de cobertura e uma feição.
+
+    Args:
+        layer (QgsVectorLayer): Camada de cobertura do atlas.
+        feature (QgsFeature): Feição específica para exportação.
+        layout_name (str): Nome do layout do atlas.
+        pdf_name (str): Nome do arquivo PDF.
+        path_output (str): Caminho de saída do arquivo.
+        suffix (str): Sufixo adicional para o nome do arquivo.
+    """
     logradouro = feature['logradouro']
 
     parameters = {
@@ -271,10 +285,19 @@ def export_atlas_single_page(layer: QgsVectorLayer, feature: QgsFeature, layout_
     processing.run("native:atlaslayouttopdf", parameters)
 
 def get_general_geom_type_name(geom):
-        geom_type = geom.geometryType()
-        if geom_type == QgsWkbTypes.PointGeometry:
-            return 'Point'
-        elif geom_type == QgsWkbTypes.LineGeometry:
-            return 'LineString'
-        elif geom_type == QgsWkbTypes.PolygonGeometry:
-            return 'Polygon'
+    """
+    Identifica o tipo de geometria de uma camada.
+
+    Args:
+        geom (QgsGeometry): Geometria da camada.
+
+    Returns:
+        str: Nome do tipo de geometria ('Point', 'LineString' ou 'Polygon').
+    """
+    geom_type = geom.geometryType()
+    if geom_type == QgsWkbTypes.PointGeometry:
+        return 'Point'
+    elif geom_type == QgsWkbTypes.LineGeometry:
+        return 'LineString'
+    elif geom_type == QgsWkbTypes.PolygonGeometry:
+        return 'Polygon'

@@ -8,9 +8,13 @@ class Utils():
 
     def add_input_scale(self, input):
         """
-        Adiciona uma escala de 50 em x e y para o dado de input.
+        Adiciona um buffer de escala de 0.05 (ou 50 unidades) nas coordenadas X e Y da geometria do dado de entrada.
 
-        @keyword input: Camada de input inserida pelo usuário.
+        Args:
+            input (QgsFeature): Feição de entrada inserida pelo usuário.
+
+        Returns:
+            QgsFeature: Feição de entrada com a geometria escalada.
         """
         scaled_input = input.copy()
 
@@ -19,7 +23,13 @@ class Utils():
 
     def get_active_basemap(self):
         """
-        Pega o basemap setado em configurações
+        Retorna o basemap ativo configurado no sistema.
+
+        Returns:
+            tuple: Um par de valores (str, str) contendo o identificador e o caminho do basemap ativo.
+
+        Raises:
+            Exception: Caso nenhum basemap esteja marcado como ativo.
         """
         json_tools = JsonTools()
         json_basemap = json_tools.get_config_basemap()

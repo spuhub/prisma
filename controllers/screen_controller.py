@@ -2,30 +2,35 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 
 class Controller:
     """
-    Classe que faz o controle das telas.
+    Classe que gerencia o controle das telas do sistema Prisma.
 
-    @ivar config_window: Armazena a classe que manipula a tela de configuração.
-    @ivar first_start: Após aparecer a primeira tela do Prisma, variável passa a ser True sempre. Serve para fazer o controle de telas.
-    @ivar iface: Variável para acessar métodos do QGIS.
-    @ivar main_window: Armazena a classe que manipula a tela principal.
-    @ivar overlay_feature_window: Armazena a classe que manipula a tela para busca com feições selecionadas.
-    @ivar overlay_point_window: Armazena a classe que manipula a tela para busca através de pontos.
-    @ivar overlay_shapefile_window: Armazena a classe que manipula a tela para busca com shapefile de input.
-    @ivar result_window: Armazena a classe que manipula a tela de resultados de sobreposição.
-    @ivar select_databases: Armazena a classe que manipula a tela de seleção de bases de dados para comparação.
-    @ivar 	report_generator: Armazena a classe que manipula a tela para preencher dados de cabeçalho e diretório de saída dos relatórios PDF.
+    Atributos:
+        config_window (ConfigWindow): Classe responsável por manipular a tela de configuração.
+        first_start (bool): Indica se a tela principal do Prisma já foi exibida.
+        iface: Interface para acessar métodos do QGIS.
+        main_window (MainWindow): Classe responsável por manipular a tela principal.
+        overlay_feature_window (OverlayFeature): Classe responsável por manipular a tela de busca com feições selecionadas.
+        overlay_point_window (OverlayPoint): Classe responsável por manipular a tela de busca por ponto.
+        overlay_shapefile_window (OverlayShapefile): Classe responsável por manipular a tela de busca com shapefile como entrada.
+        result_window (ResultWindow): Classe responsável por manipular a tela de resultados de sobreposição.
+        select_databases (SelectDatabases): Classe responsável por manipular a tela de seleção de bases de dados para comparação.
+        report_generator (ReportGenerator): Classe responsável por manipular a tela para preencher dados de cabeçalho e diretório de saída de relatórios PDF.
     """
 
     def __init__(self, iface):
         """
-        Método de inicialização da classe.
+        Inicializa a classe Controller.
+
+        Args:
+            iface: Interface para acessar métodos do QGIS.
         """
         self.first_start = False
         self.iface = iface
 
     def show_main(self):
         """
-        Função acionada (e também serve como controller) para mostrar a tela principal do prisma.
+        Exibe a tela principal do Prisma.
+        Também funciona como controlador para transições entre telas.
         """
         from ..screens.main_window import MainWindow
         self.main_window = MainWindow(self.iface)
@@ -86,7 +91,10 @@ class Controller:
 
     def show_select_databases(self, operation_config):
         """
-        Função acionada (e também serve como controller) para mostrar a tela de seleção de bases de dados para comparação do prisma.
+        Exibe a tela de seleção de bases de dados para comparação no Prisma.
+
+        Args:
+            operation_config (dict): Configurações da operação em andamento.
         """
         from ..screens.select_databases import SelectDatabases
         self.select_databases = SelectDatabases(operation_config)
@@ -96,7 +104,10 @@ class Controller:
 
     def show_report_generator(self, data):
         """
-        Função acionada (e também serve como controller) para mostrar a tela onde o usuário insere os dados de cabeçalho e local onde devem ser gerados os relatórios PDF do prisma.
+        Exibe a tela para inserção de dados de cabeçalho e diretório de saída dos relatórios PDF do Prisma.
+
+        Args:
+            data: Dados necessários para gerar o relatório.
         """
         from ..screens.report_generator import ReportGenerator
         self.report_generator = ReportGenerator(data)
@@ -104,7 +115,10 @@ class Controller:
 
     def show_result_window(self, data):
         """
-        Função acionada (e também serve como controller) para mostrar a tela de resultados do prisma.
+        Exibe a tela de resultados da análise de sobreposição no Prisma.
+
+        Args:
+            data: Dados gerados pela análise de sobreposição.
         """
         from ..screens.result_window import ResultWindow
         self.result_window = ResultWindow(data)

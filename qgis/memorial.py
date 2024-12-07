@@ -1,3 +1,8 @@
+## 
+## ESSE ARQUIVO NÃO ESTÁ SENDO UTILIZADO NO MOMENTO
+## FUNCIONALIDADE JÁ IMPLEMENTADA PARA GERAR MEMORIAL DE VÉRTICES DOS POLÍGONOS DE ENTRADA
+##
+
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image

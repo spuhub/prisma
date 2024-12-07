@@ -52,13 +52,16 @@ from ..environment import (
 
 class OverlayAnalisys():
     """
-    Classe utilizada para verificar quais áreas possuem sobreposição entre input de entrada e camadas de comparação.
+    Classe para realizar análises de sobreposição espacial entre camadas de entrada e camadas de comparação.
 
-    @ivar operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
-    @ivar utils: Armazena classe contendo algumas funções úteis para o código.
+    Atributos:
+        provider_point (QgsVectorLayer): Provedor de dados para feições de ponto.
+        provider_line (QgsVectorLayer): Provedor de dados para feições de linha.
+        provider_polygon (QgsVectorLayer): Provedor de dados para feições de polígono.
+        utils (Utils): Classe de utilidades para operações auxiliares.
     """
     def __init__(self):
-        """Método construtor da classe."""
+        """Inicializa a classe OverlayAnalisys."""
         self.provider_point = None
         self.provider_line = None
         self.provider_polygon = None
@@ -66,11 +69,14 @@ class OverlayAnalisys():
 
     def overlay_analysis(self, dic_layers, operation_config):
         """
-        Função que conta quantas sobreposições aconteceram entre a camada de input e as todas as camadas de comparação selecionadas.
-        Esta função é feita através da projeção geográfica.
+        Realiza a análise de sobreposição para identificar interseções espaciais entre as camadas de entrada e as camadas de comparação.
 
-        @keyword operation_config: Dicionário que armazena configurações de operação, como por exemplo: dado de input, bases de dados selecionadas para comparação, busca por ponto, shapefile, etc...
-        @return result: Dicionário que retorna, no formato de geodataframe, todas camadas passadas para comparação e também as camadas que tiveram sobreposição.
+        Args:
+            dic_layers (dict): Dicionário contendo camadas de entrada e de comparação.
+            operation_config (dict): Dicionário com as configurações da operação.
+
+        Returns:
+            tuple: Um dicionário de sobreposições e as camadas resultantes (pontos, linhas, polígonos, vértices e cotas).
         """
         self.operation_config = operation_config
 
@@ -220,12 +226,13 @@ class OverlayAnalisys():
     
     def _create_overlap_feature(self, feat_geom, feat_overlap_geom, feat, lyr_overlap_name) -> None:
         """
-        Função auxiliar que cria uma feição de sobreposição.
+        Cria uma nova feição que representa a interseção entre uma feição de entrada e uma de comparação.
 
-        @param feat_geom: geometria da feição do input
-        @param feat_overlap_geom: geometria da feição em que houve sobreposição
-        @param provider: provedor de dados onde a feição de sobreposição será adicionada
-        @param feat_attributes: atributos da feição do input
+        Args:
+            feat_geom (QgsGeometry): Geometria da feição de entrada.
+            feat_overlap_geom (QgsGeometry): Geometria da feição de comparação.
+            feat (QgsFeature): Feição de entrada.
+            lyr_overlap_name (str): Nome da camada de comparação.
         """
         feat_fields = feat.fields()
         feat_attributes = feat.attributes()
@@ -262,11 +269,14 @@ class OverlayAnalisys():
     
     def calcular_soma_areas(self, layer: QgsVectorLayer, epsg: str) -> str:
         """
-        Função que calcula a soma das áreas ou comprimentos das geometrias de uma camada.
+        Calcula a soma das áreas ou comprimentos das geometrias de uma camada.
 
-        @param layer: camada do tipo QgsVectorLayer onde o calculo irá ser executado.
-        @param epsg: código EPSG do sistema de referência de destino.
-        @return: string formatada contendo a soma total das áreas (para polígonos) ou comprimentos (para linhas).
+        Args:
+            layer (QgsVectorLayer): Camada do tipo QgsVectorLayer para realizar o cálculo.
+            epsg (str): Código EPSG do sistema de referência de destino.
+
+        Returns:
+            str: String formatada com a soma total das áreas (para polígonos) ou comprimentos (para linhas).
         """
         soma_geometria = 0.0
 
@@ -289,10 +299,13 @@ class OverlayAnalisys():
     
     def _extract_polygon_vertices(self, layer):
         """
-        Função auxiliar que extrai os vértices de uma camada do tipo polígono e cria uma nova camada de pontos.
+        Extrai os vértices de uma camada de polígonos e cria uma nova camada de pontos.
 
-        @param layer: camada do tipo QgsVectorLayer com geometrias de polígono que terão os seus vértices extraídos.
-        @return: nova camada do tipo QgsVectorLayer contendo os pontos extraídos.
+        Args:
+            layer (QgsVectorLayer): Camada de polígonos com as geometrias a serem processadas.
+
+        Returns:
+            QgsVectorLayer: Nova camada de pontos contendo os vértices extraídos.
         """
         vertices_layer = QgsVectorLayer('Point?crs={}'.format(layer.crs().authid()), 'vertices', 'memory')
         vertices_layer_fields = QgsFields()
@@ -325,11 +338,13 @@ class OverlayAnalisys():
     
     def _create_linestring_from_points(self, point_layer):
         """
-        Função que cria uma camada de linhas conectando pontos consecutivos de uma camada de pontos.
+        Cria uma camada de linhas conectando pontos consecutivos de uma camada de pontos.
 
-        @param point_layer: camada do tipo QgsVectorLayer contendo pontos ou multipontos.
-        @return: nova camada do tipo QgsVectorLayer contendo as linhas criadas. As linhas conectam pontos consecutivos 
-                 que pertencem à mesma feição, identificadas pelo atributo 'feature_id'.
+        Args:
+            point_layer (QgsVectorLayer): Camada de pontos ou multipontos.
+
+        Returns:
+            QgsVectorLayer: Nova camada de linhas conectando os pontos consecutivos pertencentes à mesma feição.
         """
         line_layer = QgsVectorLayer('LineString?crs=epsg:4326', NOME_CAMADA_QUOTAS, 'memory')
         provider = line_layer.dataProvider()

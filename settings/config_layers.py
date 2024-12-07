@@ -15,10 +15,30 @@ from .layer_infor import LayerInfor
 
 
 class  ConfigLayers(QtWidgets.QDialog):
+    """
+    Classe responsável por gerenciar a configuração de camadas.
+
+    Permite ao usuário selecionar tabelas ou shapefiles, definir propriedades como 
+    buffers e estilos, e salvar as configurações. É utilizada como parte do fluxo 
+    de configuração do PRISMA.
+
+    Attributes:
+        back_window (pyqtSignal): Sinal emitido ao voltar para a janela anterior.
+        continue_window (pyqtSignal): Sinal emitido ao avançar para a próxima janela.
+    """
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
 
     def __init__(self, tipo_fonte, id_current_db, login, senha):
+        """
+        Inicializa a interface de configuração de camadas.
+
+        Args:
+            tipo_fonte (str): Tipo da fonte de dados ('bd' para banco de dados ou 'shp' para shapefiles).
+            id_current_db (int): Identificador da base de dados a ser configurada.
+            login (str): Login do banco de dados.
+            senha (str): Senha do banco de dados.
+        """
         super(ConfigLayers, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'config_layers.ui'), self)
         self.tipoFonte = tipo_fonte
@@ -49,7 +69,6 @@ class  ConfigLayers(QtWidgets.QDialog):
     def fill_table(self):
         """
         Método responsavel por preencher a tabela com as informações de configuração de cada camda
-        @return: void
         """
         # if self.tipoFonte == "shp":
         #     self.fill_table_shp()
@@ -59,10 +78,14 @@ class  ConfigLayers(QtWidgets.QDialog):
 
     def create_buffer_box(self, id_object, value):
         """
-        Cria e preenche um SpinBox para digitar o tamanho do buffer.
-        @param id_object: um valor para servir de ID do objeto criado.
-        @param value: valor padrão do do objeto.
-        @return: void.
+        Cria e configura um spinbox para entrada do tamanho do buffer.
+
+        Args:
+            id_object (str): Identificador único do spinbox.
+            value (float): Valor inicial do buffer.
+
+        Returns:
+            QDoubleSpinBox: Spinbox configurado.
         """
         dsb = QDoubleSpinBox()
         dsb.setValue(value)
@@ -73,12 +96,15 @@ class  ConfigLayers(QtWidgets.QDialog):
 
     def create_Color_Select(self, id_object, corDefalt):
         """
-        Cria um Color Button para seleção de cores.
-        @param id_object:  um valor para servir de ID do objeto criado.
-        @param corDefalt: Cor padrão.
-        @return:
-        """
+        Cria um botão de seleção de cor.
 
+        Args:
+            id_object (str): Identificador único do botão.
+            corDefalt (str): Cor inicial no formato hexadecimal.
+
+        Returns:
+            QgsColorButton: Botão de seleção de cor.
+        """
         co = QgsColorButton()
         co.setObjectName(id_object)
         c = QColor(corDefalt)
@@ -88,10 +114,14 @@ class  ConfigLayers(QtWidgets.QDialog):
 
     def create_usar_check(self, id_object, ischeck):
         """
-        Cria Um checkbox para selecionar uma camada para ser usada.
-        @param id_object:  um valor para servir de ID do objeto criado.
-        @param ischeck: Valor true/false para dizer se vai ficar marcado ou não.
-        @return:
+        Cria um checkbox para selecionar se uma camada será utilizada.
+
+        Args:
+            id_object (str): Identificador único do checkbox.
+            ischeck (bool): Define se o checkbox está marcado.
+
+        Returns:
+            QCheckBox: Checkbox configurado.
         """
         b1 = QCheckBox(" ")
         b1.setChecked(ischeck)
@@ -99,13 +129,30 @@ class  ConfigLayers(QtWidgets.QDialog):
         return b1
 
     def create_filePath(self, id_object):
+        """
+        Cria um widget de seleção de arquivo.
+
+        Args:
+            id_object (str): Identificador único do widget.
+
+        Returns:
+            QgsFileWidget: Widget de seleção de arquivo.
+        """
 
         btn = QgsFileWidget()
         btn.setObjectName(id_object)
         return btn
 
     def create_button_mais_inf(self, id_object):
+        """
+        Cria um botão para abrir informações adicionais sobre a camada.
 
+        Args:
+            id_object (str): Identificador único do botão.
+
+        Returns:
+            QToolButton: Botão configurado.
+        """
         btn = QToolButton()
         btn.setObjectName(id_object)
         btn.setText("...")
@@ -113,19 +160,19 @@ class  ConfigLayers(QtWidgets.QDialog):
 
     def generate_color(self):
         """
-        Gera cores de forma aleatória.
-        @return: retorna o valor da cor em Hexadecimal.
+        Gera uma cor aleatória em formato hexadecimal.
+
+        Returns:
+            str: Cor gerada em formato hexadecimal.
         """
         color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])]
         return color[0]
 
 
     def fill_table_bd(self):
-
         """
         Método responsável por preencher a tabela com as informações de configuração de cada camada de uma base de dados
         PostgreSQL.
-        @return: void
         """
         print(self.id_current_db)
         idbd = self.id_current_db

@@ -5,7 +5,7 @@ from ..environment import CRS_PADRAO
 
 class HandleSelections():
     """
-    Classe para leitura de objetos selecionados para comparação.
+    Classe responsável por gerenciar a leitura de objetos selecionados para comparação, incluindo shapefiles, WFS e camadas de banco de dados.
     """
     def __init__(self):
         """
@@ -15,10 +15,14 @@ class HandleSelections():
 
     def read_selected_shp(self, selected_shapefiles, operation_config):
         """
-        Método que lê arquivos shapefiles selecionados para comparação.
+        Lê shapefiles selecionados para comparação e os processa no formato QgsVectorLayer.
 
-        @keyword selected_shapefiles: Vetor contendo informações das bases de dados selecionadas para comparação, essas informações são obtidas do arquivo JSON.
-        @return input: lista contendo os shapefiles selecionados para comparação.
+        Args:
+            selected_shapefiles (list): Lista contendo informações das bases de dados selecionadas, obtidas de um arquivo JSON.
+            operation_config (dict): Configurações da operação em andamento.
+
+        Returns:
+            tuple: Uma lista com os shapefiles selecionados no formato QgsVectorLayer e o dicionário atualizado de configurações.
         """
         list_selected_shp = []
 
@@ -37,10 +41,14 @@ class HandleSelections():
 
     def read_selected_wfs(self, selected_wfs, operation_config):
         """
-        Método que lê arquivos wfs selecionados para comparação.
+        Lê camadas WFS selecionadas para comparação e as processa no formato QgsVectorLayer.
 
-        @keyword selected_wfs: Vetor contendo informações das bases de dados selecionadas para comparação, essas informações são obtidas do arquivo JSON.
-        @return input: lista contendo os dados dos WFS selecionados para comparação.
+        Args:
+            selected_wfs (list): Lista contendo informações das bases de dados WFS selecionadas, obtidas de um arquivo JSON.
+            operation_config (dict): Configurações da operação em andamento.
+
+        Returns:
+            tuple: Uma lista com os dados das camadas WFS no formato QgsVectorLayer e o dicionário atualizado de configurações.
         """
         list_selected_wfs = []
 
@@ -59,10 +67,14 @@ class HandleSelections():
 
     def read_selected_db(self, selected_db, operation_config):
         """
-        Método que lê camadas do postgresql selecionados para comparação.
+        Lê camadas selecionadas de um banco de dados PostgreSQL e as processa no formato QgsVectorLayer.
 
-        @keyword selected_db: Vetor contendo informações das bases de dados selecionadas para comparação, essas informações são obtidas do arquivo JSON.
-        @return input: lista contendo os dados do banco de dados selecionados para comparação.
+        Args:
+            selected_db (list): Lista contendo informações das camadas de banco de dados selecionadas, obtidas de um arquivo JSON.
+            operation_config (dict): Configurações da operação em andamento.
+
+        Returns:
+            tuple: Uma lista com os dados das camadas do banco no formato QgsVectorLayer e o dicionário atualizado de configurações.
         """
         list_selected_db = []
 
@@ -90,6 +102,16 @@ class HandleSelections():
         return list_selected_db, operation_config
 
     def read_required_layers(self, required_list, operation_config):
+        """
+        Lê as camadas obrigatórias, sejam shapefiles ou camadas de banco de dados, e as processa.
+
+        Args:
+            required_list (list): Lista contendo informações das camadas obrigatórias.
+            operation_config (dict): Configurações da operação em andamento.
+
+        Returns:
+            tuple: Uma lista com as camadas obrigatórias no formato QgsVectorLayer e o dicionário atualizado de configurações.
+        """
         list_required = []
         for item in required_list:
             if item['tipo'] == 'shp':

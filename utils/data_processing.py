@@ -8,12 +8,40 @@ from .lyr_utils import *
 from ..environment import NOME_CAMADA_ENTRADA, NOME_CAMADA_ENTRADA_BUFFER, CRS_PADRAO
 
 class DataProcessing():
+    """
+    Classe responsável por realizar o pré-processamento de dados geoespaciais para operações específicas.
+
+    Essa classe manipula camadas de entrada, aplica buffers, insere campos para análise de sobreposição,
+    e prepara as camadas necessárias para as operações de geoprocessamento.
+
+    Atributos:
+        handle_selections (HandleSelections): Classe auxiliar para manipular seleções de camadas.
+        utils (Utils): Classe auxiliar para funções utilitárias.
+    """
     def __init__(self):
-        """Método construtor da classe."""
+        """
+        Método construtor da classe `DataProcessing`.
+
+        Inicializa os atributos `handle_selections` e `utils` para auxiliar nas operações de manipulação de camadas e utilidades.
+        """
         self.handle_selections = HandleSelections()
         self.utils = Utils()
 
     def data_preprocessing(self, operation_config):
+        """
+        Realiza o pré-processamento de dados geoespaciais com base nas configurações da operação.
+
+        Lê a camada de entrada, aplica transformações como buffer e CRS, 
+        e prepara as camadas obrigatórias e opcionais (WFS, SHP, PostgreSQL) para as operações.
+
+        Args:
+            operation_config (dict): Configurações da operação, contendo camadas de entrada, aproximações (buffers),
+                                    e camadas de comparação.
+
+        Returns:
+            dict: Dicionário contendo as camadas processadas, incluindo a camada de entrada, buffers, 
+                e camadas obrigatórias ou opcionais.
+        """
         # Leitura do shapefile de input
         lyr_input = operation_config['input']['layer']
         lyr_input.setName(NOME_CAMADA_ENTRADA)
@@ -70,12 +98,17 @@ class DataProcessing():
     
     def init_field_layer_name(self, layer, field_name):
         """
-        Função que cria para um novo campo no shapefile de input.
-        Esse campo tem o nome de uma das camadas de comparação, que armazenara True caso haja sobreposição
-        e False caso não exista sobreposição entre feição de entrada e camada de comparação 
+        Adiciona um novo campo a uma camada geoespacial para armazenar informações de sobreposição.
 
-        @param layer: Camada de entrada
-        @param field_name: Nome fantasia da camada de comparação
+        Esse campo é usado para registrar se há sobreposição entre feições da camada de entrada
+        e camadas de comparação.
+
+        Args:
+            layer (QgsVectorLayer): Camada de entrada.
+            field_name (str): Nome do campo a ser adicionado.
+
+        Returns:
+            QgsVectorLayer: Camada atualizada com o novo campo.
         """
         layer_provider = layer.dataProvider()
         # Adiciona um novo campo ao layer

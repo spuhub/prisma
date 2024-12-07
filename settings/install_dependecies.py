@@ -1,5 +1,5 @@
 """
-    funções para instalar dependencias no sistema antes de iniciar o plugin
+Funções para instalar dependencias no sistema antes de iniciar o plugin
 """
 import os
 import subprocess
@@ -9,8 +9,8 @@ flag_dependencias = os.path.join(os.path.dirname(__file__), 'flag_dependencies')
 
 def recupera_instalacao_qgis():
     """
-        Busca nos diretórios existentes uma instalação do qgis
-        returns list[paths]
+    Busca nos diretórios existentes uma instalação do qgis
+    returns list[paths]
     """
     lista_bat = []
 
@@ -31,8 +31,7 @@ def recupera_instalacao_qgis():
 
 def instala_dependencias(dependencias):
     """
-        realiza instalação das dependencias em todas os python encontrados
-        returns None
+    Realiza instalação das dependencias em todas os python encontrados
     """
     lista_bat = recupera_instalacao_qgis()
     lista_dependencias = []
@@ -52,8 +51,7 @@ def instala_dependencias(dependencias):
 
 def verifica_flag_dependencias(flag_dependencias):
     """
-        realiza checagem de flag de instalação das dependencias em todas os python encontrados
-        returns Str
+    Realiza checagem de flag de instalação das dependencias em todas os python encontrados
     """
     with open(flag_dependencias, 'r', encoding='utf-8') as arquivo:
         for line in arquivo:

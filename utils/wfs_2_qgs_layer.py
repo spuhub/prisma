@@ -6,6 +6,17 @@ from owslib.wfs import WebFeatureService
 class WfsOperations:
 
       def get_wfs_informations(self, link_wfs):
+            """
+            Obtém informações das camadas disponíveis em um serviço WFS.
+
+            Args:
+                  link_wfs (str): URL do serviço WFS.
+
+            Returns:
+                  list: Lista contendo informações das camadas disponíveis no WFS. Cada item é uma lista com:
+                        - Nome da camada (str)
+                        - Título da camada (str)
+            """
 
             wfs = WebFeatureService(url=link_wfs)
 
@@ -18,6 +29,18 @@ class WfsOperations:
             return data_wfs
 
       def download_wfs_layer(self, link_wfs, layer, base_name):
+            """
+            Faz o download de uma camada específica de um serviço WFS no formato GeoJSON.
+
+            Args:
+                  link_wfs (str): URL do serviço WFS.
+                  layer (str): Nome da camada a ser baixada.
+                  base_name (str): Nome base para o diretório onde o arquivo será salvo.
+
+            Returns:
+                  bool: `True` se o download foi concluído com sucesso, caso contrário `False`.
+            """
+
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',
                               TYPENAME=layer, OUTPUTFORMAT='json')
 
@@ -46,6 +69,18 @@ class WfsOperations:
 
 
       def update_wfs_layer(self, link_wfs, layer, base_name):
+            """
+            Atualiza uma camada existente de um serviço WFS. Caso o arquivo GeoJSON já exista, ele será removido
+            e substituído pela versão mais recente.
+
+            Args:
+                  link_wfs (str): URL do serviço WFS.
+                  layer (str): Nome da camada a ser atualizada.
+                  base_name (str): Nome base para o diretório onde o arquivo será salvo.
+
+            Returns:
+                  bool: `True` se a camada foi atualizada com sucesso, caso contrário `False`.
+            """
             params = dict(SERVICE='WFS', VERSION="1.1.0", REQUEST='GetFeature',
                   TYPENAME=layer, OUTPUTFORMAT='json')
 

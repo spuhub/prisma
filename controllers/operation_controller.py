@@ -3,17 +3,25 @@ from ..settings.env_tools import EnvTools
 
 class OperationController:
     """
-    Classe utilizada para criar um dicionário com especificações da operação que será feita.
-    Dentre as especificações estão: tipo de operação (shapefile, ponto, endereço, feição selecionada),
-    arquivos shapefile e bases de dados de bancos de dados selecionados para comparação.
+    Classe responsável por criar um dicionário contendo as configurações e especificações 
+    necessárias para a operação de análise de sobreposição.
 
-    @ivar data_bd: Armazena bases de dados de banco de dados vindos do arquivo de configuração JSON.
-    @ivar data_shp: Armazena bases de dados de shapefiles vindos do arquivo de configuração JSON.
-    @ivar json_tools: Classe para leitura de arquivos JSON. comoposwmoa
+    Especificações incluem o tipo de operação (shapefile, ponto, endereço, feição selecionada),
+    arquivos shapefile e bases de dados selecionados para comparação.
+
+    Atributos:
+        data_bd (list): Lista contendo bases de dados configuradas no arquivo JSON.
+        data_shp (list): Lista contendo shapefiles configurados no arquivo JSON.
+        data_wfs (list): Lista contendo camadas WFS configuradas no arquivo JSON.
+        data_required (list): Lista contendo camadas obrigatórias configuradas no arquivo JSON.
+        basemap (list): Lista de mapas base configurados no arquivo JSON.
+        style_default_layers (list): Lista de estilos padrão para camadas configurados no arquivo JSON.
+        json_tools (JsonTools): Classe para manipulação de arquivos JSON.
     """
     def __init__(self):
         """
-        Método de inicialização da classe.
+        Inicializa a classe OperationController e carrega as configurações de bases de dados,
+        shapefiles, WFS, camadas obrigatórias, mapas base e estilos padrão a partir do arquivo JSON.
         """
         self.json_tools = JsonTools()
         self.data_bd = self.json_tools.get_config_database()
@@ -25,13 +33,16 @@ class OperationController:
 
     def get_operation(self, operation_config, selected_items_shp, selected_items_wfs, selected_items_bd):
         """
-        Função que gera as configurações/especificações da busca de sobreposição que irá acontecer. Aqui é armazenado, em formado de dicionário, quais bases de dados serão de dados serão
-        utilizadas para a busca de sobreposição
+        Gera as configurações da operação de busca de sobreposição.
 
-        @keyword operation_config: Dicionário contendo configurações/especificações de busca.
-        @keyword selected_items_bd: Vetor com bases de dados vindos de banco de dados que foram selecionados para comparação.
-        @keyword selected_items_shp: Vetor com bases de dados vindos de shapefiles que foram selecionados para comparação.
-        @return operation_config: Dicionário contendo configurações/especificações de busca.
+        Args:
+            operation_config (dict): Configurações básicas da operação.
+            selected_items_shp (list): Lista de shapefiles selecionados para comparação.
+            selected_items_wfs (list): Lista de camadas WFS selecionadas para comparação.
+            selected_items_bd (list): Lista de bases de dados selecionadas para comparação.
+
+        Returns:
+            dict: Dicionário contendo as especificações completas da operação.
         """
         if (operation_config['operation'] == 'shapefile'):
             operation_config = self.create_operation_config(operation_config, selected_items_bd, selected_items_wfs, selected_items_shp)
@@ -51,12 +62,16 @@ class OperationController:
 
     def create_operation_config(self, operation_config, selected_items_bd, selected_items_wfs, selected_items_shp):
         """
-        Monta uma lista de configurações para operação que será realizada.
+        Monta o dicionário de configurações detalhadas para a operação a ser realizada.
 
-        @keyword operation_config: Dicionário contendo configurações/especificações de busca.
-        @keyword selected_items_bd: Vetor com bases de dados vindos de banco de dados que foram selecionados para comparação.
-        @keyword selected_items_shp: Vetor com bases de dados vindos de shapefiles que foram selecionados para comparação.
-        @return operation_config: Dicionário contendo configurações/especificações de busca.
+        Args:
+            operation_config (dict): Configurações básicas da operação.
+            selected_items_bd (list): Lista de bases de dados selecionadas para comparação.
+            selected_items_wfs (list): Lista de camadas WFS selecionadas para comparação.
+            selected_items_shp (list): Lista de shapefiles selecionados para comparação.
+
+        Returns:
+            dict: Dicionário contendo as configurações detalhadas da operação.
         """
         operation_config['shp'] = []
         for i in self.data_shp:

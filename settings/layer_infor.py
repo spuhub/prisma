@@ -6,12 +6,31 @@ from PyQt5.uic import loadUi
 from .json_tools import JsonTools
 
 class LayerInfor(QtWidgets.QDialog):
-    """Classe reponsavel por manipular a janela de configuração principal"""
+    """
+    Classe responsável por manipular a janela de configuração de informações adicionais de camadas.
+
+    Essa classe permite exibir, editar e salvar informações adicionais das camadas de uma base de dados específica.
+
+    Atributos:
+        back_window (QtCore.pyqtSignal): Sinal emitido ao retornar para a janela anterior.
+        continue_window (QtCore.pyqtSignal): Sinal emitido ao continuar para a próxima janela.
+        id_current_db (str): ID da base de dados atualmente sendo configurada.
+        index_infor (int): Índice da camada dentro das informações adicionais.
+        settings (JsonTools): Instância para manipulação do arquivo JSON de configuração.
+        source_databases (list): Lista das configurações de bases disponíveis no JSON.
+    """
 
     back_window = QtCore.pyqtSignal()
     continue_window = QtCore.pyqtSignal()
 
     def __init__(self, id_current_db, index_infor):
+        """
+        Inicializa a janela de configuração de informações adicionais.
+
+        Args:
+            id_current_db (str): ID da base de dados atualmente sendo configurada.
+            index_infor (int): Índice da camada para edição das informações adicionais.
+        """
         super(LayerInfor, self).__init__()
         loadUi(os.path.join(os.path.dirname(__file__), 'layer_infor.ui'), self)
         self.btn_salvar.clicked.connect(self.save_infor)
@@ -26,6 +45,15 @@ class LayerInfor(QtWidgets.QDialog):
 
 
     def search_base_pg(self, id_base):
+        """
+        Busca as configurações de uma base de dados PostgreSQL no JSON de configuração.
+
+        Args:
+            id_base (str): ID da base de dados.
+
+        Returns:
+            dict: Configurações da base de dados correspondente.
+        """
         config = {}
         for item in self.source_databases:
             if item["id"] == id_base:
@@ -34,6 +62,11 @@ class LayerInfor(QtWidgets.QDialog):
         return config
 
     def fill_itens_infor(self):
+        """
+        Preenche os campos da interface com as informações adicionais da camada selecionada.
+
+        Caso a camada possua informações previamente configuradas, essas são exibidas nos campos da interface.
+        """
         idbd = self.id_current_db
         config = self.search_base_pg(self.id_current_db)
         infor = {}
@@ -55,7 +88,14 @@ class LayerInfor(QtWidgets.QDialog):
                     self.descricao.setText(infor[self.index_infor]["descricao"])
 
     def save_infor(self):
+        """
+        Salva as informações adicionais configuradas para a camada no arquivo JSON.
 
+        Atualiza ou cria as informações adicionais da camada no JSON, incluindo dados como órgão responsável, 
+        período de referência, data de aquisição e descrição.
+
+        Após salvar, emite o sinal `continue_window` para prosseguir.
+        """
         config = self.search_base_pg(self.id_current_db)
 
         infor_array = []
@@ -95,5 +135,11 @@ class LayerInfor(QtWidgets.QDialog):
         self.continue_window.emit()
 
     def get_current_state(self):
+        """
+        Retorna o estado atual das configurações da base de dados.
+
+        Returns:
+            dict: Configurações atuais da base de dados selecionada.
+        """
         config = self.search_base_pg(self.id_current_db)
         return config

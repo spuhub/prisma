@@ -7,7 +7,14 @@ from typing import Optional
 
 class JsonTools:
     """
-    Classe para Manipular o arquivo de configuração.
+    Classe responsável por manipular o arquivo de configuração JSON.
+
+    Esta classe é utilizada para obter, inserir, editar e deletar informações armazenadas no 
+    arquivo de configuração do sistema, incluindo configurações de bancos de dados, shapefiles, 
+    WFS, camadas obrigatórias, e estilos padrão.
+
+    Atributos:
+        json_path (str): Caminho absoluto para o arquivo JSON de configuração.
     """
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,8 +28,10 @@ class JsonTools:
 
     def get_json(self):
         """
-        Retorna o Json de configuração.
-        @return: Json de configuração
+        Retorna o conteúdo completo do arquivo JSON de configuração.
+
+        Returns:
+            dict: Dados do JSON de configuração. Retorna um dicionário vazio se o arquivo estiver vazio.
         """
         if os.stat(self.json_path).st_size == 0:
             return {}
@@ -35,10 +44,11 @@ class JsonTools:
             return json_config
 
     def get_config_shapefile(self):
-
         """
-        Retorna uma lista com as configurações de bases em ShapeFile.
-        @return: Lista com as configurações.
+        Retorna as configurações de bases de dados do tipo Shapefile.
+
+        Returns:
+            list: Lista contendo as configurações de todas as bases do tipo Shapefile.
         """
         shp_list = []
 
@@ -54,11 +64,11 @@ class JsonTools:
         return shp_list
 
     def get_config_database(self):
-
         """
-        Retorna uma lista com as configurações de bases em PostgreSQL.
-        @return: Lista com as configurações.
+        Retorna as configurações de bases de dados do tipo PostgreSQL.
 
+        Returns:
+            list: Lista contendo as configurações de todas as bases PostgreSQL.
         """
         shp_list = []
 
@@ -76,10 +86,11 @@ class JsonTools:
         return shp_list
 
     def get_config_wfs(self):
-
         """
-        Retorna uma lista com as configurações de bases em WFS.
-        @return: Lista com as configurações.
+        Retorna as configurações de bases de dados do tipo WFS.
+
+        Returns:
+            list: Lista contendo as configurações de todas as bases WFS.
         """
         wfs_list = []
 
@@ -95,11 +106,12 @@ class JsonTools:
         return wfs_list
 
     def get_config_required(self):
-
         """
-        Retorna uma lista com as configurações das camadas obrigatórias caso tiver. Se não tiver camadas
-        obrigatórias retorna uma lista vazia.
-        @return: Lista com as configurações.
+        Retorna as configurações das camadas obrigatórias do sistema.
+
+        Returns:
+            list: Lista contendo as configurações das camadas obrigatórias. Retorna uma lista vazia 
+                se não existirem camadas obrigatórias configuradas.
         """
 
         required_list = []
@@ -129,15 +141,22 @@ class JsonTools:
         return required_list
 
     def insert_data(self, all_json):
+        """
+        Insere ou atualiza o conteúdo completo do arquivo JSON.
+
+        Args:
+            all_json (dict): Dicionário contendo os novos dados a serem salvos no arquivo JSON.
+        """
         with open(self.json_path, "w") as f:
             json.dump(all_json, f, indent=4)
             f.close()
 
     def get_config_basemap(self):
-
         """
-        Retorna uma lista com as configurações de basemap.
-        @return: Lista com as configurações.
+        Retorna as configurações dos mapas base (basemap).
+
+        Returns:
+            list: Lista contendo as configurações dos mapas base.
         """
         basemap_list = []
 
@@ -171,9 +190,15 @@ class JsonTools:
 
     def insert_database_pg(self, db_json_conf, id_base: Optional[str] = None):
         """
-        Insere as configurações de um banco de dados PostgreSQL no Json.
-        @param db_json_conf: Json com as configurações do banco de dados
-        @return: retorna o id da base inserida
+        Insere ou atualiza as configurações de um banco de dados PostgreSQL no JSON.
+
+        Args:
+            db_json_conf (dict): Dicionário contendo as configurações do banco de dados.
+            id_base (str, opcional): ID do banco de dados a ser atualizado. Caso seja None, 
+                                    será gerado um novo ID.
+
+        Returns:
+            str: ID do banco de dados inserido ou atualizado.
         """
         dados = {}
 
@@ -202,10 +227,11 @@ class JsonTools:
 
     def edit_database(self, db_id, db_json_new_conf):
         """
-        Edita um base de dados no PostgreSQL cujo seu id é passado como parametro
-        @param db_id: Id da base de dados a ser editada
-        @param db_json_new_conf: Json contendo as novas configurações da base de dados
-        @return: void
+        Edita as configurações de uma base de dados existente no JSON.
+
+        Args:
+            db_id (str): ID da base de dados a ser editada.
+            db_json_new_conf (dict): Dicionário contendo as novas configurações da base de dados.
         """
         if os.stat(self.json_path).st_size != 0:
             with open(self.json_path, 'r') as f:
@@ -262,10 +288,11 @@ class JsonTools:
 
     def get_camadas_base_obrigatoria(self):
         """
-        Retorna todas as camadas obrigatórias.
-        @return: Json com os nomes das camadas obrigatórias
-        """
+        Retorna todas as camadas obrigatórias configuradas no JSON.
 
+        Returns:
+            dict: Dicionário contendo as configurações das camadas obrigatórias.
+        """
         if os.stat(self.json_path).st_size == 0:
             return {}
         else:
@@ -282,9 +309,10 @@ class JsonTools:
 
     def set_camadas_base_obrigatoria (self, new_conf):
         """
-        Edita o valor de uma camada obigratria
-        @param new_conf: ´Json coma as nova configurações de valor : {<Tipo camada> : {nome da base, nome da camada }}
-        @return:
+        Atualiza as configurações das camadas obrigatórias no JSON.
+
+        Args:
+            new_conf (dict): Dicionário contendo as novas configurações das camadas obrigatórias.
         """
         if os.stat(self.json_path).st_size == 0:
             return {}
@@ -302,7 +330,12 @@ class JsonTools:
                 f.close()
 
     def delete_base(self, idConfig):
+        """
+        Remove uma base de dados do JSON de configuração.
 
+        Args:
+            idConfig (str): ID da base de dados a ser removida.
+        """
         if os.stat(self.json_path).st_size != 0:
 
             with open(self.json_path, 'r') as f:

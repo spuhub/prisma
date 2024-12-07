@@ -4,18 +4,25 @@ from PyQt5.QtCore import QSettings
 
 class EnvTools:
     """
-    Classe responsavel por manipular informações salva na cache do QGIS
+    Classe responsável por gerenciar informações armazenadas na cache do QGIS.
+
+    Utilizada para manipular credenciais de banco de dados, serviços de geocodificação, 
+    cabeçalhos de relatórios e caminho do JSON de configuração.
+
+    Atributos:
+        settings (QSettings): Gerencia a persistência de dados na cache do QGIS.
     """
     def __init__(self):
         self.settings = QSettings()
 
     def store_credentials(self, base_id, user_name, password):
         """
-        Armazena as credenciais login e senha para acessar uma base dados postgresql
-        @param base_id: Id da base presenta no Json de configuração
-        @param user_name: User name da base de dados.
-        @param password: Senha da Base de dados
-        @return: void
+        Armazena as credenciais de login e senha para uma base de dados PostgreSQL.
+
+        Args:
+            base_id (str): ID da base presente no JSON de configuração.
+            user_name (str): Nome de usuário da base de dados.
+            password (str): Senha da base de dados.
         """
         s = QSettings()
         path = 'prisma/databases/' + base_id
@@ -24,11 +31,12 @@ class EnvTools:
 
     def edit_credentials(self, base_id,new_user_name, new_password):
         """
-        Modifica as credeciais de uma base de dados do postgresql
-        @param base_id: Id da base presenta no Json de configuração
-        @param new_user_name: Novo user name da base de dados
-        @param new_password: Nova senha da Base de dados
-        @return:
+        Edita as credenciais armazenadas de uma base de dados PostgreSQL.
+
+        Args:
+            base_id (str): ID da base presente no JSON de configuração.
+            new_user_name (str): Novo nome de usuário.
+            new_password (str): Nova senha.
         """
         s = QSettings()
         s.setValue('prisma/databases/' + base_id + '/usuario', new_user_name)
@@ -36,10 +44,11 @@ class EnvTools:
 
     def store_keys(self, service_id, key):
         """
-        Armazena a chave do serviço de geocodificação (Ex.: Google)
-        @param service_id: Id do Serviço
-        @param key: chave do serviço
-        @return:
+        Armazena a chave de um serviço de geocodificação (por exemplo, Google).
+
+        Args:
+            service_id (str): ID do serviço de geocodificação.
+            key (str): Chave do serviço.
         """
         s = QSettings()
         s.setValue('prisma/geocoding/keys/' + str(service_id), key)
@@ -63,11 +72,14 @@ class EnvTools:
         return server_inf
 
     def get_credentials(self, base_id):
-
         """
-        Retorna as as credeciais de uma base de dados do postgresql
-        @param base_id: Id da base presente no Json de configuração
-        @return:
+        Retorna as credenciais de uma base de dados PostgreSQL.
+
+        Args:
+            base_id (str): ID da base presente no JSON de configuração.
+
+        Returns:
+            list: Lista contendo [usuario, senha].
         """
         s = QSettings()
         usuario = s.value('prisma/databases/' + base_id + '/usuario')
@@ -75,22 +87,25 @@ class EnvTools:
         return [usuario, senha]
 
     def get_key(self, service_id):
-
         """
-        Retorna a chave de um serviço de Geocodificação
-        @param service_id: Id do serviço do Geocodificação
-        @return: chave do serviço de Geocodificação
+        Retorna a chave armazenada para um serviço de geocodificação.
+
+        Args:
+            service_id (str): ID do serviço de geocodificação.
+
+        Returns:
+            str: Chave do serviço de geocodificação.
         """
         s = QSettings()
         key = s.value('prisma/geocoding/keys/' + str(service_id),"")
         return key
 
     def store_report_hearder(self, hearder_List):
-
         """
-        Armazena na cache as iformações de cabeçalho do relatório
-        @param hearder_List: Json com as informações do cabeçalho
-        @return:
+        Armazena as informações de cabeçalho do relatório na cache.
+
+        Args:
+            hearder_list (dict): JSON com as informações do cabeçalho.
         """
         self.settings.beginGroup('prisma/hearderList')
         self.settings.setValue('header', hearder_List)
@@ -98,8 +113,10 @@ class EnvTools:
 
     def get_report_hearder(self):
         """
-        Retorna cache as infnormações de cabeçalho do relatório
-        @return: Json com as informações de cabeçalho
+        Retorna as informações de cabeçalho do relatório armazenadas na cache.
+
+        Returns:
+            dict: JSON com as informações do cabeçalho.
         """
         r = {}
         header = self.settings.value('prisma/hearderList/header')
@@ -117,18 +134,17 @@ class EnvTools:
 
     def store_path_json(self, path):
         """
-        Armazena o caminho do json de configuração
-        :param path:
-        :return:
+        Armazena o caminho do arquivo JSON de configuração na cache.
+
+        Args:
+            path (str): Caminho do arquivo JSON.
         """
         s = QSettings()
         s.setValue('prisma/json', path)
 
     def get_path_json(self):
-
         """
-        retorna o caminho de configuração
-        :return:
+        Retorna o caminho de configuração
         """
         try:
             s = QSettings()

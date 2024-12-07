@@ -4,8 +4,8 @@ from ..settings.json_tools import JsonTools
 
 def pre_config_json():
     """
-        Realiza uma pré-configuração do arquivo json.
-        Foco é pegar de forma dinâmica o diretório onde o qgis está instalado na máquina do usuário.
+    Realiza uma pré-configuração do arquivo json.
+    Foco é pegar de forma dinâmica o diretório onde o qgis está instalado na máquina do usuário.
     """
     json_tools = JsonTools()
     json_data = json_tools.get_json()

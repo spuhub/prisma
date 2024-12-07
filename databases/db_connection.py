@@ -26,62 +26,46 @@ import psycopg2
 
 class DbConnection:
     """
-    Classe utilizada para realizar operações em banco de dados.
+    Classe responsável por realizar operações em um banco de dados PostgreSQL.
 
-    @ivar GETtForeignKeyRelationTable: Retorna uma tabela com informações sobre as chaves estrangeiras de uma tabela específica.
-    @ivar GEtSridTable: Retorna o SRID de uma tabela que possui uma coluna geométrica. Retorna um único valor correspondente ao SRID encontrado.
-    @ivar GEtNumberLineOfTable: Retorna o número de linhas de uma tabela.
-    @ivar GEtAllTables: Retorna uma lista com os nomes de todas as tabelas de um esquema específico.
-    @ivar GEtTablesGeo: Retorna uma lista com os nomes das tabelas que possuem colunas geométricas no esquema especificado.
-    @ivar CAlculateIntersect: Retorna os registros de uma tabela que intersectam com um polígono específico.
-    @ivar CAlculateIntersectByPoint: Retorna os registros de uma tabela que intersectam com um buffer circular de um ponto específico.
-    @ivar CReatePoint: Retorna um ponto transformado de um sistema de coordenadas inicial para o sistema EPSG 4674.
-    @ivar GEtTableColum: Retorna uma lista com os nomes das colunas de uma tabela específica em um esquema.
-    @ivar GEtTablesCollumnsAll: Retorna um dicionário contendo as colunas de todas as tabelas em uma lista de tabelas.
-    @ivar GEtGeomTypeTable: Retorna o tipo geométrico da coluna "geom" de uma tabela específica.
-    @ivar GEtDataTypeColumns: Retorna um dicionário com os tipos de dados de todas as colunas de uma tabela.
-    @ivar GEtAllTypeGeomOFGeomColum: Retorna um dicionário com o tipo geométrico de todas as tabelas que possuem uma coluna geométrica em um esquema.
-    @ivar testConnection: Testa a conexão com o banco de dados.
+    Atributos:
+        host (str): Endereço do host do banco de dados.
+        port (str): Porta do banco de dados.
+        db (str): Nome do banco de dados.
+        user (str): Nome do usuário para conexão.
+        password (str): Senha para conexão.
+        conn: Objeto de conexão com o banco de dados.
     """
 
     def __init__(self, host, port, db, user, password):
-        """Constructor."""
+        """
+        Inicializa a conexão com o banco de dados.
 
-        #QDialog.__init__(self)
-        #self.setupUi(self)
-        #self.iface = iface
-        #super(DbTools, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
-
-        #self.dataGeomTypes = {"trecho_rodoviario":"LineString", "trecho_ferroviario":"LineString", "area_politico_adminitrativo":"Polygon", "unidade_federacao":"Polygon", "municipio": "Polygon", "municipio":"Polygon", "terreno_sujeito_inundacao":"Polygon","faixa_dominio":"Polygon", "parcela":"Polygon", "terra_originalmente_uniao":"Polygon","trecho_terreno_marginal":"Polygon", "trecho_terreno_marginal":"Polygon","trecho_area_indubitavel":"Polygon", "terras_interiores":"Polygon", "faixa_dominio":"Polygon", "area_especial":"Polygon", "massa_dagua":"Polygon"}
-        #self.nameConect = ConfigurationDialog.getLastNameConnection(self)
+        Args:
+            host (str): Endereço do host do banco de dados.
+            port (str): Porta do banco de dados.
+            db (str): Nome do banco de dados.
+            user (str): Nome do usuário para conexão.
+            password (str): Senha para conexão.
+        """
         self.host = host
         self.port = port
         self.db = db
         self.user = user
         self.password = password
 
-        #try:
-        #print (self.nameConect)
-        print (self.host,self.port, self.db, self.user, self.password)
-
         self.conn = psycopg2.connect(" dbname=" + self.db + " user=" + self.user + " host=" + self.host+ " password=" + self.password + " port=" + self.port)
 
-
-    # def GEtRefSys(self):
-    #     con = sqlite3.connect('C:/Users/guibo/spatialite.db')
-    #     print("lido")
-    #     cur = con.cursor()
-    #     cur.execute('select auth_name, auth_srid, ref_sys_name from spatial_ref_sys order by srid')
-    #     rows = cur.fetchall()
-    #     return rows
-
-    #Return a table with relation "FOREIGN KEY". The format of table is: FK_Table | FK_Column | PK_Table | PK_Column
     def GETtForeignKeyRelationTable(self, tableName):
+        """
+        Retorna uma tabela com informações sobre as relações de chave estrangeira de uma tabela.
+
+        Args:
+            tableName (str): Nome da tabela.
+
+        Returns:
+            list: Lista de tuplas com informações sobre chaves estrangeiras.
+        """
 
         sql='SELECT conrelid::regclass AS ' + '"FK_Table"'
         + ',CASE WHEN pg_get_constraintdef(c.oid) LIKE' + " 'FOREIGN KEY %' THEN substring(pg_get_constraintdef(c.oid), 14, position(')' in pg_get_constraintdef(c.oid))-14) END AS " +' "FK_Column"'
@@ -98,9 +82,16 @@ class DbConnection:
         rows = cur.fetchall()
         return rows
 
-
-    #Return a RSID of the table. Return a table
     def GEtSridTable(self, tableName):
+        """
+        Obtém o SRID de uma tabela que possui uma coluna geométrica.
+
+        Args:
+            tableName (str): Nome da tabela.
+
+        Returns:
+            int: SRID da tabela.
+        """
 
         sql = "select ST_SRID(ta.geom) as srid from " + tableName +" as ta group by srid"
         cur = self.conn.cursor()
@@ -113,9 +104,16 @@ class DbConnection:
 
         return srid
 
-
     def GEtNumberLineOfTable(self, tableName):
+        """
+        Retorna o número de linhas de uma tabela.
 
+        Args:
+            tableName (str): Nome da tabela.
+
+        Returns:
+            int: Número de linhas na tabela.
+        """
         sql = "select count(*) from " + tableName
         cur = self.conn.cursor()
         cur.execute(sql)
@@ -126,10 +124,16 @@ class DbConnection:
             numberLine = row[0]
         return numberLine
 
-
-    #return all table of a schema. Return a list of strings
     def GEtAllTables(self, schemaName):
+        """
+        Retorna todas as tabelas de um esquema específico.
 
+        Args:
+            schemaName (str): Nome do esquema.
+
+        Returns:
+            list: Lista de nomes de tabelas no esquema.
+        """
         sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='" + schemaName + "';"
         cur = self.conn.cursor()
         cur.execute(sql)
@@ -140,13 +144,17 @@ class DbConnection:
             geoTablesLis.append(r[0])
 
         return geoTablesLis
-        #SELECT * FROM information_schema.tables WHERE table_schema='public' AND table_type = 'BASE TABLE' AND table_name<>'spatial_ref_sys'
-        #SELECT * FROM  information_schema.columns where table_schema='public' AND column_name='geom'
-
-
-    #return all table with geometry. Return a list of strings
+        
     def GEtTablesGeo(self, schemaName):
+        """
+        Retorna todas as tabelas com colunas geométricas de um esquema.
 
+        Args:
+            schemaName (str): Nome do esquema.
+
+        Returns:
+            list: Lista de nomes de tabelas que possuem colunas geométricas.
+        """
         sql = "SELECT * FROM  information_schema.columns where table_schema='" + schemaName + "' AND column_name='geom'"
         #sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='" + schemaName + "';"
         cur = self.conn.cursor()
@@ -159,22 +167,24 @@ class DbConnection:
 
         return geoTablesLis
 
-    #return a table with intersects with  polygono
     def CAlculateIntersect(self, polygono, tableName, sridLayer):
+        """
+        Retorna os registros de uma tabela que intersectam com um polígono específico.
 
+        Args:
+            polygono (str): Geometria do polígono no formato WKT.
+            tableName (str): Nome da tabela.
+            sridLayer (int): SRID da camada do polígono.
+
+        Returns:
+            list: Lista de registros que intersectam com o polígono.
+        """
         t = []
         if self.GEtNumberLineOfTable(tableName) > 0:
 
             sridTable = self.GEtSridTable(tableName)
 
-            # sql = "select * from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + polygono + "'," + str(
-            #     sridLayer) + ")," + str(sridTable) + " ))"
-
             sql = "select ST_AsText(geom) as wkt_geom, * from " + tableName + " as ta where ST_Intersects (ta.geom, " + " ST_Transform ( ST_GeomFromText('" + polygono + "'," + str(sridLayer) + ")," + str(sridTable) + " ))"
-            #sql = "select *, ST_AsText(geom) as wkt_geom from " + tableName + " as ta where ST_Intersects (ta.geom, " + "ST_GeogFromText('SRID=" + str(sridTable) + ";" + polygono + "'))"
-            #print (sql)
-
-
 
             cur = self.conn.cursor()
             cur.execute(sql)
@@ -186,6 +196,18 @@ class DbConnection:
             return t
 
     def CAlculateIntersectByPoint(self, pointCoord, tableName, sridPoint, raio):
+        """
+        Retorna os registros de uma tabela que intersectam com um buffer circular de um ponto.
+
+        Args:
+            pointCoord (tuple): Coordenadas do ponto (x, y).
+            tableName (str): Nome da tabela.
+            sridPoint (int): SRID do ponto.
+            raio (float): Raio do buffer.
+
+        Returns:
+            list: Lista de registros que intersectam com o buffer.
+        """
         t = []
         if self.GEtNumberLineOfTable(tableName) > 0:
             sridTable = self.GEtSridTable(tableName)
@@ -283,19 +305,15 @@ class DbConnection:
         return dataTypeDic
 
     def testConnection(self,):
+        """
+        Testa a conexão com o banco de dados.
+
+        Returns:
+            bool: Verdadeiro se a conexão for bem-sucedida, Falso caso contrário.
+        """
         try:
             cur = self.conn.cursor()
             return True
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return False
-
-
-
-    # def GETtStatesName(self):
-    #     sql = "SELECT nome_valor FROM dominio.sigla_uf ORDER BY id_codigo ASC "
-    #     cur = self.conn.cursor()
-    #     cur.execute(sql)
-    #     rows = cur.fetchall()
-    #
-    #     return rows
