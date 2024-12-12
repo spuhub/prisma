@@ -12,8 +12,8 @@ email=vinirafaelsch@gmail.com;
 
 about=Plugin to perform characterization and overlap analysis of properties with areas of the Federal Government
 
-tracker=https://github.com/cgdag/SPU-Prisma.git
-repository=https://github.com/cgdag/SPU-Prisma.git
+tracker=https://github.com/spuhub/prisma.git
+repository=https://github.com/spuhub/prisma.git
 # End of mandatory metadata
 
 # Recommended items:
@@ -74,7 +74,7 @@ changelog=Version 3.0 (22/07/2022):
 # Tags are comma separated with spaces allowed
 tags=python
 
-homepage=https://github.com/cgdag/SPU-Prisma
+homepage=https://github.com/spuhub/prisma
 category=Plugins
 icon=icon.png
 # experimental flag

@@ -46,7 +46,7 @@ Ao cadastrar as bases no plugin será gerado um arquivo "JSON de curadoria", pod
 
 ## Manual do Usuário
 
-Manual do usuário disponível [aqui](https://github.com/cgdag/SPU-Prisma/tree/master/docs/manual_usuario).
+Manual do usuário disponível [aqui](https://github.com/spuhub/prisma/tree/master/docs/manual_usuario).
 
 
 ## Download do SPU-PRISMA
