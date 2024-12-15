@@ -6,7 +6,7 @@
 name=Prisma
 qgisMinimumVersion=3.14
 description=Plugin para fazer caracterização de imóveis
-version=6.0
+version=6.0.1
 author=SPU
 email=vinirafaelsch@gmail.com;
 
@@ -70,6 +70,10 @@ changelog=Version 3.0 (22/07/2022):
             - Notificação de que as configurações estão sendo carregadas
             - Limpeza de código
             - Correção de bugs
+         Version 6.0.1 (15/12/2024):
+            - Barra de ferramentas SPUGeo
+            - Novo repositório no GitHub
+            - Novos estilos para as camadas padrões
 
 # Tags are comma separated with spaces allowed
 tags=python

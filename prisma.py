@@ -175,7 +175,7 @@ class Prisma:
         icon_path = ':/plugins/prisma/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'SPU-PRISMA v6.0'),
+            text=self.tr(u'SPU-PRISMA v6.0.1'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
